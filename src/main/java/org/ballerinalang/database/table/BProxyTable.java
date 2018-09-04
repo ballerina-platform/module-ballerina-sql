@@ -45,19 +45,19 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Represents a reflection of a database table. Through a Mirrored table it is possible to add/remove data to/from a
+ * Represents a reflection of a database table. Through a proxy table it is possible to add/remove data to/from a
  * database.
  *
  * @since 0.970.0
  */
-public class BMirrorTable extends BTable {
+public class BProxyTable extends BTable {
     private SQLDatasource datasource;
     private String tableName;
     private StructureTypeInfo timeStructInfo;
     private StructureTypeInfo timeZoneStructInfo;
     private Calendar utcCalendar;
 
-    public BMirrorTable(SQLDatasource datasource, String tableName, BStructureType constraintType,
+    public BProxyTable(SQLDatasource datasource, String tableName, BStructureType constraintType,
                         StructureTypeInfo timeStructInfo, StructureTypeInfo timeZoneStructInfo, Calendar utcCalendar) {
         super(tableName, constraintType);
         this.datasource = datasource;
@@ -86,8 +86,8 @@ public class BMirrorTable extends BTable {
             PreparedStatement stmt = conn.prepareStatement(sqlStmt);
             TableUtils.prepareAndExecuteStatement(stmt, data);
             reset(isInTransaction);
-        } catch (SQLException e) {
-            throw new BallerinaException("execute add failed: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new BallerinaException("execute proxy table add failed: " + e.getMessage(), e);
         } finally {
             SQLDatasourceUtils.cleanupResources(conn, isInTransaction);
         }
@@ -105,7 +105,7 @@ public class BMirrorTable extends BTable {
             while (this.hasNext(false)) {
                 BMap<String, BValue> data = this.getNext();
                 BValue[] args = { data };
-                BValue[] returns = BLangFunctions.invokeCallable(lambdaFunction.value().getFunctionInfo(), args);
+                BValue[] returns = BLangFunctions.invokeCallable(lambdaFunction.value(), args);
                 if (((BBoolean) returns[0]).booleanValue()) {
                     ++deletedCount;
                     this.removeData(data, connection);
