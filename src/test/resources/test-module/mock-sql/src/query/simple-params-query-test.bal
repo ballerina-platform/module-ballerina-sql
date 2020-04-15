@@ -362,7 +362,7 @@ function queryTypeDoubleDecimalParam(string url, string user, string password) r
 
 function queryTypeFloatDoubleParam(string url, string user, string password) returns @tainted record {}|error? {
     sql:TypedValue typeVal = {
-        sqlType: sql:TYPE_FLOAT,
+        sqlType: sql:TYPE_DOUBLE,
         value: 1234.567
     };
     sql:ParameterizedString sqlQuery = {
@@ -374,7 +374,7 @@ function queryTypeFloatDoubleParam(string url, string user, string password) ret
 
 function queryTypeRealDoubleParam(string url, string user, string password) returns @tainted record {}|error? {
     sql:TypedValue typeVal = {
-        sqlType: sql:TYPE_REAL,
+        sqlType: sql:TYPE_DOUBLE,
         value: 1234.567
     };
     sql:ParameterizedString sqlQuery = {
