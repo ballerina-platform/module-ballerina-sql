@@ -15,60 +15,86 @@
  *
  */
 
-apply from: "$rootDir/gradle/balNativeLibProject.gradle"
-apply from: "$rootDir/gradle/baseNativeStdLibProject.gradle"
-
-configurations.all {
-    resolutionStrategy.preferProjectModules()
+plugins {
+    id "com.github.spotbugs" version "4.0.5"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "de.undercouch.download" version "4.0.4"
+    id "net.researchgate.release" version "2.6.0"
 }
 
-dependencies {
-    baloImplementation project(path: ':ballerina-lang:annotations', configuration: 'baloImplementation')
-    baloImplementation project(path: ':ballerina-config-api', configuration: 'baloImplementation')
-    baloImplementation project(path: ':ballerina-java', configuration: 'baloImplementation')
-    baloImplementation project(path: ':ballerina-runtime-api', configuration: 'baloImplementation')
-    baloImplementation project(path: ':ballerina-io', configuration: 'baloImplementation')
-    baloImplementation project(path: ':ballerina-time', configuration: 'baloImplementation')
+ext.ballerinaLangVersion = project.ballerinaLangVersion
 
-    interopImports project(':ballerina-config-api')
-    interopImports project(':ballerina-io')
-    interopImports project(':ballerina-jsonutils')
-    interopImports project(':ballerina-system')
-    interopImports project(':ballerina-reflect')
+allprojects {
+    group = 'org.ballerinalang'
+    version = project.version
 
-    interopImports project(':ballerina-jsonutils')
+    apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
 
-    baloCreat project(':lib-creator')
-    implementation project(':ballerina-lang')
-    implementation project(':ballerina-io')
-    implementation project(':ballerina-lang:annotations')
-    implementation project(':ballerina-time')
-    implementation project(':ballerina-cache')
-    implementation project(':ballerina-runtime-api')
-    implementation project(':ballerina-runtime')
-    implementation project(':ballerina-test-utils')
-    implementation project(':ballerina-time')
-    implementation project(':ballerina-java')
-    implementation project(':ballerina-core')
-    
-    implementation 'com.zaxxer:HikariCP'
+    repositories {
+        mavenLocal()
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/repositories/releases/'
+        }
 
-    testCompile project(path: ':ballerina-test-common', configuration: 'tests')
-    testCompile project(':ballerina-io')
-    testCompile project(':ballerina-log-api')
-    testCompile project(':ballerina-runtime-api')
-    testCompile project(':ballerina-runtime')
-    testCompile project(':ballerina-core')
-    testCompile project(':ballerina-java')
-    testCompile project(':ballerina-transactions')
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/repositories/snapshots/'
+        }
 
-    testCompile 'org.testng:testng'
-    testCompile 'org.slf4j:slf4j-jdk14'
-    testCompile 'org.hsqldb:hsqldb'
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/groups/wso2-public/'
+        }
+
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/repositories/orgballerinalang-1614'
+        }
+
+        maven {
+            url = 'https://repo.maven.apache.org/maven2'
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-sql'
+        }
+    }
 }
 
-createBalo {
-    jvmTarget = 'true'
+subprojects {
+    apply plugin: 'java'
+
+    release {
+        // Disable check snapshots temporarily
+        buildTasks = []
+        failOnSnapshotDependencies = false
+        failOnCommitNeeded = false
+        versionPropertyFile = 'gradle.properties'
+        tagTemplate = 'v${version}'
+        git {
+            // To release from any branch
+            requireBranch = null
+        }
+    }
+}
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/coverage-reports/*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        csv.enabled = true
+        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
+        html.destination = new File("${buildDir}/reports/jacoco/report.html")
+        csv.destination = new File("${buildDir}/reports/jacoco/report.csv")
+    }
+
+    onlyIf = {
+        true
+    }
 }
 
 description = 'Ballerina - SQL'

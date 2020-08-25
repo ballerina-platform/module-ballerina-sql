@@ -44,5 +44,5 @@ public type BatchExecuteError distinct error<BatchExecuteErrorDetail>;
 # Represents an error originating from application-level causes.
 public type ApplicationError distinct error;
 
-# Represents a database or application level error returned from JDBC client remote functions.
+# Represents a database or application level error returned from SQL client remote functions.
 public type Error DatabaseError|BatchExecuteError|ApplicationError;
