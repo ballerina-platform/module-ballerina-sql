@@ -19,22 +19,20 @@ import ballerina/runtime;
 import ballerina/system;
 import ballerina/test;
 
-string libPath = checkpanic filepath:absolute("lib");
-string dbPath = checkpanic filepath:absolute("target/databases");
 string scriptPath = checkpanic filepath:absolute("src/sql/tests/resources/sql");
 
 string user = "test";
 string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
-function initializeDockerContainer(string containerName, string scriptName, string dbAlias, string port) {
+function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, string scriptName) {
     system:Process process;
     int exitCode = 1;
     process = checkpanic system:exec(
         "docker", {}, scriptPath, "run", "--rm", "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
         "-e", "HSQLDB_USER=test",
-        "-v", scriptPath + dbAlias + ":/scripts",
+        "-v", scriptPath + "/" + resFolder + ":/scripts",
         "-p", port + ":9001", "blacklabelops/hsqldb"
     );
     exitCode = checkpanic process.waitForExit();
@@ -43,12 +41,15 @@ function initializeDockerContainer(string containerName, string scriptName, stri
     runtime:sleep(20000);
 
     int counter = 0;
+    exitCode = 1;
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5000);
         process = checkpanic system:exec(
             "docker", {}, scriptPath, "exec", containerName,
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
-            "--inlineRc=url=jdbc:hsqldb:hsql://localhost/" +  dbAlias + ",user=test,password=", "/scripts/" + scriptName
+            "--autoCommit",
+            "--inlineRc", "url=" + urlPrefix + "9001/" +  dbAlias + ",user=test,password=", 
+            "/scripts/" + scriptName
         );
         exitCode = checkpanic process.waitForExit();
         counter = counter + 1;

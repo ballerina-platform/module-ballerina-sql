@@ -21,7 +21,7 @@ string connectDB = urlPrefix + "9001/connection";
 	value: ["connection"]	
 } 
 function initConnectionContainer() {
-	initializeDockerContainer("sql-connection", "connector-init-test-data.sql", "connection", "9001");
+	initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
 }
 
 @test:AfterGroups {
