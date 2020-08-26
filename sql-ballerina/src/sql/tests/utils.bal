@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/io;
 import ballerina/filepath;
 import ballerina/runtime;
 import ballerina/system;
@@ -61,4 +62,27 @@ function cleanDockerContainer(string containerName) {
     system:Process process = checkpanic system:exec("docker", {}, scriptPath, "stop", containerName);
     int exitCode = checkpanic process.waitForExit();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
+}
+
+function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/byteValue.txt");
+    return byteChannel;
+}
+
+function getBlobColumnChannel() returns @untainted io:ReadableByteChannel {
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/blobValue.txt");
+    return byteChannel;
+}
+
+function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/clobValue.txt");
+    io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
+    return sourceChannel;
+}
+
+function getUntaintedData(record {}|error? value, string fieldName) returns @untainted anydata {
+    if (value is record {}) {
+        return value[fieldName];
+    }
+    return {};
 }
