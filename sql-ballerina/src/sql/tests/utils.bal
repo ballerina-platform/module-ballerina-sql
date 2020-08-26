@@ -25,7 +25,7 @@ string scriptPath = checkpanic filepath:absolute("src/sql/tests/resources/sql");
 
 string user = "test";
 string password = "";
-string urlPrefix = "jdbc:hsqldb:hsql://localhost/";
+string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
 function initializeDockerContainer(string containerName, string scriptName, string dbAlias, string port) {
     system:Process process;

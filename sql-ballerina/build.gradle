@@ -32,6 +32,9 @@ dependencies {
     externalJars (group: 'com.zaxxer', name: 'HikariCP', version: "3.3.1") {
         transitive = false
     }
+    externalJars (group: 'org.hsqldb', name: 'hsqldb', version: '2.5.1') {
+        transitive = false
+    }
 }
 
 clean {

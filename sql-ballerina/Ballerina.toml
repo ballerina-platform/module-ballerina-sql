@@ -18,3 +18,10 @@ target = "java8"
     path = "./lib/HikariCP-3.3.1.jar"
     groupId = "com.zaxxer"
     modules = ["sql"]
+
+    [[platform.libraries]]
+    artifactId = "hsqldb"
+    version = "2.5.1"
+    path = "./lib/hsqldb-2.5.1.jar"
+    groupId = "org.hsqldb"
+    modules = ["sql"]
