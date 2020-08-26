@@ -11,11 +11,11 @@ CREATE TABLE NumericTypes (
    real_type REAL NOT NULL ,
    PRIMARY KEY (id)
 );
-/
+
 INSERT INTO NumericTypes (id, int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type, numeric_type,
     float_type, real_type) VALUES (1, 2147483647, 9223372036854774807, 32767, 127, 1, 1234.567, 1234.567, 1234.567,
     1234.567);
-/
+
 
 CREATE TABLE NumericNullTypes (
    id INT IDENTITY,
@@ -30,13 +30,13 @@ CREATE TABLE NumericNullTypes (
    real_type REAL,
    PRIMARY KEY (id)
 );
-/
+
 INSERT INTO NumericNullTypes (id, int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type, numeric_type,
     float_type, real_type) VALUES (1, 2147483647, 9223372036854774807, 32767, 127, 1, 1234.567, 1234.567, 1234.567,
     1234.567);
-/
+
 
 INSERT INTO NumericNullTypes (id, int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type, numeric_type,
     float_type, real_type) VALUES (2, null , null , null , null , null , null , null , null ,
     null );
-/
+

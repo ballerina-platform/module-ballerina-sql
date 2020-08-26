@@ -1,14 +1,14 @@
 [project]
 org-name = "ballerina"
-version = "0.5.0"
+version = "@toml.version@"
 
 [platform]
 target = "java8"
 
     [[platform.libraries]]
     artifactId = "sql-native"
-    version = "0.5.0-SNAPSHOT"
-    path = "../sql-native/build/libs/sql-native-0.5.0-SNAPSHOT.jar"
+    version = "@project.version@"
+    path = "../sql-native/build/libs/sql-native-@project.version@.jar"
     groupId = "ballerina"
     modules = ["sql"]
 

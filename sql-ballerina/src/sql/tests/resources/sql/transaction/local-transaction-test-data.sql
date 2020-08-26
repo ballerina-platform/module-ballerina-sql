@@ -7,4 +7,3 @@ CREATE TABLE IF NOT EXISTS Customers(
   country  VARCHAR(300),
   PRIMARY KEY (customerId)
 );
-/

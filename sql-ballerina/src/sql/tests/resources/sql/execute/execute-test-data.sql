@@ -11,9 +11,9 @@ CREATE TABLE NumericTypes (
    real_type REAL,
    PRIMARY KEY (id)
 );
-/
+
 INSERT INTO NumericTypes (int_type) VALUES (10);
-/
+
 CREATE TABLE StringTypes (
    id INT,
    varchar_type VARCHAR(255),
@@ -26,4 +26,4 @@ CREATE TABLE StringTypes (
    clob_type CLOB,
    PRIMARY KEY (id)
 );
-/
+
