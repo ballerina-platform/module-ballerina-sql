@@ -87,9 +87,9 @@ function getUntaintedData(record {}|error? value, string fieldName) returns @unt
     return {};
 }
 
-function queryMockClient(@untainted string|ParameterizedQuery sqlQuery)
+function queryMockClient(string url, @untainted string|ParameterizedQuery sqlQuery)
 returns @tainted record {}? {
-    MockClient dbClient = checkpanic new (url = executeParamsDb, user = user, password = password);
+    MockClient dbClient = checkpanic new (url = url, user = user, password = password);
     stream<record{}, error> streamData = dbClient->query(sqlQuery);
     record {|record {} value;|}? data = checkpanic streamData.next();
     checkpanic streamData.close();

@@ -160,7 +160,7 @@ function deleteDataTable3() {
     groups: ["execute-params"]
 }
 function insertIntoComplexTable() {
-    record {}? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
     string stringType = "very long text";
@@ -208,7 +208,7 @@ function insertIntoComplexTable3() {
     dependsOn: ["insertIntoComplexTable3"]
 }
 function deleteComplexTable() {
-    record {}|error? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
 
     int rowId = 2;
@@ -366,7 +366,7 @@ function insertIntoArrayTable() {
     string[] datastring = ["Hello", "Ballerina"];
     boolean[] databoolean = [true, false, true];
 
-    record {}? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[][] dataBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
 
     ArrayValue paraInt = new (dataint);

@@ -32,7 +32,7 @@ function initTransactionContainer() {
 }
 
 @test:AfterGroups {
-	value: ["transaction"]	
+	value: ["transaction"]		
 } 
 function cleanTransactionContainer() {
 	cleanDockerContainer("sql-transaction");

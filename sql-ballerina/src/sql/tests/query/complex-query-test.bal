@@ -20,14 +20,14 @@ import ballerina/time;
 string complexQueryDb = urlPrefix + "9008/querycomplex";
 
 @test:BeforeGroups {
- 	value: ["query-complex"]	
+ 	value: ["query-complex"]
 } 
 function initQueryComplexContainer() {
  	initializeDockerContainer("sql-query-complex", "querycomplex", "9008", "query", "complex-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["query-complex"]	
+ 	value: ["query-complex"]
 } 
 function cleanQueryComplexContainer() {
 	cleanDockerContainer("sql-query-complex");
@@ -320,20 +320,44 @@ function testColumnAlias() {
     checkpanic dbClient.close();
 }
 
-// function testQueryRowId() {
-//     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-//     ExecutionResult result = checkpanic dbClient->execute("SET DATABASE SQL SYNTAX ORA TRUE");
-//     stream<record{}, error> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, float_array, boolean_array," +
-//         "string_array from ArrayTypes");
-//     record{}[] recordMap = [];
+type ResultMapForRowID record {
+    int ROWNUM;
+    int[] INT_ARRAY;
+    int[] LONG_ARRAY;
+    boolean[] BOOLEAN_ARRAY;
+    string[] STRING_ARRAY;
+};
 
-//     int counter = 0;
-//     error? e = streamData.forEach(function (record {} value) {
-//         recordMap[recordMap.length()] = value;
-//     });
-//     if (e is error) {
-//         return e;
-//     }
-//     check dbClient.close();
-//     return recordMap;
-// }
+@test:Config {
+    enable: false,
+    groups: ["query-complex"]
+}
+function testQueryRowId() {
+    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
+    ExecutionResult result = checkpanic dbClient->execute("SET DATABASE SQL SYNTAX ORA TRUE");
+    stream<record{}, error> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, boolean_array," +
+         "string_array from ArrayTypes");
+
+    ResultMapForRowID mixTypesExpected = {
+        ROWNUM: 1,
+        INT_ARRAY: [1, 2, 3],
+        LONG_ARRAY: [100000000, 200000000, 300000000], 
+        STRING_ARRAY: ["Hello", "Ballerina"],
+        BOOLEAN_ARRAY: [true, false, true]
+    }; 
+
+    ResultMapForRowID? mixTypesActual = ();
+    int counter = 0;
+    error? e = streamData.forEach(function (record {} value) {
+        if (value is ResultMapForRowID && counter == 0) {
+            mixTypesActual = value;
+        }
+        counter = counter + 1;
+    });
+    if (e is error) {
+        test:assertFail("Query failed");
+    }
+    test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
+    test:assertEquals(counter, 4);
+    checkpanic dbClient.close();
+}

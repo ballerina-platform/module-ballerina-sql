@@ -40,7 +40,7 @@ function cleanQueryParamsContainer() {
 function querySingleIntParam() {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -50,7 +50,7 @@ function queryDoubleIntParam() {
     int rowId = 1;
     int intType = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -60,7 +60,7 @@ function queryIntAndLongParam() {
     int rowId = 1;
     int longType = 9223372036854774807;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -69,7 +69,7 @@ function queryIntAndLongParam() {
 function queryStringParam() {
     string stringType = "Hello";
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -79,7 +79,7 @@ function queryIntAndStringParam() {
     string stringType = "Hello";
     int rowId =1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -88,7 +88,7 @@ function queryIntAndStringParam() {
 function queryDoubleParam() {
     float doubleType = 2139095039.0;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE double_type = ${doubleType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -97,7 +97,7 @@ function queryDoubleParam() {
 function queryFloatParam() {
     float floatType = 123.34;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -108,7 +108,7 @@ function queryDoubleAndFloatParam() {
     float doubleType = 2139095039.0;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}
                                                                     and double_type = ${doubleType}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -117,7 +117,7 @@ function queryDoubleAndFloatParam() {
 function queryDecimalParam() {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -127,7 +127,7 @@ function queryDecimalAnFloatParam() {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}
                                                                     and double_type = 2139095039.0`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -136,7 +136,7 @@ function queryDecimalAnFloatParam() {
 function queryTypeVarcharStringParam() {
     VarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -145,7 +145,7 @@ function queryTypeVarcharStringParam() {
 function queryTypeCharStringParam() {
     CharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -154,7 +154,7 @@ function queryTypeCharStringParam() {
 function queryTypeNCharStringParam() {
     NCharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -163,7 +163,7 @@ function queryTypeNCharStringParam() {
 function queryTypeNVarCharStringParam() {
     NVarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -175,7 +175,7 @@ function queryTypeVarCharIntegerParam() {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
 
     decimal decimalVal = 25.45;
-    record {}? returnData = queryMockClient(sqlQuery);
+    record {}? returnData = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertNotEquals(returnData, ());
     if (returnData is ()) {
         test:assertFail("Query returns ()");
@@ -197,7 +197,7 @@ function queryTypeVarCharIntegerParam() {
 function queryTypBooleanBooleanParam() {
     BooleanValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -206,7 +206,7 @@ function queryTypBooleanBooleanParam() {
 function queryTypBitIntParam() {
     BitValue typeVal = new (1);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -215,7 +215,7 @@ function queryTypBitIntParam() {
 function queryTypBitStringParam() {
     BitValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(queryMockClient(sqlQuery));
+    validateDataTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -224,7 +224,7 @@ function queryTypBitStringParam() {
 function queryTypBitInvalidIntParam() {
     BitValue typeVal = new (12);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    record{}|error? returnVal = trap queryMockClient(sqlQuery);
+    record{}|error? returnVal = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(returnVal is error);
     error dbError = <error> returnVal;
     test:assertEquals(dbError.message(), "Only 1 or 0 can be passed for BitValue SQL Type, but found :12");
@@ -236,7 +236,7 @@ function queryTypBitInvalidIntParam() {
 function queryTypeIntIntParam() {
     IntegerValue typeVal = new (2147483647);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE int_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -245,7 +245,7 @@ function queryTypeIntIntParam() {
 function queryTypeTinyIntIntParam() {
     SmallIntValue typeVal = new (127);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE tinyint_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -254,7 +254,7 @@ function queryTypeTinyIntIntParam() {
 function queryTypeSmallIntIntParam() {
     SmallIntValue typeVal = new (32767);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE smallint_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -263,7 +263,7 @@ function queryTypeSmallIntIntParam() {
 function queryTypeBigIntIntParam() {
     BigIntValue typeVal = new (9223372036854774807);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE bigint_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -272,7 +272,7 @@ function queryTypeBigIntIntParam() {
 function queryTypeDoubleDoubleParam() {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -281,7 +281,7 @@ function queryTypeDoubleDoubleParam() {
 function queryTypeDoubleIntParam() {
     DoubleValue typeVal = new (1234);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    record{}? returnData = queryMockClient(sqlQuery);
+    record{}? returnData = queryMockClient(simpleParamsDb, sqlQuery);
 
     if (returnData is ()) {
         test:assertFail("Returned data is nil");
@@ -300,7 +300,7 @@ function queryTypeDoubleDecimalParam() {
     decimal decimalVal = 1234.567;
     DoubleValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -309,16 +309,17 @@ function queryTypeDoubleDecimalParam() {
 function queryTypeFloatDoubleParam() {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
+    enable: false,
     groups: ["query-params"]
 }
 function queryTypeRealDoubleParam() {
     RealValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE real_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -327,7 +328,7 @@ function queryTypeRealDoubleParam() {
 function queryTypeNumericDoubleParam() {
     NumericValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -336,7 +337,7 @@ function queryTypeNumericDoubleParam() {
 function queryTypeNumericIntParam() {
     NumericValue typeVal = new (1234);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    record{}? returnData = queryMockClient(sqlQuery);
+    record{}? returnData = queryMockClient(simpleParamsDb, sqlQuery);
 
     if (returnData is ()) {
         test:assertFail("Returned data is nil");
@@ -354,7 +355,7 @@ function queryTypeNumericDecimalParam() {
     decimal decimalVal = 1234.567;
     NumericValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -363,7 +364,7 @@ function queryTypeNumericDecimalParam() {
 function queryTypeDecimalDoubleParam() {
     DecimalValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -373,28 +374,28 @@ function queryTypeDecimalDecimalParam() {
     decimal decimalVal = 1234.567;
     DecimalValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
-    validateNumericTableResult(queryMockClient(sqlQuery));
+    validateNumericTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
     groups: ["query-params"]
 }
 function queryByteArrayParam() {
-    record {}|error? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
     groups: ["query-params"]
 }
 function queryTypeBinaryByteParam() {
-    record {}|error? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -404,7 +405,7 @@ function queryTypeBinaryReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getByteColumnChannel();
     BinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -414,18 +415,18 @@ function queryTypeVarBinaryReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getByteColumnChannel();
     VarBinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE var_binary_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
     groups: ["query-params"]
 }
 function queryTypeTinyBlobByteParam() {
-    record {}|error? value = queryMockClient("Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -435,7 +436,7 @@ function queryTypeBlobReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getBlobColumnChannel();
     BlobValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -444,7 +445,7 @@ function queryTypeBlobReadableByteChannelParam() {
 function queryTypeClobStringParam() {
     ClobValue typeVal = new ("very long text");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -454,7 +455,7 @@ function queryTypeClobReadableCharChannelParam() {
     io:ReadableCharacterChannel clobChannel = getClobColumnChannel();
     ClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -464,170 +465,187 @@ function queryTypeNClobReadableCharChannelParam() {
     io:ReadableCharacterChannel clobChannel = getClobColumnChannel();
     NClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(queryMockClient(sqlQuery));
+    validateComplexTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateStringParam() {
     DateValue typeVal = new ("2017-02-03");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateString2Param() {
     DateValue typeVal = new ("2017-2-3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateLongParam() {
     time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
     DateValue typeVal = new (date.time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateTimeRecordParam() {
     time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimeStringParam() {
     TimeValue typeVal = new ("11:35:45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimeLongParam() {
     time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
     TimeValue typeVal = new (date.time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimeTimeRecordParam() {
     time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
     TimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimeTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03T11:35:45", "yyyy-MM-dd'T'HH:mm:ss");
     TimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimestampStringParam() {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimestampLongParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
     TimestampValue typeVal = new (date.time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimestampTimeRecordParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryTimestampTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
-    enable: false
+    enable: false,
+    groups: ["query-params"]
 }
 function queryDateTimeTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -638,7 +656,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() {
     time:Time date = checkpanic time:parse("2008-08-08 20:08:08+0800", "yyyy-MM-dd HH:mm:ssZ");
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(sqlQuery));
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -668,7 +686,7 @@ function queryArrayBasicParams() {
                                 AND decimal_array = ${paraDecimal}
                                 AND string_array = ${paraString}
                                 AND boolean_array = ${paraBool}`;
-    record{}? returnData = queryMockClient(sqlQuery);
+    record{}? returnData = queryMockClient(simpleParamsDb, sqlQuery);
     if (returnData is record{}) {
         test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
         test:assertEquals(returnData["LONG_ARRAY"], [100000000, 200000000, 300000000]);
@@ -691,7 +709,7 @@ function queryArrayBasicNullParams() {
          is null AND double_array is null AND decimal_array is null AND string_array is null
          AND boolean_array is null`;
 
-    record{}? returnData = queryMockClient(sqlQuery);
+    record{}? returnData = queryMockClient(simpleParamsDb, sqlQuery);
     if (returnData is record{}) {
         test:assertEquals(returnData["INT_ARRAY"], ());
         test:assertEquals(returnData["LONG_ARRAY"], ());
@@ -705,16 +723,6 @@ function queryArrayBasicNullParams() {
         test:assertFail("Empty row returned.");
     }
 }
-
-// function queryMockClient(@untainted string|ParameterizedQuery sqlQuery) returns @tainted record {}? {
-//     MockClient dbClient = checkpanic new (url = simpleParamsDb, user = user, password = password);
-//     stream<record {}, error> streamData = dbClient->query(sqlQuery);
-//     record {|record {} value;|}? data = checkpanic streamData.next();
-//     checkpanic streamData.close();
-//     record {}? value = data?.value;
-//     checkpanic dbClient.close();
-//     return value;
-// }
 
 function validateDataTableResult(record{}? returnData) {
     decimal decimalVal = 23.45;
