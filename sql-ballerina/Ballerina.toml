@@ -25,3 +25,4 @@ target = "java8"
     path = "./lib/hsqldb-2.5.1.jar"
     groupId = "org.hsqldb"
     modules = ["sql"]
+    scope = "testOnly"
