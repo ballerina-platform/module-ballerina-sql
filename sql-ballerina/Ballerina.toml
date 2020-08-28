@@ -1,0 +1,28 @@
+[project]
+org-name = "ballerina"
+version = "@toml.version@"
+
+[platform]
+target = "java8"
+
+    [[platform.libraries]]
+    artifactId = "sql-native"
+    version = "@project.version@"
+    path = "../sql-native/build/libs/sql-native-@project.version@.jar"
+    groupId = "ballerina"
+    modules = ["sql"]
+
+    [[platform.libraries]]
+    artifactId = "HikariCP"
+    version = "3.3.1"
+    path = "./lib/HikariCP-3.3.1.jar"
+    groupId = "com.zaxxer"
+    modules = ["sql"]
+
+    [[platform.libraries]]
+    artifactId = "hsqldb"
+    version = "2.5.1"
+    path = "./lib/hsqldb-2.5.1.jar"
+    groupId = "org.hsqldb"
+    modules = ["sql"]
+    scope = "testOnly"
