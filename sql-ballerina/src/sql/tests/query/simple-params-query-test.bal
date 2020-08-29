@@ -18,24 +18,24 @@ import ballerina/io;
 import ballerina/time;
 import ballerina/test;
 
-string simpleParamsDb = urlPrefix + "9010/queryparams";
+string simpleParamsDb = urlPrefix + "9010/querysimpleparams";
 
 @test:BeforeGroups {
-	value: ["query-params"]	
+	value: ["query-simple-params"]	
 } 
 function initQueryParamsContainer() {
-	initializeDockerContainer("sql-query-params", "queryparams", "9010", "query", "simple-params-test-data.sql");
+	initializeDockerContainer("sql-query-params", "querysimpleparams", "9010", "query", "simple-params-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["query-params"]	
+	value: ["query-simple-params"]	
 } 
 function cleanQueryParamsContainer() {
 	cleanDockerContainer("sql-query-params");
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function querySingleIntParam() {
     int rowId = 1;
@@ -44,7 +44,7 @@ function querySingleIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDoubleIntParam() {
     int rowId = 1;
@@ -54,7 +54,7 @@ function queryDoubleIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryIntAndLongParam() {
     int rowId = 1;
@@ -64,7 +64,7 @@ function queryIntAndLongParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryStringParam() {
     string stringType = "Hello";
@@ -73,7 +73,7 @@ function queryStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryIntAndStringParam() {
     string stringType = "Hello";
@@ -83,7 +83,7 @@ function queryIntAndStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDoubleParam() {
     float doubleType = 2139095039.0;
@@ -92,7 +92,7 @@ function queryDoubleParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryFloatParam() {
     float floatType = 123.34;
@@ -101,7 +101,7 @@ function queryFloatParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDoubleAndFloatParam() {
     float floatType = 123.34;
@@ -112,7 +112,7 @@ function queryDoubleAndFloatParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDecimalParam() {
     decimal decimalValue = 23.45;
@@ -121,7 +121,7 @@ function queryDecimalParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDecimalAnFloatParam() {
     decimal decimalValue = 23.45;
@@ -131,7 +131,7 @@ function queryDecimalAnFloatParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeVarcharStringParam() {
     VarcharValue typeVal = new ("Hello");
@@ -140,7 +140,7 @@ function queryTypeVarcharStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeCharStringParam() {
     CharValue typeVal = new ("Hello");
@@ -149,7 +149,7 @@ function queryTypeCharStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNCharStringParam() {
     NCharValue typeVal = new ("Hello");
@@ -158,7 +158,7 @@ function queryTypeNCharStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNVarCharStringParam() {
     NVarcharValue typeVal = new ("Hello");
@@ -167,7 +167,7 @@ function queryTypeNVarCharStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeVarCharIntegerParam() {
     int intVal = 1;
@@ -192,7 +192,7 @@ function queryTypeVarCharIntegerParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypBooleanBooleanParam() {
     BooleanValue typeVal = new (true);
@@ -201,7 +201,7 @@ function queryTypBooleanBooleanParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypBitIntParam() {
     BitValue typeVal = new (1);
@@ -210,7 +210,7 @@ function queryTypBitIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypBitStringParam() {
     BitValue typeVal = new (true);
@@ -219,7 +219,7 @@ function queryTypBitStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypBitInvalidIntParam() {
     BitValue typeVal = new (12);
@@ -231,7 +231,7 @@ function queryTypBitInvalidIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeIntIntParam() {
     IntegerValue typeVal = new (2147483647);
@@ -240,7 +240,7 @@ function queryTypeIntIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeTinyIntIntParam() {
     SmallIntValue typeVal = new (127);
@@ -249,7 +249,7 @@ function queryTypeTinyIntIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeSmallIntIntParam() {
     SmallIntValue typeVal = new (32767);
@@ -258,7 +258,7 @@ function queryTypeSmallIntIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeBigIntIntParam() {
     BigIntValue typeVal = new (9223372036854774807);
@@ -267,7 +267,7 @@ function queryTypeBigIntIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeDoubleDoubleParam() {
     DoubleValue typeVal = new (1234.567);
@@ -276,7 +276,7 @@ function queryTypeDoubleDoubleParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeDoubleIntParam() {
     DoubleValue typeVal = new (1234);
@@ -294,7 +294,7 @@ function queryTypeDoubleIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeDoubleDecimalParam() {
     decimal decimalVal = 1234.567;
@@ -304,7 +304,7 @@ function queryTypeDoubleDecimalParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeFloatDoubleParam() {
     DoubleValue typeVal = new (1234.567);
@@ -314,7 +314,7 @@ function queryTypeFloatDoubleParam() {
 
 @test:Config {
     enable: false,
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeRealDoubleParam() {
     RealValue typeVal = new (1234.567);
@@ -323,7 +323,7 @@ function queryTypeRealDoubleParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNumericDoubleParam() {
     NumericValue typeVal = new (1234.567);
@@ -332,7 +332,7 @@ function queryTypeNumericDoubleParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNumericIntParam() {
     NumericValue typeVal = new (1234);
@@ -349,7 +349,7 @@ function queryTypeNumericIntParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNumericDecimalParam() {
     decimal decimalVal = 1234.567;
@@ -359,7 +359,7 @@ function queryTypeNumericDecimalParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeDecimalDoubleParam() {
     DecimalValue typeVal = new (1234.567);
@@ -368,7 +368,7 @@ function queryTypeDecimalDoubleParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeDecimalDecimalParam() {
     decimal decimalVal = 1234.567;
@@ -378,7 +378,7 @@ function queryTypeDecimalDecimalParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryByteArrayParam() {
     record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -388,7 +388,7 @@ function queryByteArrayParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeBinaryByteParam() {
     record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -399,7 +399,7 @@ function queryTypeBinaryByteParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeBinaryReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getByteColumnChannel();
@@ -409,7 +409,7 @@ function queryTypeBinaryReadableByteChannelParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeVarBinaryReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getByteColumnChannel();
@@ -419,7 +419,7 @@ function queryTypeVarBinaryReadableByteChannelParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeTinyBlobByteParam() {
     record {}|error? value = queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -430,7 +430,7 @@ function queryTypeTinyBlobByteParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeBlobReadableByteChannelParam() {
     io:ReadableByteChannel byteChannel = getBlobColumnChannel();
@@ -440,7 +440,7 @@ function queryTypeBlobReadableByteChannelParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeClobStringParam() {
     ClobValue typeVal = new ("very long text");
@@ -449,7 +449,7 @@ function queryTypeClobStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeClobReadableCharChannelParam() {
     io:ReadableCharacterChannel clobChannel = getClobColumnChannel();
@@ -459,7 +459,7 @@ function queryTypeClobReadableCharChannelParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTypeNClobReadableCharChannelParam() {
     io:ReadableCharacterChannel clobChannel = getClobColumnChannel();
@@ -469,7 +469,7 @@ function queryTypeNClobReadableCharChannelParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateStringParam() {
     DateValue typeVal = new ("2017-02-03");
@@ -478,7 +478,7 @@ function queryDateStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateString2Param() {
     DateValue typeVal = new ("2017-2-3");
@@ -487,7 +487,7 @@ function queryDateString2Param() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
@@ -504,7 +504,7 @@ function queryDateStringInvalidParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateLongParam() {
     time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
@@ -514,7 +514,7 @@ function queryDateLongParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateTimeRecordParam() {
     time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
@@ -524,7 +524,7 @@ function queryDateTimeRecordParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -534,7 +534,7 @@ function queryDateTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimeStringParam() {
     TimeValue typeVal = new ("11:35:45");
@@ -543,7 +543,7 @@ function queryTimeStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
@@ -560,7 +560,7 @@ function queryTimeStringInvalidParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimeLongParam() {
     time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
@@ -570,7 +570,7 @@ function queryTimeLongParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimeTimeRecordParam() {
     time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
@@ -580,7 +580,7 @@ function queryTimeTimeRecordParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimeTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03T11:35:45", "yyyy-MM-dd'T'HH:mm:ss");
@@ -590,7 +590,7 @@ function queryTimeTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampStringParam() {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
@@ -599,7 +599,7 @@ function queryTimestampStringParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
@@ -615,7 +615,7 @@ function queryTimestampStringInvalidParam() {
     }}
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampLongParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
@@ -625,7 +625,7 @@ function queryTimestampLongParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampTimeRecordParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
@@ -635,7 +635,7 @@ function queryTimestampTimeRecordParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
@@ -645,7 +645,7 @@ function queryTimestampTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryDateTimeTimeRecordWithTimeZoneParam() {
     time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
@@ -655,7 +655,7 @@ function queryDateTimeTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryTimestampTimeRecordWithTimeZone2Param() {
     time:Time date = checkpanic time:parse("2008-08-08 20:08:08+0800", "yyyy-MM-dd HH:mm:ssZ");
@@ -665,7 +665,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryArrayBasicParams() {
     int[] dataint = [1, 2, 3];
@@ -706,7 +706,7 @@ function queryArrayBasicParams() {
 }
 
 @test:Config {
-    groups: ["query-params"]
+    groups: ["query-simple-params"]
 }
 function queryArrayBasicNullParams() {
     ParameterizedQuery sqlQuery =

@@ -38,7 +38,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     );
     exitCode = checkpanic process.waitForExit();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' start failed");
-
+    io:println("Docker container for Database '" + dbAlias +"' created.");
     runtime:sleep(20000);
 
     int counter = 0;
@@ -56,12 +56,14 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
         counter = counter + 1;
     }
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
+    io:println("Docker container for Database '" + dbAlias +"' initialised with the script.");
 }
 
 function cleanDockerContainer(string containerName) {
     system:Process process = checkpanic system:exec("docker", {}, scriptPath, "stop", containerName);
     int exitCode = checkpanic process.waitForExit();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
+    io:println("Cleaned docker container '" + containerName +"'.");
 }
 
 function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
