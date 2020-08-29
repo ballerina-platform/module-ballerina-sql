@@ -32,17 +32,17 @@ function initTransactionContainer() {
 }
 
 @test:AfterGroups {
-	value: ["transaction"]		
-} 
+	value: ["transaction"]
+}
 function cleanTransactionContainer() {
-	cleanDockerContainer("sql-transaction");
+    cleanDockerContainer("sql-transaction");
 }
 
 @test:Config {
     groups: ["transaction"]
 }
 function testLocalTransaction() {
-   MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
     int retryVal = -1;
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
@@ -424,7 +424,7 @@ function testLocalTransactionSuccessWithFailed() {
     a = a + " afterTrx";
     int count = getCount(dbClient, "222");
     checkpanic dbClient.close();
-     test:assertEquals(a, "beforetx inTrx inTrx inTrx committed afterTrx");
+    test:assertEquals(a, "beforetx inTrx inTrx inTrx committed afterTrx");
     test:assertEquals(count, 2);
 }
 

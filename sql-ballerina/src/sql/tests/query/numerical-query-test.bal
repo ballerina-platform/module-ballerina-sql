@@ -45,7 +45,7 @@ type NumericTypeForQuery record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQuery() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -74,7 +74,7 @@ function testQuery() {
 }
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericTypeRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -112,7 +112,7 @@ type NumericInvalidColumn record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericInvalidColumnRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -140,7 +140,7 @@ type NumericOptionalType record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericOptionalTypeRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -177,7 +177,7 @@ type NumericUnionType record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericUnionTypeRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -215,7 +215,7 @@ type NumericStringType record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericStringTypeRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -253,7 +253,7 @@ type NumericCustomType record {
 };
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryNumericCustomTypeRecord() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
@@ -278,7 +278,7 @@ function testQueryNumericCustomTypeRecord() {
 }
 
 @test:Config {
-    groups: ["query-numeric-params"]
+    groups: ["query", "query-numeric-params"]
 }
 function testQueryFromNullTable() {
     MockClient dbClient = checkpanic new (url = jdbcURL, user = user, password = password);
