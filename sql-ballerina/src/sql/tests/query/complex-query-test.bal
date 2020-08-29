@@ -320,16 +320,7 @@ function testColumnAlias() {
     checkpanic dbClient.close();
 }
 
-type ResultMapForRowID record {
-    int ROWNUM;
-    int[] INT_ARRAY;
-    int[] LONG_ARRAY;
-    boolean[] BOOLEAN_ARRAY;
-    string[] STRING_ARRAY;
-};
-
 @test:Config {
-    enable: false,
     groups: ["query-complex"]
 }
 function testQueryRowId() {
@@ -338,18 +329,18 @@ function testQueryRowId() {
     stream<record{}, error> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, boolean_array," +
          "string_array from ArrayTypes");
 
-    ResultMapForRowID mixTypesExpected = {
-        ROWNUM: 1,
-        INT_ARRAY: [1, 2, 3],
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
-        STRING_ARRAY: ["Hello", "Ballerina"],
-        BOOLEAN_ARRAY: [true, false, true]
+    record{} mixTypesExpected = {
+        "ROWNUM": 1,
+        "INT_ARRAY": [1, 2, 3],
+        "LONG_ARRAY": [100000000, 200000000, 300000000],
+        "BOOLEAN_ARRAY": [true, false, true],
+        "STRING_ARRAY": ["Hello", "Ballerina"]
     }; 
 
-    ResultMapForRowID? mixTypesActual = ();
+    record{}? mixTypesActual = ();
     int counter = 0;
     error? e = streamData.forEach(function (record {} value) {
-        if (value is ResultMapForRowID && counter == 0) {
+        if (counter == 0) {
             mixTypesActual = value;
         }
         counter = counter + 1;

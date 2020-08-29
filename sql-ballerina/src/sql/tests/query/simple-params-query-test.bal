@@ -469,7 +469,6 @@ function queryTypeNClobReadableCharChannelParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateStringParam() {
@@ -479,7 +478,6 @@ function queryDateStringParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateString2Param() {
@@ -489,17 +487,23 @@ function queryDateString2Param() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+    record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertTrue(result is error);
+
+    if (result is ApplicationError) {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
+                "DateTimeTypes WHERE date_type =  ? . java.lang.IllegalArgumentException"));
+    } else {
+        test:assertFail("ApplicationError Error expected.");
+    }
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateLongParam() {
@@ -510,7 +514,6 @@ function queryDateLongParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateTimeRecordParam() {
@@ -521,7 +524,6 @@ function queryDateTimeRecordParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateTimeRecordWithTimeZoneParam() {
@@ -532,7 +534,6 @@ function queryDateTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimeStringParam() {
@@ -542,17 +543,23 @@ function queryTimeStringParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+    record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertTrue(result is error);
+
+    if (result is ApplicationError) {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
+                "DateTimeTypes WHERE time_type =  ? . java.lang.IllegalArgumentException"));
+    } else {
+        test:assertFail("ApplicationError Error expected.");
+    }
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimeLongParam() {
@@ -563,7 +570,6 @@ function queryTimeLongParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimeTimeRecordParam() {
@@ -574,7 +580,6 @@ function queryTimeTimeRecordParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimeTimeRecordWithTimeZoneParam() {
@@ -585,7 +590,6 @@ function queryTimeTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampStringParam() {
@@ -595,17 +599,22 @@ function queryTimestampStringParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+    record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertTrue(result is error);
+
+    if (result is ApplicationError) {
+        test:assertEquals(result.message(), "Error while executing SQL query: SELECT * from " +
+        "DateTimeTypes WHERE timestamp_type =  ? . Timestamp format must be yyyy-mm-dd hh:mm:ss[.fffffffff]");
+    } else {
+        test:assertFail("ApplicationError Error expected.");
+    }}
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampLongParam() {
@@ -616,7 +625,6 @@ function queryTimestampLongParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampTimeRecordParam() {
@@ -627,7 +635,6 @@ function queryTimestampTimeRecordParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampTimeRecordWithTimeZoneParam() {
@@ -638,7 +645,6 @@ function queryTimestampTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryDateTimeTimeRecordWithTimeZoneParam() {
@@ -649,7 +655,6 @@ function queryDateTimeTimeRecordWithTimeZoneParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query-params"]
 }
 function queryTimestampTimeRecordWithTimeZone2Param() {
@@ -771,7 +776,7 @@ function validateDateTimeTypesTableResult(record{}? returnData) {
     if (returnData is ()) {
         test:assertFail("Returned data is nil");
     } else {
-        test:assertEquals(returnData.length(), 5);
+        test:assertEquals(returnData.length(), 7);
         test:assertEquals(returnData["ROW_ID"], 1);
         test:assertTrue(returnData["DATE_TYPE"].toString().startsWith("2017-02-03"));
     }
