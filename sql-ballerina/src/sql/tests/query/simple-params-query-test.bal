@@ -708,7 +708,8 @@ function queryArrayBasicParams() {
 }
 
 @test:Config {
-    groups: ["query", "query-simple-params"]
+    groups: ["query", "query-simple-params"],
+    after: "cleanQueryParamsContainer"
 }
 function queryArrayBasicNullParams() {
     ParameterizedQuery sqlQuery =

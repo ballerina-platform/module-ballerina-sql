@@ -409,7 +409,8 @@ function getError(string message) returns error? {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testLocalTransactionFailed"]
+    dependsOn: ["testLocalTransactionFailed"],
+    after: "cleanTransactionContainer"
 }
 function testLocalTransactionSuccessWithFailed() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
