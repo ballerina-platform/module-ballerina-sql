@@ -20,21 +20,21 @@ import ballerina/test;
 string executeParamsDb = urlPrefix + "9007/executeparams";
 
 @test:BeforeGroups {
-	value: ["execute-params"]	
+	value: ["execute-params"]
 } 
 function initExecuteParamsContainer() {
-	initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+    initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["execute-params"]	
+	value: ["execute-params"]
 } 
 function cleanExecuteParamsContainer() {
-	cleanDockerContainer("sql-execute-params");
+    cleanDockerContainer("sql-execute-params");
 }
 
 @test:Config {
-    groups: ["execute-params"]
+    groups: ["execute", "execute-params"]
 }
 function insertIntoDataTable() {
     int rowId = 4;
@@ -53,7 +53,7 @@ function insertIntoDataTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDataTable"]
 }
 function insertIntoDataTable2() {
@@ -63,7 +63,7 @@ function insertIntoDataTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDataTable2"]
 }
 function insertIntoDataTable3() {
@@ -83,7 +83,7 @@ function insertIntoDataTable3() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDataTable3"]
 }
 function insertIntoDataTable4() {
@@ -104,7 +104,7 @@ function insertIntoDataTable4() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDataTable4"]
 }
 function deleteDataTable1() {
@@ -125,7 +125,7 @@ function deleteDataTable1() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["deleteDataTable1"]
 }
 function deleteDataTable2() {
@@ -135,7 +135,7 @@ function deleteDataTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["deleteDataTable2"]
 }
 function deleteDataTable3() {
@@ -157,7 +157,7 @@ function deleteDataTable3() {
 }
 
 @test:Config {
-    groups: ["execute-params"]
+    groups: ["execute", "execute-params"]
 }
 function insertIntoComplexTable() {
     record {}? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -171,7 +171,7 @@ function insertIntoComplexTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoComplexTable"]
 }
 function insertIntoComplexTable2() {
@@ -191,7 +191,7 @@ function insertIntoComplexTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoComplexTable2"]
 }
 function insertIntoComplexTable3() {
@@ -204,7 +204,7 @@ function insertIntoComplexTable3() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoComplexTable3"]
 }
 function deleteComplexTable() {
@@ -218,7 +218,7 @@ function deleteComplexTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["deleteComplexTable"]
 }
 function deleteComplexTable2() {
@@ -234,7 +234,7 @@ function deleteComplexTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"]
+    groups: ["execute", "execute-params"]
 }
 function insertIntoNumericTable() {
     BitValue bitType = new (1);
@@ -253,7 +253,7 @@ function insertIntoNumericTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoNumericTable"]
 }
 function insertIntoNumericTable2() {
@@ -267,7 +267,7 @@ function insertIntoNumericTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoNumericTable2"]
 }
 function insertIntoNumericTable3() {
@@ -291,7 +291,7 @@ function insertIntoNumericTable3() {
 }
 
 @test:Config {
-    groups: ["execute-params"]
+    groups: ["execute", "execute-params"]
 }
 function insertIntoDateTimeTable() {
     int rowId = 2;
@@ -307,7 +307,7 @@ function insertIntoDateTimeTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDateTimeTable"]
 }
 function insertIntoDateTimeTable2() {
@@ -324,7 +324,7 @@ function insertIntoDateTimeTable2() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDateTimeTable2"]
 }
 function insertIntoDateTimeTable3() {
@@ -341,7 +341,7 @@ function insertIntoDateTimeTable3() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoDateTimeTable3"]
 }
 function insertIntoDateTimeTable4() {
@@ -355,7 +355,7 @@ function insertIntoDateTimeTable4() {
 }
 
 @test:Config {
-    groups: ["execute-params"]
+    groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable() {
     int[] dataint = [1, 2, 3];
@@ -387,7 +387,7 @@ function insertIntoArrayTable() {
 }
 
 @test:Config {
-    groups: ["execute-params"],
+    groups: ["execute", "execute-params"],
     dependsOn: ["insertIntoArrayTable"]
 }
 function insertIntoArrayTable2() {

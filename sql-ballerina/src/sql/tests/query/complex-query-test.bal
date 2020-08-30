@@ -17,17 +17,17 @@ import ballerina/stringutils;
 import ballerina/test;
 import ballerina/time;
 
-string complexQueryDb = urlPrefix + "9008/querycomplex";
+string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
 @test:BeforeGroups {
- 	value: ["query-complex"]
+ 	value: ["query-complex-params"]
 } 
 function initQueryComplexContainer() {
- 	initializeDockerContainer("sql-query-complex", "querycomplex", "9008", "query", "complex-test-data.sql");
+ 	initializeDockerContainer("sql-query-complex", "querycomplexparams", "9008", "query", "complex-test-data.sql");
 }
 
 @test:AfterGroups {
- 	value: ["query-complex"]
+ 	value: ["query-complex-params"]
 } 
 function cleanQueryComplexContainer() {
 	cleanDockerContainer("sql-query-complex");
@@ -42,7 +42,7 @@ type SelectTestAlias record {
 };
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 
 function testGetPrimitiveTypes() {
@@ -66,7 +66,7 @@ function testGetPrimitiveTypes() {
 }
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testToJson() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -89,7 +89,7 @@ function testToJson() {
 }
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testToJsonComplexTypes() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -109,7 +109,7 @@ function testToJsonComplexTypes() {
 }
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testComplexTypesNil() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -128,7 +128,7 @@ function testComplexTypesNil() {
 }
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testArrayRetrieval() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -166,7 +166,7 @@ type TestTypeData record {
 };
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testComplexWithStructDef() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -199,7 +199,7 @@ type ResultMap record {
 };
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testMultipleRecoredRetrieval() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -238,7 +238,7 @@ type ResultDates record {
 };
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testDateTime() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -288,7 +288,7 @@ type ResultSetTestAlias record {
 };
 
 @test:Config {
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testColumnAlias() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -320,17 +320,8 @@ function testColumnAlias() {
     checkpanic dbClient.close();
 }
 
-type ResultMapForRowID record {
-    int ROWNUM;
-    int[] INT_ARRAY;
-    int[] LONG_ARRAY;
-    boolean[] BOOLEAN_ARRAY;
-    string[] STRING_ARRAY;
-};
-
 @test:Config {
-    enable: false,
-    groups: ["query-complex"]
+    groups: ["query", "query-complex-params"]
 }
 function testQueryRowId() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
@@ -338,18 +329,18 @@ function testQueryRowId() {
     stream<record{}, error> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, boolean_array," +
          "string_array from ArrayTypes");
 
-    ResultMapForRowID mixTypesExpected = {
-        ROWNUM: 1,
-        INT_ARRAY: [1, 2, 3],
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
-        STRING_ARRAY: ["Hello", "Ballerina"],
-        BOOLEAN_ARRAY: [true, false, true]
+    record{} mixTypesExpected = {
+        "ROWNUM": 1,
+        "INT_ARRAY": [1, 2, 3],
+        "LONG_ARRAY": [100000000, 200000000, 300000000],
+        "BOOLEAN_ARRAY": [true, false, true],
+        "STRING_ARRAY": ["Hello", "Ballerina"]
     }; 
 
-    ResultMapForRowID? mixTypesActual = ();
+    record{}? mixTypesActual = ();
     int counter = 0;
     error? e = streamData.forEach(function (record {} value) {
-        if (value is ResultMapForRowID && counter == 0) {
+        if (counter == 0) {
             mixTypesActual = value;
         }
         counter = counter + 1;
