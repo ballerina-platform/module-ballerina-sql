@@ -19,7 +19,7 @@ For more information on all the operations supported by the `sql:Client`, which 
 1. Execute stored procedures
 1. Closing client
 
-For a quick sample on demonstrating the usage see [Ballerina By Example](https://ballerina.io/swan-lake/learn/by-example/)
+For a quick sample on demonstrating the usage see [Ballerina By Example](https://ballerina.io/swan-lake/learn/by-example/).
 
 ## Building from the source
 
