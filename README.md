@@ -1,15 +1,12 @@
-Ballerina SQL library
+Ballerina SQL Library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions?query=workflow%3ABuild)
   [![Daily build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Daily%20build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-java.jdbc/actions?query=workflow%3ABuild)
-  [![GitHub Release](https://img.shields.io/github/release/ballerina-platform/module-ballerina-sql.svg)](https://central.ballerina.io/ballerina/sql)
-  [![GitHub Release Date](https://img.shields.io/github/release-date/ballerina-platform/module-ballerina-sql.svg)](https://central.ballerina.io/ballerina/sql)
-  [![GitHub Open Issues](https://img.shields.io/github/issues-raw/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/issues)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/commits/master)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-SQL package for <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
+This SQL library is one of the standard libraries of <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
 
 For more information on all the operations supported by the `sql:Client`, which includes the below mentioned operations, see [API Docs](https://ballerina.io/swan-lake/learn/api-docs/ballerina/sql/).
 
@@ -22,11 +19,11 @@ For more information on all the operations supported by the `sql:Client`, which 
 1. Execute stored procedures
 1. Closing client
 
-For a quick sample on demonstrating the usage see [Ballerina By Example](https://ballerina.io/swan-lake/learn/by-example/)
+For a quick sample on demonstrating the usage see [Ballerina By Example](https://ballerina.io/swan-lake/learn/by-example/).
 
-## Building from the source
+## Building from the Source
 
-1. To build the JDBC library use, issue the following command.
+1. To build the library,
         
         ./gradlew clean build
 
@@ -62,7 +59,11 @@ As an open source project, Ballerina welcomes contributions from the community. 
 
 Check the issue tracker for open issues that interest you. We look forward to receiving your contributions.
 
-## Useful links
+## Code of Conduct
+
+All contributors are encouraged to read [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
+
+## Useful Links
 
 * The ballerina-dev@googlegroups.com mailing list is for discussing code changes to the Ballerina project.
 * Chat live with us on our [Slack channel](https://ballerina.io/community/slack/).
