@@ -59,6 +59,10 @@ As an open source project, Ballerina welcomes contributions from the community. 
 
 Check the issue tracker for open issues that interest you. We look forward to receiving your contributions.
 
+## Code of Conduct
+
+All contributors are encouraged to read [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
+
 ## Useful links
 
 * The ballerina-dev@googlegroups.com mailing list is for discussing code changes to the Ballerina project.
