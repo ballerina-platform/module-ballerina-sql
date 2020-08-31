@@ -21,7 +21,7 @@ For more information on all the operations supported by the `sql:Client`, which 
 
 For a quick sample on demonstrating the usage see [Ballerina By Example](https://ballerina.io/swan-lake/learn/by-example/).
 
-## Building from the source
+## Building from the Source
 
 1. To build the library,
         
@@ -63,7 +63,7 @@ Check the issue tracker for open issues that interest you. We look forward to re
 
 All contributors are encouraged to read [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
 
-## Useful links
+## Useful Links
 
 * The ballerina-dev@googlegroups.com mailing list is for discussing code changes to the Ballerina project.
 * Chat live with us on our [Slack channel](https://ballerina.io/community/slack/).
