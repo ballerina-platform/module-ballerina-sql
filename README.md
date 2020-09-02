@@ -23,8 +23,31 @@ For more information on the operations supported by the `sql:Client`, which incl
 
 For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/mysql-init-options.html).
 
-
 ## Building from the Source
+
+### Setting up the prerequisites
+
+1. Java SE Development Kit (JDK) version 8 (from one of the following locations)
+
+   * [Oracle](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
+   
+   * [OpenJDK](http://openjdk.java.net/install/index.html)
+   
+        > Note: Set the JAVA_HOME environment variable to the path name of the directory into which you installed JDK.
+     
+2. Docker (The MySQL library is tested with a docker based integration test framework. The test framework initializes the docker container before executing the test suite)
+   
+   * Installing docker on Linux,
+   
+        > Note: These commands retrieve content from get.docker.com web in a quiet output-document mode and install.
+   
+          wget -qO- https://get.docker.com/ | sh
+   
+   * On installing docker on Mac, see <a target="_blank" href="https://docs.docker.com/docker-for-mac/">Get started with Docker for Mac</a>
+  
+   * On installing docker on Windows, see <a target="_blank" href="https://docs.docker.com/docker-for-windows/">Get started with Docker for Windows</a>
+
+### Building the Source
 
 Execute the commands below to build from source.
 
