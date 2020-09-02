@@ -2,7 +2,7 @@ Ballerina SQL library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions?query=workflow%3ABuild)
-  [![Daily build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Daily%20build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-java.jdbc/actions?query=workflow%3ABuild)
+  [![Daily build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Daily%20build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions?query=workflow%3A%22Daily+build%22)
   [![GitHub Release](https://img.shields.io/github/release/ballerina-platform/module-ballerina-sql.svg)](https://central.ballerina.io/ballerina/sql)
   [![GitHub Release Date](https://img.shields.io/github/release-date/ballerina-platform/module-ballerina-sql.svg)](https://central.ballerina.io/ballerina/sql)
   [![GitHub Open Issues](https://img.shields.io/github/issues-raw/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/issues)

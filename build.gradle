@@ -23,6 +23,8 @@ plugins {
 }
 
 ext.ballerinaLangVersion = project.ballerinaLangVersion
+ext.hsqlDriverVersion = project.hsqlDriverVersion
+ext.hikkariLibVersion = project.hikkariLibVersion
 
 allprojects {
     group = 'org.ballerinalang'
@@ -61,6 +63,25 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+
+    configurations {
+        externalJars
+    }
+
+    dependencies {
+        compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
+        compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+        compile group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
+        compile group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
+        compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
+
+        externalJars (group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}") {
+            transitive = false
+        }
+        externalJars (group: 'org.hsqldb', name: 'hsqldb', version: "${hsqlDriverVersion}") {
+            transitive = false
+        }
+    }
 
     release {
         // Disable check snapshots temporarily
