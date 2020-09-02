@@ -23,16 +23,6 @@ plugins {
 }
 
 ext.ballerinaLangVersion = project.ballerinaLangVersion
-ext.hsqlDriverVersion = project.hsqlDriverVersion
-ext.hikkariLibVersion = project.hikkariLibVersion
-ext.stdlibIoVersion = project.stdlibIoVersion
-ext.stdlibStringUtilsVersion = project.stdlibStringUtilsVersion
-ext.stdlibTimeVersion = project.stdlibTimeVersion
-ext.stdlibConfigVersion = project.stdlibConfigVersion
-ext.stdlibFilepathVersion = project.stdlibFilepathVersion
-ext.stdlibRuntimeVersion = project.stdlibRuntimeVersion
-ext.stdlibSystemVersion = project.stdlibSystemVersion
-ext.stdlibLogVersion = project.stdlibLogVersion
 
 allprojects {
     group = 'org.ballerinalang'

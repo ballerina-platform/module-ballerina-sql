@@ -177,7 +177,7 @@ test {
 }
 
 task ballerinaBuild {
-    dependsOn(unpackJballerinaTools)
+    dependsOn(copyStdlibs)
     dependsOn(":sql-native:build")
     dependsOn(test)
     dependsOn(updateTomlFile)
