@@ -130,8 +130,8 @@ subprojects {
     dependencies {
         compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
         compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-        compile group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
-        compile group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
+        compile group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}"
+        compile group: 'org.ballerinalang', name: 'time-native', version: "${stdlibTimeVersion}"
         compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
 
         ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
