@@ -25,6 +25,14 @@ plugins {
 ext.ballerinaLangVersion = project.ballerinaLangVersion
 ext.hsqlDriverVersion = project.hsqlDriverVersion
 ext.hikkariLibVersion = project.hikkariLibVersion
+ext.stdlibIoVersion = project.stdlibIoVersion
+ext.stdlibStringUtilsVersion = project.stdlibStringUtilsVersion
+ext.stdlibTimeVersion = project.stdlibTimeVersion
+ext.stdlibConfigVersion = project.stdlibConfigVersion
+ext.stdlibFilepathVersion = project.stdlibFilepathVersion
+ext.stdlibRuntimeVersion = project.stdlibRuntimeVersion
+ext.stdlibSystemVersion = project.stdlibSystemVersion
+ext.stdlibLogVersion = project.stdlibLogVersion
 
 allprojects {
     group = 'org.ballerinalang'
@@ -56,7 +64,67 @@ allprojects {
         }
 
         maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-sql'
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-io'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-stringutils'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-time'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-config'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-filepath'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-runtime'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-system'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-log'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
         }
     }
 }
@@ -75,6 +143,15 @@ subprojects {
         compile group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
         compile group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
         compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
+
+        ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
+        ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
+        ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
+        ballerinaStdLibs "org.ballerinalang:runtime-api-ballerina:${stdlibRuntimeVersion}"
+        ballerinaStdLibs "org.ballerinalang:system-ballerina:${stdlibSystemVersion}"
+        ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
+        ballerinaStdLibs "org.ballerinalang:filepath-ballerina:${stdlibFilepathVersion}"
+        ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
 
         externalJars (group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}") {
             transitive = false
