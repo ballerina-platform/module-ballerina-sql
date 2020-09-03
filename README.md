@@ -35,7 +35,7 @@ For example demonstrations of the usage, go to [Ballerina By Examples](https://b
    
         > **Note:** Set the JAVA_HOME environment variable to the path name of the directory into which you installed JDK.
      
-2. Download and install Docker as follows. (The MySQL library is tested with a docker-based integration test framework. The test framework initializes the docker container before executing the test suite).
+2. Download and install Docker as follows. (The SQL library is tested with a docker-based integration test framework. The test framework initializes the docker container before executing the test suite).
    
    * Installing Docker on Linux
    
