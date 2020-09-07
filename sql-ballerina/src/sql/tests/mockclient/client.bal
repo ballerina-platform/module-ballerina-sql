@@ -21,9 +21,9 @@ public type MockClient client object {
     *Client;
     private boolean clientActive = true;
 
-    public function init(public string url, public string? user = (), public string? password = (),
-        public string? datasourceName = (), public map<anydata>? options = (),
-        public ConnectionPool? connectionPool = (), public map<anydata>? connectionPoolOptions = ()) returns Error? {
+    public function init(string url, string? user = (), string? password = (), string? datasourceName = (),
+        map<anydata>? options = (), ConnectionPool? connectionPool = (),
+        map<anydata>? connectionPoolOptions = ()) returns Error? {
         SQLParams sqlParams = {
             url: url,
             user: user,
