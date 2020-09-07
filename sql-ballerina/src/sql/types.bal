@@ -350,7 +350,7 @@ type ResultIterator object {
     private boolean isClosed = false;
     private Error? err;
 
-    public function init(public Error? err = ()) {
+    public function init(Error? err = ()) {
         self.err = err;
     }
 
