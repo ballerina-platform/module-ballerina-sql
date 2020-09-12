@@ -17,7 +17,7 @@
 import ballerina/java;
 
 # Represents a Mock database client.
-public type MockClient client object {
+client class MockClient {
     *Client;
     private boolean clientActive = true;
 
@@ -78,7 +78,7 @@ public type MockClient client object {
         self.clientActive = false;
         return close(self);
     }
-};
+}
 
 type SQLParams record {|
     string? url;
@@ -92,29 +92,29 @@ type SQLParams record {|
 
 function createSqlClient(Client sqlClient, SQLParams sqlParams, ConnectionPool globalConnPool)
 returns Error? = @java:Method {
-    class: "org.ballerinalang.sql.utils.ClientUtils"
+    'class: "org.ballerinalang.sql.utils.ClientUtils"
 } external;
 
 function nativeQuery(Client sqlClient, string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType)
 returns stream <record {}, Error> = @java:Method {
-    class: "org.ballerinalang.sql.utils.QueryUtils"
+    'class: "org.ballerinalang.sql.utils.QueryUtils"
 } external;
 
 function nativeExecute(Client sqlClient, string|ParameterizedQuery sqlQuery)
 returns ExecutionResult|Error = @java:Method {
-    class: "org.ballerinalang.sql.utils.ExecuteUtils"
+    'class: "org.ballerinalang.sql.utils.ExecuteUtils"
 } external;
 
 function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
-    class: "org.ballerinalang.sql.utils.ExecuteUtils"
+    'class: "org.ballerinalang.sql.utils.ExecuteUtils"
 } external;
 
 function nativeCall(Client sqlClient, string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes)
 returns ProcedureCallResult|Error = @java:Method {
-    class: "org.ballerinalang.sql.utils.CallUtils"
+    'class: "org.ballerinalang.sql.utils.CallUtils"
 } external;
 
 function close(Client Client) returns Error? = @java:Method {
-    class: "org.ballerinalang.sql.utils.ClientUtils"
+    'class: "org.ballerinalang.sql.utils.ClientUtils"
 } external;
