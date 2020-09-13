@@ -38,7 +38,7 @@ public type ConnectionPool record {|
 |};
 
 // This is a container object that holds the global pool config and initializes the internal map of connection pools
-type GlobalConnectionPoolContainer object {
+class GlobalConnectionPoolContainer {
     private ConnectionPool connectionPool = {};
 
     function init() {
@@ -50,10 +50,10 @@ type GlobalConnectionPoolContainer object {
     public function getGlobalConnectionPool() returns ConnectionPool {
         return self.connectionPool;
     }
-};
+}
 
 function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
-    class: "org.ballerinalang.sql.utils.ConnectionPoolUtils"
+    'class: "org.ballerinalang.sql.utils.ConnectionPoolUtils"
 } external;
 
 // This is an instance of GlobalPoolConfigContainer object type. The init functions of database clients pass
