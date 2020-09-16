@@ -18,10 +18,10 @@
 
 package org.ballerinalang.sql;
 
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.types.BPackage;
-import org.ballerinalang.jvm.values.api.BString;
 
-import static org.ballerinalang.jvm.StringUtils.fromString;
+import static org.ballerinalang.jvm.api.BStringUtils.fromString;
 
 /**
  * Constants for SQL client.

@@ -17,7 +17,9 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BError;
+import org.ballerinalang.jvm.api.values.BObject;
 import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.scheduling.Strand;
 import org.ballerinalang.jvm.types.BField;
@@ -25,9 +27,6 @@ import org.ballerinalang.jvm.types.BRecordType;
 import org.ballerinalang.jvm.types.BStreamType;
 import org.ballerinalang.jvm.types.BStructureType;
 import org.ballerinalang.jvm.util.Flags;
-import org.ballerinalang.jvm.values.AbstractObjectValue;
-import org.ballerinalang.jvm.values.ErrorValue;
-import org.ballerinalang.jvm.values.ObjectValue;
 import org.ballerinalang.jvm.values.StreamValue;
 import org.ballerinalang.jvm.values.StringValue;
 import org.ballerinalang.jvm.values.TypedescValue;
@@ -57,7 +56,7 @@ import static org.ballerinalang.sql.utils.Utils.setParams;
  */
 public class QueryUtils {
 
-    public static StreamValue nativeQuery(ObjectValue client, Object paramSQLString,
+    public static StreamValue nativeQuery(BObject client, Object paramSQLString,
                                           Object recordType) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         Strand strand = Scheduler.getStrand();
@@ -71,12 +70,12 @@ public class QueryUtils {
                 if (paramSQLString instanceof StringValue) {
                     sqlQuery = ((StringValue) paramSQLString).getValue();
                 } else {
-                    sqlQuery = getSqlQuery((AbstractObjectValue) paramSQLString);
+                    sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
                 connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                if (paramSQLString instanceof AbstractObjectValue) {
-                    setParams(connection, statement, (AbstractObjectValue) paramSQLString);
+                if (paramSQLString instanceof BObject) {
+                    setParams(connection, statement, (BObject) paramSQLString);
                 }
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
@@ -105,12 +104,12 @@ public class QueryUtils {
                         statement, connection, columnDefinitions, streamConstraint));
             } catch (SQLException e) {
                 closeResources(strand, resultSet, statement, connection);
-                ErrorValue errorValue = ErrorGenerator.getSQLDatabaseError(e,
+                BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
                 return new StreamValue(new BStreamType(getDefaultStreamConstraint()), createRecordIterator(errorValue));
             } catch (ApplicationError applicationError) {
                 closeResources(strand, resultSet, statement, connection);
-                ErrorValue errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
+                BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
                 return getErrorStream(recordType, errorValue);
             } catch (Throwable e) {
                 closeResources(strand, resultSet, statement, connection);
@@ -118,17 +117,17 @@ public class QueryUtils {
                 if (message == null) {
                     message = e.getClass().getName();
                 }
-                ErrorValue errorValue = ErrorGenerator.getSQLApplicationError(
+                BError errorValue = ErrorGenerator.getSQLApplicationError(
                         "Error while executing SQL query: " + sqlQuery + ". " + message);
                 return getErrorStream(recordType, errorValue);
             }
         } else {
-            ErrorValue errorValue = ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
+            BError errorValue = ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
             return getErrorStream(recordType, errorValue);
         }
     }
 
-    private static StreamValue getErrorStream(Object recordType, ErrorValue errorValue) {
+    private static StreamValue getErrorStream(Object recordType, BError errorValue) {
         if (recordType == null) {
             return new StreamValue(new BStreamType(getDefaultStreamConstraint()), createRecordIterator(errorValue));
         } else {
@@ -137,8 +136,8 @@ public class QueryUtils {
         }
     }
 
-    private static ObjectValue createRecordIterator(ErrorValue errorValue) {
-        return BallerinaValues.createObjectValue(Constants.SQL_PACKAGE_ID, Constants.RESULT_ITERATOR_OBJECT,
+    private static BObject createRecordIterator(BError errorValue) {
+        return BValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID, Constants.RESULT_ITERATOR_OBJECT,
                 errorValue);
     }
 

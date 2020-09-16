@@ -18,7 +18,11 @@
 
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BArray;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.scheduling.Strand;
 import org.ballerinalang.jvm.types.BField;
@@ -27,14 +31,10 @@ import org.ballerinalang.jvm.types.BStreamType;
 import org.ballerinalang.jvm.types.BStructureType;
 import org.ballerinalang.jvm.types.TypeTags;
 import org.ballerinalang.jvm.util.Flags;
-import org.ballerinalang.jvm.values.AbstractObjectValue;
 import org.ballerinalang.jvm.values.ArrayValue;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.ObjectValue;
 import org.ballerinalang.jvm.values.StreamValue;
 import org.ballerinalang.jvm.values.StringValue;
 import org.ballerinalang.jvm.values.TypedescValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -85,7 +85,7 @@ public class CallUtils {
     private static final Calendar calendar = Calendar.getInstance(
             TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
-    public static Object nativeCall(ObjectValue client, Object paramSQLString, ArrayValue recordTypes) {
+    public static Object nativeCall(BObject client, Object paramSQLString, ArrayValue recordTypes) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         Strand strand = Scheduler.getStrand();
         if (dbClient != null) {
@@ -98,7 +98,7 @@ public class CallUtils {
                 if (paramSQLString instanceof StringValue) {
                     sqlQuery = ((StringValue) paramSQLString).getValue();
                 } else {
-                    sqlQuery = Utils.getSqlQuery((AbstractObjectValue) paramSQLString);
+                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
                 }
                 connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
@@ -112,7 +112,7 @@ public class CallUtils {
                 } else {
                     cache = new HashMap<>();
                 }
-                if (paramSQLString instanceof AbstractObjectValue) {
+                if (paramSQLString instanceof BObject) {
                     HashMap<Integer, Integer> metaData;
                     if (metaDataObject != null) {
                         metaData = (HashMap<Integer, Integer>) metaDataObject;
@@ -120,7 +120,7 @@ public class CallUtils {
                         metaData = new HashMap<>();
                     }
 
-                    setCallParameters(connection, statement, sqlQuery, (AbstractObjectValue) paramSQLString,
+                    setCallParameters(connection, statement, sqlQuery, (BObject) paramSQLString,
                             cache, metaData);
                     if (!cache.isEmpty()) {
                         client.addNativeData(PROCEDURE_CALL_PARAM_CACHE, cache);
@@ -132,11 +132,11 @@ public class CallUtils {
 
                 boolean resultType = statement.execute();
 
-                if (paramSQLString instanceof AbstractObjectValue) {
-                    populateOutParameters(statement, (AbstractObjectValue) paramSQLString, cache);
+                if (paramSQLString instanceof BObject) {
+                    populateOutParameters(statement, (BObject) paramSQLString, cache);
                 }
 
-                ObjectValue procedureCallResult = BallerinaValues.createObjectValue(SQL_PACKAGE_ID,
+                BObject procedureCallResult = BValueCreator.createObjectValue(SQL_PACKAGE_ID,
                         PROCEDURE_CALL_RESULT, strand);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
@@ -178,7 +178,7 @@ public class CallUtils {
                     Map<String, Object> resultFields = new HashMap<>();
                     resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
                     resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    MapValue<BString, Object> executionResult = BallerinaValues.createRecordValue(
+                    BMap<BString, Object> executionResult = BValueCreator.createRecordValue(
                             SQL_PACKAGE_ID, EXECUTION_RESULT_RECORD, resultFields);
                     procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
                 }
@@ -200,15 +200,15 @@ public class CallUtils {
     }
 
     static void setCallParameters(Connection connection, CallableStatement statement, String sqlQuery,
-                                  AbstractObjectValue paramString, HashMap<Integer, Integer> cache,
+                                  BObject paramString, HashMap<Integer, Integer> cache,
                                   HashMap<Integer, Integer> metaData)
             throws SQLException, ApplicationError, IOException {
-        ArrayValue arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
+        BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
             int index = i + 1;
-            if (object instanceof ObjectValue) {
-                ObjectValue objectValue = (ObjectValue) object;
+            if (object instanceof BObject) {
+                BObject objectValue = (BObject) object;
                 if ((objectValue.getType().getTag() != TypeTags.OBJECT_TYPE_TAG)) {
                     throw new ApplicationError("Unsupported type:" +
                             objectValue.getType().getQualifiedName() + " in column index: " + index);
@@ -246,18 +246,18 @@ public class CallUtils {
         }
     }
 
-    static void populateOutParameters(CallableStatement statement, AbstractObjectValue paramSQLString,
+    static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                       HashMap<Integer, Integer> cache) throws SQLException, ApplicationError {
         if (cache.size() == 0) {
             return;
         }
-        ArrayValue arrayValue = paramSQLString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
+        BArray arrayValue = paramSQLString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
 
         for (Map.Entry<Integer, Integer> entry : cache.entrySet()) {
             int paramIndex = entry.getKey();
             int sqlType = entry.getValue();
 
-            ObjectValue parameter = (ObjectValue) arrayValue.get(paramIndex - 1);
+            BObject parameter = (BObject) arrayValue.get(paramIndex - 1);
             parameter.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, sqlType);
 
             switch (sqlType) {

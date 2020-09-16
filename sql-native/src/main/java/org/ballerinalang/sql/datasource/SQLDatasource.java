@@ -19,9 +19,9 @@ package org.ballerinalang.sql.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.values.DecimalValue;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 
@@ -217,7 +217,7 @@ public class SQLDatasource {
                 }
             }
             if (sqlDatasourceParams.options != null) {
-                MapValue<BString, Object> optionMap = (MapValue<BString, Object>) sqlDatasourceParams.options;
+                BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry -> {
                     if (SQLDatasourceUtils.isSupportedDbOptionType(entry.getValue())) {
                         config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue());
@@ -251,14 +251,14 @@ public class SQLDatasource {
         private String user;
         private String password;
         private String datasourceName;
-        private MapValue connectionPool;
-        private MapValue options;
+        private BMap connectionPool;
+        private BMap options;
         private Properties poolProperties;
 
         public SQLDatasourceParams() {
         }
 
-        public SQLDatasourceParams setConnectionPool(MapValue connectionPool, MapValue globalConnectionPool) {
+        public SQLDatasourceParams setConnectionPool(BMap connectionPool, BMap globalConnectionPool) {
             if (connectionPool != null) {
                 this.connectionPool = connectionPool;
             } else {
@@ -287,7 +287,7 @@ public class SQLDatasource {
             return this;
         }
 
-        public SQLDatasourceParams setOptions(MapValue options) {
+        public SQLDatasourceParams setOptions(BMap options) {
             this.options = options;
             return this;
         }
