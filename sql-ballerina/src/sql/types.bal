@@ -34,7 +34,7 @@ public type Value string|int|boolean|float|decimal|byte[]|xml|TypedValue?;
 public class VarcharValue {
     string? value;
 
-    public function init(string? value = ()) {
+    public isolated function init(string? value = ()) {
         self.value = value;
     }
 }
@@ -44,7 +44,7 @@ public class VarcharValue {
 public class NVarcharValue {
     string? value;
 
-    public function init(string? value = ()) {
+    public isolated function init(string? value = ()) {
         self.value = value;
     }
 }
@@ -54,7 +54,7 @@ public class NVarcharValue {
 public class CharValue {
     string? value;
 
-    public function init(string? value = ()) {
+    public isolated function init(string? value = ()) {
         self.value = value;
     }
 }
@@ -64,7 +64,7 @@ public class CharValue {
 public class NCharValue {
     string? value;
 
-    public function init(string? value = ()) {
+    public isolated function init(string? value = ()) {
         self.value = value;
     }
 }
@@ -74,7 +74,7 @@ public class NCharValue {
 public class TextValue {
     io:ReadableCharacterChannel|string? value;
 
-    public function init(io:ReadableCharacterChannel|string? value = ()) {
+    public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
         self.value = value;
     }
 }
@@ -84,7 +84,7 @@ public class TextValue {
 public class ClobValue {
     io:ReadableCharacterChannel|string? value;
 
-    public function init(io:ReadableCharacterChannel|string? value = ()) {
+    public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
         self.value = value;
     }
 }
@@ -94,7 +94,7 @@ public class ClobValue {
 public class NClobValue {
     io:ReadableCharacterChannel|string? value;
 
-    public function init(io:ReadableCharacterChannel|string? value = ()) {
+    public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
         self.value = value;
     }
 }
@@ -104,7 +104,7 @@ public class NClobValue {
 public class SmallIntValue {
     int? value;
 
-    public function init(int? value = ()) {
+    public isolated function init(int? value = ()) {
         self.value = value;
     }
 }
@@ -114,7 +114,7 @@ public class SmallIntValue {
 public class IntegerValue {
     int? value;
 
-    public function init(int? value = ()) {
+    public isolated function init(int? value = ()) {
         self.value = value;
     }
 }
@@ -124,7 +124,7 @@ public class IntegerValue {
 public class BigIntValue {
     int? value;
 
-    public function init(int? value = ()) {
+    public isolated function init(int? value = ()) {
         self.value = value;
     }
 }
@@ -134,7 +134,7 @@ public class BigIntValue {
 public class NumericValue {
     int|float|decimal? value;
 
-    public function init(int|float|decimal? value = ()) {
+    public isolated function init(int|float|decimal? value = ()) {
         self.value = value;
     }
 }
@@ -144,7 +144,7 @@ public class NumericValue {
 public class DecimalValue {
     int|decimal? value;
 
-    public function init(int|decimal? value = ()) {
+    public isolated function init(int|decimal? value = ()) {
         self.value = value;
     }
 }
@@ -154,7 +154,7 @@ public class DecimalValue {
 public class RealValue {
     int|float|decimal? value;
 
-    public function init(int|float|decimal? value = ()) {
+    public isolated function init(int|float|decimal? value = ()) {
         self.value = value;
     }
 }
@@ -164,7 +164,7 @@ public class RealValue {
 public class FloatValue {
     int|float? value;
 
-    public function init(int|float? value = ()) {
+    public isolated function init(int|float? value = ()) {
         self.value = value;
     }
 }
@@ -174,7 +174,7 @@ public class FloatValue {
 public class DoubleValue {
     int|float|decimal? value;
 
-    public function init(int|float|decimal? value = ()) {
+    public isolated function init(int|float|decimal? value = ()) {
         self.value = value;
     }
 }
@@ -184,7 +184,7 @@ public class DoubleValue {
 public class BitValue {
     boolean|int? value;
 
-    public function init(boolean|int? value = ()) {
+    public isolated function init(boolean|int? value = ()) {
         self.value = value;
     }
 }
@@ -194,7 +194,7 @@ public class BitValue {
 public class BooleanValue {
     boolean? value;
 
-    public function init(boolean? value = ()) {
+    public isolated function init(boolean? value = ()) {
         self.value = value;
     }
 }
@@ -204,7 +204,7 @@ public class BooleanValue {
 public class BinaryValue {
     byte[]|io:ReadableByteChannel? value;
 
-    public function init(byte[]|io:ReadableByteChannel? value = ()) {
+    public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
         self.value = value;
     }
 }
@@ -214,7 +214,7 @@ public class BinaryValue {
 public class VarBinaryValue {
     byte[]|io:ReadableByteChannel? value;
 
-    public function init(byte[]|io:ReadableByteChannel? value = ()) {
+    public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
         self.value = value;
     }
 }
@@ -224,7 +224,7 @@ public class VarBinaryValue {
 public class BlobValue {
     byte[]|io:ReadableByteChannel? value;
 
-    public function init(byte[]|io:ReadableByteChannel? value = ()) {
+    public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
         self.value = value;
     }
 }
@@ -234,7 +234,7 @@ public class BlobValue {
 public class DateValue {
     string|int|time:Time? value;
 
-    public function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Time? value = ()) {
         self.value = value;
     }
 }
@@ -244,7 +244,7 @@ public class DateValue {
 public class TimeValue {
     string|int|time:Time? value;
 
-    public function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Time? value = ()) {
         self.value = value;
     }
 }
@@ -254,7 +254,7 @@ public class TimeValue {
 public class DateTimeValue {
     string|int|time:Time? value;
 
-    public function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Time? value = ()) {
         self.value = value;
     }
 }
@@ -264,7 +264,7 @@ public class DateTimeValue {
 public class TimestampValue {
     string|int|time:Time? value;
 
-    public function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Time? value = ()) {
         self.value = value;
     }
 }
@@ -274,7 +274,7 @@ public class TimestampValue {
 public class ArrayValue {
     string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value;
 
-    public function init(string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value = ()) {
+    public isolated function init(string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value = ()) {
         self.value = value;
     }
 }
@@ -284,7 +284,7 @@ public class ArrayValue {
 public class RefValue {
     record {}? value;
 
-    public function init(record {}? value = ()) {
+    public isolated function init(record {}? value = ()) {
         self.value = value;
     }
 }
@@ -294,7 +294,7 @@ public class RefValue {
 public class StructValue {
     record {}? value;
 
-    public function init(record {}? value = ()) {
+    public isolated function init(record {}? value = ()) {
         self.value = value;
     }
 }
@@ -304,7 +304,7 @@ public class StructValue {
 public class RowValue {
     byte[]? value;
 
-    public function init(byte[]? value = ()) {
+    public isolated function init(byte[]? value = ()) {
         self.value = value;
     }
 }
@@ -350,7 +350,7 @@ class ResultIterator {
     private boolean isClosed = false;
     private Error? err;
 
-    public function init(Error? err = ()) {
+    public isolated function init(Error? err = ()) {
         self.err = err;
     }
 
@@ -399,7 +399,7 @@ public class OutParameter {
     #
     # + td - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -408,7 +408,7 @@ public class OutParameter {
 public class InOutParameter {
     Value 'in;
 
-    public function init(Value 'in) {
+    public isolated function init(Value 'in) {
         self.'in = 'in;
     }
 
@@ -416,7 +416,7 @@ public class InOutParameter {
     #
     # + td - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }

@@ -17,6 +17,13 @@
 import ballerina/config;
 import ballerina/java;
 
+final int defaultMaxOpenConnections = config:getAsInt("b7a.sql.pool.maxOpenConnections", 15);
+
+final decimal defaultMaxConnectionLifeTime =
+            <decimal> config:getAsFloat("b7a.sql.pool.maxConnectionLifeTimeInSeconds", 1800.0);
+
+final int defaultMinIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConnections", 15);
+
 # Represents the properties which are used to configure DB connection pool.
 # Default values of the fields can be set through the configuration API.
 #
@@ -31,28 +38,27 @@ import ballerina/java;
 #                        is the same as maxOpenConnections and it can be changed through the configuration
 #                        API with the key `b7a.sql.pool.minIdleConnections`.
 public type ConnectionPool record {|
-    int maxOpenConnections = config:getAsInt("b7a.sql.pool.maxOpenConnections", 15);
-    decimal maxConnectionLifeTimeInSeconds = <decimal>config:getAsFloat("b7a.sql.pool.maxConnectionLifeTimeInSeconds",
-        1800.0);
-    int minIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConnections", 15);
+    int maxOpenConnections = defaultMaxOpenConnections;
+    decimal maxConnectionLifeTimeInSeconds = defaultMaxConnectionLifeTime;
+    int minIdleConnections = defaultMinIdleConnections;
 |};
 
 // This is a container object that holds the global pool config and initializes the internal map of connection pools
 class GlobalConnectionPoolContainer {
     private ConnectionPool connectionPool = {};
 
-    function init() {
+    isolated function init() {
         // poolConfig record is frozen so that it cannot be modified during runtime
         ConnectionPool frozenConfig = self.connectionPool.cloneReadOnly();
         initGlobalPoolContainer(frozenConfig);
     }
 
-    public function getGlobalConnectionPool() returns ConnectionPool {
+    public isolated function getGlobalConnectionPool() returns ConnectionPool {
         return self.connectionPool;
     }
 }
 
-function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
+isolated function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
     'class: "org.ballerinalang.sql.utils.ConnectionPoolUtils"
 } external;
 
@@ -61,6 +67,6 @@ function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
 // of connection pools.
 final GlobalConnectionPoolContainer globalPoolContainer = new;
 
-public function getGlobalConnectionPool() returns ConnectionPool {
+public isolated function getGlobalConnectionPool() returns ConnectionPool {
     return globalPoolContainer.getGlobalConnectionPool();
 }
