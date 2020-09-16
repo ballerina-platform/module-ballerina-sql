@@ -17,18 +17,16 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.scheduling.Strand;
 import org.ballerinalang.jvm.types.BArrayType;
 import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.values.AbstractObjectValue;
 import org.ballerinalang.jvm.values.ArrayValue;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.ObjectValue;
 import org.ballerinalang.jvm.values.StringValue;
-import org.ballerinalang.jvm.values.api.BString;
-import org.ballerinalang.jvm.values.api.BValueCreator;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -60,7 +58,7 @@ import static org.ballerinalang.sql.utils.Utils.setParams;
  */
 public class ExecuteUtils {
 
-    public static Object nativeExecute(ObjectValue client, Object paramSQLString) {
+    public static Object nativeExecute(BObject client, Object paramSQLString) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         Strand strand = Scheduler.getStrand();
         if (dbClient != null) {
@@ -73,12 +71,12 @@ public class ExecuteUtils {
                 if (paramSQLString instanceof StringValue) {
                     sqlQuery = ((StringValue) paramSQLString).getValue();
                 } else {
-                    sqlQuery = getSqlQuery((AbstractObjectValue) paramSQLString);
+                    sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
                 connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-                if (paramSQLString instanceof AbstractObjectValue) {
-                    setParams(connection, statement, (AbstractObjectValue) paramSQLString);
+                if (paramSQLString instanceof BObject) {
+                    setParams(connection, statement, (BObject) paramSQLString);
                 }
                 int count = statement.executeUpdate();
                 Object lastInsertedId = null;
@@ -91,7 +89,7 @@ public class ExecuteUtils {
                 Map<String, Object> resultFields = new HashMap<>();
                 resultFields.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                 resultFields.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                return BallerinaValues.createRecordValue(Constants.SQL_PACKAGE_ID,
+                return BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
@@ -108,7 +106,7 @@ public class ExecuteUtils {
         }
     }
 
-    public static Object nativeBatchExecute(ObjectValue client, ArrayValue paramSQLStrings) {
+    public static Object nativeBatchExecute(BObject client, ArrayValue paramSQLStrings) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -117,15 +115,15 @@ public class ExecuteUtils {
             ResultSet resultSet = null;
             Strand strand = Scheduler.getStrand();
             String sqlQuery = null;
-            List<AbstractObjectValue> parameters = new ArrayList<>();
-            List<MapValue<BString, Object>> executionResults = new ArrayList<>();
+            List<BObject> parameters = new ArrayList<>();
+            List<BMap<BString, Object>> executionResults = new ArrayList<>();
             try {
                 Object[] paramSQLObjects = paramSQLStrings.getValues();
-                AbstractObjectValue parameterizedQuery = (AbstractObjectValue) paramSQLObjects[0];
+                BObject parameterizedQuery = (BObject) paramSQLObjects[0];
                 sqlQuery = getSqlQuery(parameterizedQuery);
                 parameters.add(parameterizedQuery);
                 for (int i = 1; i < paramSQLStrings.size(); i++) {
-                    parameterizedQuery = (AbstractObjectValue) paramSQLObjects[i];
+                    parameterizedQuery = (BObject) paramSQLObjects[i];
                     String paramSQLQuery = getSqlQuery(parameterizedQuery);
 
                     if (sqlQuery.equals(paramSQLQuery)) {
@@ -137,7 +135,7 @@ public class ExecuteUtils {
                 }
                 connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-                for (AbstractObjectValue param : parameters) {
+                for (BObject param : parameters) {
                     setParams(connection, statement, param);
                     statement.addBatch();
                 }
@@ -154,7 +152,7 @@ public class ExecuteUtils {
                         lastInsertedId = getGeneratedKeys(resultSet);
                     }
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    executionResults.add(BallerinaValues.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return BValueCreator.createArrayValue(executionResults.toArray(), new BArrayType(
@@ -165,7 +163,7 @@ public class ExecuteUtils {
                     Map<String, Object> resultField = new HashMap<>();
                     resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                    executionResults.add(BallerinaValues.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,

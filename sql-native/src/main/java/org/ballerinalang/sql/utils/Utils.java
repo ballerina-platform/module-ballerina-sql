@@ -18,9 +18,14 @@
 
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.BallerinaValues;
 import org.ballerinalang.jvm.TypeChecker;
 import org.ballerinalang.jvm.XMLFactory;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BArray;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
+import org.ballerinalang.jvm.api.values.BValue;
 import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.scheduling.Strand;
 import org.ballerinalang.jvm.types.BArrayType;
@@ -34,16 +39,9 @@ import org.ballerinalang.jvm.types.BUnionType;
 import org.ballerinalang.jvm.types.BXMLType;
 import org.ballerinalang.jvm.types.TypeFlags;
 import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.values.AbstractObjectValue;
 import org.ballerinalang.jvm.values.ArrayValue;
 import org.ballerinalang.jvm.values.DecimalValue;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.MapValueImpl;
-import org.ballerinalang.jvm.values.ObjectValue;
 import org.ballerinalang.jvm.values.XMLValue;
-import org.ballerinalang.jvm.values.api.BString;
-import org.ballerinalang.jvm.values.api.BValue;
-import org.ballerinalang.jvm.values.api.BValueCreator;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 import org.ballerinalang.stdlib.io.channels.base.Channel;
@@ -84,7 +82,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static org.ballerinalang.jvm.StringUtils.fromString;
+import static org.ballerinalang.jvm.api.BStringUtils.fromString;
 
 /**
  * This class has the utility methods to process and convert the SQL types into ballerina types,
@@ -123,8 +121,8 @@ class Utils {
         }
     }
 
-    static String getSqlQuery(AbstractObjectValue paramString) {
-        ArrayValue stringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
+    static String getSqlQuery(BObject paramString) {
+        BArray stringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
         StringBuilder sqlQuery = new StringBuilder();
         for (int i = 0; i < stringsArray.size(); i++) {
             if (i > 0) {
@@ -135,9 +133,9 @@ class Utils {
         return sqlQuery.toString();
     }
 
-    static void setParams(Connection connection, PreparedStatement preparedStatement, AbstractObjectValue paramString)
+    static void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws SQLException, ApplicationError, IOException {
-        ArrayValue arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
+        BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
             int index = i + 1;
@@ -175,8 +173,8 @@ class Utils {
                         "ParameterizedQuery, any other array types should be wrapped as sql:Value");
             }
             return Types.VARBINARY;
-        } else if (object instanceof ObjectValue) {
-            ObjectValue objectValue = (ObjectValue) object;
+        } else if (object instanceof BObject) {
+            BObject objectValue = (BObject) object;
             if ((objectValue.getType().getTag() == TypeTags.OBJECT_TYPE_TAG)) {
                 setSqlTypedParam(connection, preparedStatement, index, objectValue);
                 if (returnType) {
@@ -195,7 +193,7 @@ class Utils {
         }
     }
 
-    private static int getSQLType(ObjectValue typedValue) throws ApplicationError {
+    private static int getSQLType(BObject typedValue) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
@@ -292,7 +290,7 @@ class Utils {
     }
 
     private static void setSqlTypedParam(Connection connection, PreparedStatement preparedStatement, int index,
-                                         ObjectValue typedValue)
+                                         BObject typedValue)
             throws SQLException, ApplicationError, IOException {
         String sqlType = typedValue.getType().getName();
         Object value = typedValue.get(Constants.TypedValueFields.VALUE);
@@ -414,8 +412,8 @@ class Utils {
                     } else {
                         throw throwInvalidParameterError(value, sqlType);
                     }
-                } else if (value instanceof ObjectValue) {
-                    ObjectValue objectValue = (ObjectValue) value;
+                } else if (value instanceof BObject) {
+                    BObject objectValue = (BObject) value;
                     if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
                             objectValue.getType().getPackage().toString()
                                     .equalsIgnoreCase(IOConstants.IO_PACKAGE_ID.toString())) {
@@ -442,8 +440,8 @@ class Utils {
                     if (value instanceof BString) {
                         clob.setString(1, value.toString());
                         preparedStatement.setClob(index, clob);
-                    } else if (value instanceof ObjectValue) {
-                        ObjectValue objectValue = (ObjectValue) value;
+                    } else if (value instanceof BObject) {
+                        BObject objectValue = (BObject) value;
                         if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
                                 objectValue.getType().getPackage().toString()
                                         .equalsIgnoreCase(IOConstants.IO_PACKAGE_ID.toString())) {
@@ -465,8 +463,8 @@ class Utils {
                         date = Date.valueOf(value.toString());
                     } else if (value instanceof Long) {
                         date = new Date((Long) value);
-                    } else if (value instanceof MapValue) {
-                        MapValue<BString, Object> dateTimeStruct = (MapValue<BString, Object>) value;
+                    } else if (value instanceof BMap) {
+                        BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
                         if (dateTimeStruct.getType().getName()
                                 .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
                             ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
@@ -489,8 +487,8 @@ class Utils {
                         time = Time.valueOf(value.toString());
                     } else if (value instanceof Long) {
                         time = new Time((Long) value);
-                    } else if (value instanceof MapValue) {
-                        MapValue<BString, Object> dateTimeStruct = (MapValue<BString, Object>) value;
+                    } else if (value instanceof BMap) {
+                        BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
                         if (dateTimeStruct.getType().getName()
                                 .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
                             ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
@@ -514,8 +512,8 @@ class Utils {
                         timestamp = Timestamp.valueOf(value.toString());
                     } else if (value instanceof Long) {
                         timestamp = new Timestamp((Long) value);
-                    } else if (value instanceof MapValue) {
-                        MapValue<BString, Object> dateTimeStruct = (MapValue<BString, Object>) value;
+                    } else if (value instanceof BMap) {
+                        BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
                         if (dateTimeStruct.getType().getName()
                                 .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
                             ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
@@ -647,7 +645,7 @@ class Utils {
         Iterator<BField> fieldIterator = structFields.values().iterator();
         for (int i = 0; i < fieldCount; ++i) {
             BField field = fieldIterator.next();
-            Object bValue = ((MapValue) value).get(fromString(field.getFieldName()));
+            Object bValue = ((BMap) value).get(fromString(field.getFieldName()));
             int typeTag = field.getFieldType().getTag();
             switch (typeTag) {
                 case TypeTags.INT_TAG:
@@ -990,13 +988,13 @@ class Utils {
         }
     }
 
-    private static MapValue<BString, Object> createUserDefinedType(Struct structValue, BStructureType structType)
+    private static BMap<BString, Object> createUserDefinedType(Struct structValue, BStructureType structType)
             throws ApplicationError {
         if (structValue == null) {
             return null;
         }
         BField[] internalStructFields = structType.getFields().values().toArray(new BField[0]);
-        MapValue<BString, Object> struct = new MapValueImpl<>(structType);
+        BMap<BString, Object> struct = BValueCreator.createMapValue(structType);
         try {
             Object[] dataArray = structValue.getAttributes();
             if (dataArray != null) {
@@ -1059,7 +1057,7 @@ class Utils {
     }
 
 
-    private static MapValue<BString, Object> createTimeStruct(long millis) {
+    private static BMap<BString, Object> createTimeStruct(long millis) {
         return TimeUtils.createTimeRecord(TimeUtils.getTimeZoneRecord(), TimeUtils.getTimeRecord(), millis,
                 Constants.TIMEZONE_UTC);
     }
@@ -1304,11 +1302,11 @@ class Utils {
         return null;
     }
 
-    public static ObjectValue createRecordIterator(ResultSet resultSet,
+    public static BObject createRecordIterator(ResultSet resultSet,
                                                    Statement statement,
                                                    Connection connection, List<ColumnDefinition> columnDefinitions,
                                                    BStructureType streamConstraint) {
-        ObjectValue resultIterator = BallerinaValues.createObjectValue(Constants.SQL_PACKAGE_ID,
+        BObject resultIterator = BValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID,
                 Constants.RESULT_ITERATOR_OBJECT, new Object[1]);
         resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
         resultIterator.addNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD, statement);
@@ -1428,7 +1426,7 @@ class Utils {
         }
     }
 
-    public static Object cleanUpConnection(ObjectValue ballerinaObject, ResultSet resultSet,
+    public static Object cleanUpConnection(BObject ballerinaObject, ResultSet resultSet,
                                            Statement statement, Connection connection) {
         if (resultSet != null) {
             try {

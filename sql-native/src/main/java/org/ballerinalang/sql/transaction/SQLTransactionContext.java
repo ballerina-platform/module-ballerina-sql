@@ -17,7 +17,8 @@
  */
 package org.ballerinalang.sql.transaction;
 
-import org.ballerinalang.jvm.BallerinaErrors;
+import org.ballerinalang.jvm.api.BErrorCreator;
+import org.ballerinalang.jvm.api.BStringUtils;
 import org.ballerinalang.jvm.transactions.BallerinaTransactionContext;
 
 import java.sql.Connection;
@@ -52,7 +53,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
         try {
             conn.commit();
         } catch (SQLException e) {
-            throw BallerinaErrors.createError("transaction commit failed:" + e.getMessage());
+            throw BErrorCreator.createError(BStringUtils.fromString("transaction commit failed:" + e.getMessage()));
         }
     }
 
@@ -63,7 +64,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
                 conn.rollback();
             }
         } catch (SQLException e) {
-            throw BallerinaErrors.createError("transaction rollback failed:" + e.getMessage());
+            throw BErrorCreator.createError(BStringUtils.fromString("transaction rollback failed:" + e.getMessage()));
         }
     }
 
@@ -74,7 +75,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
                 conn.close();
             }
         } catch (SQLException e) {
-            throw BallerinaErrors.createError("connection close failed:" + e.getMessage());
+            throw BErrorCreator.createError(BStringUtils.fromString("connection close failed:" + e.getMessage()));
         }
     }
 
