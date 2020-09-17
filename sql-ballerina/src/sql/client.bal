@@ -69,7 +69,7 @@ isolated function closedStreamInvocationError() returns Error {
     return ApplicationError("Stream is closed. Therefore, no operations are allowed further on the stream.");
 }
 
-public function generateApplicationErrorStream(string message) returns stream <record {}, Error> {
+public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error> {
     ApplicationError applicationErr = ApplicationError(message);
     ResultIterator resultIterator = new (err = applicationErr);
     stream<record {}, Error> errorStream = new (resultIterator);
