@@ -41,18 +41,18 @@ public type ConnectionPool record {|
 class GlobalConnectionPoolContainer {
     private ConnectionPool connectionPool = {};
 
-    function init() {
+    isolated function init() {
         // poolConfig record is frozen so that it cannot be modified during runtime
         ConnectionPool frozenConfig = self.connectionPool.cloneReadOnly();
         initGlobalPoolContainer(frozenConfig);
     }
 
-    public function getGlobalConnectionPool() returns ConnectionPool {
+    public isolated function getGlobalConnectionPool() returns ConnectionPool {
         return self.connectionPool;
     }
 }
 
-function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
+isolated function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
     'class: "org.ballerinalang.sql.utils.ConnectionPoolUtils"
 } external;
 
@@ -61,6 +61,6 @@ function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
 // of connection pools.
 final GlobalConnectionPoolContainer globalPoolContainer = new;
 
-public function getGlobalConnectionPool() returns ConnectionPool {
+public isolated function getGlobalConnectionPool() returns ConnectionPool {
     return globalPoolContainer.getGlobalConnectionPool();
 }
