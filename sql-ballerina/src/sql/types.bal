@@ -354,7 +354,7 @@ class ResultIterator {
         self.err = err;
     }
 
-    public function next() returns record {|record {} value;|}|Error? {
+    public isolated function next() returns record {|record {} value;|}|Error? {
         if (self.isClosed) {
             return closedStreamInvocationError();
         }
@@ -379,7 +379,7 @@ class ResultIterator {
         }
     }
 
-    public function close() returns Error? {
+    public isolated function close() returns Error? {
         if (!self.isClosed) {
             if (self.err is ()) {
                 Error? e = closeResult(self);
@@ -445,14 +445,14 @@ public class ProcedureCallResult {
     # results by default.
     #
     # + return - True if the next result is `queryResult`
-    public function getNextQueryResult() returns boolean|Error {
+    public isolated function getNextQueryResult() returns boolean|Error {
         return getNextQueryResult(self);
     }
 
     # Closes the `ProcedureCallResult` object and releases resources.
     #
     # + return - `Error` if any error occurred while closing.
-    public function close() returns Error? {
+    public isolated function close() returns Error? {
         return closeCallResult(self);
     }
 }
