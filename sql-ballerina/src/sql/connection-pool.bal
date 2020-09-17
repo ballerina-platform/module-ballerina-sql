@@ -17,13 +17,6 @@
 import ballerina/config;
 import ballerina/java;
 
-final int defaultMaxOpenConnections = config:getAsInt("b7a.sql.pool.maxOpenConnections", 15);
-
-final decimal defaultMaxConnectionLifeTime =
-            <decimal> config:getAsFloat("b7a.sql.pool.maxConnectionLifeTimeInSeconds", 1800.0);
-
-final int defaultMinIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConnections", 15);
-
 # Represents the properties which are used to configure DB connection pool.
 # Default values of the fields can be set through the configuration API.
 #
@@ -38,9 +31,10 @@ final int defaultMinIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConne
 #                        is the same as maxOpenConnections and it can be changed through the configuration
 #                        API with the key `b7a.sql.pool.minIdleConnections`.
 public type ConnectionPool record {|
-    int maxOpenConnections = defaultMaxOpenConnections;
-    decimal maxConnectionLifeTimeInSeconds = defaultMaxConnectionLifeTime;
-    int minIdleConnections = defaultMinIdleConnections;
+    int maxOpenConnections = config:getAsInt("b7a.sql.pool.maxOpenConnections", 15);
+    decimal maxConnectionLifeTimeInSeconds = <decimal>config:getAsFloat("b7a.sql.pool.maxConnectionLifeTimeInSeconds",
+        1800.0);
+    int minIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConnections", 15);
 |};
 
 // This is a container object that holds the global pool config and initializes the internal map of connection pools
