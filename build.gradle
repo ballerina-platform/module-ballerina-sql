@@ -186,4 +186,21 @@ task codeCoverageReport(type: JacocoReport) {
     }
 }
 
+def moduleVersion = project.version
+if (moduleVersion.indexOf('-') != -1) {
+    moduleVersion = moduleVersion.substring(0, moduleVersion.indexOf('-'))
+}
+
+release {
+    failOnPublishNeeded = false
+
+    buildTasks = ['build', 'publish']
+    tagTemplate = 'v$version'
+
+    git {
+        requireBranch = "release-${moduleVersion}"
+        pushToRemote = 'origin'
+    }
+}
+
 description = 'Ballerina - SQL'
