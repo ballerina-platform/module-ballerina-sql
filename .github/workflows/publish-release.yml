@@ -44,3 +44,8 @@ jobs:
               "tag_name": "v'"$VERSION"'",
               "name": "module-ballerina-sql-v'"$VERSION"'"
           }'
+      - name: Post release sync master
+        run: |
+          git checkout master
+          git merge release-${VERSION}
+          git push origin master
