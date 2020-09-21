@@ -149,6 +149,7 @@ assemble {
 }
 
 task ballerinaTest {
+    dependsOn(assemble)
     dependsOn(updateTomlFile)
     finalizedBy(revertTomlFile)
 
