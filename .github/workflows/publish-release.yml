@@ -46,13 +46,6 @@ jobs:
               "tag_name": "v'"$VERSION"'",
               "name": "module-ballerina-sql-v'"$VERSION"'"
           }'
-# This may be not needed for manual release of only one stdlib. To be discussed further
-#      - name : Post release dependency version update
-#        run: |
-#          chmod +x build-config/release/post-release-dependency-bump.sh
-#          bash build-config/release/post-release-dependency-bump.sh
-#          git add gradle.properties
-#          git commit -m "Post release dependency bump" || echo "No changes to commit"
       - name: Post release PR
         run: |
           git checkout master
