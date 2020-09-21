@@ -150,7 +150,6 @@ subprojects {
             transitive = false
         }
     }
-    afterReleaseBuild.dependsOn(publish)
 }
 
 def moduleVersion = project.version
