@@ -160,7 +160,7 @@ if (moduleVersion.indexOf('-') != -1) {
 release {
     failOnPublishNeeded = false
 
-    buildTasks = ['build']
+    buildTasks = []
     versionPropertyFile = 'gradle.properties'
     tagTemplate = 'v$version'
 
@@ -168,10 +168,6 @@ release {
         requireBranch = "release-${moduleVersion}"
         pushToRemote = 'origin'
     }
-}
-
-task build {
-    dependsOn('sql-ballerina:build')
 }
 
 task codeCoverageReport(type: JacocoReport) {
