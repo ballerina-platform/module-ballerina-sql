@@ -23,7 +23,7 @@ jobs:
           sed -i 's/ballerinaLangVersion=\(.*\)-SNAPSHOT/ballerinaLangVersion=\1/g' gradle.properties
           sed -i 's/stdlib\(.*\)=\(.*\)-SNAPSHOT/stdlib\1=\2/g' gradle.properties
           git add gradle.properties
-          git commit -m "Bump depenendcy versions" || echo "No changes to commit"
+          git commit -m "Move dependencies to stable version" || echo "No changes to commit"
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish artifact
@@ -34,7 +34,7 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_STDLIB_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
-      - name: Create release
+      - name: Create Github release from the release tag
         run: |
           curl --request POST 'https://api.github.com/repos/ballerina-platform/module-ballerina-sql/releases' \
           --header 'Accept: application/vnd.github.v3+json' \
@@ -44,13 +44,14 @@ jobs:
               "tag_name": "v'"$VERSION"'",
               "name": "module-ballerina-sql-v'"$VERSION"'"
           }'
-      - name : Post release depenency version update
-        run: |
-          chmod +x build-config/release/post-release-dependency-bump.sh
-          bash build-config/release/post-release-dependency-bump.sh
-          git add gradle.properties
-          git commit -m "Post release dependency bump" || echo "No changes to commit"
-      - name: Post release sync master
+# This may be not needed for manual release of only one stdlib. To be discussed further
+#      - name : Post release dependency version update
+#        run: |
+#          chmod +x build-config/release/post-release-dependency-bump.sh
+#          bash build-config/release/post-release-dependency-bump.sh
+#          git add gradle.properties
+#          git commit -m "Post release dependency bump" || echo "No changes to commit"
+      - name: Post release PR
         run: |
           git checkout master
           git merge release-${VERSION}
