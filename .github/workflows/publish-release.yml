@@ -15,6 +15,8 @@ jobs:
       - name: Set version env variable
         run: echo ::set-env name=VERSION::$((grep -w "version" | cut -d= -f2) < gradle.properties | cut -d- -f1)
       - name : Pre release depenency version update
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           echo "Version: ${VERSION}"
           git config user.name ${{ secrets.BALLERINA_BOT_USERNAME }}
@@ -28,17 +30,17 @@ jobs:
         run: chmod +x gradlew
       - name: Publish artifact
         env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_STDLIB_TOKEN }}
           BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_ACCESS_TOKEN }}
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.BALLERINA_STDLIB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
       - name: Create Github release from the release tag
         run: |
           curl --request POST 'https://api.github.com/repos/ballerina-platform/module-ballerina-sql/releases' \
           --header 'Accept: application/vnd.github.v3+json' \
-          --header 'Authorization: Bearer ${{ secrets.BALLERINA_STDLIB_TOKEN }}' \
+          --header 'Authorization: Bearer ${{ secrets.BALLERINA_BOT_TOKEN }}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
               "tag_name": "v'"$VERSION"'",
