@@ -48,7 +48,8 @@ jobs:
               "name": "module-ballerina-sql-v'"$VERSION"'"
           }'
       - name: Post release PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
-          git checkout master
-          git merge release-${VERSION}
-          git push origin master
+          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
+          bin/hub pull-request -m "[Automated] Sync the version after "$VERSION" release"
