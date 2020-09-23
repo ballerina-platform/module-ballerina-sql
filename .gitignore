@@ -23,7 +23,7 @@
 hs_err_pid*
 
 # Ballerina
-.idea	Ballerina.lock
+Ballerina.lock
 
 #Idea files
 .idea
