@@ -27,7 +27,7 @@ For example demonstrations of the usage, go to [Ballerina By Examples](https://b
 
 ### Prerequisites
 
-1. [Java 8.0](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
+1. [Java 11.0](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 2. [Docker](https://www.docker.com/get-started)
    
