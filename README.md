@@ -2,7 +2,6 @@ Ballerina SQL Library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions?query=workflow%3ABuild)
-  [![Daily build](https://github.com/ballerina-platform/module-ballerina-sql/workflows/Daily%20build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions?query=workflow%3A%22Daily+build%22)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/commits/master)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -27,7 +26,7 @@ For example demonstrations of the usage, go to [Ballerina By Examples](https://b
 
 ### Prerequisites
 
-1. [Java 8.0](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
+1. [Java 11.0](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 2. [Docker](https://www.docker.com/get-started)
    
