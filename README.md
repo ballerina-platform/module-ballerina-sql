@@ -26,9 +26,11 @@ For example demonstrations of the usage, go to [Ballerina By Examples](https://b
 
 ### Prerequisites
 
-1. [Java 11.0](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+1. Download and install Java SE Development Kit (JDK) version 11 (from one of the following locations).
+   * [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+   * [OpenJDK](http://openjdk.java.net/install/index.html)
 
-2. [Docker](https://www.docker.com/get-started)
+2. Download and install [Docker](https://www.docker.com/get-started)
    
 3. Export Github Access Tokens with read package permissions.
         
