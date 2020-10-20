@@ -403,8 +403,6 @@ public class CharOutParameter {
     } external;
 }
 
-
-
 # Represents Varchar Out Parameter used in procedure calls
 public class VarcharOutParameter {
     # Parses returned SQL value to ballerina value.
