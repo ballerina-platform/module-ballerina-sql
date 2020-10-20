@@ -49,8 +49,6 @@ public final class Constants {
     public static final String STATEMENT_NATIVE_DATA_FIELD = "Statement";
     public static final String COLUMN_DEFINITIONS_DATA_FIELD = "ColumnDefinition";
     public static final String RECORD_TYPE_DATA_FIELD = "recordType";
-    public static final String PROCEDURE_CALL_PARAM_CACHE = "procedureCallParamCache";
-    public static final String PROCEDURE_CALL_META_DATA = "procedureCallMetaData";
 
     public static final String PROCEDURE_CALL_RESULT = "ProcedureCallResult";
     public static final String TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD = "TypeDescription";
@@ -147,6 +145,41 @@ public final class Constants {
         public static final String ROW = "RowValue";
         public static final String STRUCT = "StructValue";
 
+    }
+
+    /**
+     * Constants related to OutParameter supported.
+     */
+    public static final class OutParameterTypes {
+        public static final String CHAR = "CharOutParameter";
+        public static final String VARCHAR = "VarcharOutParameter";
+        public static final String NCHAR = "NCharOutParameter";
+        public static final String NVARCHAR = "NVarcharOutParameter";
+        public static final String BINARY = "BinaryOutParameter";
+        public static final String VARBINARY = "VarBinaryOutParameter";
+        public static final String TEXT = "TextOutParameter";
+        public static final String BLOB = "BlobOutParameter";
+        public static final String CLOB = "ClobOutParameter";
+        public static final String NCLOB = "NClobOutParameter";
+        public static final String DATE = "DateOutParameter";
+        public static final String TIME = "TimeOutParameter";
+        public static final String DATETIME = "DateTimeOutParameter";
+        public static final String TIMESTAMP = "TimestampOutParameter";
+        public static final String ARRAY = "ArrayOutParameter";
+        public static final String ROW = "RowOutParameter";
+        public static final String SMALLINT = "SmallIntOutParameter";
+        public static final String INTEGER = "IntegerOutParameter";
+        public static final String BIGINT = "BigIntOutParameter";
+        public static final String REAL = "RealOutParameter";
+        public static final String FLOAT = "FloatOutParameter";
+        public static final String DOUBLE = "DoubleOutParameter";
+        public static final String NUMERIC = "NumericOutParameter";
+        public static final String DECIMAL = "DecimalOutParameter";
+        public static final String BIT = "BitOutParameter";
+        public static final String BOOLEAN = "BooleanOutParameter";
+        public static final String REF = "RefOutParameter";
+        public static final String STRUCT = "StructOutParameter";
+        public static final String XML = "XMLOutParameter";
     }
 
     /**

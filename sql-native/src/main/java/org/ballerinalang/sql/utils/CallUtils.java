@@ -56,8 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static org.ballerinalang.sql.Constants.CONNECTION_NATIVE_DATA_FIELD;
@@ -65,8 +63,6 @@ import static org.ballerinalang.sql.Constants.DATABASE_CLIENT;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
 import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
-import static org.ballerinalang.sql.Constants.PROCEDURE_CALL_META_DATA;
-import static org.ballerinalang.sql.Constants.PROCEDURE_CALL_PARAM_CACHE;
 import static org.ballerinalang.sql.Constants.PROCEDURE_CALL_RESULT;
 import static org.ballerinalang.sql.Constants.QUERY_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIELD;
@@ -77,6 +73,7 @@ import static org.ballerinalang.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIEL
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
 import static org.ballerinalang.sql.utils.Utils.getDefaultStreamConstraint;
 import static org.ballerinalang.sql.utils.Utils.getGeneratedKeys;
+import static org.ballerinalang.sql.utils.Utils.getOutParameterType;
 import static org.ballerinalang.sql.utils.Utils.setSQLValueParam;
 
 /**
@@ -104,37 +101,15 @@ public class CallUtils {
                 connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
-                Object cacheObject = client.getNativeData(PROCEDURE_CALL_PARAM_CACHE);
-                Object metaDataObject = client.getNativeData(PROCEDURE_CALL_META_DATA);
-
-                HashMap<Integer, Integer> cache;
-                if (cacheObject != null) {
-                    cache = (HashMap<Integer, Integer>) cacheObject;
-                } else {
-                    cache = new HashMap<>();
-                }
+                HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
                 if (paramSQLString instanceof BObject) {
-                    HashMap<Integer, Integer> metaData;
-                    if (metaDataObject != null) {
-                        metaData = (HashMap<Integer, Integer>) metaDataObject;
-                    } else {
-                        metaData = new HashMap<>();
-                    }
-
-                    setCallParameters(connection, statement, sqlQuery, (BObject) paramSQLString,
-                            cache, metaData);
-                    if (!cache.isEmpty()) {
-                        client.addNativeData(PROCEDURE_CALL_PARAM_CACHE, cache);
-                    }
-                    if (!metaData.isEmpty()) {
-                        client.addNativeData(PROCEDURE_CALL_META_DATA, metaData);
-                    }
+                    setCallParameters(connection, statement, sqlQuery, (BObject) paramSQLString, outputParamTypes);
                 }
 
                 boolean resultType = statement.execute();
 
                 if (paramSQLString instanceof BObject) {
-                    populateOutParameters(statement, (BObject) paramSQLString, cache);
+                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes);
                 }
 
                 BObject procedureCallResult = ValueCreator.createObjectValue(SQL_PACKAGE_ID,
@@ -201,8 +176,7 @@ public class CallUtils {
     }
 
     static void setCallParameters(Connection connection, CallableStatement statement, String sqlQuery,
-                                  BObject paramString, HashMap<Integer, Integer> cache,
-                                  HashMap<Integer, Integer> metaData)
+                                  BObject paramString, HashMap<Integer, Integer> outputParamTypes)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
@@ -215,27 +189,26 @@ public class CallUtils {
                             objectValue.getType().getQualifiedName() + " in column index: " + index);
                 }
 
+                String parameterType;
                 String objectType = objectValue.getType().getName();
+                if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
+                    parameterType = Constants.ParameterObject.INOUT_PARAMETER;
+                } else if (objectType.endsWith("OutParameter")) {
+                    parameterType = Constants.ParameterObject.OUT_PARAMETER;
+                } else {
+                    parameterType = "InParameter";
+                }
+
                 Integer sqlType;
-                switch (objectType) {
+                switch (parameterType) {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
-                        sqlType = !cache.isEmpty() ? cache.get(index) : null;
-                        if (sqlType == null) {
-                            sqlType = setSQLValueParam(connection, statement, innerObject, index, true);
-                            cache.put(index, sqlType);
-                        } else {
-                            setSQLValueParam(connection, statement, innerObject, index, false);
-                        }
+                        sqlType = setSQLValueParam(connection, statement, innerObject, index, true);
                         statement.registerOutParameter(index, sqlType);
                         break;
                     case Constants.ParameterObject.OUT_PARAMETER:
-                        sqlType = !cache.isEmpty() ? cache.get(index) : null;
-                        if (sqlType == null) {
-                            metaData.putAll(getOutParameterTypes(connection, sqlQuery, arrayValue.size()));
-                            sqlType = metaData.get(index);
-                            cache.put(index, sqlType);
-                        }
+                        sqlType = getOutParameterType(objectValue);
+                        outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
                     default:
@@ -248,13 +221,14 @@ public class CallUtils {
     }
 
     static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
-                                      HashMap<Integer, Integer> cache) throws SQLException, ApplicationError {
-        if (cache.size() == 0) {
+                                      HashMap<Integer, Integer> outputParamTypes)
+            throws SQLException, ApplicationError {
+        if (outputParamTypes.size() == 0) {
             return;
         }
         BArray arrayValue = paramSQLString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
 
-        for (Map.Entry<Integer, Integer> entry : cache.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : outputParamTypes.entrySet()) {
             int paramIndex = entry.getKey();
             int sqlType = entry.getValue();
 
@@ -373,34 +347,4 @@ public class CallUtils {
         }
     }
 
-    static HashMap<Integer, Integer> getOutParameterTypes(Connection connection, String sqlQuery, int size)
-            throws ApplicationError {
-        HashMap<Integer, Integer> colTypes = new HashMap<>();
-        Pattern pattern = Pattern.compile("[^(]*\\s([^(]*).*");
-        Matcher m = pattern.matcher(sqlQuery);
-        if (m.matches() && m.groupCount() == 1) {
-            String procedureCallName = m.group(1);
-            try {
-                ResultSet procCols = connection.getMetaData().getProcedureColumns(connection.getCatalog(),
-                        connection.getSchema(), procedureCallName, null);
-                int count = 1;
-                while (procCols.next()) {
-                    colTypes.put(count, procCols.getInt("DATA_TYPE"));
-                    count++;
-                }
-                if (colTypes.size() != size) {
-                    throw new ApplicationError("Unable to parse SQL call query to get metadata for OutParameter, " +
-                            "as column count does not match for procedure '" + procCols.getString("PROCEDURE_NAME") +
-                            "'.");
-                }
-            } catch (SQLException e) {
-                throw new ApplicationError("Unable to parse SQL call query to get metadata for OutParameters of " +
-                        "procedure, '" + procedureCallName + "', " + e.getMessage());
-            }
-        } else {
-            throw new ApplicationError("Unable to parse SQL call query to process type of the Parameters. Ensure " +
-                    "that the query follows standard format for procedure calls.");
-        }
-        return colTypes;
-    }
 }

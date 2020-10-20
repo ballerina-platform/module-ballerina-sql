@@ -347,7 +347,7 @@ This example demonstrates how to execute a stored procedure with a single INSERT
 
 ```ballerina
 int uid = 10;
-sql:OutParameter insertId = new;
+sql:IntegerOutParameter insertId = new;
 
 var ret = dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 if (ret is error) {
