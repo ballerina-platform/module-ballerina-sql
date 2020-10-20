@@ -396,9 +396,9 @@ class ResultIterator {
 public class CharOutParameter {
     # Parses returned Char SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -409,9 +409,9 @@ public class CharOutParameter {
 public class VarcharOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -420,9 +420,9 @@ public class VarcharOutParameter {
 public class NCharOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -431,9 +431,9 @@ public class NCharOutParameter {
 public class NVarcharOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -442,9 +442,9 @@ public class NVarcharOutParameter {
 public class BinaryOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -453,9 +453,9 @@ public class BinaryOutParameter {
 public class VarBinaryOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -464,9 +464,9 @@ public class VarBinaryOutParameter {
 public class TextOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -475,9 +475,9 @@ public class TextOutParameter {
 public class BlobOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -486,9 +486,9 @@ public class BlobOutParameter {
 public class ClobOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -497,9 +497,9 @@ public class ClobOutParameter {
 public class NClobOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -508,9 +508,9 @@ public class NClobOutParameter {
 public class DateOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -519,9 +519,9 @@ public class DateOutParameter {
 public class TimeOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -530,9 +530,9 @@ public class TimeOutParameter {
 public class DateTimeOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -541,9 +541,9 @@ public class DateTimeOutParameter {
 public class TimestampOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -552,9 +552,9 @@ public class TimestampOutParameter {
 public class ArrayOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -563,9 +563,9 @@ public class ArrayOutParameter {
 public class RowOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -574,9 +574,9 @@ public class RowOutParameter {
 public class SmallIntOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -585,9 +585,9 @@ public class SmallIntOutParameter {
 public class IntegerOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -596,9 +596,9 @@ public class IntegerOutParameter {
 public class BigIntOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -607,9 +607,9 @@ public class BigIntOutParameter {
 public class RealOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -618,9 +618,9 @@ public class RealOutParameter {
 public class FloatOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -629,9 +629,9 @@ public class FloatOutParameter {
 public class DoubleOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -640,9 +640,9 @@ public class DoubleOutParameter {
 public class NumericOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -651,9 +651,9 @@ public class NumericOutParameter {
 public class DecimalOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -662,9 +662,9 @@ public class DecimalOutParameter {
 public class BitOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -673,9 +673,9 @@ public class BitOutParameter {
 public class BooleanOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -684,9 +684,9 @@ public class BooleanOutParameter {
 public class RefOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -695,9 +695,9 @@ public class RefOutParameter {
 public class StructOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -706,9 +706,9 @@ public class StructOutParameter {
 public class XMLOutParameter {
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
@@ -723,9 +723,9 @@ public class InOutParameter {
 
     # Parses returned SQL value to ballerina value.
     #
-    # + td - Type description of the data that need to be converted
+    # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
-    public isolated function get(typedesc<anydata> td) returns td|Error = @java:Method {
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
