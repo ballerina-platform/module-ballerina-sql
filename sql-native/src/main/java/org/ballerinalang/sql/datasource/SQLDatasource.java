@@ -19,9 +19,9 @@ package org.ballerinalang.sql.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.values.DecimalValue;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.values.DecimalValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 

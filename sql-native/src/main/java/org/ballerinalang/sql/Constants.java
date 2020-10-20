@@ -18,10 +18,10 @@
 
 package org.ballerinalang.sql;
 
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.BPackage;
+import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.values.BString;
 
-import static org.ballerinalang.jvm.api.BStringUtils.fromString;
+import static io.ballerina.runtime.api.StringUtils.fromString;
 
 /**
  * Constants for SQL client.
@@ -31,7 +31,7 @@ import static org.ballerinalang.jvm.api.BStringUtils.fromString;
 public final class Constants {
 
     public static final String CONNECTOR_NAME = "SQLClientConnector";
-    public static final BPackage SQL_PACKAGE_ID = new BPackage("ballerina", "sql", "0.5.1");
+    public static final Module SQL_PACKAGE_ID = new Module("ballerina", "sql", "0.5.1");
     public static final String DATABASE_CLIENT = "Client";
     public static final String SQL_CONNECTOR_TRANSACTION_ID = "sql-transaction-id";
 

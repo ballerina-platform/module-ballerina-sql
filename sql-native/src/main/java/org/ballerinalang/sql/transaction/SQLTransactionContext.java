@@ -17,9 +17,9 @@
  */
 package org.ballerinalang.sql.transaction;
 
-import org.ballerinalang.jvm.api.BErrorCreator;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.transactions.BallerinaTransactionContext;
+import io.ballerina.runtime.api.ErrorCreator;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.transactions.BallerinaTransactionContext;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -53,7 +53,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
         try {
             conn.commit();
         } catch (SQLException e) {
-            throw BErrorCreator.createError(BStringUtils.fromString("transaction commit failed:" + e.getMessage()));
+            throw ErrorCreator.createError(StringUtils.fromString("transaction commit failed:" + e.getMessage()));
         }
     }
 
@@ -64,7 +64,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
                 conn.rollback();
             }
         } catch (SQLException e) {
-            throw BErrorCreator.createError(BStringUtils.fromString("transaction rollback failed:" + e.getMessage()));
+            throw ErrorCreator.createError(StringUtils.fromString("transaction rollback failed:" + e.getMessage()));
         }
     }
 
@@ -75,7 +75,7 @@ public class SQLTransactionContext implements BallerinaTransactionContext {
                 conn.close();
             }
         } catch (SQLException e) {
-            throw BErrorCreator.createError(BStringUtils.fromString("connection close failed:" + e.getMessage()));
+            throw ErrorCreator.createError(StringUtils.fromString("connection close failed:" + e.getMessage()));
         }
     }
 

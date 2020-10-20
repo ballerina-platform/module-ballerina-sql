@@ -17,7 +17,7 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.types.BType;
+import io.ballerina.runtime.api.types.Type;
 
 /**
  * This class provides the mapping of the sql columns, its names and types.
@@ -29,12 +29,12 @@ public class ColumnDefinition {
     private String ballerinaFieldName;
     private int sqlType;
     private String sqlName;
-    private BType ballerinaType;
+    private Type ballerinaType;
     private boolean isNullable;
 
 
     ColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
-                     BType ballerinaType, boolean isNullable) {
+                     Type ballerinaType, boolean isNullable) {
         this.columnName = columnName;
         if (ballerinaFieldName != null && !ballerinaFieldName.isEmpty()) {
             this.ballerinaFieldName = ballerinaFieldName;
@@ -55,7 +55,7 @@ public class ColumnDefinition {
         return sqlType;
     }
 
-    BType getBallerinaType() {
+    Type getBallerinaType() {
         return ballerinaType;
     }
 

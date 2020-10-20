@@ -17,16 +17,16 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.JSONParser;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.BArrayType;
-import org.ballerinalang.jvm.types.BStructureType;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.util.exceptions.BallerinaException;
+import io.ballerina.runtime.JSONParser;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.types.BArrayType;
+import io.ballerina.runtime.types.BStructureType;
+import io.ballerina.runtime.util.exceptions.BallerinaException;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 
@@ -50,7 +50,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import static org.ballerinalang.jvm.api.BStringUtils.fromString;
+import static io.ballerina.runtime.api.StringUtils.fromString;
 import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
 import static org.ballerinalang.sql.utils.Utils.convert;
 import static org.ballerinalang.sql.utils.Utils.getString;
@@ -69,7 +69,7 @@ public class RecordIteratorUtils {
             if (resultSet.next()) {
                 BStructureType streamConstraint = (BStructureType) recordIterator.
                         getNativeData(Constants.RECORD_TYPE_DATA_FIELD);
-                BMap<BString, Object> bStruct = BValueCreator.createMapValue(streamConstraint);
+                BMap<BString, Object> bStruct = ValueCreator.createMapValue(streamConstraint);
                 List<ColumnDefinition> columnDefinitions = (List<ColumnDefinition>) recordIterator
                         .getNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD);
                 for (int i = 0; i < columnDefinitions.size(); i++) {
@@ -95,7 +95,7 @@ public class RecordIteratorUtils {
     private static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition)
             throws SQLException, ApplicationError, IOException {
         int sqlType = columnDefinition.getSqlType();
-        BType ballerinaType = columnDefinition.getBallerinaType();
+        Type ballerinaType = columnDefinition.getBallerinaType();
         switch (sqlType) {
             case Types.ARRAY:
                 return convert(resultSet.getArray(columnIndex), sqlType, ballerinaType);

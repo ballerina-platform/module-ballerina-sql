@@ -17,16 +17,16 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.scheduling.Scheduler;
-import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.types.BArrayType;
-import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.values.ArrayValue;
-import org.ballerinalang.jvm.values.StringValue;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.scheduling.Scheduler;
+import io.ballerina.runtime.scheduling.Strand;
+import io.ballerina.runtime.types.BArrayType;
+import io.ballerina.runtime.types.BRecordType;
+import io.ballerina.runtime.values.ArrayValue;
+import io.ballerina.runtime.values.StringValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -89,7 +89,7 @@ public class ExecuteUtils {
                 Map<String, Object> resultFields = new HashMap<>();
                 resultFields.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                 resultFields.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                return BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                return ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
@@ -152,10 +152,10 @@ public class ExecuteUtils {
                         lastInsertedId = getGeneratedKeys(resultSet);
                     }
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    executionResults.add(BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
-                return BValueCreator.createArrayValue(executionResults.toArray(), new BArrayType(
+                return ValueCreator.createArrayValue(executionResults.toArray(), new BArrayType(
                         new BRecordType(Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0)));
             } catch (BatchUpdateException e) {
                 int[] updateCounts = e.getUpdateCounts();
@@ -163,7 +163,7 @@ public class ExecuteUtils {
                     Map<String, Object> resultField = new HashMap<>();
                     resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                    executionResults.add(BValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
