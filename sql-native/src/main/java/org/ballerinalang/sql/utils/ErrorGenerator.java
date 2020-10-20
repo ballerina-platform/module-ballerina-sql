@@ -42,8 +42,8 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLBatchExecuteError(SQLException exception,
-                                                     List<BMap<BString, Object>> executionResults,
-                                                     String messagePrefix) {
+                                                 List<BMap<BString, Object>> executionResults,
+                                                 String messagePrefix) {
         String sqlErrorMessage =
                 exception.getMessage() != null ? exception.getMessage() : Constants.BATCH_EXECUTE_ERROR_MESSAGE;
         int vendorCode = exception.getErrorCode();
@@ -67,7 +67,7 @@ public class ErrorGenerator {
     }
 
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
-                                                      List<BMap<BString, Object>> executionResults) {
+                                                  List<BMap<BString, Object>> executionResults) {
         Map<String, Object> valueMap = new HashMap<>();
         valueMap.put(Constants.ErrorRecordFields.ERROR_CODE, vendorCode);
         valueMap.put(Constants.ErrorRecordFields.SQL_STATE, sqlState);

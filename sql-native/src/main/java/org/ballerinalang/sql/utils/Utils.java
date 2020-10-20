@@ -1307,9 +1307,9 @@ class Utils {
     }
 
     public static BObject createRecordIterator(ResultSet resultSet,
-                                                   Statement statement,
-                                                   Connection connection, List<ColumnDefinition> columnDefinitions,
-                                                   BStructureType streamConstraint) {
+                                               Statement statement,
+                                               Connection connection, List<ColumnDefinition> columnDefinitions,
+                                               BStructureType streamConstraint) {
         BObject resultIterator = ValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID,
                 Constants.RESULT_ITERATOR_OBJECT, new Object[1]);
         resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
