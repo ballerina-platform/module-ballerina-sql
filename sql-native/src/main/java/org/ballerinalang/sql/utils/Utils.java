@@ -18,30 +18,32 @@
 
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.TypeChecker;
-import org.ballerinalang.jvm.XMLFactory;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BArray;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.api.values.BValue;
-import org.ballerinalang.jvm.scheduling.Scheduler;
-import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.types.BArrayType;
-import org.ballerinalang.jvm.types.BField;
-import org.ballerinalang.jvm.types.BPackage;
-import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.types.BStructureType;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.BTypes;
-import org.ballerinalang.jvm.types.BUnionType;
-import org.ballerinalang.jvm.types.BXMLType;
-import org.ballerinalang.jvm.types.TypeFlags;
-import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.values.ArrayValue;
-import org.ballerinalang.jvm.values.DecimalValue;
-import org.ballerinalang.jvm.values.XMLValue;
+import io.ballerina.runtime.TypeChecker;
+import io.ballerina.runtime.XMLFactory;
+import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeCreator;
+import io.ballerina.runtime.api.TypeFlags;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
+import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
+import io.ballerina.runtime.scheduling.Scheduler;
+import io.ballerina.runtime.scheduling.Strand;
+import io.ballerina.runtime.types.BArrayType;
+import io.ballerina.runtime.types.BRecordType;
+import io.ballerina.runtime.types.BStructureType;
+import io.ballerina.runtime.types.BUnionType;
+import io.ballerina.runtime.types.BXMLType;
+import io.ballerina.runtime.values.ArrayValue;
+import io.ballerina.runtime.values.DecimalValue;
+import io.ballerina.runtime.values.XMLValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 import org.ballerinalang.stdlib.io.channels.base.Channel;
@@ -82,7 +84,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static org.ballerinalang.jvm.api.BStringUtils.fromString;
+import static io.ballerina.runtime.api.StringUtils.fromString;
+
+;
 
 /**
  * This class has the utility methods to process and convert the SQL types into ballerina types,
@@ -92,11 +96,11 @@ import static org.ballerinalang.jvm.api.BStringUtils.fromString;
  */
 class Utils {
 
-    private static final BArrayType stringArrayType = new BArrayType(BTypes.typeString);
-    private static final BArrayType booleanArrayType = new BArrayType(BTypes.typeBoolean);
-    private static final BArrayType intArrayType = new BArrayType(BTypes.typeInt);
-    private static final BArrayType floatArrayType = new BArrayType(BTypes.typeFloat);
-    private static final BArrayType decimalArrayType = new BArrayType(BTypes.typeDecimal);
+    private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
+    private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
+    private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
+    private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
+    private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
 
     static void closeResources(Strand strand, ResultSet resultSet, Statement statement, Connection connection) {
         if (resultSet != null) {
@@ -569,11 +573,11 @@ class Utils {
     }
 
     private static Object[] getArrayData(Object value) throws ApplicationError {
-        BType type = TypeChecker.getType(value);
+        Type type = TypeChecker.getType(value);
         if (value == null || type.getTag() != TypeTags.ARRAY_TAG) {
             return new Object[]{null, null};
         }
-        BType elementType = ((BArrayType) type).getElementType();
+        Type elementType = ((BArrayType) type).getElementType();
         int typeTag = elementType.getTag();
         Object[] arrayData;
         int arrayLength;
@@ -614,7 +618,7 @@ class Utils {
                 }
                 return new Object[]{arrayData, "BOOLEAN"};
             case TypeTags.ARRAY_TAG:
-                BType elementTypeOfArrayElement = ((BArrayType) elementType)
+                Type elementTypeOfArrayElement = ((BArrayType) elementType)
                         .getElementType();
                 if (elementTypeOfArrayElement.getTag() == TypeTags.BYTE_TAG) {
                     ArrayValue arrayValue = (ArrayValue) value;
@@ -632,19 +636,19 @@ class Utils {
     }
 
     private static Object[] getStructData(Object value, Connection conn) throws SQLException, ApplicationError {
-        BType type = TypeChecker.getType(value);
+        Type type = TypeChecker.getType(value);
         if (value == null || (type.getTag() != TypeTags.OBJECT_TYPE_TAG
                 && type.getTag() != TypeTags.RECORD_TYPE_TAG)) {
             return new Object[]{null, null};
         }
         String structuredSQLType = type.getName().toUpperCase(Locale.getDefault());
-        Map<String, BField> structFields = ((BStructureType) type)
+        Map<String, Field> structFields = ((BStructureType) type)
                 .getFields();
         int fieldCount = structFields.size();
         Object[] structData = new Object[fieldCount];
-        Iterator<BField> fieldIterator = structFields.values().iterator();
+        Iterator<Field> fieldIterator = structFields.values().iterator();
         for (int i = 0; i < fieldCount; ++i) {
-            BField field = fieldIterator.next();
+            Field field = fieldIterator.next();
             Object bValue = ((BMap) value).get(fromString(field.getFieldName()));
             int typeTag = field.getFieldType().getTag();
             switch (typeTag) {
@@ -656,7 +660,7 @@ class Utils {
                     structData[i] = bValue;
                     break;
                 case TypeTags.ARRAY_TAG:
-                    BType elementType = ((BArrayType) field
+                    Type elementType = ((BArrayType) field
                             .getFieldType()).getElementType();
                     if (elementType.getTag() == TypeTags.BYTE_TAG) {
                         structData[i] = ((ArrayValue) bValue).getBytes();
@@ -693,9 +697,9 @@ class Utils {
     }
 
 
-    static ArrayValue convert(Array array, int sqlType, BType bType) throws SQLException, ApplicationError {
+    static ArrayValue convert(Array array, int sqlType, Type type) throws SQLException, ApplicationError {
         if (array != null) {
-            validatedInvalidFieldAssignment(sqlType, bType, "SQL Array");
+            validatedInvalidFieldAssignment(sqlType, type, "SQL Array");
             Object[] dataArray = (Object[]) array.getArray();
             if (dataArray == null || dataArray.length == 0) {
                 return null;
@@ -707,7 +711,7 @@ class Utils {
 
             if (containsNull) {
                 // If there are some null elements, return a union-type element array
-                return createAndPopulateRefValueArray(firstNonNullElement, dataArray, bType);
+                return createAndPopulateRefValueArray(firstNonNullElement, dataArray, type);
             } else {
                 // If there are no null elements, return a ballerina primitive-type array
                 return createAndPopulatePrimitiveValueArray(firstNonNullElement, dataArray);
@@ -721,43 +725,43 @@ class Utils {
     private static ArrayValue createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray) {
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
-            ArrayValue stringDataArray = (ArrayValue) BValueCreator.createArrayValue(stringArrayType);
+            ArrayValue stringDataArray = (ArrayValue) ValueCreator.createArrayValue(stringArrayType);
             for (int i = 0; i < length; i++) {
                 stringDataArray.add(i, (String) dataArray[i]);
             }
             return stringDataArray;
         } else if (firstNonNullElement instanceof Boolean) {
-            ArrayValue boolDataArray = (ArrayValue) BValueCreator.createArrayValue(booleanArrayType);
+            ArrayValue boolDataArray = (ArrayValue) ValueCreator.createArrayValue(booleanArrayType);
             for (int i = 0; i < length; i++) {
                 boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
             }
             return boolDataArray;
         } else if (firstNonNullElement instanceof Integer) {
-            ArrayValue intDataArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
+            ArrayValue intDataArray = (ArrayValue) ValueCreator.createArrayValue(intArrayType);
             for (int i = 0; i < length; i++) {
                 intDataArray.add(i, ((Integer) dataArray[i]).intValue());
             }
             return intDataArray;
         } else if (firstNonNullElement instanceof Long) {
-            ArrayValue longDataArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
+            ArrayValue longDataArray = (ArrayValue) ValueCreator.createArrayValue(intArrayType);
             for (int i = 0; i < length; i++) {
                 longDataArray.add(i, ((Long) dataArray[i]).longValue());
             }
             return longDataArray;
         } else if (firstNonNullElement instanceof Float) {
-            ArrayValue floatDataArray = (ArrayValue) BValueCreator.createArrayValue(floatArrayType);
+            ArrayValue floatDataArray = (ArrayValue) ValueCreator.createArrayValue(floatArrayType);
             for (int i = 0; i < length; i++) {
                 floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
             }
             return floatDataArray;
         } else if (firstNonNullElement instanceof Double) {
-            ArrayValue doubleDataArray = (ArrayValue) BValueCreator.createArrayValue(floatArrayType);
+            ArrayValue doubleDataArray = (ArrayValue) ValueCreator.createArrayValue(floatArrayType);
             for (int i = 0; i < dataArray.length; i++) {
                 doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
             }
             return doubleDataArray;
         } else if ((firstNonNullElement instanceof BigDecimal)) {
-            ArrayValue decimalDataArray = (ArrayValue) BValueCreator.createArrayValue(decimalArrayType);
+            ArrayValue decimalDataArray = (ArrayValue) ValueCreator.createArrayValue(decimalArrayType);
             for (int i = 0; i < dataArray.length; i++) {
                 decimalDataArray.add(i, new DecimalValue((BigDecimal) dataArray[i]));
             }
@@ -782,46 +786,46 @@ class Utils {
     }
 
     private static ArrayValue createAndPopulateRefValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                             BType bType) {
+                                                             Type type) {
         ArrayValue refValueArray = null;
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeString);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_STRING);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof Boolean) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeBoolean);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_BOOLEAN);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof Integer) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeInt);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_INT);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof Long) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeInt);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_INT);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof Float) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeFloat);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_FLOAT);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof Double) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeFloat);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_FLOAT);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i]);
             }
         } else if (firstNonNullElement instanceof BigDecimal) {
-            refValueArray = createEmptyRefValueArray(BTypes.typeDecimal);
+            refValueArray = createEmptyRefValueArray(PredefinedTypes.TYPE_DECIMAL);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, dataArray[i] != null ? new DecimalValue((BigDecimal) dataArray[i]) : null);
             }
         } else if (firstNonNullElement == null) {
-            refValueArray = createEmptyRefValueArray(bType);
+            refValueArray = createEmptyRefValueArray(type);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, firstNonNullElement);
             }
@@ -829,12 +833,12 @@ class Utils {
         return refValueArray;
     }
 
-    private static ArrayValue createEmptyRefValueArray(BType type) {
-        List<BType> memberTypes = new ArrayList<>(2);
+    private static ArrayValue createEmptyRefValueArray(Type type) {
+        List<Type> memberTypes = new ArrayList<>(2);
         memberTypes.add(type);
-        memberTypes.add(BTypes.typeNull);
+        memberTypes.add(PredefinedTypes.TYPE_NULL);
         BUnionType unionType = new BUnionType(memberTypes);
-        return (ArrayValue) BValueCreator.createArrayValue(new BArrayType(unionType));
+        return (ArrayValue) ValueCreator.createArrayValue(new BArrayType(unionType));
     }
 
     private static Object[] validateNullable(Object[] objects) {
@@ -861,74 +865,74 @@ class Utils {
         return returnResult;
     }
 
-    static BString convert(String value, int sqlType, BType bType) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL String");
+    static BString convert(String value, int sqlType, Type type) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL String");
         return fromString(value);
     }
 
-    static Object convert(String value, int sqlType, BType bType, String sqlTypeName) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, sqlTypeName);
+    static Object convert(String value, int sqlType, Type type, String sqlTypeName) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, sqlTypeName);
         return fromString(value);
     }
 
-    static Object convert(byte[] value, int sqlType, BType bType, String sqlTypeName) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, sqlTypeName);
+    static Object convert(byte[] value, int sqlType, Type type, String sqlTypeName) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, sqlTypeName);
         if (value != null) {
-            return BValueCreator.createArrayValue(value);
+            return ValueCreator.createArrayValue(value);
         } else {
             return null;
         }
     }
 
-    static Object convert(long value, int sqlType, BType bType, boolean isNull) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL long or integer");
+    static Object convert(long value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL long or integer");
         if (isNull) {
             return null;
         } else {
-            if (bType.getTag() == TypeTags.STRING_TAG) {
+            if (type.getTag() == TypeTags.STRING_TAG) {
                 return fromString(String.valueOf(value));
             }
             return value;
         }
     }
 
-    static Object convert(double value, int sqlType, BType bType, boolean isNull) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL double or float");
+    static Object convert(double value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL double or float");
         if (isNull) {
             return null;
         } else {
-            if (bType.getTag() == TypeTags.STRING_TAG) {
+            if (type.getTag() == TypeTags.STRING_TAG) {
                 return fromString(String.valueOf(value));
             }
             return value;
         }
     }
 
-    static Object convert(BigDecimal value, int sqlType, BType bType, boolean isNull) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL decimal or real");
+    static Object convert(BigDecimal value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL decimal or real");
         if (isNull) {
             return null;
         } else {
-            if (bType.getTag() == TypeTags.STRING_TAG) {
+            if (type.getTag() == TypeTags.STRING_TAG) {
                 return fromString(String.valueOf(value));
             }
             return new DecimalValue(value);
         }
     }
 
-    static Object convert(Blob value, int sqlType, BType bType) throws ApplicationError, SQLException {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL Blob");
+    static Object convert(Blob value, int sqlType, Type type) throws ApplicationError, SQLException {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL Blob");
         if (value != null) {
-            return BValueCreator.createArrayValue(value.getBytes(1L, (int) value.length()));
+            return ValueCreator.createArrayValue(value.getBytes(1L, (int) value.length()));
         } else {
             return null;
         }
     }
 
-    static Object convert(java.util.Date date, int sqlType, BType bType) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL Date/Time");
+    static Object convert(java.util.Date date, int sqlType, Type type) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (date != null) {
-            switch (bType.getTag()) {
+            switch (type.getTag()) {
                 case TypeTags.STRING_TAG:
                     return fromString(getString(date));
                 case TypeTags.OBJECT_TYPE_TAG:
@@ -941,10 +945,10 @@ class Utils {
         return null;
     }
 
-    static Object convert(boolean value, int sqlType, BType bType, boolean isNull) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL Boolean");
+    static Object convert(boolean value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL Boolean");
         if (!isNull) {
-            switch (bType.getTag()) {
+            switch (type.getTag()) {
                 case TypeTags.BOOLEAN_TAG:
                     return value;
                 case TypeTags.INT_TAG:
@@ -960,28 +964,28 @@ class Utils {
         return null;
     }
 
-    static Object convert(Struct value, int sqlType, BType bType) throws ApplicationError {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL Struct");
+    static Object convert(Struct value, int sqlType, Type type) throws ApplicationError {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL Struct");
         if (value != null) {
-            if (bType instanceof BRecordType) {
-                return createUserDefinedType(value, (BRecordType) bType);
+            if (type instanceof BRecordType) {
+                return createUserDefinedType(value, (BRecordType) type);
             } else {
                 throw new ApplicationError("The ballerina type that can be used for SQL struct should be record type," +
-                        " but found " + bType.getName() + " .");
+                        " but found " + type.getName() + " .");
             }
         } else {
             return null;
         }
     }
 
-    static Object convert(SQLXML value, int sqlType, BType bType) throws ApplicationError, SQLException {
-        validatedInvalidFieldAssignment(sqlType, bType, "SQL XML");
+    static Object convert(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException {
+        validatedInvalidFieldAssignment(sqlType, type, "SQL XML");
         if (value != null) {
-            if (bType instanceof BXMLType) {
+            if (type instanceof BXMLType) {
                 return XMLFactory.parse(value.getBinaryStream());
             } else {
                 throw new ApplicationError("The ballerina type that can be used for SQL struct should be record type," +
-                        " but found " + bType.getName() + " .");
+                        " but found " + type.getName() + " .");
             }
         } else {
             return null;
@@ -993,8 +997,8 @@ class Utils {
         if (structValue == null) {
             return null;
         }
-        BField[] internalStructFields = structType.getFields().values().toArray(new BField[0]);
-        BMap<BString, Object> struct = BValueCreator.createMapValue(structType);
+        Field[] internalStructFields = structType.getFields().values().toArray(new Field[0]);
+        BMap<BString, Object> struct = ValueCreator.createMapValue(structType);
         try {
             Object[] dataArray = structValue.getAttributes();
             if (dataArray != null) {
@@ -1003,7 +1007,7 @@ class Utils {
                             "are different, and hence not compatible");
                 }
                 int index = 0;
-                for (BField internalField : internalStructFields) {
+                for (Field internalField : internalStructFields) {
                     int type = internalField.getFieldType().getTag();
                     BString fieldName = fromString(internalField.getFieldName());
                     Object value = dataArray[index];
@@ -1166,35 +1170,35 @@ class Utils {
         dateString.append(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private static void validatedInvalidFieldAssignment(int sqlType, BType bType, String sqlTypeName)
+    private static void validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName)
             throws ApplicationError {
-        if (!isValidFieldConstraint(sqlType, bType)) {
+        if (!isValidFieldConstraint(sqlType, type)) {
             throw new ApplicationError(sqlTypeName + " field cannot be converted to ballerina type : "
-                    + bType.getName());
+                    + type.getName());
         }
     }
 
-    static BType validFieldConstraint(int sqlType, BType bType) {
-        if (bType.getTag() == TypeTags.UNION_TAG && bType instanceof BUnionType) {
-            BUnionType bUnionType = (BUnionType) bType;
-            for (BType memberType : bUnionType.getMemberTypes()) {
+    static Type validFieldConstraint(int sqlType, Type type) {
+        if (type.getTag() == TypeTags.UNION_TAG && type instanceof BUnionType) {
+            BUnionType bUnionType = (BUnionType) type;
+            for (Type memberType : bUnionType.getMemberTypes()) {
                 //In case if the member type is another union type, check recursively.
                 if (isValidFieldConstraint(sqlType, memberType)) {
                     return memberType;
                 }
             }
         } else {
-            if (isValidPrimitiveConstraint(sqlType, bType)) {
-                return bType;
+            if (isValidPrimitiveConstraint(sqlType, type)) {
+                return type;
             }
         }
         return null;
     }
 
-    public static boolean isValidFieldConstraint(int sqlType, BType bType) {
-        if (bType.getTag() == TypeTags.UNION_TAG && bType instanceof BUnionType) {
-            BUnionType bUnionType = (BUnionType) bType;
-            for (BType memberType : bUnionType.getMemberTypes()) {
+    public static boolean isValidFieldConstraint(int sqlType, Type type) {
+        if (type.getTag() == TypeTags.UNION_TAG && type instanceof BUnionType) {
+            BUnionType bUnionType = (BUnionType) type;
+            for (Type memberType : bUnionType.getMemberTypes()) {
                 //In case if the member type is another union type, check recursively.
                 if (isValidFieldConstraint(sqlType, memberType)) {
                     return true;
@@ -1202,14 +1206,14 @@ class Utils {
             }
             return false;
         } else {
-            return isValidPrimitiveConstraint(sqlType, bType);
+            return isValidPrimitiveConstraint(sqlType, type);
         }
     }
 
-    private static boolean isValidPrimitiveConstraint(int sqlType, BType bType) {
+    private static boolean isValidPrimitiveConstraint(int sqlType, Type type) {
         switch (sqlType) {
             case Types.ARRAY:
-                return bType.getTag() == TypeTags.ARRAY_TAG;
+                return type.getTag() == TypeTags.ARRAY_TAG;
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -1218,67 +1222,67 @@ class Utils {
             case Types.LONGNVARCHAR:
             case Types.CLOB:
             case Types.NCLOB:
-                return bType.getTag() == TypeTags.STRING_TAG ||
-                        bType.getTag() == TypeTags.JSON_TAG;
+                return type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.JSON_TAG;
             case Types.DATE:
             case Types.TIME:
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
             case Types.TIME_WITH_TIMEZONE:
-                return bType.getTag() == TypeTags.STRING_TAG ||
-                        bType.getTag() == TypeTags.OBJECT_TYPE_TAG ||
-                        bType.getTag() == TypeTags.RECORD_TYPE_TAG ||
-                        bType.getTag() == TypeTags.INT_TAG;
+                return type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
+                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
+                        type.getTag() == TypeTags.INT_TAG;
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
             case Types.BIGINT:
-                return bType.getTag() == TypeTags.INT_TAG ||
-                        bType.getTag() == TypeTags.STRING_TAG;
+                return type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
             case Types.BIT:
             case Types.BOOLEAN:
-                return bType.getTag() == TypeTags.BOOLEAN_TAG ||
-                        bType.getTag() == TypeTags.INT_TAG ||
-                        bType.getTag() == TypeTags.STRING_TAG;
+                return type.getTag() == TypeTags.BOOLEAN_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
             case Types.NUMERIC:
             case Types.DECIMAL:
-                return bType.getTag() == TypeTags.DECIMAL_TAG ||
-                        bType.getTag() == TypeTags.INT_TAG ||
-                        bType.getTag() == TypeTags.STRING_TAG;
+                return type.getTag() == TypeTags.DECIMAL_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
             case Types.REAL:
             case Types.FLOAT:
             case Types.DOUBLE:
-                return bType.getTag() == TypeTags.FLOAT_TAG ||
-                        bType.getTag() == TypeTags.STRING_TAG;
+                return type.getTag() == TypeTags.FLOAT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
             case Types.BLOB:
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
             case Types.ROWID:
-                if (bType.getTag() == TypeTags.ARRAY_TAG) {
-                    int elementTypeTag = ((BArrayType) bType).getElementType().getTag();
+                if (type.getTag() == TypeTags.ARRAY_TAG) {
+                    int elementTypeTag = ((BArrayType) type).getElementType().getTag();
                     return elementTypeTag == TypeTags.BYTE_TAG;
                 }
-                return bType.getTag() == TypeTags.STRING_TAG || bType.getTag() == TypeTags.BYTE_ARRAY_TAG;
+                return type.getTag() == TypeTags.STRING_TAG || type.getTag() == TypeTags.BYTE_ARRAY_TAG;
             case Types.REF:
             case Types.STRUCT:
-                return bType.getTag() == TypeTags.RECORD_TYPE_TAG;
+                return type.getTag() == TypeTags.RECORD_TYPE_TAG;
             case Types.SQLXML:
-                return bType.getTag() == TypeTags.XML_TAG;
+                return type.getTag() == TypeTags.XML_TAG;
             default:
                 //If user is passing the intended type variable for the sql types, then it will use
                 // those types to resolve the result.
-                return bType.getTag() == TypeTags.ANY_TAG ||
-                        bType.getTag() == TypeTags.ANYDATA_TAG ||
-                        (bType.getTag() == TypeTags.ARRAY_TAG &&
-                                ((BArrayType) bType).getElementType().getTag() == TypeTags.BYTE_TAG) ||
-                        bType.getTag() == TypeTags.STRING_TAG ||
-                        bType.getTag() == TypeTags.INT_TAG ||
-                        bType.getTag() == TypeTags.BOOLEAN_TAG ||
-                        bType.getTag() == TypeTags.XML_TAG ||
-                        bType.getTag() == TypeTags.FLOAT_TAG ||
-                        bType.getTag() == TypeTags.DECIMAL_TAG ||
-                        bType.getTag() == TypeTags.JSON_TAG;
+                return type.getTag() == TypeTags.ANY_TAG ||
+                        type.getTag() == TypeTags.ANYDATA_TAG ||
+                        (type.getTag() == TypeTags.ARRAY_TAG &&
+                                ((BArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG) ||
+                        type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.BOOLEAN_TAG ||
+                        type.getTag() == TypeTags.XML_TAG ||
+                        type.getTag() == TypeTags.FLOAT_TAG ||
+                        type.getTag() == TypeTags.DECIMAL_TAG ||
+                        type.getTag() == TypeTags.JSON_TAG;
         }
     }
 
@@ -1306,7 +1310,7 @@ class Utils {
                                                    Statement statement,
                                                    Connection connection, List<ColumnDefinition> columnDefinitions,
                                                    BStructureType streamConstraint) {
-        BObject resultIterator = BValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID,
+        BObject resultIterator = ValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID,
                 Constants.RESULT_ITERATOR_OBJECT, new Object[1]);
         resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
         resultIterator.addNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD, statement);
@@ -1318,9 +1322,9 @@ class Utils {
 
     public static BRecordType getDefaultStreamConstraint() {
         BRecordType defaultRecord = new BRecordType("$stream$anon$constraint$",
-                new BPackage("ballerina", "lang.annotations", "0.0.0"), 0, false,
-                TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
-        defaultRecord.restFieldType = BTypes.typeAnydata;
+                                                    new Module("ballerina", "lang.annotations", "0.0.0"), 0, false,
+                                                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
+        defaultRecord.restFieldType = PredefinedTypes.TYPE_ANYDATA;
         return defaultRecord;
     }
 
@@ -1352,15 +1356,16 @@ class Utils {
                                                              BStructureType streamConstraint, boolean isNullable)
             throws ApplicationError {
         String ballerinaFieldName = null;
-        BType ballerinaType = null;
+        Type ballerinaType = null;
         if (streamConstraint != null) {
-            for (Map.Entry<String, BField> field : streamConstraint.getFields().entrySet()) {
+            for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
                 if (field.getKey().equalsIgnoreCase(columnName)) {
                     ballerinaFieldName = field.getKey();
-                    ballerinaType = validFieldConstraint(sqlType, field.getValue().type);
+                    ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
                     if (ballerinaType == null) {
-                        throw new ApplicationError(field.getValue().type.getName() + " cannot be mapped to SQL type '"
-                                + sqlTypeName + "'");
+                        throw new ApplicationError(
+                                field.getValue().getFieldType().getName() + " cannot be mapped to SQL type '"
+                                        + sqlTypeName + "'");
                     }
                     break;
                 }
@@ -1377,10 +1382,10 @@ class Utils {
 
     }
 
-    private static BType getDefaultBallerinaType(int sqlType) {
+    private static Type getDefaultBallerinaType(int sqlType) {
         switch (sqlType) {
             case Types.ARRAY:
-                return new BArrayType(BTypes.typeAnydata);
+                return new BArrayType(PredefinedTypes.TYPE_ANYDATA);
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -1394,35 +1399,35 @@ class Utils {
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
             case Types.TIME_WITH_TIMEZONE:
-                return BTypes.typeString;
+                return PredefinedTypes.TYPE_STRING;
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
             case Types.BIGINT:
-                return BTypes.typeInt;
+                return PredefinedTypes.TYPE_INT;
             case Types.BIT:
             case Types.BOOLEAN:
-                return BTypes.typeBoolean;
+                return PredefinedTypes.TYPE_BOOLEAN;
             case Types.NUMERIC:
             case Types.DECIMAL:
-                return BTypes.typeDecimal;
+                return PredefinedTypes.TYPE_DECIMAL;
             case Types.REAL:
             case Types.FLOAT:
             case Types.DOUBLE:
-                return BTypes.typeFloat;
+                return PredefinedTypes.TYPE_FLOAT;
             case Types.BLOB:
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
             case Types.ROWID:
-                return new BArrayType(BTypes.typeByte);
+                return new BArrayType(PredefinedTypes.TYPE_BYTE);
             case Types.REF:
             case Types.STRUCT:
                 return getDefaultStreamConstraint();
             case Types.SQLXML:
-                return BTypes.typeXML;
+                return PredefinedTypes.TYPE_XML;
             default:
-                return BTypes.typeAnydata;
+                return PredefinedTypes.TYPE_ANYDATA;
         }
     }
 

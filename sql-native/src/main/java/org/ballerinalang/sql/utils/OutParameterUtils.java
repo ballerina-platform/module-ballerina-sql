@@ -18,10 +18,10 @@
 
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BTypedesc;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.TypeTags;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 
@@ -54,7 +54,7 @@ public class OutParameterUtils {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
 
-        BType ballerinaType = typeDesc.getDescribingType();
+        Type ballerinaType = typeDesc.getDescribingType();
         try {
             switch (sqlType) {
                 case Types.CHAR:
