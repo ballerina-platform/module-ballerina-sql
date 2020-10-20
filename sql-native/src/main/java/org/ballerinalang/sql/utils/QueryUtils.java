@@ -17,19 +17,20 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.scheduling.Scheduler;
-import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.types.BField;
-import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.types.BStreamType;
-import org.ballerinalang.jvm.types.BStructureType;
-import org.ballerinalang.jvm.util.Flags;
-import org.ballerinalang.jvm.values.StreamValue;
-import org.ballerinalang.jvm.values.StringValue;
-import org.ballerinalang.jvm.values.TypedescValue;
+import io.ballerina.runtime.api.TypeCreator;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.scheduling.Scheduler;
+import io.ballerina.runtime.scheduling.Strand;
+import io.ballerina.runtime.types.BRecordType;
+import io.ballerina.runtime.types.BStreamType;
+import io.ballerina.runtime.types.BStructureType;
+import io.ballerina.runtime.util.Flags;
+import io.ballerina.runtime.values.StreamValue;
+import io.ballerina.runtime.values.StringValue;
+import io.ballerina.runtime.values.TypedescValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -83,7 +84,7 @@ public class QueryUtils {
                 if (recordType == null) {
                     columnDefinitions = getColumnDefinitions(resultSet, null);
                     BRecordType defaultRecord = getDefaultStreamConstraint();
-                    Map<String, BField> fieldMap = new HashMap<>();
+                    Map<String, Field> fieldMap = new HashMap<>();
                     for (ColumnDefinition column : columnDefinitions) {
                         int flags = Flags.PUBLIC;
                         if (column.isNullable()) {
@@ -91,8 +92,8 @@ public class QueryUtils {
                         } else {
                             flags += Flags.REQUIRED;
                         }
-                        fieldMap.put(column.getColumnName(), new BField(column.getBallerinaType(),
-                                column.getColumnName(), flags));
+                        fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
+                                                                                     column.getColumnName(), flags));
                     }
                     defaultRecord.setFields(fieldMap);
                     streamConstraint = defaultRecord;
@@ -137,7 +138,7 @@ public class QueryUtils {
     }
 
     private static BObject createRecordIterator(BError errorValue) {
-        return BValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID, Constants.RESULT_ITERATOR_OBJECT,
+        return ValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID, Constants.RESULT_ITERATOR_OBJECT,
                 errorValue);
     }
 

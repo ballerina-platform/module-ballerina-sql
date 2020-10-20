@@ -19,7 +19,7 @@
 module io.ballerina.stdlib.sql {
     requires java.sql;
     requires com.zaxxer.hikari;
-    requires io.ballerina.jvm;
+    requires io.ballerina.runtime;
     requires io.ballerina.lang;
     requires io.ballerina.stdlib.io;
     requires io.ballerina.stdlib.time;

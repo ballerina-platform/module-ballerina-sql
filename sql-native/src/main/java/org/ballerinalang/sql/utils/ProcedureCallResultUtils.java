@@ -18,17 +18,18 @@
 
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.BField;
-import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.types.BStreamType;
-import org.ballerinalang.jvm.types.BStructureType;
-import org.ballerinalang.jvm.util.Flags;
-import org.ballerinalang.jvm.values.StreamValue;
-import org.ballerinalang.jvm.values.TypedescValue;
+import io.ballerina.runtime.api.TypeCreator;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.types.BRecordType;
+import io.ballerina.runtime.types.BStreamType;
+import io.ballerina.runtime.types.BStructureType;
+import io.ballerina.runtime.util.Flags;
+import io.ballerina.runtime.values.StreamValue;
+import io.ballerina.runtime.values.TypedescValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 
@@ -77,7 +78,7 @@ public class ProcedureCallResultUtils {
                 if (totalRecordDescriptions == 0) {
                     columnDefinitions = getColumnDefinitions(resultSet, null);
                     BRecordType defaultRecord = getDefaultStreamConstraint();
-                    Map<String, BField> fieldMap = new HashMap<>();
+                    Map<String, Field> fieldMap = new HashMap<>();
                     for (ColumnDefinition column : columnDefinitions) {
                         int flags = Flags.PUBLIC;
                         if (column.isNullable()) {
@@ -85,8 +86,8 @@ public class ProcedureCallResultUtils {
                         } else {
                             flags += Flags.REQUIRED;
                         }
-                        fieldMap.put(column.getColumnName(), new BField(column.getBallerinaType(),
-                                column.getColumnName(), flags));
+                        fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
+                                                                                     column.getColumnName(), flags));
                     }
                     defaultRecord.setFields(fieldMap);
                     streamConstraint = defaultRecord;
@@ -118,7 +119,7 @@ public class ProcedureCallResultUtils {
                 Map<String, Object> resultFields = new HashMap<>();
                 resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
                 resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
-                BMap<BString, Object> executionResult = BValueCreator.createRecordValue(
+                BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
                         SQL_PACKAGE_ID, EXECUTION_RESULT_RECORD, resultFields);
                 procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
                 procedureCallResult.set(QUERY_RESULT_FIELD, null);

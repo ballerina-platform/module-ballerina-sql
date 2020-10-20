@@ -17,11 +17,11 @@
  */
 package org.ballerinalang.sql.datasource;
 
-import org.ballerinalang.jvm.TypeChecker;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.TypeTags;
+import io.ballerina.runtime.TypeChecker;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
 
 import java.util.Map;
 
@@ -66,7 +66,7 @@ public class PoolKey {
         for (Map.Entry<BString, ?> entry : options.entrySet()) {
             int keyHashCode = entry.getKey().hashCode();
             Object value = entry.getValue();
-            BType type = TypeChecker.getType(value);
+            Type type = TypeChecker.getType(value);
             int typeTag = type.getTag();
             int valueHashCode;
             switch (typeTag) {

@@ -17,8 +17,8 @@
  */
 package org.ballerinalang.sql.utils;
 
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
