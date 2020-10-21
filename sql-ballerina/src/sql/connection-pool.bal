@@ -48,7 +48,7 @@ readonly class GlobalConnectionPoolContainer {
     }
 
     public isolated function getGlobalConnectionPool() returns ConnectionPool {
-        return self.connectionPool.cloneReadOnly();
+        return self.connectionPool;
     }
 }
 
