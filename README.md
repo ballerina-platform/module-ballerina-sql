@@ -32,10 +32,10 @@ For example demonstrations of the usage, go to [Ballerina By Examples](https://b
 
 2. Download and install [Docker](https://www.docker.com/get-started)
    
-3. Export Github Access Tokens with read package permissions as follows,
+3. Export Github Personal access token with read package permissions as follows,
         
         export packageUser=<Username>
-        export packagePAT=<Access token>
+        export packagePAT=<Personal access token>
 
 ### Building the Source
 

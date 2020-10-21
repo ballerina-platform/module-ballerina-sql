@@ -38,7 +38,7 @@ public type ConnectionPool record {|
 |};
 
 // This is a container object that holds the global pool config and initializes the internal map of connection pools
-class GlobalConnectionPoolContainer {
+readonly class GlobalConnectionPoolContainer {
     private ConnectionPool connectionPool = {};
 
     isolated function init() {
