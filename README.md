@@ -23,7 +23,21 @@ For more information on the operations supported by the `sql:Client`, which incl
 
 For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/mysql-init-options.html).
 
-## Building from the Source
+## Contributing to Ballerina
+
+As an open source project, Ballerina welcomes contributions from the community.
+
+All Ballerina Standard Library **bug reports/feature requests** are maintained in [ballerina-standard-library](https://github.com/ballerina-platform/ballerina-standard-library) repository. 
+
+You can also check for [open issues](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql) that interest you. We look forward to receiving your contributions. Do not forget to suggest `module/sql` label for issues related to SQL module.
+
+For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
+
+## Code of Conduct
+
+All contributors are encouraged to read the [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
+
+## Development
 
 ### Prerequisites
 
@@ -71,18 +85,6 @@ Execute the commands below to build from source.
 4. To debug the tests:
 
         ./gradlew clean build -Pdebug=<port>
-
-## Contributing to Ballerina
-
-As an open source project, Ballerina welcomes contributions from the community. 
-
-You can also check for [open issues](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql) that interest you. We look forward to receiving your contributions.
-
-For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
-
-## Code of Conduct
-
-All contributors are encouraged to read the [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
 
 ## Useful Links
 
