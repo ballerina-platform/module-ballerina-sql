@@ -204,6 +204,7 @@ public class CallUtils {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
                         sqlType = setSQLValueParam(connection, statement, innerObject, index, true);
+                        outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
                     case Constants.ParameterObject.OUT_PARAMETER:
