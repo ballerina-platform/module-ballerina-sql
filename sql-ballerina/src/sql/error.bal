@@ -19,20 +19,20 @@
 # + errorCode - SQL error code
 # + sqlState - SQL state
 # + executionResults - Result of execution of commands
-public type BatchExecuteErrorDetail record {|
+public type BatchExecuteErrorDetail record {
     int errorCode;
     string sqlState;
     ExecutionResult[] executionResults;
-|};
+};
 
 # Represents the properties belonging to a `DatabaseError`.
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
-public type DatabaseErrorDetail record {|
+public type DatabaseErrorDetail record {
     int errorCode;
     string sqlState;
-|};
+};
 
 # Represents an error caused by an issue related to database accessibility, erroneous queries, constraint violations,
 # database resource clean-up, and other similar scenarios.
