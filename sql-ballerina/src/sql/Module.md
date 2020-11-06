@@ -343,8 +343,7 @@ if (ret is error) {
 #### Execute SQL stored procedures
 
 This example demonstrates how to execute a stored procedure with a single INSERT statement that is executed via the 
-`call` remote function of the client. You will need to explicitly close the returned stored procedure result in 
-order to release the resources.
+`call` remote function of the client.
 
 ```ballerina
 int uid = 10;
@@ -363,9 +362,10 @@ if (ret is error) {
     } else {
         io:println("Stored  procedure does not return anything.");
     }
-    ret.close();
+    check ret.close();
 }
 ```
+Note that you have to explicitly invoke the close operation on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
 
 >**Note:** The default thread pool size used in Ballerina is the number of processors available * 2. You can configure
 the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
