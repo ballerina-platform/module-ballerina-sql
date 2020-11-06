@@ -343,7 +343,8 @@ if (ret is error) {
 #### Execute SQL stored procedures
 
 This example demonstrates how to execute a stored procedure with a single INSERT statement that is executed via the 
-`call` remote function of the client.
+`call` remote function of the client. You will need to explicitly close the returned stored procedure result in 
+order to release the resources.
 
 ```ballerina
 int uid = 10;
@@ -362,6 +363,7 @@ if (ret is error) {
     } else {
         io:println("Stored  procedure does not return anything.");
     }
+    ret.close();
 }
 ```
 
