@@ -156,6 +156,8 @@ task ballerinaTest {
     def groupParams = ""
     if (project.hasProperty("groups")) {
         groupParams = "--groups ${project.findProperty("groups")}"
+    } else if (project.hasProperty("disable-groups")) {
+        groupParams = "--disable-groups ${project.findProperty("disable-groups")}"
     }
 
     def debugParams = ""
