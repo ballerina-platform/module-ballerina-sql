@@ -17,13 +17,12 @@
  */
 package org.ballerinalang.sql.datasource;
 
-import io.ballerina.runtime.TypeChecker;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.scheduling.Strand;
 import io.ballerina.runtime.transactions.BallerinaTransactionContext;
 import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
@@ -68,7 +67,7 @@ public class SQLDatasourceUtils {
     static boolean isSupportedDbOptionType(Object value) {
         boolean supported = false;
         if (value != null) {
-            Type type = TypeChecker.getType(value);
+            Type type = TypeUtils.getType(value);
             int typeTag = type.getTag();
             supported = (typeTag == TypeTags.STRING_TAG || typeTag == TypeTags.INT_TAG || typeTag == TypeTags.FLOAT_TAG
                     || typeTag == TypeTags.BOOLEAN_TAG || typeTag == TypeTags.DECIMAL_TAG
@@ -77,25 +76,26 @@ public class SQLDatasourceUtils {
         return supported;
     }
 
-    public static Connection getConnection(Strand strand, BObject client, SQLDatasource datasource)
+    public static Connection getConnection(TransactionResourceManager trxResourceManager, BObject client,
+                                           SQLDatasource datasource)
             throws SQLException {
         Connection conn;
         try {
-            boolean isInTransaction = strand.isInTransaction();
+            boolean isInTransaction = trxResourceManager.isInTransaction();
             if (!isInTransaction) {
                 conn = datasource.getConnection();
                 return conn;
             } else {
                 //This is when there is an infected transaction block. But this is not participated to the transaction
                 //since the action call is outside of the transaction block.
-                if (!strand.currentTrxContext.hasTransactionBlock()) {
+                if (!trxResourceManager.getCurrentTransactionContext().hasTransactionBlock()) {
                     conn = datasource.getConnection();
                     return conn;
                 }
             }
             String connectorId = (String) client.getNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID);
             boolean isXAConnection = datasource.isXADataSource();
-            TransactionLocalContext transactionLocalContext = strand.currentTrxContext;
+            TransactionLocalContext transactionLocalContext = trxResourceManager.getCurrentTransactionContext();
             String globalTxId = transactionLocalContext.getGlobalTransactionId();
             String currentTxBlockId = transactionLocalContext.getCurrentTransactionBlockId();
             BallerinaTransactionContext txContext = transactionLocalContext.getTransactionContext(connectorId);

@@ -18,18 +18,17 @@
 
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.TypeCreator;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.flags.SymbolFlags;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.types.BRecordType;
-import io.ballerina.runtime.types.BStreamType;
-import io.ballerina.runtime.types.BStructureType;
-import io.ballerina.runtime.util.Flags;
-import io.ballerina.runtime.values.StreamValue;
-import io.ballerina.runtime.values.TypedescValue;
+import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 
@@ -71,23 +70,23 @@ public class ProcedureCallResultUtils {
             boolean moreResults = statement.getMoreResults();
             if (moreResults) {
                 List<ColumnDefinition> columnDefinitions;
-                BStructureType streamConstraint;
+                StructureType streamConstraint;
                 resultSet = statement.getResultSet();
                 int totalRecordDescriptions = (int) procedureCallResult
                         .getNativeData(RESULT_SET_TOTAL_NATIVE_DATA_FIELD);
                 if (totalRecordDescriptions == 0) {
                     columnDefinitions = getColumnDefinitions(resultSet, null);
-                    BRecordType defaultRecord = getDefaultStreamConstraint();
+                    RecordType defaultRecord = getDefaultStreamConstraint();
                     Map<String, Field> fieldMap = new HashMap<>();
                     for (ColumnDefinition column : columnDefinitions) {
-                        int flags = Flags.PUBLIC;
+                        int flags = SymbolFlags.PUBLIC;
                         if (column.isNullable()) {
-                            flags += Flags.OPTIONAL;
+                            flags += SymbolFlags.OPTIONAL;
                         } else {
-                            flags += Flags.REQUIRED;
+                            flags += SymbolFlags.REQUIRED;
                         }
                         fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
-                                                                                     column.getColumnName(), flags));
+                                column.getColumnName(), flags));
                     }
                     defaultRecord.setFields(fieldMap);
                     streamConstraint = defaultRecord;
@@ -96,8 +95,8 @@ public class ProcedureCallResultUtils {
                             .getNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD);
                     int recordDescription = (int) procedureCallResult.getNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD);
                     if (recordDescription <= totalRecordDescriptions) {
-                        streamConstraint = (BStructureType)
-                                ((TypedescValue) recordDescriptions[recordDescription]).getDescribingType();
+                        streamConstraint = (StructureType)
+                                ((BTypedesc) recordDescriptions[recordDescription]).getDescribingType();
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, recordDescription + 1);
                     } else {
@@ -105,7 +104,8 @@ public class ProcedureCallResultUtils {
                                 "returned result sets count.");
                     }
                 }
-                StreamValue streamValue = new StreamValue(new BStreamType(streamConstraint),
+                BStream streamValue = ValueCreator.createStreamValue(
+                        TypeCreator.createStreamType(streamConstraint),
                         createRecordIterator(resultSet, null, null, columnDefinitions, streamConstraint));
                 procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 procedureCallResult.set(EXECUTION_RESULT_FIELD, null);

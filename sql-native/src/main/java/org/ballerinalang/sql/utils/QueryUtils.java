@@ -17,20 +17,18 @@
  */
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.TypeCreator;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.flags.SymbolFlags;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.scheduling.Scheduler;
-import io.ballerina.runtime.scheduling.Strand;
-import io.ballerina.runtime.types.BRecordType;
-import io.ballerina.runtime.types.BStreamType;
-import io.ballerina.runtime.types.BStructureType;
-import io.ballerina.runtime.util.Flags;
-import io.ballerina.runtime.values.StreamValue;
-import io.ballerina.runtime.values.StringValue;
-import io.ballerina.runtime.values.TypedescValue;
+import io.ballerina.runtime.api.values.BStream;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BTypedesc;
+import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -57,10 +55,10 @@ import static org.ballerinalang.sql.utils.Utils.setParams;
  */
 public class QueryUtils {
 
-    public static StreamValue nativeQuery(BObject client, Object paramSQLString,
-                                          Object recordType) {
+    public static BStream nativeQuery(BObject client, Object paramSQLString,
+                                      Object recordType) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
-        Strand strand = Scheduler.getStrand();
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             Connection connection = null;
@@ -68,52 +66,54 @@ public class QueryUtils {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof StringValue) {
-                    sqlQuery = ((StringValue) paramSQLString).getValue();
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
+                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
                 if (paramSQLString instanceof BObject) {
                     setParams(connection, statement, (BObject) paramSQLString);
                 }
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
-                BStructureType streamConstraint;
+                StructureType streamConstraint;
                 if (recordType == null) {
                     columnDefinitions = getColumnDefinitions(resultSet, null);
-                    BRecordType defaultRecord = getDefaultStreamConstraint();
+                    RecordType defaultRecord = getDefaultStreamConstraint();
                     Map<String, Field> fieldMap = new HashMap<>();
                     for (ColumnDefinition column : columnDefinitions) {
-                        int flags = Flags.PUBLIC;
+                        int flags = SymbolFlags.PUBLIC;
                         if (column.isNullable()) {
-                            flags += Flags.OPTIONAL;
+                            flags += SymbolFlags.OPTIONAL;
                         } else {
-                            flags += Flags.REQUIRED;
+                            flags += SymbolFlags.REQUIRED;
                         }
                         fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
-                                                                                     column.getColumnName(), flags));
+                                column.getColumnName(), flags));
                     }
                     defaultRecord.setFields(fieldMap);
                     streamConstraint = defaultRecord;
                 } else {
-                    streamConstraint = (BStructureType) ((TypedescValue) recordType).getDescribingType();
+                    streamConstraint = (StructureType) ((BTypedesc) recordType).getDescribingType();
                     columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                 }
-                return new StreamValue(new BStreamType(streamConstraint), Utils.createRecordIterator(resultSet,
-                        statement, connection, columnDefinitions, streamConstraint));
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint),
+                        Utils.createRecordIterator(resultSet, statement, connection, columnDefinitions,
+                                streamConstraint));
             } catch (SQLException e) {
-                closeResources(strand, resultSet, statement, connection);
+                closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
-                return new StreamValue(new BStreamType(getDefaultStreamConstraint()), createRecordIterator(errorValue));
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(getDefaultStreamConstraint()),
+                        createRecordIterator(errorValue));
             } catch (ApplicationError applicationError) {
-                closeResources(strand, resultSet, statement, connection);
+                closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
                 return getErrorStream(recordType, errorValue);
             } catch (Throwable e) {
-                closeResources(strand, resultSet, statement, connection);
+                closeResources(trxResourceManager, resultSet, statement, connection);
                 String message = e.getMessage();
                 if (message == null) {
                     message = e.getClass().getName();
@@ -128,11 +128,13 @@ public class QueryUtils {
         }
     }
 
-    private static StreamValue getErrorStream(Object recordType, BError errorValue) {
+    private static BStream getErrorStream(Object recordType, BError errorValue) {
         if (recordType == null) {
-            return new StreamValue(new BStreamType(getDefaultStreamConstraint()), createRecordIterator(errorValue));
+            return ValueCreator.createStreamValue(
+                    TypeCreator.createStreamType(getDefaultStreamConstraint()), createRecordIterator(errorValue));
         } else {
-            return new StreamValue(new BStreamType(((TypedescValue) recordType).getDescribingType()),
+            return ValueCreator.createStreamValue(
+                    TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType()),
                     createRecordIterator(errorValue));
         }
     }

@@ -21,7 +21,7 @@ package org.ballerinalang.sql;
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.values.BString;
 
-import static io.ballerina.runtime.api.StringUtils.fromString;
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 
 /**
  * Constants for SQL client.

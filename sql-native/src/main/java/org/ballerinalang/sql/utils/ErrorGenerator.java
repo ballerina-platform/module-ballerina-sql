@@ -17,14 +17,13 @@
  */
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.ErrorCreator;
-import io.ballerina.runtime.api.StringUtils;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.types.BArrayType;
-import io.ballerina.runtime.types.BRecordType;
 import org.ballerinalang.sql.Constants;
 
 import java.sql.SQLException;
@@ -63,7 +62,7 @@ public class ErrorGenerator {
 
     public static BError getSQLApplicationError(String errorMessage) {
         return ErrorCreator.createDistinctError(Constants.APPLICATION_ERROR, Constants.SQL_PACKAGE_ID,
-                                                 StringUtils.fromString(errorMessage));
+                StringUtils.fromString(errorMessage));
     }
 
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
@@ -72,13 +71,14 @@ public class ErrorGenerator {
         valueMap.put(Constants.ErrorRecordFields.ERROR_CODE, vendorCode);
         valueMap.put(Constants.ErrorRecordFields.SQL_STATE, sqlState);
         valueMap.put(Constants.ErrorRecordFields.EXECUTION_RESULTS,
-                ValueCreator.createArrayValue(executionResults.toArray(), new BArrayType(
-                        new BRecordType(Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0))));
+                ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
+                        TypeCreator.createRecordType(
+                                Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0))));
 
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(Constants.SQL_PACKAGE_ID, Constants.BATCH_EXECUTE_ERROR_DETAIL, valueMap);
         return ErrorCreator.createDistinctError(Constants.BATCH_EXECUTE_ERROR, Constants.SQL_PACKAGE_ID,
-                                                 StringUtils.fromString(message), sqlClientErrorDetailRecord);
+                StringUtils.fromString(message), sqlClientErrorDetailRecord);
     }
 
     private static BError getSQLDatabaseError(String message, int vendorCode, String sqlState) {
@@ -88,6 +88,6 @@ public class ErrorGenerator {
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(Constants.SQL_PACKAGE_ID, Constants.DATABASE_ERROR_DETAILS, valueMap);
         return ErrorCreator.createDistinctError(Constants.DATABASE_ERROR, Constants.SQL_PACKAGE_ID,
-                                                 StringUtils.fromString(message), sqlClientErrorDetailRecord);
+                StringUtils.fromString(message), sqlClientErrorDetailRecord);
     }
 }

@@ -17,8 +17,8 @@
  */
 package org.ballerinalang.sql.transaction;
 
-import io.ballerina.runtime.api.ErrorCreator;
-import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.transactions.BallerinaTransactionContext;
 
 import java.sql.Connection;

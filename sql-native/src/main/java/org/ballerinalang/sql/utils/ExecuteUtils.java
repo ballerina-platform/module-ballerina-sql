@@ -17,16 +17,13 @@
  */
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.scheduling.Scheduler;
-import io.ballerina.runtime.scheduling.Strand;
-import io.ballerina.runtime.types.BArrayType;
-import io.ballerina.runtime.types.BRecordType;
-import io.ballerina.runtime.values.ArrayValue;
-import io.ballerina.runtime.values.StringValue;
+import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -60,7 +57,7 @@ public class ExecuteUtils {
 
     public static Object nativeExecute(BObject client, Object paramSQLString) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
-        Strand strand = Scheduler.getStrand();
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             Connection connection = null;
@@ -68,12 +65,12 @@ public class ExecuteUtils {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof StringValue) {
-                    sqlQuery = ((StringValue) paramSQLString).getValue();
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
+                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 if (paramSQLString instanceof BObject) {
                     setParams(connection, statement, (BObject) paramSQLString);
@@ -98,7 +95,7 @@ public class ExecuteUtils {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             } finally {
-                closeResources(strand, resultSet, statement, connection);
+                closeResources(trxResourceManager, resultSet, statement, connection);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(
@@ -106,14 +103,14 @@ public class ExecuteUtils {
         }
     }
 
-    public static Object nativeBatchExecute(BObject client, ArrayValue paramSQLStrings) {
+    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
-            Strand strand = Scheduler.getStrand();
+            TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
             String sqlQuery = null;
             List<BObject> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
@@ -133,7 +130,7 @@ public class ExecuteUtils {
                                 "commands. These has to be executed in different function calls");
                     }
                 }
-                connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
+                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 for (BObject param : parameters) {
                     setParams(connection, statement, param);
@@ -155,8 +152,9 @@ public class ExecuteUtils {
                     executionResults.add(ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
-                return ValueCreator.createArrayValue(executionResults.toArray(), new BArrayType(
-                        new BRecordType(Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0)));
+                return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
+                        TypeCreator.createRecordType(
+                                Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0)));
             } catch (BatchUpdateException e) {
                 int[] updateCounts = e.getUpdateCounts();
                 for (int count : updateCounts) {
@@ -175,7 +173,7 @@ public class ExecuteUtils {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + e.getMessage());
             } finally {
-                closeResources(strand, resultSet, statement, connection);
+                closeResources(trxResourceManager, resultSet, statement, connection);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(

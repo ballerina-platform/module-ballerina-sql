@@ -18,24 +18,20 @@
 
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.TypeCreator;
 import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.flags.SymbolFlags;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.scheduling.Scheduler;
-import io.ballerina.runtime.scheduling.Strand;
-import io.ballerina.runtime.types.BRecordType;
-import io.ballerina.runtime.types.BStreamType;
-import io.ballerina.runtime.types.BStructureType;
-import io.ballerina.runtime.util.Flags;
-import io.ballerina.runtime.values.ArrayValue;
-import io.ballerina.runtime.values.StreamValue;
-import io.ballerina.runtime.values.StringValue;
-import io.ballerina.runtime.values.TypedescValue;
+import io.ballerina.runtime.api.values.BTypedesc;
+import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
@@ -83,9 +79,9 @@ public class CallUtils {
     private static final Calendar calendar = Calendar.getInstance(
             TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
-    public static Object nativeCall(BObject client, Object paramSQLString, ArrayValue recordTypes) {
+    public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
-        Strand strand = Scheduler.getStrand();
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             Connection connection;
@@ -93,17 +89,17 @@ public class CallUtils {
             ResultSet resultSet;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof StringValue) {
-                    sqlQuery = ((StringValue) paramSQLString).getValue();
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
                     sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(strand, client, sqlDatasource);
+                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
                 if (paramSQLString instanceof BObject) {
-                    setCallParameters(connection, statement, sqlQuery, (BObject) paramSQLString, outputParamTypes);
+                    setCallParameters(connection, statement, (BObject) paramSQLString, outputParamTypes);
                 }
 
                 boolean resultType = statement.execute();
@@ -113,35 +109,35 @@ public class CallUtils {
                 }
 
                 BObject procedureCallResult = ValueCreator.createObjectValue(SQL_PACKAGE_ID,
-                        PROCEDURE_CALL_RESULT, strand);
+                        PROCEDURE_CALL_RESULT);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
                 if (resultType) {
                     List<ColumnDefinition> columnDefinitions;
-                    BStructureType streamConstraint;
+                    StructureType streamConstraint;
                     resultSet = statement.getResultSet();
                     if (recordTypes.size() == 0) {
                         columnDefinitions = getColumnDefinitions(resultSet, null);
-                        BRecordType defaultRecord = getDefaultStreamConstraint();
+                        RecordType defaultRecord = getDefaultStreamConstraint();
                         Map<String, Field> fieldMap = new HashMap<>();
                         for (ColumnDefinition column : columnDefinitions) {
-                            int flags = Flags.PUBLIC;
+                            int flags = SymbolFlags.PUBLIC;
                             if (column.isNullable()) {
-                                flags += Flags.OPTIONAL;
+                                flags += SymbolFlags.OPTIONAL;
                             } else {
-                                flags += Flags.REQUIRED;
+                                flags += SymbolFlags.REQUIRED;
                             }
                             fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
-                                                                             column.getColumnName(), flags));
+                                    column.getColumnName(), flags));
                         }
                         defaultRecord.setFields(fieldMap);
                         streamConstraint = defaultRecord;
                     } else {
-                        streamConstraint = (BStructureType) ((TypedescValue) recordDescriptions[0]).getDescribingType();
+                        streamConstraint = (StructureType) ((BTypedesc) recordDescriptions[0]).getDescribingType();
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         resultSetCount++;
                     }
-                    StreamValue streamValue = new StreamValue(new BStreamType(streamConstraint),
+                    BStream streamValue = ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint),
                             Utils.createRecordIterator(resultSet, null, null, columnDefinitions, streamConstraint));
                     procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 } else {
@@ -175,7 +171,7 @@ public class CallUtils {
         }
     }
 
-    static void setCallParameters(Connection connection, CallableStatement statement, String sqlQuery,
+    static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
@@ -199,7 +195,7 @@ public class CallUtils {
                     parameterType = "InParameter";
                 }
 
-                Integer sqlType;
+                int sqlType;
                 switch (parameterType) {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
