@@ -74,7 +74,7 @@ Execute the commands below to build from source.
    batch-execute | batch-execute 
    query | query-simple-params<br>query-numeric-params<br>query-complex-params
 
-4. To disable some specific groups during test,
+4. To disable some specific test groups:
 
         ./gradlew clean build -Pdisable-groups=<Comma separated groups/test cases>
 
