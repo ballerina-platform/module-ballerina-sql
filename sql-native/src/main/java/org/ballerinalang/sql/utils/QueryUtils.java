@@ -19,9 +19,6 @@ package org.ballerinalang.sql.utils;
 
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.flags.SymbolFlags;
-import io.ballerina.runtime.api.types.Field;
-import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
@@ -38,12 +35,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.ballerinalang.sql.utils.Utils.closeResources;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
+import static org.ballerinalang.sql.utils.Utils.getDefaultRecordType;
 import static org.ballerinalang.sql.utils.Utils.getDefaultStreamConstraint;
 import static org.ballerinalang.sql.utils.Utils.getSqlQuery;
 import static org.ballerinalang.sql.utils.Utils.setParams;
@@ -81,20 +77,7 @@ public class QueryUtils {
                 StructureType streamConstraint;
                 if (recordType == null) {
                     columnDefinitions = getColumnDefinitions(resultSet, null);
-                    RecordType defaultRecord = getDefaultStreamConstraint();
-                    Map<String, Field> fieldMap = new HashMap<>();
-                    for (ColumnDefinition column : columnDefinitions) {
-                        int flags = SymbolFlags.PUBLIC;
-                        if (column.isNullable()) {
-                            flags += SymbolFlags.OPTIONAL;
-                        } else {
-                            flags += SymbolFlags.REQUIRED;
-                        }
-                        fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
-                                column.getColumnName(), flags));
-                    }
-                    defaultRecord.setFields(fieldMap);
-                    streamConstraint = defaultRecord;
+                    streamConstraint = getDefaultRecordType(columnDefinitions);
                 } else {
                     streamConstraint = (StructureType) ((BTypedesc) recordType).getDescribingType();
                     columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);

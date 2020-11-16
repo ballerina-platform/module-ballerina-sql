@@ -21,12 +21,8 @@ package org.ballerinalang.sql.utils;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.flags.SymbolFlags;
-import io.ballerina.runtime.api.types.Field;
-import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BArray;
-import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
@@ -53,12 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static org.ballerinalang.sql.Constants.CONNECTION_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.DATABASE_CLIENT;
-import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
-import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
-import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
 import static org.ballerinalang.sql.Constants.PROCEDURE_CALL_RESULT;
 import static org.ballerinalang.sql.Constants.QUERY_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIELD;
@@ -67,10 +59,10 @@ import static org.ballerinalang.sql.Constants.SQL_PACKAGE_ID;
 import static org.ballerinalang.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
-import static org.ballerinalang.sql.utils.Utils.getDefaultStreamConstraint;
-import static org.ballerinalang.sql.utils.Utils.getGeneratedKeys;
+import static org.ballerinalang.sql.utils.Utils.getDefaultRecordType;
 import static org.ballerinalang.sql.utils.Utils.getOutParameterType;
 import static org.ballerinalang.sql.utils.Utils.setSQLValueParam;
+import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResult;
 
 /**
  * This class holds the utility methods involved with executing the call statements.
@@ -118,20 +110,7 @@ public class CallUtils {
                     resultSet = statement.getResultSet();
                     if (recordTypes.size() == 0) {
                         columnDefinitions = getColumnDefinitions(resultSet, null);
-                        RecordType defaultRecord = getDefaultStreamConstraint();
-                        Map<String, Field> fieldMap = new HashMap<>();
-                        for (ColumnDefinition column : columnDefinitions) {
-                            int flags = SymbolFlags.PUBLIC;
-                            if (column.isNullable()) {
-                                flags += SymbolFlags.OPTIONAL;
-                            } else {
-                                flags += SymbolFlags.REQUIRED;
-                            }
-                            fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
-                                    column.getColumnName(), flags));
-                        }
-                        defaultRecord.setFields(fieldMap);
-                        streamConstraint = defaultRecord;
+                        streamConstraint = getDefaultRecordType(columnDefinitions);
                     } else {
                         streamConstraint = (StructureType) ((BTypedesc) recordDescriptions[0]).getDescribingType();
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
@@ -141,18 +120,7 @@ public class CallUtils {
                             Utils.createRecordIterator(resultSet, null, null, columnDefinitions, streamConstraint));
                     procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 } else {
-                    Object lastInsertedId = null;
-                    int count = statement.getUpdateCount();
-                    resultSet = statement.getGeneratedKeys();
-                    if (resultSet.next()) {
-                        lastInsertedId = getGeneratedKeys(resultSet);
-                    }
-                    Map<String, Object> resultFields = new HashMap<>();
-                    resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
-                    resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
-                            SQL_PACKAGE_ID, EXECUTION_RESULT_RECORD, resultFields);
-                    procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
+                    updateProcedureCallExecutionResult(statement, procedureCallResult);
                 }
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
                 procedureCallResult.addNativeData(CONNECTION_NATIVE_DATA_FIELD, connection);

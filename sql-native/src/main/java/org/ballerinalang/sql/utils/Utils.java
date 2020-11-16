@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.flags.SymbolFlags;
 import io.ballerina.runtime.api.flags.TypeFlags;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Field;
@@ -56,6 +57,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.Array;
 import java.sql.Blob;
+import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
@@ -83,6 +85,11 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
+import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
+import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
+import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
+import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
+import static org.ballerinalang.sql.Constants.SQL_PACKAGE_ID;
 
 /**
  * This class has the utility methods to process and convert the SQL types into ballerina types,
@@ -1418,13 +1425,29 @@ class Utils {
         return resultIterator;
     }
 
+    public static StructureType getDefaultRecordType(List<ColumnDefinition> columnDefinitions) {
+        RecordType defaultRecord = getDefaultStreamConstraint();
+        Map<String, Field> fieldMap = new HashMap<>();
+        for (ColumnDefinition column : columnDefinitions) {
+            int flags = SymbolFlags.PUBLIC;
+            if (column.isNullable()) {
+                flags += SymbolFlags.OPTIONAL;
+            } else {
+                flags += SymbolFlags.REQUIRED;
+            }
+            fieldMap.put(column.getColumnName(), TypeCreator.createField(column.getBallerinaType(),
+                    column.getColumnName(), flags));
+        }
+        defaultRecord.setFields(fieldMap);
+        return defaultRecord;
+    }
+
     public static RecordType getDefaultStreamConstraint() {
         Module ballerinaAnnotation = new Module("ballerina", "lang.annotations", "0.0.0");
-        RecordType defaultRecord = TypeCreator.createRecordType(
+        return TypeCreator.createRecordType(
                 "$stream$anon$constraint$", ballerinaAnnotation, 0,
                 new HashMap<>(), PredefinedTypes.TYPE_ANYDATA, false,
                 TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
-        return defaultRecord;
     }
 
     public static List<ColumnDefinition> getColumnDefinitions(ResultSet resultSet, StructureType streamConstraint)
@@ -1562,4 +1585,21 @@ class Utils {
         }
         return null;
     }
+
+    public static void updateProcedureCallExecutionResult(CallableStatement statement, BObject procedureCallResult)
+            throws SQLException {
+        Object lastInsertedId = null;
+        int count = statement.getUpdateCount();
+        ResultSet resultSet = statement.getGeneratedKeys();
+        if (resultSet.next()) {
+            lastInsertedId = getGeneratedKeys(resultSet);
+        }
+        Map<String, Object> resultFields = new HashMap<>();
+        resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
+        resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
+        BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
+                SQL_PACKAGE_ID, EXECUTION_RESULT_RECORD, resultFields);
+        procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
+    }
+
 }
