@@ -1429,7 +1429,7 @@ class Utils {
         RecordType defaultRecord = getDefaultStreamConstraint();
         Map<String, Field> fieldMap = new HashMap<>();
         for (ColumnDefinition column : columnDefinitions) {
-            int flags = SymbolFlags.PUBLIC;
+            long flags = SymbolFlags.PUBLIC;
             if (column.isNullable()) {
                 flags += SymbolFlags.OPTIONAL;
             } else {
