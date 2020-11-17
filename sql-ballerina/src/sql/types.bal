@@ -392,6 +392,16 @@ class ResultIterator {
     }
 }
 
+# Represents all OUT parameters used in SQL stored procedure call.
+public type OutParameter object {
+
+    # Parses returned Char SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error;
+};
+
 # Represents Char Out Parameter used in procedure calls
 public class CharOutParameter {
     # Parses returned Char SQL value to ballerina value.
@@ -727,16 +737,6 @@ public class InOutParameter {
         'class: "org.ballerinalang.sql.utils.OutParameterUtils"
     } external;
 }
-
-// todo Introduce OutParameter object type to simplify
-# Represents all OUT parameters used in SQL stored procedure call.
-public type OutParameter CharOutParameter|VarcharOutParameter|NCharOutParameter|NVarcharOutParameter|
-                         BinaryOutParameter|VarBinaryOutParameter|TextOutParameter|BlobOutParameter|
-                         ClobOutParameter|NClobOutParameter|DateOutParameter|TimeOutParameter|DateTimeOutParameter|
-                         TimestampOutParameter|ArrayOutParameter|RowOutParameter|SmallIntOutParameter|
-                         IntegerOutParameter|BigIntOutParameter|RealOutParameter|FloatOutParameter|DoubleOutParameter|
-                         NumericOutParameter|DecimalOutParameter|BitOutParameter|BooleanOutParameter|RefOutParameter|
-                         StructOutParameter|XMLOutParameter;
 
 # Represents all parameters used in SQL stored procedure call.
 public type Parameter Value|InOutParameter|OutParameter;
