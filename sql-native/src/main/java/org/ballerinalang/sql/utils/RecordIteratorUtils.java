@@ -17,16 +17,16 @@
  */
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.JSONParser;
 import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
+import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.JsonUtils;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.types.BArrayType;
-import io.ballerina.runtime.types.BStructureType;
-import io.ballerina.runtime.util.exceptions.BallerinaException;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
 
@@ -50,7 +50,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import static io.ballerina.runtime.api.StringUtils.fromString;
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
 import static org.ballerinalang.sql.utils.Utils.convert;
 import static org.ballerinalang.sql.utils.Utils.getString;
@@ -67,7 +67,7 @@ public class RecordIteratorUtils {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
         try {
             if (resultSet.next()) {
-                BStructureType streamConstraint = (BStructureType) recordIterator.
+                StructureType streamConstraint = (StructureType) recordIterator.
                         getNativeData(Constants.RECORD_TYPE_DATA_FIELD);
                 BMap<BString, Object> bStruct = ValueCreator.createMapValue(streamConstraint);
                 List<ColumnDefinition> columnDefinitions = (List<ColumnDefinition>) recordIterator
@@ -196,7 +196,7 @@ public class RecordIteratorUtils {
                     return convert(resultSet.getBoolean(columnIndex),
                             sqlType, ballerinaType, resultSet.wasNull());
                 } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
-                        ((BArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
+                        ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
                     return convert(resultSet.getBytes(columnIndex), sqlType, ballerinaType,
                             columnDefinition.getSqlName());
                 } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
@@ -212,9 +212,9 @@ public class RecordIteratorUtils {
                             .getValue();
                     Reader reader = new StringReader(jsonString);
                     try {
-                        return JSONParser.parse(reader, JSONParser.NonStringValueProcessingMode.FROM_JSON_STRING);
-                    } catch (BallerinaException e) {
-                        throw new ApplicationError("Error while converting to JSON type. " + e.getDetail());
+                        return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
+                    } catch (BError e) {
+                        throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
                     }
                 }
                 throw new ApplicationError("Unsupported SQL type " + columnDefinition.getSqlName());

@@ -37,7 +37,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
         "-p", port + ":9001", "blacklabelops/hsqldb"
     );
     exitCode = checkpanic process.waitForExit();
-    test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' start failed");
+    test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
     io:println("Docker container for Database '" + dbAlias +"' created.");
     runtime:sleep(20000);
 
@@ -82,7 +82,7 @@ function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
     return sourceChannel;
 }
 
-function getUntaintedData(record {}|error? value, string fieldName) returns @untainted anydata {
+isolated function getUntaintedData(record {}|error? value, string fieldName) returns @untainted anydata {
     if (value is record {}) {
         return value[fieldName];
     }

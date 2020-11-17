@@ -84,7 +84,7 @@ function batchInsertIntoDataTableFailure() {
     }
 }
 
-function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
+isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
     test:assertEquals(results.length(), rowCount.length());
 
     int i =0;

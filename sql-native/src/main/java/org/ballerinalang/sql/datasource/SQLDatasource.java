@@ -19,9 +19,9 @@ package org.ballerinalang.sql.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.values.DecimalValue;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 
@@ -203,8 +203,8 @@ public class SQLDatasource {
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
-                if (connLifeTimeSec instanceof DecimalValue) {
-                    DecimalValue connLifeTime = (DecimalValue) connLifeTimeSec;
+                if (connLifeTimeSec instanceof BDecimal) {
+                    BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
                     if (connLifeTime.floatValue() > 0) {
                         long connLifeTimeMS = Double.valueOf(connLifeTime.floatValue() * 1000).longValue();
                         config.setMaxLifetime(connLifeTimeMS);
@@ -231,7 +231,7 @@ public class SQLDatasource {
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
         } catch (Throwable t) {
             StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
-            String lastCauseMessage = null;
+            String lastCauseMessage;
             int count = 0;
             while (t.getCause() != null && count < 3) {
                 lastCauseMessage = t.getCause().getMessage();

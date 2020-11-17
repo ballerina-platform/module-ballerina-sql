@@ -416,7 +416,7 @@ returns ExecutionResult {
     return result;
 }
 
-function validateResult(ExecutionResult result, int rowCount, int? lastId = ()) {
+isolated function validateResult(ExecutionResult result, int rowCount, int? lastId = ()) {
     test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
     if (lastId is ()) {

@@ -21,7 +21,7 @@ package org.ballerinalang.sql;
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.values.BString;
 
-import static io.ballerina.runtime.api.StringUtils.fromString;
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 
 /**
  * Constants for SQL client.
@@ -90,7 +90,6 @@ public final class Constants {
      * Constant related error fields.
      */
     public static final class ErrorRecordFields {
-        public static final String MESSAGE = "message";
         public static final String ERROR_CODE = "errorCode";
         public static final String SQL_STATE = "sqlState";
         public static final String EXECUTION_RESULTS = "executionResults";

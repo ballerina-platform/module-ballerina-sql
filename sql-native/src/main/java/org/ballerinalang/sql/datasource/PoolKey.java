@@ -17,9 +17,9 @@
  */
 package org.ballerinalang.sql.datasource;
 
-import io.ballerina.runtime.TypeChecker;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 
@@ -66,7 +66,7 @@ public class PoolKey {
         for (Map.Entry<BString, ?> entry : options.entrySet()) {
             int keyHashCode = entry.getKey().hashCode();
             Object value = entry.getValue();
-            Type type = TypeChecker.getType(value);
+            Type type = TypeUtils.getType(value);
             int typeTag = type.getTag();
             int valueHashCode;
             switch (typeTag) {

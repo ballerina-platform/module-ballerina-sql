@@ -73,7 +73,7 @@ def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
 def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def tomlVersion = project.version.split("-")[0]
+def tomlVersion = project.version.split("-")[0].toString()
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def targetBallerinaJar = file("$project.projectDir/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
@@ -112,16 +112,25 @@ task copyStdlibs(type: Copy) {
 
 task updateTomlFile {
     doLast {
-        def stdlibDependentIoVersion = project.stdlibIoVersion.split('-')[0]
-        def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0]
-        def stdlibTimeVersion = project.stdlibTimeVersion.split("-")[0]
-        def stdlibConfigVersion = project.stdlibConfigVersion.split("-")[0]
-        def stdlibFilepathVersion = project.stdlibFilepathVersion.split("-")[0]
-        def stdlibRuntimeVersion = project.stdlibRuntimeVersion.split("-")[0]
-        def stdlibSystemVersion = project.stdlibSystemVersion.split("-")[0]
-        def stdlibLogVersion = project.stdlibLogVersion.split("-")[0]
+        def stdlibDependentIoVersion = project.stdlibIoVersion.split('-')[0].toString()
+        def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0].toString()
+        def stdlibTimeVersion = project.stdlibTimeVersion.split("-")[0].toString()
+        def stdlibConfigVersion = project.stdlibConfigVersion.split("-")[0].toString()
+        def stdlibFilepathVersion = project.stdlibFilepathVersion.split("-")[0].toString()
+        def stdlibRuntimeVersion = project.stdlibRuntimeVersion.split("-")[0].toString()
+        def stdlibSystemVersion = project.stdlibSystemVersion.split("-")[0].toString()
+        def stdlibLogVersion = project.stdlibLogVersion.split("-")[0].toString()
+        def stdlibTransactionVersion = project.stdlibTransactionVersion.split("-")[0].toString()
+        def stdlibTaskVersion = project.stdlibTaskVersion.split("-")[0].toString()
+        def stdlibFileVersion = project.stdlibFileVersion.split("-")[0].toString()
+        def stdlibCryptoVersion = project.stdlibCryptoVersion.split("-")[0].toString()
+        def stdlibReflectVersion = project.stdlibReflectVersion.split("-")[0].toString()
+        def stdlibMimeVersion = project.stdlibMimeVersion.split("-")[0].toString()
+        def stdlibCacheVersion = project.stdlibCacheVersion.split("-")[0].toString()
+        def stdlibAuthVersion = project.stdlibAuthVersion.split("-")[0].toString()
+        def stdlibHttpVersion = project.stdlibHttpVersion.split("-")[0].toString()
 
-        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
+        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version.toString())
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         newConfig = newConfig.replace("@project.path@", distributionPath)
         newConfig = newConfig.replace("@stdlib.io.version@", stdlibDependentIoVersion)
@@ -132,6 +141,15 @@ task updateTomlFile {
         newConfig = newConfig.replace("@stdlib.runtime.version@", stdlibRuntimeVersion)
         newConfig = newConfig.replace("@stdlib.system.version@", stdlibSystemVersion)
         newConfig = newConfig.replace("@stdlib.log.version@", stdlibLogVersion)
+        newConfig = newConfig.replace("@stdlib.transaction.version@", stdlibTransactionVersion)
+        newConfig = newConfig.replace("@stdlib.task.version@", stdlibTaskVersion)
+        newConfig = newConfig.replace("@stdlib.file.version@", stdlibFileVersion)
+        newConfig = newConfig.replace("@stdlib.crypto.version@", stdlibCryptoVersion)
+        newConfig = newConfig.replace("@stdlib.reflect.version@", stdlibReflectVersion)
+        newConfig = newConfig.replace("@stdlib.mime.version@", stdlibMimeVersion)
+        newConfig = newConfig.replace("@stdlib.cache.version@", stdlibCacheVersion)
+        newConfig = newConfig.replace("@stdlib.auth.version@", stdlibAuthVersion)
+        newConfig = newConfig.replace("@stdlib.http.version@", stdlibHttpVersion)
 
         ballerinaConfigFile.text = newConfig
     }
@@ -156,6 +174,8 @@ task ballerinaTest {
     def groupParams = ""
     if (project.hasProperty("groups")) {
         groupParams = "--groups ${project.findProperty("groups")}"
+    } else if (project.hasProperty("disable-groups")) {
+        groupParams = "--disable-groups ${project.findProperty("disable-groups")}"
     }
 
     def debugParams = ""
