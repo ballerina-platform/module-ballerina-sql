@@ -4,22 +4,8 @@ version = "@toml.version@"
 
 [dependencies]
 "ballerina/io" = "@stdlib.io.version@"
-"ballerina/stringutils" = "@stdlib.stringutils.version@"
 "ballerina/time" = "@stdlib.time.version@"
 "ballerina/config" = "@stdlib.config.version@"
-"ballerina/filepath" = "@stdlib.filepath.version@"
-"ballerina/runtime" = "@stdlib.runtime.version@"
-"ballerina/system" = "@stdlib.system.version@"
-"ballerina/log" = "@stdlib.log.version@"
-"ballerina/lang.transaction" = "@stdlib.transaction.version@"
-"ballerina/task" = "@stdlib.task.version@"
-"ballerina/file" = "@stdlib.file.version@"
-"ballerina/crypto" = "@stdlib.crypto.version@"
-"ballerina/reflect" = "@stdlib.reflect.version@"
-"ballerina/mime" = "@stdlib.mime.version@"
-"ballerina/cache" = "@stdlib.cache.version@"
-"ballerina/auth" = "@stdlib.auth.version@"
-"ballerina/http" = "@stdlib.http.version@"
 
 [platform]
 target = "java11"
