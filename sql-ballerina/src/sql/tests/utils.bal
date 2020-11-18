@@ -33,7 +33,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
         "docker", {}, scriptPath, "run", "--rm", "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
         "-e", "HSQLDB_USER=test",
-        "-v", scriptPath + "/" + resFolder + ":/scripts",
+        "-v", checkpanic file:joinPath(scriptPath, resFolder) + ":/scripts",
         "-p", port + ":9001", "blacklabelops/hsqldb"
     );
     exitCode = checkpanic process.waitForExit();
