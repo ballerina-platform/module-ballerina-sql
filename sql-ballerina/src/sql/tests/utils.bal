@@ -15,12 +15,12 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/filepath;
+import ballerina/file;
 import ballerina/runtime;
 import ballerina/system;
 import ballerina/test;
 
-string scriptPath = checkpanic filepath:absolute("src/sql/tests/resources/sql");
+string scriptPath = checkpanic file:getAbsolutePath("src/sql/tests/resources/sql");
 
 string user = "test";
 string password = "";
