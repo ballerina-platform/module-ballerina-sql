@@ -20,7 +20,7 @@ import ballerina/runtime;
 import ballerina/system;
 import ballerina/test;
 
-string scriptPath = checkpanic file:getAbsolutePath("src/sql/tests/resources/sql");
+string scriptPath = checkpanic file:getAbsolutePath("tests/resources/sql");
 
 string user = "test";
 string password = "";
@@ -67,17 +67,17 @@ function cleanDockerContainer(string containerName) {
 }
 
 function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/byteValue.txt");
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/byteValue.txt");
     return byteChannel;
 }
 
 function getBlobColumnChannel() returns @untainted io:ReadableByteChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/blobValue.txt");
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/blobValue.txt");
     return byteChannel;
 }
 
 function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./src/sql/tests/resources/files/clobValue.txt");
+    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/clobValue.txt");
     io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
     return sourceChannel;
 }
