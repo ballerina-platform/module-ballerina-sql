@@ -125,22 +125,19 @@ assemble {
 
 //TODO: remove this once loading dependencies from bir cache is fixed
 task deleteCache(type: Delete) {
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/io"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/stringutils"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/runtime"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/system"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/time"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/config"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/log"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/file"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/io"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/stringutils"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/runtime"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/system"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/time"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/config"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/log"
 
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/task"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/crypto"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/reflect"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/mime"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/cache"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/auth"
-    delete "${buildDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/http"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/task"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/crypto"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/mime"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerina/cache"
+    delete "${buildDir}/target/jballerina-tools-${ballerinaLangVersion}/repo/cache/ballerinai/transaction"
 }
 
 task ballerinaTest {
