@@ -42,3 +42,10 @@ jobs:
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew.bat build -x test
         # Due to no docker available in gitaction windows
+      - name: Archive Error log
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Ballerina Internal Log
+          path: sql-ballerina/ballerina-internal.log
+          if-no-files-found: ignore
