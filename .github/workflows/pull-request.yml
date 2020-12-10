@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: Ballerina Internal Log
+          name: Ballerina Internal Log Linux
           path: sql-ballerina/ballerina-internal.log
           if-no-files-found: ignore
 
@@ -46,6 +46,6 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: Ballerina Internal Log
+          name: Ballerina Internal Log Windows
           path: sql-ballerina/ballerina-internal.log
           if-no-files-found: ignore
