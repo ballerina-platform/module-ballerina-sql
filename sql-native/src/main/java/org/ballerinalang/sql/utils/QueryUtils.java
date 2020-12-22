@@ -123,7 +123,7 @@ public class QueryUtils {
     }
 
     private static BObject createRecordIterator(BError errorValue) {
-        return ValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID, Constants.RESULT_ITERATOR_OBJECT,
+        return ValueCreator.createObjectValue(ModuleUtils.getModule(), Constants.RESULT_ITERATOR_OBJECT,
                 errorValue);
     }
 

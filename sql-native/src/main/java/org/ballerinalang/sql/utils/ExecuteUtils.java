@@ -86,7 +86,7 @@ public class ExecuteUtils {
                 Map<String, Object> resultFields = new HashMap<>();
                 resultFields.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                 resultFields.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                return ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                return ValueCreator.createRecordValue(ModuleUtils.getModule(),
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
@@ -149,19 +149,19 @@ public class ExecuteUtils {
                         lastInsertedId = getGeneratedKeys(resultSet);
                     }
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    executionResults.add(ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
-                                Constants.EXECUTION_RESULT_RECORD, Constants.SQL_PACKAGE_ID, 0, false, 0)));
+                                Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
             } catch (BatchUpdateException e) {
                 int[] updateCounts = e.getUpdateCounts();
                 for (int count : updateCounts) {
                     Map<String, Object> resultField = new HashMap<>();
                     resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
                     resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                    executionResults.add(ValueCreator.createRecordValue(Constants.SQL_PACKAGE_ID,
+                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
