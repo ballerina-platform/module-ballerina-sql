@@ -55,7 +55,6 @@ import static org.ballerinalang.sql.Constants.PROCEDURE_CALL_RESULT;
 import static org.ballerinalang.sql.Constants.QUERY_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD;
-import static org.ballerinalang.sql.Constants.SQL_PACKAGE_ID;
 import static org.ballerinalang.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
@@ -100,7 +99,7 @@ public class CallUtils {
                     populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes);
                 }
 
-                BObject procedureCallResult = ValueCreator.createObjectValue(SQL_PACKAGE_ID,
+                BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                         PROCEDURE_CALL_RESULT);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
