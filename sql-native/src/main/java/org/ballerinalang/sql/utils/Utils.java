@@ -89,7 +89,6 @@ import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
 import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
-import static org.ballerinalang.sql.Constants.SQL_PACKAGE_ID;
 
 /**
  * This class has the utility methods to process and convert the SQL types into ballerina types,
@@ -1415,7 +1414,7 @@ class Utils {
                                                Statement statement,
                                                Connection connection, List<ColumnDefinition> columnDefinitions,
                                                StructureType streamConstraint) {
-        BObject resultIterator = ValueCreator.createObjectValue(Constants.SQL_PACKAGE_ID,
+        BObject resultIterator = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                 Constants.RESULT_ITERATOR_OBJECT, new Object[1]);
         resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
         resultIterator.addNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD, statement);
@@ -1598,7 +1597,7 @@ class Utils {
         resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
         resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
         BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
-                SQL_PACKAGE_ID, EXECUTION_RESULT_RECORD, resultFields);
+                ModuleUtils.getModule(), EXECUTION_RESULT_RECORD, resultFields);
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
     }
 

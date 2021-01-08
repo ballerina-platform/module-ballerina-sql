@@ -36,7 +36,7 @@ client class MockClient {
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
 
-    public remote function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
+    remote function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
     returns @tainted stream <record {}, Error> {
         if (self.clientActive) {
             return nativeQuery(self, sqlQuery, rowType);
@@ -46,7 +46,7 @@ client class MockClient {
         }
     }
 
-    public remote function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
+    remote function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
         if (self.clientActive) {
             return nativeExecute(self, sqlQuery);
         } else {
@@ -54,7 +54,7 @@ client class MockClient {
         }
     }
 
-    public remote function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
+    remote function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
             return ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
@@ -65,7 +65,7 @@ client class MockClient {
         }
     }
 
-    public remote function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error {
         if (self.clientActive) {
             return nativeCall(self, sqlQuery, rowTypes);
