@@ -205,6 +205,7 @@ subprojects {
         compile group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}"
         compile group: 'org.ballerinalang', name: 'time-native', version: "${stdlibTimeVersion}"
         compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
+        compile group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
 
         ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
         ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
