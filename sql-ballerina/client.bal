@@ -66,11 +66,11 @@ public type Client client object {
 };
 
 isolated function closedStreamInvocationError() returns Error {
-    return ApplicationError("Stream is closed. Therefore, no operations are allowed further on the stream.");
+    return error ApplicationError("Stream is closed. Therefore, no operations are allowed further on the stream.");
 }
 
 public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error> {
-    ApplicationError applicationErr = ApplicationError(message);
+    ApplicationError applicationErr = error ApplicationError(message);
     ResultIterator resultIterator = new (err = applicationErr);
     stream<record {}, Error> errorStream = new (resultIterator);
     return errorStream;

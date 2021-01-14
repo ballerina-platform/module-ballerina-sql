@@ -50,18 +50,18 @@ client class MockClient {
         if (self.clientActive) {
             return nativeExecute(self, sqlQuery);
         } else {
-            return ApplicationError("SQL Client is already closed, hence further operations are not allowed");
+            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
         }
     }
 
     remote function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
-            return ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
+            return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
         if (self.clientActive) {
             return nativeBatchExecute(self, sqlQueries);
         } else {
-            return ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
+            return error ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
         }
     }
 
@@ -70,7 +70,7 @@ client class MockClient {
         if (self.clientActive) {
             return nativeCall(self, sqlQuery, rowTypes);
         } else {
-            return ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
+            return error ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
         }
     }
 
