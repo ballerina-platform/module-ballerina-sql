@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/file;
 import ballerina/runtime;
-import ballerina/system;
+import ballerina/os;
 import ballerina/test;
 
 string scriptPath = checkpanic file:getAbsolutePath("tests/resources/sql");
@@ -27,9 +27,9 @@ string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, string scriptName) {
-    system:Process process;
+    os:Process process;
     int exitCode = 1;
-    process = checkpanic system:exec(
+    process = checkpanic os:exec(
         "docker", {}, scriptPath, "run", "--rm", "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
         "-e", "HSQLDB_USER=test",
@@ -45,7 +45,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     exitCode = 1;
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5000);
-        process = checkpanic system:exec(
+        process = checkpanic os:exec(
             "docker", {}, scriptPath, "exec", containerName,
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
             "--autoCommit",
@@ -60,7 +60,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
 }
 
 function cleanDockerContainer(string containerName) {
-    system:Process process = checkpanic system:exec("docker", {}, scriptPath, "stop", containerName);
+    os:Process process = checkpanic os:exec("docker", {}, scriptPath, "stop", containerName);
     int exitCode = checkpanic process.waitForExit();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
     io:println("Cleaned docker container '" + containerName +"'.");
