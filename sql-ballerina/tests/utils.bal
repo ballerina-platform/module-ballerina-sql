@@ -16,7 +16,7 @@
 
 import ballerina/io;
 import ballerina/file;
-import ballerina/runtime;
+import ballerina/lang.runtime as runtime;
 import ballerina/os;
 import ballerina/test;
 
@@ -39,12 +39,12 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     exitCode = checkpanic process.waitForExit();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
     io:println("Docker container for Database '" + dbAlias +"' created.");
-    runtime:sleep(20000);
+    runtime:sleep(20);
 
     int counter = 0;
     exitCode = 1;
     while (exitCode > 0 && counter < 12) {
-        runtime:sleep(5000);
+        runtime:sleep(5);
         process = checkpanic os:exec(
             "docker", {}, scriptPath, "exec", containerName,
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
