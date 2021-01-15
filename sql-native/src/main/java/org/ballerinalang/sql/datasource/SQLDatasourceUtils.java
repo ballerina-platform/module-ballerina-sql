@@ -100,13 +100,18 @@ public class SQLDatasourceUtils {
             String currentTxBlockId = transactionLocalContext.getCurrentTransactionBlockId();
             BallerinaTransactionContext txContext = transactionLocalContext.getTransactionContext(connectorId);
             if (txContext == null) {
-                if (isXAConnection) {
+                if (isXAConnection && !trxResourceManager.getTransactionManagerEnabled()) {
                     XAConnection xaConn = datasource.getXAConnection();
                     XAResource xaResource = xaConn.getXAResource();
                     TransactionResourceManager.getInstance()
                             .beginXATransaction(globalTxId, currentTxBlockId, xaResource);
                     conn = xaConn.getConnection();
                     txContext = new SQLTransactionContext(conn, xaResource);
+                } else if (isXAConnection) {
+                    TransactionResourceManager.getInstance()
+                            .beginXATransaction(globalTxId, currentTxBlockId, null);
+                    conn = datasource.getConnection();
+                    txContext = new SQLTransactionContext(conn);
                 } else {
                     conn = datasource.getConnection();
                     conn.setAutoCommit(false);
