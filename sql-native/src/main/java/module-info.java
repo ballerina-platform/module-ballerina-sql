@@ -23,6 +23,7 @@ module io.ballerina.stdlib.sql {
     requires io.ballerina.lang;
     requires io.ballerina.stdlib.io;
     requires io.ballerina.stdlib.time;
+    requires transactions.jdbc;
     exports org.ballerinalang.sql.utils;
     exports org.ballerinalang.sql.datasource;
 }

@@ -17,11 +17,13 @@
  */
 package org.ballerinalang.sql.datasource;
 
+import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 
@@ -29,6 +31,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -44,27 +47,44 @@ import javax.sql.XADataSource;
  */
 public class SQLDatasource {
 
-    private HikariDataSource hikariDataSource;
     private AtomicInteger clientCounter = new AtomicInteger(0);
     private Lock mutex = new ReentrantLock();
     private boolean poolShutdown = false;
     private boolean xaConn;
+    private AtomikosDataSourceBean atomikosDataSourceBean;
+    private HikariDataSource hikariDataSource;
     private XADataSource xaDataSource;
 
     private SQLDatasource(SQLDatasourceParams sqlDatasourceParams) {
-        buildDataSource(sqlDatasourceParams);
+
         Connection connection = null;
         try {
-            xaConn = hikariDataSource.isWrapperFor(XADataSource.class);
-            if (xaConn) {
+            if (sqlDatasourceParams.datasourceName != null  && !sqlDatasourceParams.datasourceName.isEmpty() &&
+                    TransactionResourceManager.getInstance().getTransactionManagerEnabled()) {
+                Class<?> dataSourceClass =
+                        ClassLoader.getSystemClassLoader().loadClass(sqlDatasourceParams.datasourceName);
+                if (XADataSource.class.isAssignableFrom(dataSourceClass)) {
+                    xaConn = true;
+                    atomikosDataSourceBean = buildXAAwareDataSource(sqlDatasourceParams);
+                    connection = getConnection();
+                    return;
+                }
+            }
+            hikariDataSource = buildNonXADataSource(sqlDatasourceParams);
+            if (hikariDataSource.isWrapperFor(XADataSource.class)) {
+                xaConn = true;
                 xaDataSource = hikariDataSource.unwrap(XADataSource.class);
                 connection = xaDataSource.getXAConnection().getConnection();
-            } else {
-                connection = getConnection();
+                return;
             }
+            connection = getConnection();
+
         } catch (SQLException e) {
             throw ErrorGenerator.getSQLDatabaseError(e,
                     "error while verifying the connection for " + Constants.CONNECTOR_NAME + ", ");
+        } catch (ClassNotFoundException e) {
+            throw ErrorGenerator.getSQLApplicationError("error while loading datasource class for " +
+                    Constants.CONNECTOR_NAME + ", ");
         } finally {
             if (connection != null) {
                 try {
@@ -122,7 +142,11 @@ public class SQLDatasource {
     }
 
     Connection getConnection() throws SQLException {
-        return hikariDataSource.getConnection();
+      if (atomikosDataSourceBean != null) {
+          return atomikosDataSourceBean.getConnection();
+      }
+
+      return hikariDataSource.getConnection();
     }
 
     public XAConnection getXAConnection() throws SQLException {
@@ -137,7 +161,13 @@ public class SQLDatasource {
     }
 
     private void closeConnectionPool() {
-        hikariDataSource.close();
+        if (hikariDataSource != null) {
+            hikariDataSource.close();
+        }
+
+        if (atomikosDataSourceBean != null) {
+            atomikosDataSourceBean.close();
+        }
         poolShutdown = true;
     }
 
@@ -167,8 +197,9 @@ public class SQLDatasource {
         mutex.lock();
     }
 
-    private void buildDataSource(SQLDatasourceParams sqlDatasourceParams) {
+    private HikariDataSource buildNonXADataSource(SQLDatasourceParams sqlDatasourceParams) {
         try {
+            HikariDataSource hikariDataSource;
             HikariConfig config;
             if (sqlDatasourceParams.poolProperties != null) {
                 config = new HikariConfig(sqlDatasourceParams.poolProperties);
@@ -229,6 +260,70 @@ public class SQLDatasource {
             }
             hikariDataSource = new HikariDataSource(config);
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
+            return hikariDataSource;
+        } catch (Throwable t) {
+            StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
+            String lastCauseMessage;
+            int count = 0;
+            while (t.getCause() != null && count < 3) {
+                lastCauseMessage = t.getCause().getMessage();
+                message.append(" Caused by :").append(lastCauseMessage);
+                count++;
+                t = t.getCause();
+            }
+            throw ErrorGenerator.getSQLApplicationError(message.toString());
+        }
+    }
+
+    private AtomikosDataSourceBean buildXAAwareDataSource(SQLDatasourceParams sqlDatasourceParams) {
+        AtomikosDataSourceBean atomikosDataSource = new AtomikosDataSourceBean();
+        try {
+            Properties xaProperties = new Properties();
+            if (sqlDatasourceParams.datasourceName != null && !sqlDatasourceParams.datasourceName.isEmpty()) {
+                if (sqlDatasourceParams.options == null || !sqlDatasourceParams.options
+                        .containsKey(Constants.Options.URL)) {
+                    xaProperties.setProperty(Constants.Options.URL.getValue(), sqlDatasourceParams.url);
+                }
+                if (sqlDatasourceParams.user != null) {
+                    xaProperties.setProperty(Constants.USERNAME, sqlDatasourceParams.user);
+                }
+                if (sqlDatasourceParams.password != null) {
+                    xaProperties.setProperty(Constants.PASSWORD, sqlDatasourceParams.password);
+                }
+            }
+            if (sqlDatasourceParams.connectionPool != null) {
+                int maxOpenConn = sqlDatasourceParams.connectionPool.
+                        getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS).intValue();
+                if (maxOpenConn > 0) {
+                    atomikosDataSource.setMaxPoolSize(maxOpenConn);
+                }
+
+                Object connLifeTimeSec = sqlDatasourceParams.connectionPool
+                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
+                if (connLifeTimeSec instanceof BDecimal) {
+                    BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
+                    if (connLifeTime.floatValue() > 0) {
+                        atomikosDataSource.setMaxLifetime(Double.valueOf(connLifeTime.floatValue()).intValue());
+                    }
+                }
+            }
+            if (sqlDatasourceParams.options != null) {
+                BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
+                optionMap.entrySet().forEach(entry -> {
+                    if (SQLDatasourceUtils.isSupportedDbOptionType(entry.getValue())) {
+                        xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString());
+                    } else {
+                        throw ErrorGenerator.getSQLApplicationError("unsupported type " + entry.getKey()
+                                + " for the db option");
+                    }
+                });
+            }
+
+            atomikosDataSource.setXaProperties(xaProperties);
+            atomikosDataSource.setUniqueResourceName(UUID.randomUUID().toString());
+            atomikosDataSource.setXaDataSourceClassName(sqlDatasourceParams.datasourceName);
+            Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
+            return atomikosDataSource;
         } catch (Throwable t) {
             StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
             String lastCauseMessage;
