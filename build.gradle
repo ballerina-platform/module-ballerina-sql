@@ -158,6 +158,14 @@ allprojects {
         }
 
         maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-reflect'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-uuid'
             credentials {
                 username System.getenv("packageUser")
@@ -226,6 +234,7 @@ subprojects {
         ballerinaStdLibs "org.ballerinalang:transaction-ballerina:${stdlibTransactionVersion}"
         ballerinaStdLibs "org.ballerinalang:task-ballerina:${stdlibTaskVersion}"
         ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
+        ballerinaStdLibs "org.ballerinalang:reflect-ballerina:${stdlibReflectVersion}"
         ballerinaStdLibs "org.ballerinalang:uuid-ballerina:${stdlibUuidVersion}"
         ballerinaStdLibs "org.ballerinalang:mime-ballerina:${stdlibMimeVersion}"
         ballerinaStdLibs "org.ballerinalang:cache-ballerina:${stdlibCacheVersion}"
