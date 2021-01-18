@@ -144,9 +144,9 @@ task ballerinaTest {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat test --code-coverage ${groupParams} ${debugParams} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat test ${groupParams} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$distributionBinPath/ballerina test --code-coverage ${groupParams} ${debugParams}"
+                commandLine 'sh', '-c', "$distributionBinPath/ballerina test ${groupParams} ${debugParams}"
             }
         }
     }

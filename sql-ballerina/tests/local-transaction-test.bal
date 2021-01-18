@@ -86,7 +86,7 @@ boolean stmtAfterFailureExecutedRWC = false;
 int retryValRWC = -1;
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testLocalTransaction"]
+    dependsOn: [testLocalTransaction]
 }
 function testTransactionRollbackWithCheck() {
     MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -115,7 +115,7 @@ function testTransactionRollbackWithCheckHelper(MockClient dbClient) returns err
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTransactionRollbackWithCheck"]
+    dependsOn: [testTransactionRollbackWithCheck]
 }
 function testTransactionRollbackWithRollback() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -151,7 +151,7 @@ function testTransactionRollbackWithRollback() {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTransactionRollbackWithRollback"]
+    dependsOn: [testTransactionRollbackWithRollback]
 }
 function testLocalTransactionUpdateWithGeneratedKeys() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -177,7 +177,7 @@ function testLocalTransactionUpdateWithGeneratedKeys() {
 int returnValRGK = 0;
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testLocalTransactionUpdateWithGeneratedKeys"]
+    dependsOn: [testLocalTransactionUpdateWithGeneratedKeys]
 }
 function testLocalTransactionRollbackWithGeneratedKeys() {
     MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -204,7 +204,7 @@ function testLocalTransactionRollbackWithGeneratedKeysHelper(MockClient dbClient
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testLocalTransactionRollbackWithGeneratedKeys"]
+    dependsOn: [testLocalTransactionRollbackWithGeneratedKeys]
 }
 function testTransactionAbort() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -282,7 +282,7 @@ function testTransactionErrorPanicHelper(MockClient dbClient) {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTransactionAbort"]
+    dependsOn: [testTransactionAbort]
 }
 function testTransactionErrorPanicAndTrap() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -317,7 +317,7 @@ isolated function testTransactionErrorPanicAndTrapHelper(int i) {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTransactionErrorPanicAndTrap"]
+    dependsOn: [testTransactionErrorPanicAndTrap]
 }
 function testTwoTransactions() {
     MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -354,7 +354,7 @@ function testTwoTransactions() {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTwoTransactions"]
+    dependsOn: [testTwoTransactions]
 }
 function testTransactionWithoutHandlers() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -373,7 +373,7 @@ function testTransactionWithoutHandlers() {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testTransactionWithoutHandlers"]
+    dependsOn: [testTransactionWithoutHandlers]
 }
 function testLocalTransactionFailed() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
@@ -424,7 +424,7 @@ isolated function getError(string message) returns error? {
 
 @test:Config {
     groups: ["transaction"],
-    dependsOn: ["testLocalTransactionFailed"]
+    dependsOn: [testLocalTransactionFailed]
 }
 function testLocalTransactionSuccessWithFailed() {
    MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);

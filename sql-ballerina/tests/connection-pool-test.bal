@@ -13,8 +13,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/runtime;
-import ballerina/stringutils;
+import ballerina/lang.runtime as runtime;
+import ballerina/lang.'string as strings;
 import ballerina/test;
 
 
@@ -322,13 +322,13 @@ function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url)
 returns error? {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
         connectionPoolOptions = connectionPoolOptions);
-    runtime:sleep(10);
+    runtime:sleep(1);
     check dbClient.close();
 }
 
 function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url)
 returns @tainted int|error {
-    runtime:sleep(10);
+    runtime:sleep(1);
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
         connectionPoolOptions = connectionPoolOptions);
     var dt = dbClient->query("SELECT COUNT(*) as val from Customers where registrationID = 1", Result);
@@ -584,11 +584,11 @@ isolated function getReturnValue(stream<record{}, error> queryResult) returns in
 function validateApplicationError(int|error dbError) {
     test:assertTrue(dbError is error);
     ApplicationError sqlError = <ApplicationError> dbError;
-    test:assertTrue(stringutils:contains(sqlError.message(), "Client is already closed"), sqlError.message());
+    test:assertTrue(strings:includes(sqlError.message(), "Client is already closed"), sqlError.message());
 }
 
 function validateConnectionTimeoutError(int|error dbError) {
     test:assertTrue(dbError is error);
     DatabaseError sqlError = <DatabaseError> dbError;
-    test:assertTrue(stringutils:contains(sqlError.message(), "request timed out after"), sqlError.message());
+    test:assertTrue(strings:includes(sqlError.message(), "request timed out after"), sqlError.message());
 }
