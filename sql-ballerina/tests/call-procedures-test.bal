@@ -53,16 +53,14 @@ function cleanproceduresContainer() {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCreateProcedures1"]
+    dependsOn: [testCreateProcedures1]
 }
 function testCallWithStringTypes() returns @tainted record {}|error? {
     int id = 2;
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult ret = checkpanic dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
-
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
-
     stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
     stream<StringDataForCall,Error> queryData = <stream<StringDataForCall,Error>>streamData;
     StringDataForCall? returnData = ();
@@ -89,16 +87,14 @@ function testCallWithStringTypes() returns @tainted record {}|error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCallWithStringTypes"]
+    dependsOn: [testCallWithStringTypes]
 }
 function testCallWithStringTypesInParams() {
     int id = 3;
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult ret = checkpanic dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
-
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
-
     stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
     stream<StringDataForCall,Error> queryData = <stream<StringDataForCall,Error>>streamData;
     StringDataForCall? returnData = ();
@@ -124,7 +120,7 @@ function testCallWithStringTypesInParams() {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCallWithStringTypesInParams","testCreateProcedures2"]
+    dependsOn: [testCallWithStringTypesInParams,testCreateProcedures2]
 }
 function testCallWithStringTypesOutParams() {
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
@@ -153,7 +149,7 @@ function testCallWithStringTypesOutParams() {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCallWithStringTypesOutParams","testCreateProcedures3"]
+    dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
 }
 function testCallWithNumericTypesOutParams() {
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
@@ -190,7 +186,7 @@ function testCallWithNumericTypesOutParams() {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCallWithNumericTypesOutParams","testCreateProcedures4"]
+    dependsOn: [testCallWithNumericTypesOutParams,testCreateProcedures4]
 }
 function testCallWithStringTypesInoutParams() {
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
@@ -219,7 +215,7 @@ function testCallWithStringTypesInoutParams() {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: ["testCallWithStringTypesInoutParams","testCreateProcedures5"]
+    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
 }
 function testCallWithNumericTypesInoutParams() {
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
@@ -254,10 +250,6 @@ function testCallWithNumericTypesInoutParams() {
     test:assertTrue((checkpanic paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
 }
-
-
-
-
 
 @test:Config {
     groups: ["procedures"]
@@ -388,6 +380,15 @@ function testCreateProcedures5() {
     checkpanic dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 0, "Affected row count is different.");
     test:assertExactEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
+}
+
+
+function procedureQueryMockClient(ParameterizedCallQuery sqlQueries)
+returns ProcedureCallResult {
+    MockClient dbClient = checkpanic new (url = batchExecuteDB, user = user, password = password);
+    ProcedureCallResult result = checkpanic dbClient->call(sqlQueries);
+    checkpanic dbClient.close();
+    return result;
 }
 
 
