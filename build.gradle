@@ -62,7 +62,7 @@ allprojects {
         }
 
         maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-stringutils'
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-regex'
             credentials {
                 username System.getenv("packageUser")
                 password System.getenv("packagePAT")
@@ -224,7 +224,7 @@ subprojects {
         compile group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
 
         ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
-        ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
+        ballerinaStdLibs "org.ballerinalang:regex-ballerina:${stdlibRegexVersion}"
         ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
         ballerinaStdLibs "org.ballerinalang:os-ballerina:${stdlibOsVersion}"
         ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
