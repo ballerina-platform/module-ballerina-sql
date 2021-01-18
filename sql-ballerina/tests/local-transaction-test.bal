@@ -202,6 +202,8 @@ function testLocalTransactionRollbackWithGeneratedKeysHelper(MockClient dbClient
     }
 }
 
+isolated int abortVal = 0;
+
 @test:Config {
     groups: ["transaction"],
     dependsOn: [testLocalTransactionRollbackWithGeneratedKeys]
@@ -211,7 +213,9 @@ function testTransactionAbort() {
     transactions:Info transInfo;
 
     var abortFunc = isolated function(transactions:Info? info, error? cause, boolean willTry) {
-        io:println("Transaction aborted !");
+        lock {
+            abortVal = -1;
+        }
     };
 
     retry<SQLDefaultRetryManager>(1) transaction {
@@ -234,6 +238,9 @@ function testTransactionAbort() {
     checkpanic dbClient.close();
 
     test:assertEquals(returnVal, 0);
+    lock {
+        test:assertEquals(abortVal, -1);
+    }
     test:assertEquals(count, 0);
 }
 
@@ -369,6 +376,8 @@ function testTransactionWithoutHandlers() {
     test:assertEquals(count, 2);
 }
 
+isolated string rollbackOut = "";
+
 @test:Config {
     groups: ["transaction"],
     dependsOn: [testTransactionWithoutHandlers]
@@ -378,30 +387,33 @@ function testLocalTransactionFailed() {
 
     string a = "beforetx";
 
-    var ret = trap testLocalTransactionFailedHelper(a, dbClient);
+    var ret = trap testLocalTransactionFailedHelper(dbClient);
     if (ret is string) {
-        a = ret;
+        a += ret;
     } else {
-        a = ret.message() + " trapped";
+        a += ret.message() + " trapped";
     }
     a = a + " afterTrx";
     int count = getCount(dbClient, "111");
     checkpanic dbClient.close();
-    test:assertEquals(a, "beforetx inTrx inTrx inTrx trapped afterTrx");
+    test:assertEquals(a, "beforetx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
     test:assertEquals(count, 0);
 }
 
-function testLocalTransactionFailedHelper(string status,MockClient dbClient) returns string|error {
-    string a = status;
+function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
     transactions:Info transInfo;
     int i = 0;
 
     var onRollbackFunc = isolated function(transactions:Info? info, error? cause, boolean willTry) {
-        io:println("trxAborted");
+        lock {
+           rollbackOut += " trxAborted";
+        }
     };
 
     retry<SQLDefaultRetryManager>(2) transaction {
-        a = a + " inTrx";
+        lock {
+           rollbackOut += " inTrx";
+        }
         transInfo = transactions:info();
         transactions:onRollback(onRollbackFunc);
         var e1 = check dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
@@ -409,15 +421,19 @@ function testLocalTransactionFailedHelper(string status,MockClient dbClient) ret
         var e2 = dbClient->execute("Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country) " +
                         "values ('Anne', 'Clerk', 111, 5000.75, 'USA')");
         if(e2 is error){
-           check getError(a);
+           check getError();
         }
         check commit;
     }
-    return a;
+    lock {
+       return rollbackOut;
+    }
 }
 
-isolated function getError(string message) returns error? {
-    return error(message);
+function getError() returns error? {
+    lock {
+       return error(rollbackOut);
+    }
 }
 
 @test:Config {
