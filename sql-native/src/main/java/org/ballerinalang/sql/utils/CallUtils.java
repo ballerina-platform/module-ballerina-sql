@@ -277,7 +277,7 @@ public class CallUtils {
                     break;
                 case Types.INTEGER:
                     parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            (Long.valueOf(statement.getInt(paramIndex))));
+                        Long.valueOf(statement.getInt(paramIndex)));
                     break;
                 case Types.BIGINT:
                     parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, statement.getLong(paramIndex));
