@@ -14,7 +14,7 @@
 // under the License.
 
 import ballerina/lang.runtime as runtime;
-import ballerina/stringutils;
+import ballerina/lang.'string as strings;
 import ballerina/test;
 
 
@@ -584,11 +584,11 @@ isolated function getReturnValue(stream<record{}, error> queryResult) returns in
 function validateApplicationError(int|error dbError) {
     test:assertTrue(dbError is error);
     ApplicationError sqlError = <ApplicationError> dbError;
-    test:assertTrue(stringutils:contains(sqlError.message(), "Client is already closed"), sqlError.message());
+    test:assertTrue(strings:includes(sqlError.message(), "Client is already closed"), sqlError.message());
 }
 
 function validateConnectionTimeoutError(int|error dbError) {
     test:assertTrue(dbError is error);
     DatabaseError sqlError = <DatabaseError> dbError;
-    test:assertTrue(stringutils:contains(sqlError.message(), "request timed out after"), sqlError.message());
+    test:assertTrue(strings:includes(sqlError.message(), "request timed out after"), sqlError.message());
 }

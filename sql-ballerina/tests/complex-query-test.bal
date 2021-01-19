@@ -13,7 +13,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/stringutils;
+import ballerina/regex;
 import ballerina/test;
 import ballerina/time;
 
@@ -256,17 +256,17 @@ function testDateTime() {
 
     time:Time dateTime = checkpanic time:createTime(2017, 5, 23, 0, 0, 0, 0, systemTimeZone.id);
     string dateType = checkpanic time:format(dateTime, "yyyy-MM-ddXXX");
-    dateType = stringutils:replace(dateType, "Z", "+00:00");
+    dateType = regex:replaceAll(dateType, "Z", "+00:00");
 
     time:Time timeType = checkpanic time:createTime(2017, 5, 23, 14, 15, 23, 0, "UTC");
     time:Time newTime = checkpanic time:toTimeZone(timeType, systemTimeZone.id);
     string timeTypeString = checkpanic time:format(newTime, "HH:mm:ss.SSSXXX");
-    timeTypeString = stringutils:replace(timeTypeString, "Z", "+00:00");
+    timeTypeString = regex:replaceAll(timeTypeString, "Z", "+00:00");
 
     time:Time insertedTimeType = checkpanic time:createTime(2017, 1, 25, 16, 33, 55, 0, "UTC");
     time:Time insertedOffsetTime = checkpanic time:toTimeZone(insertedTimeType, systemTimeZone.id);
     string insertedTimeString = checkpanic time:format(insertedOffsetTime, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-    insertedTimeString = stringutils:replace(insertedTimeString, "Z", "+00:00");
+    insertedTimeString = regex:replaceAll(insertedTimeString, "Z", "+00:00");
 
     ResultDates expected = {
         DATE_TYPE: dateType,
