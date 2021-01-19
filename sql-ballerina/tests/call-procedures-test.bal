@@ -16,7 +16,7 @@
 import ballerina/test;
 
 string proceduresDb = "procedures";
-string proceduresDB = urlPrefix + "9002/procedures";
+string proceduresDB = urlPrefix + "9012/procedures";
 
 
 type StringDataForCall record {
@@ -36,7 +36,7 @@ type StringDataSingle record {
 	value: ["procedures"]	
 } 
 function initproceduresContainer() {
-	initializeDockerContainer("sql-procedures", "procedures", "9002", "procedures", "call-procedures-test-data.sql");
+	initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
 
 }
 
@@ -267,6 +267,7 @@ function testCreateProcedures1() {
 
 @test:Config {
     groups: ["procedures"]
+    dependsOn: [testCreateProcedures1]
 }
 function testCreateProcedures2() {
     ParameterizedQuery createProcedure = `
@@ -288,6 +289,7 @@ function testCreateProcedures2() {
 
 @test:Config {
     groups: ["procedures"]
+    dependsOn: [testCreateProcedures2]
 }
 function testCreateProcedures3() {
     ParameterizedQuery createProcedure = `
@@ -313,6 +315,7 @@ function testCreateProcedures3() {
 
 @test:Config {
     groups: ["procedures"]
+    dependsOn: [testCreateProcedures3]
 }
 function testCreateProcedures4() {
     ParameterizedQuery createProcedure = `
@@ -334,6 +337,7 @@ function testCreateProcedures4() {
 
 @test:Config {
     groups: ["procedures"]
+    dependsOn: [testCreateProcedures4]
 }
 function testCreateProcedures5() {
     ParameterizedQuery createProcedure = `
