@@ -18,7 +18,6 @@ import ballerina/test;
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
 
-
 type StringDataForCall record {
     string varchar_type;
     string charmax_type;
@@ -37,7 +36,6 @@ type StringDataSingle record {
 } 
 function initproceduresContainer() {
 	initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
-
 }
 
 @test:AfterGroups {
