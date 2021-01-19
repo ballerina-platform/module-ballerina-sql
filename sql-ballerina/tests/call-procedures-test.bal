@@ -266,7 +266,7 @@ function testCreateProcedures1() {
 }
 
 @test:Config {
-    groups: ["procedures"]
+    groups: ["procedures"],
     dependsOn: [testCreateProcedures1]
 }
 function testCreateProcedures2() {
@@ -288,7 +288,7 @@ function testCreateProcedures2() {
 }
 
 @test:Config {
-    groups: ["procedures"]
+    groups: ["procedures"],
     dependsOn: [testCreateProcedures2]
 }
 function testCreateProcedures3() {
@@ -314,7 +314,7 @@ function testCreateProcedures3() {
 }
 
 @test:Config {
-    groups: ["procedures"]
+    groups: ["procedures"],
     dependsOn: [testCreateProcedures3]
 }
 function testCreateProcedures4() {
@@ -336,7 +336,7 @@ function testCreateProcedures4() {
 }
 
 @test:Config {
-    groups: ["procedures"]
+    groups: ["procedures"],
     dependsOn: [testCreateProcedures4]
 }
 function testCreateProcedures5() {
