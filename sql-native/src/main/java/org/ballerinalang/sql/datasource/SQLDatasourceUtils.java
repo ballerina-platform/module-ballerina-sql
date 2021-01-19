@@ -111,6 +111,7 @@ public class SQLDatasourceUtils {
                     TransactionResourceManager.getInstance()
                             .beginXATransaction(globalTxId, currentTxBlockId, null);
                     conn = datasource.getConnection();
+                    conn.setAutoCommit(false);
                     txContext = new SQLTransactionContext(conn);
                 } else {
                     conn = datasource.getConnection();
