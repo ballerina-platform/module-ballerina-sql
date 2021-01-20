@@ -1166,8 +1166,7 @@ class Utils {
 
 
     private static BMap<BString, Object> createTimeStruct(long millis) {
-        return TimeUtils.createTimeRecord(TimeUtils.getTimeZoneRecord(), TimeUtils.getTimeRecord(), millis,
-                Constants.TIMEZONE_UTC);
+        return TimeUtils.createTimeRecord(millis, Constants.TIMEZONE_UTC);
     }
 
     private static String getString(java.util.Date value) {
