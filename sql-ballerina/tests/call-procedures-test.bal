@@ -127,7 +127,7 @@ function testCallWithStringTypesOutParams() {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithOutParams(${paraID}, ${paraVarchar},
                             ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = procedureQueryMockClient(callProcedureQuery);
+    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     checkpanic ret.close();
 
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
@@ -159,7 +159,7 @@ function testCallWithNumericTypesOutParams() {
                         ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                         ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = procedureQueryMockClient(callProcedureQuery);
+    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     checkpanic ret.close();
 
     decimal paraDecimalVal= 1234.56;
@@ -192,7 +192,7 @@ function testCallWithStringTypesInoutParams() {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithInoutParams(${paraID}, ${paraVarchar},
                              ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = procedureQueryMockClient(callProcedureQuery);
+    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     checkpanic ret.close();
 
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
@@ -227,7 +227,7 @@ function testCallWithNumericTypesInoutParams() {
                                 ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                                  ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = procedureQueryMockClient(callProcedureQuery);
+    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     checkpanic ret.close();
 
     decimal paraDecimalVal= 1234.56;
@@ -360,7 +360,7 @@ function testCreateProcedures5() {
 }
 
 
-function procedureQueryMockClient(ParameterizedCallQuery sqlQuery)
+function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery)
 returns ProcedureCallResult {
     MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = checkpanic dbClient->call(sqlQuery);
