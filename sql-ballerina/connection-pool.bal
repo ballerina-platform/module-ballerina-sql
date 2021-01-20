@@ -14,8 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/config;
 import ballerina/java;
+
+final configurable int maxOpenConnections = 15;
+final configurable decimal maxConnectionLifeTimeInSeconds = 1800.0;
+final configurable int minIdleConnections = 15;
 
 # Represents the properties which are used to configure DB connection pool.
 # Default values of the fields can be set through the configuration API.
@@ -31,10 +34,9 @@ import ballerina/java;
 #                        is the same as maxOpenConnections and it can be changed through the configuration
 #                        API with the key `b7a.sql.pool.minIdleConnections`.
 public type ConnectionPool record {|
-    int maxOpenConnections = config:getAsInt("b7a.sql.pool.maxOpenConnections", 15);
-    decimal maxConnectionLifeTimeInSeconds = <decimal>config:getAsFloat("b7a.sql.pool.maxConnectionLifeTimeInSeconds",
-        1800.0);
-    int minIdleConnections = config:getAsInt("b7a.sql.pool.minIdleConnections", 15);
+    int maxOpenConnections = maxOpenConnections;
+    decimal maxConnectionLifeTimeInSeconds = maxConnectionLifeTimeInSeconds;
+    int minIdleConnections = minIdleConnections;
 |};
 
 // This is a container object that holds the global pool config and initializes the internal map of connection pools
