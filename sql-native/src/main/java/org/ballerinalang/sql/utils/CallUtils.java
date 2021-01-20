@@ -269,10 +269,16 @@ public class CallUtils {
                             statement.getRowId(paramIndex));
                     break;
                 case Types.TINYINT:
-                case Types.SMALLINT:
                     parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, statement.getInt(paramIndex));
                     break;
+                case Types.SMALLINT:
+                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
+                        Integer.valueOf(statement.getShort(paramIndex)));
+                    break;
                 case Types.INTEGER:
+                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
+                        Long.valueOf(statement.getInt(paramIndex)));
+                    break;
                 case Types.BIGINT:
                     parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, statement.getLong(paramIndex));
                     break;
