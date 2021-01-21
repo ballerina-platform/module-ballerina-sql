@@ -13,11 +13,6 @@ org = "ballerina"
 name = "time"
 version = "@stdlib.time.version@"
 
-[[dependency]]
-org = "ballerina"
-name = "config"
-version = "@stdlib.config.version@"
-
 [[platform.java11.dependency]]
 path = "../sql-native/build/libs/sql-native-@project.version@.jar"
 groupId = "ballerina"
