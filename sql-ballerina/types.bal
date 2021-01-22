@@ -16,7 +16,7 @@
 
 import ballerina/io;
 import ballerina/time;
-import ballerina/java;
+import ballerina/jballerina.java;
 
 # Represents a parameter for the SQL Client remote functions when a variable needs to be passed
 # to the remote function.

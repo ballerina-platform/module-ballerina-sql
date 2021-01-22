@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/java;
+import ballerina/jballerina.java;
 
 final configurable int maxOpenConnections = 15;
 final configurable decimal maxConnectionLifeTimeInSeconds = 1800.0;
