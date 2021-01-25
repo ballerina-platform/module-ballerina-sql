@@ -26,7 +26,6 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
-import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
 import org.ballerinalang.sql.exception.ApplicationError;
 
 import java.io.IOException;
@@ -70,7 +69,7 @@ public class ExecuteUtils {
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 if (paramSQLString instanceof BObject) {
                     setParams(connection, statement, (BObject) paramSQLString);
@@ -130,7 +129,7 @@ public class ExecuteUtils {
                                 "commands. These has to be executed in different function calls");
                     }
                 }
-                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 for (BObject param : parameters) {
                     setParams(connection, statement, param);

@@ -201,105 +201,6 @@ class Utils {
         }
     }
 
-    public static int getOutParameterType(BObject typedValue) throws ApplicationError {
-        String sqlType = typedValue.getType().getName();
-        int sqlTypeValue;
-        switch (sqlType) {
-            case Constants.OutParameterTypes.VARCHAR:
-            case Constants.OutParameterTypes.TEXT:
-                sqlTypeValue = Types.VARCHAR;
-                break;
-            case Constants.OutParameterTypes.CHAR:
-                sqlTypeValue = Types.CHAR;
-                break;
-            case Constants.OutParameterTypes.NCHAR:
-                sqlTypeValue = Types.NCHAR;
-                break;
-            case Constants.OutParameterTypes.NVARCHAR:
-                sqlTypeValue = Types.NVARCHAR;
-                break;
-            case Constants.OutParameterTypes.BIT:
-                sqlTypeValue = Types.BIT;
-                break;
-            case Constants.OutParameterTypes.BOOLEAN:
-                sqlTypeValue = Types.BOOLEAN;
-                break;
-            case Constants.OutParameterTypes.INTEGER:
-                sqlTypeValue = Types.INTEGER;
-                break;
-            case Constants.OutParameterTypes.BIGINT:
-                sqlTypeValue = Types.BIGINT;
-                break;
-            case Constants.OutParameterTypes.SMALLINT:
-                sqlTypeValue = Types.SMALLINT;
-                break;
-            case Constants.OutParameterTypes.FLOAT:
-                sqlTypeValue = Types.FLOAT;
-                break;
-            case Constants.OutParameterTypes.REAL:
-                sqlTypeValue = Types.REAL;
-                break;
-            case Constants.OutParameterTypes.DOUBLE:
-                sqlTypeValue = Types.DOUBLE;
-                break;
-            case Constants.OutParameterTypes.NUMERIC:
-                sqlTypeValue = Types.NUMERIC;
-                break;
-            case Constants.OutParameterTypes.DECIMAL:
-                sqlTypeValue = Types.DECIMAL;
-                break;
-            case Constants.OutParameterTypes.BINARY:
-                sqlTypeValue = Types.BINARY;
-                break;
-            case Constants.OutParameterTypes.VARBINARY:
-                sqlTypeValue = Types.VARBINARY;
-                break;
-            case Constants.OutParameterTypes.BLOB:
-                if (typedValue instanceof BArray) {
-                    sqlTypeValue = Types.VARBINARY;
-                } else {
-                    sqlTypeValue = Types.LONGVARBINARY;
-                }
-                break;
-            case Constants.OutParameterTypes.CLOB:
-            case Constants.OutParameterTypes.NCLOB:
-                if (typedValue instanceof BString) {
-                    sqlTypeValue = Types.CLOB;
-                } else {
-                    sqlTypeValue = Types.LONGVARCHAR;
-                }
-                break;
-            case Constants.OutParameterTypes.DATE:
-                sqlTypeValue = Types.DATE;
-                break;
-            case Constants.OutParameterTypes.TIME:
-                sqlTypeValue = Types.TIME;
-                break;
-            case Constants.OutParameterTypes.TIMESTAMP:
-            case Constants.OutParameterTypes.DATETIME:
-                sqlTypeValue = Types.TIMESTAMP;
-                break;
-            case Constants.OutParameterTypes.ARRAY:
-                sqlTypeValue = Types.ARRAY;
-                break;
-            case Constants.OutParameterTypes.REF:
-                sqlTypeValue = Types.REF;
-                break;
-            case Constants.OutParameterTypes.STRUCT:
-                sqlTypeValue = Types.STRUCT;
-                break;
-            case Constants.OutParameterTypes.ROW:
-                sqlTypeValue = Types.ROWID;
-                break;
-            case Constants.OutParameterTypes.XML:
-                sqlTypeValue = Types.SQLXML;
-                break;
-            default:
-                throw new ApplicationError("Unsupported OutParameter type: " + sqlType);
-        }
-        return sqlTypeValue;
-    }
-
     private static int getSQLType(BObject typedValue) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
@@ -1281,7 +1182,7 @@ class Utils {
         }
     }
 
-    static Type validFieldConstraint(int sqlType, Type type) {
+    private static Type validFieldConstraint(int sqlType, Type type) {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
@@ -1599,5 +1500,4 @@ class Utils {
                 ModuleUtils.getModule(), EXECUTION_RESULT_RECORD, resultFields);
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
     }
-
 }

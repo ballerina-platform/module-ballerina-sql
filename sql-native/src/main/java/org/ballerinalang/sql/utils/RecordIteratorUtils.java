@@ -61,7 +61,8 @@ import static org.ballerinalang.sql.utils.Utils.getString;
  * @since 1.2.0
  */
 public class RecordIteratorUtils {
-    private static Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
+    private static final Calendar calendar = Calendar
+            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nextResult(BObject recordIterator) {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
