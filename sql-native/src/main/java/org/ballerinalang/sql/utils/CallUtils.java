@@ -30,7 +30,6 @@ import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
-import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
 import org.ballerinalang.sql.exception.ApplicationError;
 
 import java.io.IOException;
@@ -59,7 +58,6 @@ import static org.ballerinalang.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
 import static org.ballerinalang.sql.utils.Utils.getDefaultRecordType;
-import static org.ballerinalang.sql.utils.Utils.getOutParameterType;
 import static org.ballerinalang.sql.utils.Utils.setSQLValueParam;
 import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResult;
 
@@ -67,8 +65,8 @@ import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResu
  * This class holds the utility methods involved with executing the call statements.
  */
 public class CallUtils {
-    private static final Calendar calendar = Calendar.getInstance(
-            TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
+    private static final Calendar calendar = Calendar
+            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
@@ -85,7 +83,7 @@ public class CallUtils {
                 } else {
                     sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
@@ -138,7 +136,7 @@ public class CallUtils {
         }
     }
 
-    static void setCallParameters(Connection connection, CallableStatement statement,
+    private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
@@ -184,7 +182,7 @@ public class CallUtils {
         }
     }
 
-    static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
+    private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                       HashMap<Integer, Integer> outputParamTypes)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
@@ -317,4 +315,102 @@ public class CallUtils {
         }
     }
 
+    private static int getOutParameterType(BObject typedValue) throws ApplicationError {
+        String sqlType = typedValue.getType().getName();
+        int sqlTypeValue;
+        switch (sqlType) {
+        case Constants.OutParameterTypes.VARCHAR:
+        case Constants.OutParameterTypes.TEXT:
+            sqlTypeValue = Types.VARCHAR;
+            break;
+        case Constants.OutParameterTypes.CHAR:
+            sqlTypeValue = Types.CHAR;
+            break;
+        case Constants.OutParameterTypes.NCHAR:
+            sqlTypeValue = Types.NCHAR;
+            break;
+        case Constants.OutParameterTypes.NVARCHAR:
+            sqlTypeValue = Types.NVARCHAR;
+            break;
+        case Constants.OutParameterTypes.BIT:
+            sqlTypeValue = Types.BIT;
+            break;
+        case Constants.OutParameterTypes.BOOLEAN:
+            sqlTypeValue = Types.BOOLEAN;
+            break;
+        case Constants.OutParameterTypes.INTEGER:
+            sqlTypeValue = Types.INTEGER;
+            break;
+        case Constants.OutParameterTypes.BIGINT:
+            sqlTypeValue = Types.BIGINT;
+            break;
+        case Constants.OutParameterTypes.SMALLINT:
+            sqlTypeValue = Types.SMALLINT;
+            break;
+        case Constants.OutParameterTypes.FLOAT:
+            sqlTypeValue = Types.FLOAT;
+            break;
+        case Constants.OutParameterTypes.REAL:
+            sqlTypeValue = Types.REAL;
+            break;
+        case Constants.OutParameterTypes.DOUBLE:
+            sqlTypeValue = Types.DOUBLE;
+            break;
+        case Constants.OutParameterTypes.NUMERIC:
+            sqlTypeValue = Types.NUMERIC;
+            break;
+        case Constants.OutParameterTypes.DECIMAL:
+            sqlTypeValue = Types.DECIMAL;
+            break;
+        case Constants.OutParameterTypes.BINARY:
+            sqlTypeValue = Types.BINARY;
+            break;
+        case Constants.OutParameterTypes.VARBINARY:
+            sqlTypeValue = Types.VARBINARY;
+            break;
+        case Constants.OutParameterTypes.BLOB:
+            if (typedValue instanceof BArray) {
+                sqlTypeValue = Types.VARBINARY;
+            } else {
+                sqlTypeValue = Types.LONGVARBINARY;
+            }
+            break;
+        case Constants.OutParameterTypes.CLOB:
+        case Constants.OutParameterTypes.NCLOB:
+            if (typedValue instanceof BString) {
+                sqlTypeValue = Types.CLOB;
+            } else {
+                sqlTypeValue = Types.LONGVARCHAR;
+            }
+            break;
+        case Constants.OutParameterTypes.DATE:
+            sqlTypeValue = Types.DATE;
+            break;
+        case Constants.OutParameterTypes.TIME:
+            sqlTypeValue = Types.TIME;
+            break;
+        case Constants.OutParameterTypes.TIMESTAMP:
+        case Constants.OutParameterTypes.DATETIME:
+            sqlTypeValue = Types.TIMESTAMP;
+            break;
+        case Constants.OutParameterTypes.ARRAY:
+            sqlTypeValue = Types.ARRAY;
+            break;
+        case Constants.OutParameterTypes.REF:
+            sqlTypeValue = Types.REF;
+            break;
+        case Constants.OutParameterTypes.STRUCT:
+            sqlTypeValue = Types.STRUCT;
+            break;
+        case Constants.OutParameterTypes.ROW:
+            sqlTypeValue = Types.ROWID;
+            break;
+        case Constants.OutParameterTypes.XML:
+            sqlTypeValue = Types.SQLXML;
+            break;
+        default:
+            throw new ApplicationError("Unsupported OutParameter type: " + sqlType);
+        }
+        return sqlTypeValue;
+    }
 }

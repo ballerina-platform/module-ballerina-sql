@@ -25,7 +25,6 @@ import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 
-import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -38,20 +37,9 @@ public class ClientUtils {
     private ClientUtils() {
     }
 
-    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
-        try {
-            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
-            client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
-            client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
-            return null;
-        } catch (BError errorValue) {
-            return errorValue;
-        }
-    }
-
     public static Object createSqlClient(BObject client, BMap<BString, Object> sqlDatasourceParams,
                                          BMap<BString, Object> globalConnectionPool) {
-        return createClient(client, createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
+        return createClient(client, SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
     }
 
     public static Object close(BObject client) {
@@ -65,32 +53,14 @@ public class ClientUtils {
         return null;
     }
 
-    private static SQLDatasource.SQLDatasourceParams createSQLDatasourceParams
-            (BMap<BString, Object> sqlDatasourceParams, BMap<BString, Object> globalConnectionPool) {
-        BMap<BString, Object> connPoolProps = (BMap<BString, Object>) sqlDatasourceParams
-                .getMapValue(Constants.SQLParamsFields.CONNECTION_POOL_OPTIONS);
-        Properties poolProperties = null;
-        if (connPoolProps != null) {
-            poolProperties = new Properties();
-            for (BString key : connPoolProps.getKeys()) {
-                poolProperties.setProperty(key.getValue(), connPoolProps.getStringValue(key).getValue());
-            }
+    private static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
+        try {
+            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
+            client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
+            client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
+            return null;
+        } catch (BError errorValue) {
+            return errorValue;
         }
-        BString userVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.USER);
-        String user = userVal == null ? null : userVal.getValue();
-        BString passwordVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.PASSWORD);
-        String password = passwordVal == null ? null : passwordVal.getValue();
-        BString dataSourceNamVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.DATASOURCE_NAME);
-        String datasourceName = dataSourceNamVal == null ? null : dataSourceNamVal.getValue();
-        return new SQLDatasource.SQLDatasourceParams()
-                .setUrl(sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.URL).getValue())
-                .setUser(user)
-                .setPassword(password)
-                .setDatasourceName(datasourceName)
-                .setOptions(sqlDatasourceParams.getMapValue(Constants.SQLParamsFields.OPTIONS))
-                .setConnectionPool(sqlDatasourceParams.getMapValue(Constants.SQLParamsFields.CONNECTION_POOL),
-                        globalConnectionPool)
-                .setPoolProperties(poolProperties);
     }
-
 }

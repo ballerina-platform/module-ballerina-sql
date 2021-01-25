@@ -19,7 +19,7 @@ package org.ballerinalang.sql.utils;
 
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
+import org.ballerinalang.sql.datasource.SQLDatasource;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionPoolUtils {
 
     public static void initGlobalPoolContainer(BMap<BString, Object> poolConfig) {
-        SQLDatasourceUtils.putDatasourceContainer(poolConfig, new ConcurrentHashMap<>());
+        SQLDatasource.putDatasourceContainer(poolConfig, new ConcurrentHashMap<>());
     }
 }

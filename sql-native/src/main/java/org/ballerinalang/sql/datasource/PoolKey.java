@@ -31,8 +31,8 @@ import java.util.Map;
  * @since 1.2.0
  */
 public class PoolKey {
-    private String jdbcUrl;
-    private BMap<BString, ?> options;
+    private final String jdbcUrl;
+    private final BMap<BString, ?> options;
 
     public PoolKey(String jdbcUrl, BMap<BString, ?> options) {
         this.jdbcUrl = jdbcUrl;
