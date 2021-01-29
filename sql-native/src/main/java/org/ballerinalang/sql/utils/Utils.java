@@ -136,7 +136,7 @@ public class Utils {
     }
 
 
-    private static ApplicationError throwInvalidParameterError(Object value, String sqlType) {
+    public static ApplicationError throwInvalidParameterError(Object value, String sqlType) {
         String valueName;
         if (value instanceof BValue) {
             valueName = ((BValue) value).getType().getName();
@@ -378,5 +378,224 @@ public class Utils {
         BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
                 ModuleUtils.getModule(), EXECUTION_RESULT_RECORD, resultFields);
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
+    }
+
+    public static void validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName)
+            throws ApplicationError {
+        if (!isValidFieldConstraint(sqlType, type)) {
+            throw new ApplicationError(sqlTypeName + " field cannot be converted to ballerina type : "
+                    + type.getName());
+        }
+    }
+
+    private static Type validFieldConstraint(int sqlType, Type type) {
+        if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            UnionType bUnionType = (UnionType) type;
+            for (Type memberType : bUnionType.getMemberTypes()) {
+                //In case if the member type is another union type, check recursively.
+                if (isValidFieldConstraint(sqlType, memberType)) {
+                    return memberType;
+                }
+            }
+        } else {
+            if (isValidPrimitiveConstraint(sqlType, type)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    public static List<ColumnDefinition> getColumnDefinitions(ResultSet resultSet, StructureType streamConstraint)
+            throws SQLException, ApplicationError {
+        List<ColumnDefinition> columnDefs = new ArrayList<>();
+        Set<String> columnNames = new HashSet<>();
+        ResultSetMetaData rsMetaData = resultSet.getMetaData();
+        int cols = rsMetaData.getColumnCount();
+        for (int i = 1; i <= cols; i++) {
+            String colName = rsMetaData.getColumnLabel(i);
+            if (columnNames.contains(colName)) {
+                String tableName = rsMetaData.getTableName(i).toUpperCase(Locale.getDefault());
+                colName = tableName + "." + colName;
+            }
+            int sqlType = rsMetaData.getColumnType(i);
+            String sqlTypeName = rsMetaData.getColumnTypeName(i);
+            boolean isNullable = true;
+            if (rsMetaData.isNullable(i) == ResultSetMetaData.columnNoNulls) {
+                isNullable = false;
+            }
+            columnDefs.add(generateColumnDefinition(colName, sqlType, sqlTypeName, streamConstraint, isNullable));
+            columnNames.add(colName);
+        }
+        return columnDefs;
+    }
+
+    private static ColumnDefinition generateColumnDefinition(String columnName, int sqlType, String sqlTypeName,
+                                                             StructureType streamConstraint, boolean isNullable)
+            throws ApplicationError {
+        String ballerinaFieldName = null;
+        Type ballerinaType = null;
+        if (streamConstraint != null) {
+            for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
+                if (field.getKey().equalsIgnoreCase(columnName)) {
+                    ballerinaFieldName = field.getKey();
+                    ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
+                    if (ballerinaType == null) {
+                        throw new ApplicationError(
+                                field.getValue().getFieldType().getName() + " cannot be mapped to SQL type '"
+                                        + sqlTypeName + "'");
+                    }
+                    break;
+                }
+            }
+            if (ballerinaFieldName == null) {
+                throw new ApplicationError("No mapping field found for SQL table column '" + columnName + "'"
+                        + " in the record type '" + streamConstraint.getName() + "'");
+            }
+        } else {
+            ballerinaType = getDefaultBallerinaType(sqlType);
+            ballerinaFieldName = columnName;
+        }
+        return new ColumnDefinition(columnName, ballerinaFieldName, sqlType, sqlTypeName, ballerinaType, isNullable);
+
+    }
+
+    private static boolean isValidFieldConstraint(int sqlType, Type type) {
+        if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            UnionType bUnionType = (UnionType) type;
+            for (Type memberType : bUnionType.getMemberTypes()) {
+                //In case if the member type is another union type, check recursively.
+                if (isValidFieldConstraint(sqlType, memberType)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return isValidPrimitiveConstraint(sqlType, type);
+        }
+    }
+
+    private static Type getDefaultBallerinaType(int sqlType) {
+        switch (sqlType) {
+            case Types.ARRAY:
+                return TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA);
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+            case Types.NCHAR:
+            case Types.NVARCHAR:
+            case Types.LONGNVARCHAR:
+            case Types.CLOB:
+            case Types.NCLOB:
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+            case Types.TIME_WITH_TIMEZONE:
+                return PredefinedTypes.TYPE_STRING;
+            case Types.TINYINT:
+            case Types.SMALLINT:
+            case Types.INTEGER:
+            case Types.BIGINT:
+                return PredefinedTypes.TYPE_INT;
+            case Types.BIT:
+            case Types.BOOLEAN:
+                return PredefinedTypes.TYPE_BOOLEAN;
+            case Types.NUMERIC:
+            case Types.DECIMAL:
+                return PredefinedTypes.TYPE_DECIMAL;
+            case Types.REAL:
+            case Types.FLOAT:
+            case Types.DOUBLE:
+                return PredefinedTypes.TYPE_FLOAT;
+            case Types.BLOB:
+            case Types.BINARY:
+            case Types.VARBINARY:
+            case Types.LONGVARBINARY:
+            case Types.ROWID:
+                return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
+            case Types.REF:
+            case Types.STRUCT:
+                return getDefaultStreamConstraint();
+            case Types.SQLXML:
+                return PredefinedTypes.TYPE_XML;
+            default:
+                return PredefinedTypes.TYPE_ANYDATA;
+        }
+    }
+
+    private static boolean isValidPrimitiveConstraint(int sqlType, Type type) {
+        switch (sqlType) {
+            case Types.ARRAY:
+                return type.getTag() == TypeTags.ARRAY_TAG;
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+            case Types.NCHAR:
+            case Types.NVARCHAR:
+            case Types.LONGNVARCHAR:
+            case Types.CLOB:
+            case Types.NCLOB:
+                return type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.JSON_TAG;
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+            case Types.TIME_WITH_TIMEZONE:
+                return type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
+                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
+                        type.getTag() == TypeTags.INT_TAG;
+            case Types.TINYINT:
+            case Types.SMALLINT:
+            case Types.INTEGER:
+            case Types.BIGINT:
+                return type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
+            case Types.BIT:
+            case Types.BOOLEAN:
+                return type.getTag() == TypeTags.BOOLEAN_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
+            case Types.NUMERIC:
+            case Types.DECIMAL:
+                return type.getTag() == TypeTags.DECIMAL_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
+            case Types.REAL:
+            case Types.FLOAT:
+            case Types.DOUBLE:
+                return type.getTag() == TypeTags.FLOAT_TAG ||
+                        type.getTag() == TypeTags.STRING_TAG;
+            case Types.BLOB:
+            case Types.BINARY:
+            case Types.VARBINARY:
+            case Types.LONGVARBINARY:
+            case Types.ROWID:
+                if (type.getTag() == TypeTags.ARRAY_TAG) {
+                    int elementTypeTag = ((ArrayType) type).getElementType().getTag();
+                    return elementTypeTag == TypeTags.BYTE_TAG;
+                }
+                return type.getTag() == TypeTags.STRING_TAG || type.getTag() == TypeTags.BYTE_ARRAY_TAG;
+            case Types.REF:
+            case Types.STRUCT:
+                return type.getTag() == TypeTags.RECORD_TYPE_TAG;
+            case Types.SQLXML:
+                return type.getTag() == TypeTags.XML_TAG;
+            default:
+                //If user is passing the intended type variable for the sql types, then it will use
+                // those types to resolve the result.
+                return type.getTag() == TypeTags.ANY_TAG ||
+                        type.getTag() == TypeTags.ANYDATA_TAG ||
+                        (type.getTag() == TypeTags.ARRAY_TAG &&
+                                ((ArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG) ||
+                        type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.INT_TAG ||
+                        type.getTag() == TypeTags.BOOLEAN_TAG ||
+                        type.getTag() == TypeTags.XML_TAG ||
+                        type.getTag() == TypeTags.FLOAT_TAG ||
+                        type.getTag() == TypeTags.DECIMAL_TAG ||
+                        type.getTag() == TypeTags.JSON_TAG;
+        }
     }
 }
