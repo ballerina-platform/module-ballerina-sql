@@ -17,7 +17,7 @@
  */
 
 module io.ballerina.stdlib.sql {
-    requires transitivejava.sql;
+    requires transitive java.sql;
     requires com.zaxxer.hikari;
     requires io.ballerina.runtime;
     requires io.ballerina.lang;
