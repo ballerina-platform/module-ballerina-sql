@@ -98,13 +98,7 @@ import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
  */
 public class Utils {
 
-    // private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
-    // private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
-    // private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    // private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
-    // private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
-
-    private static void closeResources(TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,
+    public static void closeResources(TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,
                                Connection connection) {
         if (resultSet != null) {
             try {
@@ -129,7 +123,7 @@ public class Utils {
         }
     }
 
-    private static String getSqlQuery(BObject paramString) {
+    public static String getSqlQuery(BObject paramString) {
         BArray stringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
         StringBuilder sqlQuery = new StringBuilder();
         for (int i = 0; i < stringsArray.size(); i++) {
@@ -155,7 +149,7 @@ public class Utils {
 
 
     
-    private static String getString(Clob data) throws IOException, SQLException {
+    public static String getString(Clob data) throws IOException, SQLException {
         if (data == null) {
             return null;
         }
@@ -169,45 +163,11 @@ public class Utils {
         }
     }
 
-    
-    private static BArray createEmptyBBRefValueArray(Type type) {
-        List<Type> memberTypes = new ArrayList<>(2);
-        memberTypes.add(type);
-        memberTypes.add(PredefinedTypes.TYPE_NULL);
-        UnionType unionType = TypeCreator.createUnionType(memberTypes);
-        return ValueCreator.createArrayValue(TypeCreator.createArrayType(unionType));
-    }
-
-    private static Object[] validateNullable(Object[] objects) {
-        Object[] returnResult = new Object[2];
-        boolean foundNull = false;
-        Object nonNullObject = null;
-        for (Object object : objects) {
-            if (object != null) {
-                if (nonNullObject == null) {
-                    nonNullObject = object;
-                }
-                if (foundNull) {
-                    break;
-                }
-            } else {
-                foundNull = true;
-                if (nonNullObject != null) {
-                    break;
-                }
-            }
-        }
-        returnResult[0] = nonNullObject;
-        returnResult[1] = foundNull;
-        return returnResult;
-    }
-
-
     private static BMap<BString, Object> createTimeStruct(long millis) {
         return TimeUtils.createTimeRecord(millis, Constants.TIMEZONE_UTC);
     }
 
-    private static String getString(java.util.Date value) {
+    public static String getString(java.util.Date value) {
         if (value == null) {
             return null;
         }
@@ -311,125 +271,7 @@ public class Utils {
         dateString.append(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    protected validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName)
-            throws ApplicationError {
-        if (!isValidFieldConstraint(sqlType, type)) {
-            throw new ApplicationError(sqlTypeName + " field cannot be converted to ballerina type : "
-                    + type.getName());
-        }
-    }
-
-
-    protected Type validFieldConstraint(int sqlType, Type type) {
-        if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
-            UnionType bUnionType = (UnionType) type;
-            for (Type memberType : bUnionType.getMemberTypes()) {
-                //In case if the member type is another union type, check recursively.
-                if (isValidFieldConstraint(sqlType, memberType)) {
-                    return memberType;
-                }
-            }
-        } else {
-            if (isValidPrimitiveConstraint(sqlType, type)) {
-                return type;
-            }
-        }
-        return null;
-    }
-
-
-    protected boolean isValidFieldConstraint(int sqlType, Type type) {
-        if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
-            UnionType bUnionType = (UnionType) type;
-            for (Type memberType : bUnionType.getMemberTypes()) {
-                //In case if the member type is another union type, check recursively.
-                if (isValidFieldConstraint(sqlType, memberType)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return isValidPrimitiveConstraint(sqlType, type);
-        }
-    }
-
-    protected boolean isValidPrimitiveConstraint(int sqlType, Type type) {
-        switch (sqlType) {
-            case Types.ARRAY:
-                return type.getTag() == TypeTags.ARRAY_TAG;
-            case Types.CHAR:
-            case Types.VARCHAR:
-            case Types.LONGVARCHAR:
-            case Types.NCHAR:
-            case Types.NVARCHAR:
-            case Types.LONGNVARCHAR:
-            case Types.CLOB:
-            case Types.NCLOB:
-                return type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.JSON_TAG;
-            case Types.DATE:
-            case Types.TIME:
-            case Types.TIMESTAMP:
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-            case Types.TIME_WITH_TIMEZONE:
-                return type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
-                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
-                        type.getTag() == TypeTags.INT_TAG;
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-            case Types.BIGINT:
-                return type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
-            case Types.BIT:
-            case Types.BOOLEAN:
-                return type.getTag() == TypeTags.BOOLEAN_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
-            case Types.NUMERIC:
-            case Types.DECIMAL:
-                return type.getTag() == TypeTags.DECIMAL_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
-            case Types.REAL:
-            case Types.FLOAT:
-            case Types.DOUBLE:
-                return type.getTag() == TypeTags.FLOAT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
-            case Types.BLOB:
-            case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-            case Types.ROWID:
-                if (type.getTag() == TypeTags.ARRAY_TAG) {
-                    int elementTypeTag = ((ArrayType) type).getElementType().getTag();
-                    return elementTypeTag == TypeTags.BYTE_TAG;
-                }
-                return type.getTag() == TypeTags.STRING_TAG || type.getTag() == TypeTags.BYTE_ARRAY_TAG;
-            case Types.REF:
-            case Types.STRUCT:
-                return type.getTag() == TypeTags.RECORD_TYPE_TAG;
-            case Types.SQLXML:
-                return type.getTag() == TypeTags.XML_TAG;
-            default:
-                //If user is passing the intended type variable for the sql types, then it will use
-                // those types to resolve the result.
-                return type.getTag() == TypeTags.ANY_TAG ||
-                        type.getTag() == TypeTags.ANYDATA_TAG ||
-                        (type.getTag() == TypeTags.ARRAY_TAG &&
-                                ((ArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG) ||
-                        type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.BOOLEAN_TAG ||
-                        type.getTag() == TypeTags.XML_TAG ||
-                        type.getTag() == TypeTags.FLOAT_TAG ||
-                        type.getTag() == TypeTags.DECIMAL_TAG ||
-                        type.getTag() == TypeTags.JSON_TAG;
-        }
-    }
-
-    private static Object getGeneratedKeys(ResultSet rs) throws SQLException {
+    public static Object getGeneratedKeys(ResultSet rs) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
         if (columnCount > 0) {
@@ -449,7 +291,8 @@ public class Utils {
         return null;
     }
 
-    private static BObject createRecordIterator(ResultSet resultSet,
+    //need to be changed according to recorditeratorutils class
+    public static BObject createRecordIterator(ResultSet resultSet,
                                                Statement statement,
                                                Connection connection, List<ColumnDefinition> columnDefinitions,
                                                StructureType streamConstraint) {
@@ -463,7 +306,7 @@ public class Utils {
         return resultIterator;
     }
 
-    private static StructureType getDefaultRecordType(List<ColumnDefinition> columnDefinitions) {
+    public static StructureType getDefaultRecordType(List<ColumnDefinition> columnDefinitions) {
         RecordType defaultRecord = getDefaultStreamConstraint();
         Map<String, Field> fieldMap = new HashMap<>();
         for (ColumnDefinition column : columnDefinitions) {
@@ -480,7 +323,7 @@ public class Utils {
         return defaultRecord;
     }
 
-    private static RecordType getDefaultStreamConstraint() {
+    public static RecordType getDefaultStreamConstraint() {
         Module ballerinaAnnotation = new Module("ballerina", "lang.annotations", "0.0.0");
         return TypeCreator.createRecordType(
                 "$stream$anon$constraint$", ballerinaAnnotation, 0,
@@ -488,110 +331,7 @@ public class Utils {
                 TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
     }
 
-    protected List<ColumnDefinition> getColumnDefinitions(ResultSet resultSet, StructureType streamConstraint)
-            throws SQLException, ApplicationError {
-        List<ColumnDefinition> columnDefs = new ArrayList<>();
-        Set<String> columnNames = new HashSet<>();
-        ResultSetMetaData rsMetaData = resultSet.getMetaData();
-        int cols = rsMetaData.getColumnCount();
-        for (int i = 1; i <= cols; i++) {
-            String colName = rsMetaData.getColumnLabel(i);
-            if (columnNames.contains(colName)) {
-                String tableName = rsMetaData.getTableName(i).toUpperCase(Locale.getDefault());
-                colName = tableName + "." + colName;
-            }
-            int sqlType = rsMetaData.getColumnType(i);
-            String sqlTypeName = rsMetaData.getColumnTypeName(i);
-            boolean isNullable = true;
-            if (rsMetaData.isNullable(i) == ResultSetMetaData.columnNoNulls) {
-                isNullable = false;
-            }
-            columnDefs.add(generateColumnDefinition(colName, sqlType, sqlTypeName, streamConstraint, isNullable));
-            columnNames.add(colName);
-        }
-        return columnDefs;
-    }
-
-    protected ColumnDefinition generateColumnDefinition(String columnName, int sqlType, String sqlTypeName,
-                                                             StructureType streamConstraint, boolean isNullable)
-            throws ApplicationError {
-        String ballerinaFieldName = null;
-        Type ballerinaType = null;
-        if (streamConstraint != null) {
-            for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
-                if (field.getKey().equalsIgnoreCase(columnName)) {
-                    ballerinaFieldName = field.getKey();
-                    ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
-                    if (ballerinaType == null) {
-                        throw new ApplicationError(
-                                field.getValue().getFieldType().getName() + " cannot be mapped to SQL type '"
-                                        + sqlTypeName + "'");
-                    }
-                    break;
-                }
-            }
-            if (ballerinaFieldName == null) {
-                throw new ApplicationError("No mapping field found for SQL table column '" + columnName + "'"
-                        + " in the record type '" + streamConstraint.getName() + "'");
-            }
-        } else {
-            ballerinaType = getDefaultBallerinaType(sqlType);
-            ballerinaFieldName = columnName;
-        }
-        return new ColumnDefinition(columnName, ballerinaFieldName, sqlType, sqlTypeName, ballerinaType, isNullable);
-
-    }
-
-    protected Type getDefaultBallerinaType(int sqlType) {
-        switch (sqlType) {
-            case Types.ARRAY:
-                return TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA);
-            case Types.CHAR:
-            case Types.VARCHAR:
-            case Types.LONGVARCHAR:
-            case Types.NCHAR:
-            case Types.NVARCHAR:
-            case Types.LONGNVARCHAR:
-            case Types.CLOB:
-            case Types.NCLOB:
-            case Types.DATE:
-            case Types.TIME:
-            case Types.TIMESTAMP:
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-            case Types.TIME_WITH_TIMEZONE:
-                return PredefinedTypes.TYPE_STRING;
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-            case Types.BIGINT:
-                return PredefinedTypes.TYPE_INT;
-            case Types.BIT:
-            case Types.BOOLEAN:
-                return PredefinedTypes.TYPE_BOOLEAN;
-            case Types.NUMERIC:
-            case Types.DECIMAL:
-                return PredefinedTypes.TYPE_DECIMAL;
-            case Types.REAL:
-            case Types.FLOAT:
-            case Types.DOUBLE:
-                return PredefinedTypes.TYPE_FLOAT;
-            case Types.BLOB:
-            case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-            case Types.ROWID:
-                return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
-            case Types.REF:
-            case Types.STRUCT:
-                return getDefaultStreamConstraint();
-            case Types.SQLXML:
-                return PredefinedTypes.TYPE_XML;
-            default:
-                return PredefinedTypes.TYPE_ANYDATA;
-        }
-    }
-
-    private static Object cleanUpConnection(BObject ballerinaObject, ResultSet resultSet,
+    public static Object cleanUpConnection(BObject ballerinaObject, ResultSet resultSet,
                                            Statement statement, Connection connection) {
         if (resultSet != null) {
             try {
@@ -624,7 +364,7 @@ public class Utils {
         return null;
     }
 
-    private static void updateProcedureCallExecutionResult(CallableStatement statement, BObject procedureCallResult)
+    public static void updateProcedureCallExecutionResult(CallableStatement statement, BObject procedureCallResult)
             throws SQLException {
         Object lastInsertedId = null;
         int count = statement.getUpdateCount();
