@@ -43,7 +43,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 
-// import static org.ballerinalang.sql.parameterprocessor.convert;
+
 import static org.ballerinalang.sql.utils.Utils.getString;
 
 /**
