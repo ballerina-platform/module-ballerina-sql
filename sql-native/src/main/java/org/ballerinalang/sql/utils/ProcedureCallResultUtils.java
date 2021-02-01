@@ -41,10 +41,10 @@ import static org.ballerinalang.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD
 import static org.ballerinalang.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
-import static org.ballerinalang.sql.utils.Utils.createRecordIterator;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
 import static org.ballerinalang.sql.utils.Utils.getDefaultRecordType;
 import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResult;
+
 
 /**
  * This class provides functionality for the `ProcedureCallResult` to iterate through the sql result sets.
@@ -52,6 +52,11 @@ import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResu
 public class ProcedureCallResultUtils {
 
     public static Object getNextQueryResult(BObject procedureCallResult) {
+        ResultParameterProcessor resultParameterProcessor = ResultParameterProcessor.getInstance();
+        return getNextQueryResult(procedureCallResult, resultParameterProcessor);
+    }
+
+    public static Object getNextQueryResult(BObject procedureCallResult, ResultParameterProcessor resultParameterProcessor) {
         CallableStatement statement = (CallableStatement) procedureCallResult
                 .getNativeData(STATEMENT_NATIVE_DATA_FIELD);
         ResultSet resultSet;
@@ -82,7 +87,7 @@ public class ProcedureCallResultUtils {
                 }
                 BStream streamValue = ValueCreator.createStreamValue(
                         TypeCreator.createStreamType(streamConstraint),
-                        createRecordIterator(resultSet, null, null, columnDefinitions, streamConstraint));
+                        resultParameterProcessor.createRecordIterator(resultSet, null, null, columnDefinitions, streamConstraint));
                 procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 procedureCallResult.set(EXECUTION_RESULT_FIELD, null);
             } else {
