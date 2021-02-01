@@ -22,8 +22,6 @@ plugins {
     id "net.researchgate.release" version "${researchgateReleaseVersion}"
 }
 
-ext.ballerinaLangVersion = project.ballerinaLangVersion
-
 allprojects {
     group = project.group
     version = project.version
