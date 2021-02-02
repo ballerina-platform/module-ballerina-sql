@@ -26,12 +26,18 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           ./gradlew publish
-      - name: Archive Error log
+      - name: Archive Error Log
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: Ballerina Internal Log
           path: sql-ballerina/ballerina-internal.log
+          if-no-files-found: ignore
+      - name: Archive Code Coverage JSON
+        uses: actions/upload-artifact@v2
+        with:
+          name: Code Coverage JSON
+          path: sql-ballerina/target/report/test_results.json
           if-no-files-found: ignore
       - name: Dispatch Dependent Module Builds
         if: github.event.action != 'stdlib-publish-snapshot'
