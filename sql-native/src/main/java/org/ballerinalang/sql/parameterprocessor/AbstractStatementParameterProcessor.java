@@ -36,68 +36,62 @@ abstract class AbstractStatementParameterProcessor {
     protected abstract int getCustomOutParameterType(BObject typedValue) throws ApplicationError;
     protected abstract int getCustomSQLType(BObject typedValue) throws ApplicationError;
     protected abstract void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
-                            int index, BObject typedValue)
-            throws SQLException, ApplicationError, IOException;
+            int index, BObject typedValue) throws SQLException, ApplicationError, IOException;
     protected abstract Object[] getCustomArrayData(Object value) throws ApplicationError;
-    protected abstract Object[] getCustomStructData(Object value, Connection conn) 
+    protected abstract Object[] getCustomStructData(Connection conn, Object value) 
             throws SQLException, ApplicationError;
-
-    protected abstract void setVarchar(int index, Object value, PreparedStatement preparedStatement)
+    protected abstract void setVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException;
-    protected abstract void setText(int index, Object value, PreparedStatement preparedStatement) throws SQLException;
-    protected abstract void setChar(int index, Object value, PreparedStatement preparedStatement) throws SQLException;
-    protected abstract void setNChar(int index, Object value, PreparedStatement preparedStatement) throws SQLException;
-    protected abstract void setNVarchar(int index, Object value, PreparedStatement preparedStatement)
+    protected abstract void setText(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+    protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+    protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+    protected abstract void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException;
-    protected abstract void setBit(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setBoolean(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setInteger(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setInteger(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setBigInt(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setSmallInt(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setSmallInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setFloat(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setReal(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setDouble(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setNumeric(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setDecimal(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setBinary(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
-    protected abstract void setVarBinary(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
-    protected abstract void setBlob(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setBlob(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
-    protected abstract void setClob(int index, Object value, PreparedStatement preparedStatement, String sqlType,
-            Connection connection)
+    protected abstract void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
+            int index, Object value) throws SQLException, ApplicationError;
+    protected abstract void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
+            int index, Object value) throws SQLException, ApplicationError;
+    protected abstract void setRow(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setNClob(int index, Object value, PreparedStatement preparedStatement, String sqlType,
-            Connection connection)
+    protected abstract void setStruct(Connection connection, PreparedStatement preparedStatement, int index,
+            Object value) throws SQLException, ApplicationError;
+    protected abstract void setRef(Connection connection, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setRow(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index, 
+            Object value) throws SQLException, ApplicationError;
+    protected abstract void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setStruct(int index, Object value, PreparedStatement preparedStatement,
-            Connection connection)
+    protected abstract void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setRef(int index, Object value, PreparedStatement preparedStatement, Connection connection)
+    protected abstract void setDate(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
-    protected abstract void setArray(int index, Object value, PreparedStatement preparedStatement,
-            Connection connection)
-            throws SQLException, ApplicationError;
-    protected abstract void setDateTime(int index, Object value, PreparedStatement preparedStatement, String sqlType)
-            throws SQLException, ApplicationError;
-    protected abstract void setTimestamp(int index, Object value, PreparedStatement preparedStatement, String sqlType)
-            throws SQLException, ApplicationError;
-    protected abstract void setDate(int index, Object value, PreparedStatement preparedStatement, String sqlType)
-            throws SQLException, ApplicationError;
-    protected abstract void setTime(int index, Object value, PreparedStatement preparedStatement, String sqlType)
+    protected abstract void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
     protected abstract Object[] getIntArrayData(Object value) throws ApplicationError;
     protected abstract Object[] getFloatArrayData(Object value) throws ApplicationError;
@@ -106,10 +100,9 @@ abstract class AbstractStatementParameterProcessor {
     protected abstract Object[] getBooleanArrayData(Object value) throws ApplicationError;
     protected abstract Object[] getNestedArrayData(Object value) throws ApplicationError;
 
-    protected abstract void getRecordStructData(Object bValue, Object[] structData, Connection conn, int i)
+    protected abstract void getRecordStructData(Connection conn, Object[] structData, int i, Object bValue)
             throws SQLException, ApplicationError;
-    protected abstract void getArrayStructData(Field field, Object bValue, Object[] structData, int i,
-            String structuredSQLType)
-            throws SQLException, ApplicationError;
+    protected abstract void getArrayStructData(Field field, Object[] structData, String structuredSQLType, int i,
+            Object bValue) throws SQLException, ApplicationError;
 
 }
