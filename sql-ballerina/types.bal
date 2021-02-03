@@ -378,10 +378,10 @@ class ResultIterator {
             return self.err;
         } else {
             record {}|Error? result;
-            if(self.customResultIterator is CustomResultIterator){
+            if (self.customResultIterator is CustomResultIterator) {
                 result = (<CustomResultIterator>self.customResultIterator).nextResult(self);
             }
-            else{
+            else {
                 result = nextResult(self);
             }
             if (result is record {}) {
@@ -416,7 +416,7 @@ class ResultIterator {
 # The custom result iterator object type that is used as a structure to define custom
 # result iterator classes in connector modules
 # 
-public type CustomResultIterator object{
+public type CustomResultIterator object {
     isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
 };
 
@@ -797,7 +797,7 @@ public class ProcedureCallResult {
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error {
-        if(self.customProcedureCallResult is CustomProcedureCallResult){
+        if (self.customProcedureCallResult is CustomProcedureCallResult) {
             return (<CustomProcedureCallResult>self.customProcedureCallResult).getNextQueryResult(self);
         }
         return getNextQueryResult(self);
