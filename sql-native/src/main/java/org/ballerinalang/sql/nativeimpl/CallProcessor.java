@@ -68,6 +68,8 @@ import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResu
 
 /**
  * This class holds the utility methods involved with executing the call statements.
+ *
+ * @since 0.5.6
  */
 public class CallProcessor {
     private static final Calendar calendar = Calendar
