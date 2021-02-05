@@ -47,7 +47,7 @@ import java.sql.Types;
 import static org.ballerinalang.sql.utils.Utils.getString;
 
 /**
- * class to process InOut/Out parameters of procedure calls.
+ * This class provides the implementation of processing InOut/Out parameters of procedure calls.
  *
  * @since 0.5.6
  */
