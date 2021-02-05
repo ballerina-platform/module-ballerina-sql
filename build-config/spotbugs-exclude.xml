@@ -21,11 +21,15 @@
         <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
     </Match>
     <Match>
-        <class name="org.ballerinalang.sql.utils.QueryUtils"/>
+        <class name="org.ballerinalang.sql.nativeimpl.QueryProcessor"/>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Match>
     <Match>
-        <class name="org.ballerinalang.sql.utils.ExecuteUtils"/>
+        <class name="org.ballerinalang.sql.nativeimpl.QueryProcessor"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
+    </Match>
+    <Match>
+        <class name="org.ballerinalang.sql.nativeimpl.ExecuteProcessor"/>
         <Bug pattern="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH"/>
     </Match>
 </FindBugsFilter>
