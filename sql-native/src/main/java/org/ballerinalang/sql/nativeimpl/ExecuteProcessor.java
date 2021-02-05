@@ -53,6 +53,8 @@ import static org.ballerinalang.sql.utils.Utils.getSqlQuery;
 
 /**
  * This class contains methods for executing SQL queries.
+ *
+ * @since 0.5.6
  */
 public class ExecuteProcessor {
     public static Object nativeExecute(BObject client, Object paramSQLString) {
