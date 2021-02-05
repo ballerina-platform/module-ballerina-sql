@@ -54,7 +54,7 @@ import static org.ballerinalang.sql.utils.Utils.getString;
 public class OutParameterProcessor {
 
     public static Object get(BObject result, BTypedesc typeDesc) {
-        get(result, typeDesc, ResultParameterProcessor.getInstance());
+        return get(result, typeDesc, ResultParameterProcessor.getInstance());
     }
 
     public static Object get(BObject result, BTypedesc typeDesc, ResultParameterProcessor resultParameterProcessor) {
@@ -77,8 +77,10 @@ public class OutParameterProcessor {
                     if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
                         return resultParameterProcessor.convert((String) value, sqlType, ballerinaType);
                     } else {
-                        return resultParameterProcessor.convert(((String) value).getBytes(Charset.defaultCharset()), sqlType, ballerinaType,
-                                JDBCType.valueOf(sqlType).getName());
+                        return resultParameterProcessor.convert(
+                                ((String) value).getBytes(Charset.defaultCharset()), sqlType, ballerinaType,
+                                JDBCType.valueOf(sqlType).getName()
+                        );
                     }
                 case Types.ARRAY:
                     return resultParameterProcessor.convert((Array) value, sqlType, ballerinaType);
@@ -99,7 +101,9 @@ public class OutParameterProcessor {
                 case Types.TIMESTAMP_WITH_TIMEZONE:
                     return resultParameterProcessor.convert((Timestamp) value, sqlType, ballerinaType);
                 case Types.ROWID:
-                    return resultParameterProcessor.convert(((RowId) value).getBytes(), sqlType, ballerinaType, "SQL RowID");
+                    return resultParameterProcessor.convert(
+                            ((RowId) value).getBytes(), sqlType, ballerinaType, "SQL RowID"
+                    );
                 case Types.TINYINT:
                 case Types.SMALLINT:
                     if (value == null) {

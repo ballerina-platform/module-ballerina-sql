@@ -78,7 +78,8 @@ import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
  */
 public class Utils {
 
-    public static void closeResources(TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,
+    public static void closeResources(
+            TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,
                                Connection connection) {
         if (resultSet != null) {
             try {
@@ -143,7 +144,7 @@ public class Utils {
         }
     }
 
-    private static BMap<BString, Object> createTimeStruct(long millis) {
+    public static BMap<BString, Object> createTimeStruct(long millis) {
         return TimeUtils.createTimeRecord(millis, Constants.TIMEZONE_UTC);
     }
 

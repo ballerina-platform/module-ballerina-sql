@@ -53,7 +53,7 @@ public class ClientProcessor {
         return null;
     }
 
-    public static createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
+    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         try {
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
