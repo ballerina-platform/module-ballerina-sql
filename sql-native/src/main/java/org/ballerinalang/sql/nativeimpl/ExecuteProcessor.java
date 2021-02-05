@@ -201,5 +201,3 @@ public class ExecuteProcessor {
         CREATE, ALTER, DROP, TRUNCATE, COMMENT, RENAME
     }
 }
-
-
