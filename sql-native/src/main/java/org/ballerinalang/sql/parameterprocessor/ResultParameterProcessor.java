@@ -65,6 +65,8 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 /**
  * This class implements methods required convert SQL types into ballerina types and
  * other methods that process the parameters of the result.
+ *
+ * @since 0.5.6
  */
 public class ResultParameterProcessor extends AbstractResultParameterProcessor {
     private static final Object lock = new Object();
