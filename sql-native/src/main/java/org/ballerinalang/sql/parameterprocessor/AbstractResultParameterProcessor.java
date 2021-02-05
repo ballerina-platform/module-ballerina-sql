@@ -44,7 +44,6 @@ import java.util.List;
  *
  * @since 0.5.6
  */
- */
 public abstract class AbstractResultParameterProcessor {
 
     protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Object[] dataArray)
