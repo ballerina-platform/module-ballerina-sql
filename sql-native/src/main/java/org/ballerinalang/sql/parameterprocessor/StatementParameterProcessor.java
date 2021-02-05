@@ -62,6 +62,8 @@ import static org.ballerinalang.sql.utils.Utils.throwInvalidParameterError;
 
 /**
  * Represent the Process methods for statements.
+ *
+ * @since 0.5.6
  */
 public class StatementParameterProcessor extends AbstractStatementParameterProcessor {
 
