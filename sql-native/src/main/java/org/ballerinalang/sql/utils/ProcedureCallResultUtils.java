@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -44,7 +45,6 @@ import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
 import static org.ballerinalang.sql.utils.Utils.getColumnDefinitions;
 import static org.ballerinalang.sql.utils.Utils.getDefaultRecordType;
 import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResult;
-
 
 /**
  * This class provides functionality for the `ProcedureCallResult` to iterate through the sql result sets.
