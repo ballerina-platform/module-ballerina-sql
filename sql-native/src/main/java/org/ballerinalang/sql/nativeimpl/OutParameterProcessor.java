@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -24,6 +24,8 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
+import org.ballerinalang.sql.utils.ErrorGenerator;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -41,8 +43,6 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-
-
 
 import static org.ballerinalang.sql.utils.Utils.getString;
 
@@ -139,8 +139,7 @@ public class OutParameterProcessor {
                 case Types.SQLXML:
                     return resultParameterProcessor.convert((SQLXML) value, sqlType, ballerinaType);
                 default:
-                    return resultParameterProcessor.customOutParameter();
-                    // return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
+                    return resultParameterProcessor.getCustomOutParameters(value, sqlType, ballerinaType);
             }
         } catch (ApplicationError | IOException applicationError) {
             return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
