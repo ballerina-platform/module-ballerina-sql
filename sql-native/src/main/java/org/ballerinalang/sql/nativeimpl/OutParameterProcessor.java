@@ -48,6 +48,8 @@ import static org.ballerinalang.sql.utils.Utils.getString;
 
 /**
  * class to process InOut/Out parameters of procedure calls.
+ *
+ * @since 0.5.6
  */
 public class OutParameterProcessor {
 
