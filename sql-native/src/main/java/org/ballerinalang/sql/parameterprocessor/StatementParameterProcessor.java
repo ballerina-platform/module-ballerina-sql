@@ -36,6 +36,7 @@ import org.ballerinalang.stdlib.io.channels.base.Channel;
 import org.ballerinalang.stdlib.io.channels.base.CharacterChannel;
 import org.ballerinalang.stdlib.io.readers.CharacterChannelReader;
 import org.ballerinalang.stdlib.io.utils.IOConstants;
+import org.ballerinalang.stdlib.io.utils.IOUtils;
 import org.ballerinalang.stdlib.time.util.TimeUtils;
 
 import java.io.IOException;
@@ -481,7 +482,7 @@ public class StatementParameterProcessor extends AbstractStatementParameterProce
             BObject objectValue = (BObject) value;
             if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
                     objectValue.getType().getPackage().toString()
-                            .equalsIgnoreCase(IOConstants.IO_PACKAGE_ID.toString())) {
+                        .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                 Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
                 preparedStatement.setBinaryStream(index, byteChannel.getInputStream());
             } else {
@@ -511,7 +512,7 @@ public class StatementParameterProcessor extends AbstractStatementParameterProce
                 BObject objectValue = (BObject) value;
                 if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
                         objectValue.getType().getPackage().toString()
-                                .equalsIgnoreCase(IOConstants.IO_PACKAGE_ID.toString())) {
+                                .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     CharacterChannel charChannel = (CharacterChannel) objectValue.getNativeData(
                             IOConstants.CHARACTER_CHANNEL_NAME);
                     preparedStatement.setCharacterStream(index, new CharacterChannelReader(charChannel));
