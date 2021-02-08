@@ -129,7 +129,7 @@ public class Utils {
     }
 
 
-    
+
     public static String getString(Clob data) throws IOException, SQLException {
         if (data == null) {
             return null;
