@@ -10,7 +10,7 @@ The SQL library is one of the standard library modules of the<a target="_blank" 
 
 It provides the common interface and functionality to interact with a database. The corresponding database clients can be created by using specific database modules such as MySQL or using the Java Database Connectivity module JDBC.
 
-For more information on the operations supported by the `sql:Client`, which include the below, go to [The SQL Module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/sql/).
+For more information on the operations supported by the `sql:Client`, which include the below, go to [The SQL Module](https://ballerina.io/learn/api-docs/ballerina/sql/).
 
 - Pooling connections
 - Querying data
@@ -21,7 +21,7 @@ For more information on the operations supported by the `sql:Client`, which incl
 - Executing stored procedures
 - Closing the client
 
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/mysql-init-options.html).
+For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/mysql-init-options.html).
 
 ## Issues and Projects 
 
