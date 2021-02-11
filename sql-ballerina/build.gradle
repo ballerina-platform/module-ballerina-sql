@@ -62,7 +62,6 @@ task copyToLib(type: Copy) {
 }
 
 task unpackJballerinaTools(type: Copy) {
-    dependsOn(copyToLib)
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
         into new File("${buildDir}/target")
@@ -70,7 +69,6 @@ task unpackJballerinaTools(type: Copy) {
 }
 
 task unpackStdLibs() {
-    dependsOn(unpackJballerinaTools)
     doLast {
         configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             copy {
@@ -82,8 +80,6 @@ task unpackStdLibs() {
 }
 
 task copyStdlibs(type: Copy) {
-    dependsOn(unpackStdLibs)
-
     into distributionPath
     /* Standard Libraries */
     configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -121,11 +117,6 @@ task revertTomlFile {
     }
 }
 
-assemble {
-    dependsOn(copyStdlibs)
-    dependsOn(":${packageName}-native:build")
-}
-
 def groupParams = ""
 def disableGroups = ""
 def debugParams = ""
@@ -147,7 +138,7 @@ task initializeVariables {
     }
 
     gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(':${packageName}-ballerina:build') || graph.hasTask(':${packageName}-ballerina:publish')) {
+        if (graph.hasTask(":${packageName}-ballerina:build") || graph.hasTask(":${packageName}-ballerina:publish")) {
             ballerinaTest.enabled = false
         }
 
@@ -166,11 +157,6 @@ task initializeVariables {
 }
 
 task ballerinaTest {
-    dependsOn(assemble)
-    dependsOn(updateTomlFile)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
-
     doLast {
         exec {
             workingDir project.projectDir
@@ -185,17 +171,7 @@ task ballerinaTest {
     }
 }
 
-test {
-    dependsOn(ballerinaTest)
-}
-
 task ballerinaBuild {
-    mustRunAfter(test)
-    dependsOn(assemble)
-    dependsOn(updateTomlFile)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
-
     inputs.dir file(project.projectDir)
 
     doLast {
@@ -242,12 +218,7 @@ task ballerinaBuild {
     outputs.dir artifactLibParent
 }
 
-build {
-    dependsOn(ballerinaBuild)
-}
-
 task ballerinaPublish {
-    dependsOn(build)
     doLast {
         // Publish to central
         if (!project.hasProperty("publishToCentral")) {
@@ -275,10 +246,6 @@ task ballerinaPublish {
     }
 }
 
-publish {
-    dependsOn(ballerinaPublish)
-}
-
 task createArtifactZip(type: Zip) {
     destinationDirectory = file("$buildDir/distributions")
     from ballerinaBuild
@@ -302,3 +269,24 @@ publishing {
         }
     }
 }
+
+unpackJballerinaTools.dependsOn copyToLib
+unpackStdLibs.dependsOn unpackJballerinaTools
+copyStdlibs.dependsOn unpackStdLibs
+updateTomlFile.dependsOn copyStdlibs
+
+ballerinaTest.dependsOn updateTomlFile
+ballerinaTest.dependsOn initializeVariables
+ballerinaTest.dependsOn ":${packageName}-native:build"
+ballerinaTest.finalizedBy revertTomlFile
+test.dependsOn ballerinaTest
+
+ballerinaBuild.dependsOn test
+ballerinaBuild.dependsOn updateTomlFile
+ballerinaBuild.dependsOn initializeVariables
+ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaBuild.finalizedBy revertTomlFile
+build.dependsOn ballerinaBuild
+
+ballerinaPublish.dependsOn ballerinaBuild
+publish.dependsOn ballerinaPublish
