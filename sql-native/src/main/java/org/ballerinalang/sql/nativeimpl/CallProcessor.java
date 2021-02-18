@@ -42,11 +42,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -221,114 +217,103 @@ public class CallProcessor {
 
             switch (sqlType) {
                 case Types.CHAR:
+                    resultParameterProcessor.populateChar(statement, parameter, paramIndex);
+                    break;
                 case Types.VARCHAR:
+                    resultParameterProcessor.populateVarchar(statement, parameter, paramIndex);
+                    break;
                 case Types.LONGVARCHAR:
+                    resultParameterProcessor.populateLongVarchar(statement, parameter, paramIndex);
+                    break;
                 case Types.NCHAR:
+                    resultParameterProcessor.populateNChar(statement, parameter, paramIndex);
+                    break;
                 case Types.NVARCHAR:
+                    resultParameterProcessor.populateNVarchar(statement, parameter, paramIndex);
+                    break;
                 case Types.LONGNVARCHAR:
+                    resultParameterProcessor.populateLongNVarchar(statement, parameter, paramIndex);
+                    break;
                 case Types.BINARY:
+                    resultParameterProcessor.populateBinary(statement, parameter, paramIndex);
+                    break;
                 case Types.VARBINARY:
+                    resultParameterProcessor.populateVarBinary(statement, parameter, paramIndex);
+                    break;
                 case Types.LONGVARBINARY:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getString(paramIndex));
+                    resultParameterProcessor.populateLongVarBinary(statement, parameter, paramIndex);
                     break;
                 case Types.BLOB:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getBlob(paramIndex));
+                    resultParameterProcessor.populateBlob(statement, parameter, paramIndex);
                     break;
                 case Types.CLOB:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getClob(paramIndex));
+                    resultParameterProcessor.populateClob(statement, parameter, paramIndex);
                     break;
                 case Types.NCLOB:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getNClob(paramIndex));
+                    resultParameterProcessor.populateNClob(statement, parameter, paramIndex);
                     break;
                 case Types.DATE:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getDate(paramIndex, calendar));
+                    resultParameterProcessor.populateDate(statement, parameter, paramIndex);
                     break;
                 case Types.TIME:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getTime(paramIndex, calendar));
+                    resultParameterProcessor.populateTime(statement, parameter, paramIndex);
                     break;
                 case Types.TIME_WITH_TIMEZONE:
-                    try {
-                        Time time = statement.getTime(paramIndex, calendar);
-                        parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, time);
-                    } catch (SQLException ex) {
-                        //Some database drivers do not support getTime operation,
-                        // therefore falling back to getObject method.
-                        OffsetTime offsetTime = statement.getObject(paramIndex, OffsetTime.class);
-                        parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                                Time.valueOf(offsetTime.toLocalTime()));
-                    }
+                    resultParameterProcessor.populateTimeWithTimeZone(statement, parameter, paramIndex);
                     break;
                 case Types.TIMESTAMP:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getTimestamp(paramIndex, calendar));
+                    resultParameterProcessor.populateTimestamp(statement, parameter, paramIndex);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
-                    try {
-                        parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                                statement.getTimestamp(paramIndex, calendar));
-                    } catch (SQLException ex) {
-                        //Some database drivers do not support getTimestamp operation,
-                        // therefore falling back to getObject method.
-                        OffsetDateTime offsetDateTime = statement.getObject(paramIndex, OffsetDateTime.class);
-                        parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                                Timestamp.valueOf(offsetDateTime.toLocalDateTime()));
-                    }
+                    resultParameterProcessor.populateTimestampWithTimeZone(statement, parameter, paramIndex);
                     break;
                 case Types.ARRAY:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getArray(paramIndex));
+                    resultParameterProcessor.populateArray(statement, parameter, paramIndex);
                     break;
                 case Types.ROWID:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getRowId(paramIndex));
+                    resultParameterProcessor.populateRowID(statement, parameter, paramIndex);
                     break;
                 case Types.TINYINT:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, statement.getInt(paramIndex));
+                    resultParameterProcessor.populateTinyInt(statement, parameter, paramIndex);
                     break;
                 case Types.SMALLINT:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                        Integer.valueOf(statement.getShort(paramIndex)));
+                    resultParameterProcessor.populateSmallInt(statement, parameter, paramIndex);
                     break;
                 case Types.INTEGER:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                        Long.valueOf(statement.getInt(paramIndex)));
+                    resultParameterProcessor.populateInteger(statement, parameter, paramIndex);
                     break;
                 case Types.BIGINT:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, statement.getLong(paramIndex));
+                    resultParameterProcessor.populateBigInt(statement, parameter, paramIndex);
                     break;
                 case Types.REAL:
+                    resultParameterProcessor.populateReal(statement, parameter, paramIndex);
+                    break;
                 case Types.FLOAT:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getFloat(paramIndex));
+                    resultParameterProcessor.populateFloat(statement, parameter, paramIndex);
                     break;
                 case Types.DOUBLE:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getDouble(paramIndex));
+                    resultParameterProcessor.populateDouble(statement, parameter, paramIndex);
                     break;
                 case Types.NUMERIC:
+                    resultParameterProcessor.populateNumeric(statement, parameter, paramIndex);
+                    break;
                 case Types.DECIMAL:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getBigDecimal(paramIndex));
+                    resultParameterProcessor.populateDecimal(statement, parameter, paramIndex);
                     break;
                 case Types.BIT:
+                    resultParameterProcessor.populateBit(statement, parameter, paramIndex);
+                    break;
                 case Types.BOOLEAN:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getBoolean(paramIndex));
+                    resultParameterProcessor.populateBoolean(statement, parameter, paramIndex);
                     break;
                 case Types.REF:
+                    resultParameterProcessor.populateRef(statement, parameter, paramIndex);
+                    break;
                 case Types.STRUCT:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getObject(paramIndex));
+                    resultParameterProcessor.populateStruct(statement, parameter, paramIndex);
                     break;
                 case Types.SQLXML:
-                    parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                            statement.getSQLXML(paramIndex));
+                    resultParameterProcessor.populateXML(statement, parameter, paramIndex);
                     break;
                 default:
                     resultParameterProcessor.populateCustomOutParameters(statement, parameter, paramIndex, sqlType);
