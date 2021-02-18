@@ -338,8 +338,7 @@ public class CallProcessor {
 
     private static int getOutParameterType(
             BObject typedValue, DefaultStatementParameterProcessor statementParameterProcessor
-    )
-                    throws ApplicationError {
+    ) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {

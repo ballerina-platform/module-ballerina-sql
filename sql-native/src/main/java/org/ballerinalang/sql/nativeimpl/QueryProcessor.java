@@ -64,8 +64,7 @@ public class QueryProcessor {
             BObject client, Object paramSQLString,
             Object recordType,
             DefaultStatementParameterProcessor statementParametersProcessor,
-            DefaultResultParameterProcessor resultParametersProcessor
-    ) {
+            DefaultResultParameterProcessor resultParametersProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {

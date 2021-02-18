@@ -58,8 +58,7 @@ public class OutParameterProcessor {
     }
 
     public static Object get(
-            BObject result, BTypedesc typeDesc, DefaultResultParameterProcessor resultParameterProcessor
-    ) {
+            BObject result, BTypedesc typeDesc, DefaultResultParameterProcessor resultParameterProcessor) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
 
