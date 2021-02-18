@@ -138,8 +138,10 @@ task initializeVariables {
     }
 
     gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(":${packageName}-ballerina:build") || graph.hasTask(":${packageName}-ballerina:publish")) {
+        if (graph.hasTask(":${packageName}-ballerina:build")) {
             ballerinaTest.enabled = false
+        } else {
+            ballerinaTest.enabled = true
         }
 
         if (graph.hasTask(":${packageName}-ballerina:test")) {
@@ -150,6 +152,7 @@ task initializeVariables {
 
         if (graph.hasTask(":${packageName}-ballerina:publish")) {
             ballerinaPublish.enabled = true
+            ballerinaTest.enabled = false
         } else {
             ballerinaPublish.enabled = false
         }
@@ -220,18 +223,7 @@ task ballerinaBuild {
 
 task ballerinaPublish {
     doLast {
-        // Publish to central
-        if (!project.hasProperty("publishToCentral")) {
-            return
-        }
-
-        if (project.version.endsWith('-SNAPSHOT')) {
-            throw new GradleException("Stdlib not pushed to central for snapshot version '${project.version}'.")
-        } else {
-            if (ballerinaCentralAccessToken == null) {
-                throw new GradleException("Central push failed invalid access token.")
-            }
-
+        if (ballerinaCentralAccessToken != null) {
             println("Publishing to the ballerina central..")
             exec {
                 workingDir project.projectDir
@@ -242,6 +234,8 @@ task ballerinaPublish {
                     commandLine 'sh', '-c', "$distributionBinPath/bal push ${packageName}"
                 }
             }
+        } else {
+            println("Central Access Token is Not Present")
         }
     }
 }
