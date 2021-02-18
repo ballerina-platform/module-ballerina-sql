@@ -24,7 +24,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 
 import java.io.IOException;
@@ -54,10 +54,12 @@ import static org.ballerinalang.sql.utils.Utils.getString;
 public class OutParameterProcessor {
 
     public static Object get(BObject result, BTypedesc typeDesc) {
-        return get(result, typeDesc, ResultParameterProcessor.getInstance());
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
     }
 
-    public static Object get(BObject result, BTypedesc typeDesc, ResultParameterProcessor resultParameterProcessor) {
+    public static Object get(
+            BObject result, BTypedesc typeDesc, DefaultResultParameterProcessor resultParameterProcessor
+    ) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
 
