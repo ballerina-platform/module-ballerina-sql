@@ -26,7 +26,7 @@ import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -52,12 +52,12 @@ import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResu
 public class ProcedureCallResultUtils {
 
     public static Object getNextQueryResult(BObject procedureCallResult) {
-        ResultParameterProcessor resultParameterProcessor = ResultParameterProcessor.getInstance();
+        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         return getNextQueryResult(procedureCallResult, resultParameterProcessor);
     }
 
     public static Object getNextQueryResult(
-            BObject procedureCallResult, ResultParameterProcessor resultParameterProcessor) {
+            BObject procedureCallResult, DefaultResultParameterProcessor resultParameterProcessor) {
         CallableStatement statement = (CallableStatement) procedureCallResult
                 .getNativeData(STATEMENT_NATIVE_DATA_FIELD);
         ResultSet resultSet;

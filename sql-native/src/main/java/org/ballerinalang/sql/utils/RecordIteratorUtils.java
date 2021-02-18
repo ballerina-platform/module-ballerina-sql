@@ -29,7 +29,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -65,11 +65,11 @@ public class RecordIteratorUtils {
             .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nextResult(BObject recordIterator) {
-        ResultParameterProcessor resultParameterProcessor = ResultParameterProcessor.getInstance();
+        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         return nextResult(recordIterator, resultParameterProcessor);
     }
 
-    public static Object nextResult(BObject recordIterator, ResultParameterProcessor resultParameterProcessor) {
+    public static Object nextResult(BObject recordIterator, DefaultResultParameterProcessor resultParameterProcessor) {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
         try {
             if (resultSet.next()) {
@@ -99,7 +99,7 @@ public class RecordIteratorUtils {
     }
 
     private static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
-                    ResultParameterProcessor resultParameterProcessor)
+                    DefaultResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError, IOException {
         int sqlType = columnDefinition.getSqlType();
         Type ballerinaType = columnDefinition.getBallerinaType();
