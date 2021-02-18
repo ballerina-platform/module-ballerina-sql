@@ -105,124 +105,125 @@ public class RecordIteratorUtils {
         Type ballerinaType = columnDefinition.getBallerinaType();
         switch (sqlType) {
             case Types.ARRAY:
-                return resultParameterProcessor.convert(resultSet.getArray(columnIndex), sqlType, ballerinaType);
+                return resultParameterProcessor.convertArray(resultSet.getArray(columnIndex), sqlType, ballerinaType);
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
             case Types.NCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                return resultParameterProcessor.convert(resultSet.getString(columnIndex), sqlType, ballerinaType);
+                return resultParameterProcessor.convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
                 if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getString(columnIndex), sqlType, ballerinaType,
-                            columnDefinition.getSqlName());
+                    return resultParameterProcessor.convertChar(
+                            resultSet.getString(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
                 } else {
-                    return resultParameterProcessor.convert(resultSet.getBytes(columnIndex), sqlType, ballerinaType,
-                            columnDefinition.getSqlName());
+                    return resultParameterProcessor.convertByteArray(
+                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
                 }
             case Types.BLOB:
-                return resultParameterProcessor.convert(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
+                return resultParameterProcessor.convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
             case Types.CLOB:
                 String clobValue = getString(resultSet.getClob(columnIndex));
-                return resultParameterProcessor.convert(clobValue, sqlType, ballerinaType);
+                return resultParameterProcessor.convertChar(clobValue, sqlType, ballerinaType);
             case Types.NCLOB:
                 String nClobValue = getString(resultSet.getNClob(columnIndex));
-                return resultParameterProcessor.convert(nClobValue, sqlType, ballerinaType);
+                return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
             case Types.DATE:
                 Date date = resultSet.getDate(columnIndex, calendar);
-                return resultParameterProcessor.convert(date, sqlType, ballerinaType);
+                return resultParameterProcessor.convertDate(date, sqlType, ballerinaType);
             case Types.TIME:
                 Time time = resultSet.getTime(columnIndex, calendar);
-                return resultParameterProcessor.convert(time, sqlType, ballerinaType);
+                return resultParameterProcessor.convertDate(time, sqlType, ballerinaType);
             case Types.TIME_WITH_TIMEZONE:
                 try {
                     time = resultSet.getTime(columnIndex, calendar);
-                    return resultParameterProcessor.convert(time, sqlType, ballerinaType);
+                    return resultParameterProcessor.convertDate(time, sqlType, ballerinaType);
                 } catch (SQLException ex) {
                     //Some database drivers do not support getTime operation,
                     // therefore falling back to getObject method.
                     OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
-                    return resultParameterProcessor.convert(Time.valueOf(offsetTime.toLocalTime()), 
+                    return resultParameterProcessor.convertDate(Time.valueOf(offsetTime.toLocalTime()), 
                            sqlType, ballerinaType);
                 }
             case Types.TIMESTAMP:
                 Timestamp timestamp = resultSet.getTimestamp(columnIndex, calendar);
-                return resultParameterProcessor.convert(timestamp, sqlType, ballerinaType);
+                return resultParameterProcessor.convertDate(timestamp, sqlType, ballerinaType);
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 try {
                     timestamp = resultSet.getTimestamp(columnIndex, calendar);
-                    return resultParameterProcessor.convert(timestamp, sqlType, ballerinaType);
+                    return resultParameterProcessor.convertDate(timestamp, sqlType, ballerinaType);
                 } catch (SQLException ex) {
                     //Some database drivers do not support getTimestamp operation,
                     // therefore falling back to getObject method.
                     OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
-                    return resultParameterProcessor.convert(Timestamp.valueOf(offsetDateTime.toLocalDateTime()),
+                    return resultParameterProcessor.convertDate(Timestamp.valueOf(offsetDateTime.toLocalDateTime()),
                             sqlType, ballerinaType);
                 }
             case Types.ROWID:
-                return resultParameterProcessor.convert(resultSet.getRowId(columnIndex).getBytes(), sqlType, 
+                return resultParameterProcessor.convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType, 
                             ballerinaType, "SQL RowID");
             case Types.TINYINT:
             case Types.SMALLINT:
                 long iValue = resultSet.getInt(columnIndex);
-                return resultParameterProcessor.convert(iValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.INTEGER:
             case Types.BIGINT:
                 long lValue = resultSet.getLong(columnIndex);
-                return resultParameterProcessor.convert(lValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertInteger(lValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.REAL:
             case Types.FLOAT:
                 double fValue = resultSet.getFloat(columnIndex);
-                return resultParameterProcessor.convert(fValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertDouble(fValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.DOUBLE:
                 double dValue = resultSet.getDouble(columnIndex);
-                return resultParameterProcessor.convert(dValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertDouble(dValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.NUMERIC:
             case Types.DECIMAL:
                 BigDecimal decimalValue = resultSet.getBigDecimal(columnIndex);
-                return resultParameterProcessor.convert(decimalValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertDecimal(
+                        decimalValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.BIT:
             case Types.BOOLEAN:
                 boolean boolValue = resultSet.getBoolean(columnIndex);
-                return resultParameterProcessor.convert(boolValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.convertBoolean(boolValue, sqlType, ballerinaType, resultSet.wasNull());
             case Types.REF:
             case Types.STRUCT:
                 Struct structData = (Struct) resultSet.getObject(columnIndex);
-                return resultParameterProcessor.convert(structData, sqlType, ballerinaType);
+                return resultParameterProcessor.convertStruct(structData, sqlType, ballerinaType);
             case Types.SQLXML:
                 SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
-                return resultParameterProcessor.convert(sqlxml, sqlType, ballerinaType);
+                return resultParameterProcessor.convertXml(sqlxml, sqlType, ballerinaType);
             default:
                 if (ballerinaType.getTag() == TypeTags.INT_TAG) {
-                    resultParameterProcessor.convert(resultSet.getInt(columnIndex), sqlType, ballerinaType,
-                             resultSet.wasNull());
+                    resultParameterProcessor.convertInteger(
+                            resultSet.getInt(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
                 } else if (ballerinaType.getTag() == TypeTags.STRING_TAG
                         || ballerinaType.getTag() == TypeTags.ANY_TAG
                         || ballerinaType.getTag() == TypeTags.ANYDATA_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getString(columnIndex), sqlType, ballerinaType);
+                    return resultParameterProcessor.convertChar(
+                            resultSet.getString(columnIndex), sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.BOOLEAN_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getBoolean(columnIndex),
-                            sqlType, ballerinaType, resultSet.wasNull());
+                    return resultParameterProcessor.convertBoolean(
+                            resultSet.getBoolean(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
                 } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
                         ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getBytes(columnIndex), sqlType, ballerinaType,
-                            columnDefinition.getSqlName());
+                    return resultParameterProcessor.convertByteArray(
+                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
                 } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getDouble(columnIndex), sqlType, ballerinaType,
-                            resultSet.wasNull());
+                    return resultParameterProcessor.convertDouble(
+                            resultSet.getDouble(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
                 } else if (ballerinaType.getTag() == TypeTags.DECIMAL_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getBigDecimal(columnIndex), sqlType,
-                            ballerinaType,
-                            resultSet.wasNull());
+                    return resultParameterProcessor.convertDecimal(
+                            resultSet.getBigDecimal(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
                 } else if (ballerinaType.getTag() == TypeTags.XML_TAG) {
-                    return resultParameterProcessor.convert(resultSet.getSQLXML(columnIndex), sqlType, ballerinaType);
+                    return resultParameterProcessor.convertXml(
+                            resultSet.getSQLXML(columnIndex), sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    String jsonString = resultParameterProcessor.convert(resultSet.getString(columnIndex), sqlType,
-                            ballerinaType)
-                            .getValue();
+                    String jsonString = resultParameterProcessor.convertChar(
+                            resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
                     Reader reader = new StringReader(jsonString);
                     try {
                         return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);

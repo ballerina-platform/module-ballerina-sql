@@ -55,29 +55,37 @@ public abstract class AbstractResultParameterProcessor {
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws ApplicationError;
 
-    protected abstract BArray convert(Array array, int sqlType, Type type) throws SQLException, ApplicationError;
+    protected abstract BArray convertArray(Array array, int sqlType, Type type)
+            throws SQLException, ApplicationError;
 
-    protected abstract BString convert(String value, int sqlType, Type type) throws ApplicationError;
+    protected abstract BString convertChar(String value, int sqlType, Type type)
+            throws ApplicationError;
 
-    protected abstract Object convert(String value, int sqlType, Type type, String sqlTypeName) throws ApplicationError;
+    protected abstract Object convertChar(String value, int sqlType, Type type, String sqlTypeName)
+            throws ApplicationError;
 
-    protected abstract Object convert(byte[] value, int sqlType, Type type, String sqlTypeName) throws ApplicationError;
+    protected abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
+            throws ApplicationError;
 
-    protected abstract Object convert(long value, int sqlType, Type type, boolean isNull) throws ApplicationError;
+    protected abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
+            throws ApplicationError;
 
-    protected abstract Object convert(double value, int sqlType, Type type, boolean isNull) throws ApplicationError;
+    protected abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
+            throws ApplicationError;
 
-    protected abstract Object convert(BigDecimal value, int sqlType, Type type, boolean isNull) throws ApplicationError;
+    protected abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
+            throws ApplicationError;
 
-    protected abstract Object convert(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
+    protected abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
 
-    protected abstract Object convert(java.util.Date date, int sqlType, Type type) throws ApplicationError;
+    protected abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convert(boolean value, int sqlType, Type type, boolean isNull) throws ApplicationError;
+    protected abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
+            throws ApplicationError;
 
-    protected abstract Object convert(Struct value, int sqlType, Type type) throws ApplicationError;
+    protected abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convert(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
+    protected abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
 
     protected abstract void populateChar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
