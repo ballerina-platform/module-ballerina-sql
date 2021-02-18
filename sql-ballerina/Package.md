@@ -1,35 +1,35 @@
-## Module overview
+## Package overview
 
-This module provides the common interface and functionality to interact with a database. The corresponding database
-clients can be created by using specific database modules such as `MySQL` or using the Java Database Connectivity 
-module `JDBC`.
+This Package provides the common interface and functionality to interact with a database. The corresponding database
+clients can be created by using specific database packages such as `MySQL` or using the Java Database Connectivity 
+package `JDBC`.
 
-### List of Database Modules
-1. JDBC (Java Database Connectivity) Module
-This module can be used to connect with any database by simply providing the JDBC URL and the other related properties. 
-For more details, see the [JDBC module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/#/jdbc).
+### List of Database Packages
+1. JDBC (Java Database Connectivity) Package
+This package can be used to connect with any database by simply providing the JDBC URL and the other related properties. 
+For more details, see the [JDBC package](https://ballerina.io/learn/api-docs/ballerina/#/jdbc).
 
 
-2. MySQL Module  
-This module is specially designed to work with a MySQL database and allows to access the functionality 
-provided by MySQL 8.0.x onwards. For more details, see the [MySQL module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/#/mysql).
+2. MySQL Package  
+This package is specially designed to work with a MySQL database and allows to access the functionality 
+provided by MySQL 8.0.x onwards. For more details, see the [MySQL package](https://ballerina.io/learn/api-docs/ballerina/#/mysql).
 
 
 ### Client
 
-The database client should be created using any of the above-listed database modules and once it is created, the 
+The database client should be created using any of the above-listed database packages and once it is created, the 
 operations and functionality explained below can be used. 
 
 #### Connection pool handling
 
-All database modules share the same connection pooling concept and there are 3 possible scenarios for 
+All database packages share the same connection pooling concept and there are 3 possible scenarios for 
 connection pool handling.  For its properties and possible values, see the `sql:ConnectionPool`.  
 
 1. Global shareable default connection pool
 
     If you do not provide the `poolOptions` field when creating the database client, a globally-shareable pool will be 
     created for your database unless a connection pool matching with the properties you provided already exists. 
-    The JDBC module example below shows how the global connection pool is used. 
+    The JDBC package example below shows how the global connection pool is used. 
 
     ```ballerina
     jdbc:Client|sql:Error dbClient = 
@@ -40,7 +40,7 @@ connection pool handling.  For its properties and possible values, see the `sql:
 2. Client owned, unsharable connection pool
 
     If you define the `connectionPool` field inline when creating the database client with the `sql:ConnectionPool` type, 
-    an unsharable connection pool will be created. The JDBC module example below shows how the global 
+    an unsharable connection pool will be created. The JDBC package example below shows how the global 
     connection pool is used.
 
     ```ballerina
@@ -53,7 +53,7 @@ connection pool handling.  For its properties and possible values, see the `sql:
 
     If you create a record of type `sql:ConnectionPool` and reuse that in the configuration of multiple clients, 
     for each  set of clients that connects to the same database instance with the same set of properties, a shared 
-    connection pool will be created. The JDBC module example below shows how the global connection pool is used.
+    connection pool will be created. The JDBC package example below shows how the global connection pool is used.
 
     ```ballerina
     sql:ConnectionPool connPool = {maxOpenConnections: 5};
@@ -83,7 +83,7 @@ if (e is error){
 ```    
 ### Database operations
 
-Once the client is created, database operations can be executed through that client. This module defines the interface 
+Once the client is created, database operations can be executed through that client. This package defines the interface 
 and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
