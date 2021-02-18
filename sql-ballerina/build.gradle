@@ -138,7 +138,9 @@ task initializeVariables {
     }
 
     gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(":${packageName}-ballerina:build")) {
+        if (graph.hasTask(":${packageName}-ballerina:build") ||
+                graph.hasTask(":${packageName}-ballerina:publish") ||
+                graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
             ballerinaTest.enabled = false
         } else {
             ballerinaTest.enabled = true
@@ -152,7 +154,6 @@ task initializeVariables {
 
         if (graph.hasTask(":${packageName}-ballerina:publish")) {
             ballerinaPublish.enabled = true
-            ballerinaTest.enabled = false
         } else {
             ballerinaPublish.enabled = false
         }
