@@ -66,16 +66,16 @@ import static org.ballerinalang.sql.utils.Utils.throwInvalidParameterError;
  *
  * @since 0.5.6
  */
-public class StatementParameterProcessor extends AbstractStatementParameterProcessor {
+public class DefaultStatementParameterProcessor extends AbstractStatementParameterProcessor {
 
     private static final Object lock = new Object();
-    private static volatile StatementParameterProcessor instance;
+    private static volatile DefaultStatementParameterProcessor instance;
 
-    public static StatementParameterProcessor getInstance() {
+    public static DefaultStatementParameterProcessor getInstance() {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
-                    instance = new StatementParameterProcessor();
+                    instance = new DefaultStatementParameterProcessor();
                 }
             }
         }

@@ -31,8 +31,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
-import org.ballerinalang.sql.parameterprocessor.StatementParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 import org.ballerinalang.sql.utils.ModuleUtils;
@@ -72,13 +72,13 @@ public class CallProcessor {
             .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes) {
-        return nativeCall(client, paramSQLString, recordTypes, StatementParameterProcessor.getInstance(),
-            ResultParameterProcessor.getInstance());
+        return nativeCall(client, paramSQLString, recordTypes, DefaultStatementParameterProcessor.getInstance(),
+            DefaultResultParameterProcessor.getInstance());
     }
 
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
-            StatementParameterProcessor statementParameterProcessor, 
-            ResultParameterProcessor resultParameterProcessor) {
+            DefaultStatementParameterProcessor statementParameterProcessor, 
+            DefaultResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -153,7 +153,7 @@ public class CallProcessor {
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes,
-                                  StatementParameterProcessor statementParameterProcessor)
+                                  DefaultStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
@@ -201,7 +201,7 @@ public class CallProcessor {
 
     private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                       HashMap<Integer, Integer> outputParamTypes,
-                                      ResultParameterProcessor resultParameterProcessor)
+                                      DefaultResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;
@@ -321,8 +321,9 @@ public class CallProcessor {
         }
     }
 
-    private static int getOutParameterType(BObject typedValue, StatementParameterProcessor statementParameterProcessor)
-                    throws ApplicationError {
+    private static int getOutParameterType(
+            BObject typedValue, DefaultStatementParameterProcessor statementParameterProcessor
+            ) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {

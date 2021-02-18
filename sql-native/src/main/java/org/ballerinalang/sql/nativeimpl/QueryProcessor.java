@@ -31,8 +31,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.sql.parameterprocessor.ResultParameterProcessor;
-import org.ballerinalang.sql.parameterprocessor.StatementParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
+import org.ballerinalang.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 import org.ballerinalang.sql.utils.ModuleUtils;
@@ -53,15 +53,18 @@ public class QueryProcessor {
 
     public static BStream nativeQuery(BObject client, Object paramSQLString,
                                       Object recordType) {
-        StatementParameterProcessor statementParametersProcessor = StatementParameterProcessor.getInstance();
-        ResultParameterProcessor resultParametersProcessor = ResultParameterProcessor.getInstance();
+        DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
+                .getInstance();
+        DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
+                .getInstance();
         return nativeQuery(client, paramSQLString, recordType, statementParametersProcessor, resultParametersProcessor);
     }
 
-    public static BStream nativeQuery(BObject client, Object paramSQLString,
-                                      Object recordType, StatementParameterProcessor statementParametersProcessor,
-                                      ResultParameterProcessor resultParametersProcessor
-    ) {
+    public static BStream nativeQuery(
+            BObject client, Object paramSQLString,
+            Object recordType,
+            DefaultStatementParameterProcessor statementParametersProcessor,
+            DefaultResultParameterProcessor resultParametersProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {

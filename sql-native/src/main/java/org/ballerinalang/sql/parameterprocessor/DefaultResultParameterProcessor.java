@@ -68,9 +68,9 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
  *
  * @since 0.5.6
  */
-public class ResultParameterProcessor extends AbstractResultParameterProcessor {
+public class DefaultResultParameterProcessor extends AbstractResultParameterProcessor {
     private static final Object lock = new Object();
-    private static volatile ResultParameterProcessor instance;
+    private static volatile DefaultResultParameterProcessor instance;
 
     private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
     private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
@@ -82,11 +82,11 @@ public class ResultParameterProcessor extends AbstractResultParameterProcessor {
             .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
 
-    public static ResultParameterProcessor getInstance() {
+    public static DefaultResultParameterProcessor getInstance() {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
-                    instance = new ResultParameterProcessor();
+                    instance = new DefaultResultParameterProcessor();
                 }
             }
         }
