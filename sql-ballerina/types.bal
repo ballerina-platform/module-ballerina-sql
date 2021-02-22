@@ -806,8 +806,8 @@ public class ProcedureCallResult {
     }
 }
 
-# The object type that is used as a structure to define custom procesureCallResult classes 
-# with custom implementations for nextResult and getNextQueryResult in connector modules.
+# The object type that is used as a structure to define a custom class with custom
+# implementations for nextResult and getNextQueryResult in the connector modules.
 # 
 public type CustomResultIterator object {
     isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
