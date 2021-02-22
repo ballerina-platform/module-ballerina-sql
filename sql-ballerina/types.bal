@@ -31,8 +31,9 @@ public type Value string|int|boolean|float|decimal|byte[]|xml|TypedValue?;
 
 # Represents Varchar SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class VarcharValue {
-    string? value;
+    public string? value;
 
     public isolated function init(string? value = ()) {
         self.value = value;
@@ -41,6 +42,7 @@ public class VarcharValue {
 
 # Represents NVarchar SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class NVarcharValue {
     public string? value;
 
@@ -51,6 +53,7 @@ public class NVarcharValue {
 
 # Represents Char SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class CharValue {
     public string? value;
 
@@ -61,6 +64,7 @@ public class CharValue {
 
 # Represents NChar SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class NCharValue {
     public string? value;
 
@@ -71,6 +75,7 @@ public class NCharValue {
 
 # Represents Text SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class TextValue {
     public io:ReadableCharacterChannel|string? value;
 
@@ -81,6 +86,7 @@ public class TextValue {
 
 # Represents Clob SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class ClobValue {
     public io:ReadableCharacterChannel|string? value;
 
@@ -91,6 +97,7 @@ public class ClobValue {
 
 # Represents NClob SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class NClobValue {
     public io:ReadableCharacterChannel|string? value;
 
@@ -101,6 +108,7 @@ public class NClobValue {
 
 # Represents SmallInt SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class SmallIntValue {
     public int? value;
 
@@ -111,6 +119,7 @@ public class SmallIntValue {
 
 # Represents Integer SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class IntegerValue {
     public int? value;
 
@@ -121,6 +130,7 @@ public class IntegerValue {
 
 # Represents BigInt SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class BigIntValue {
     public int? value;
 
@@ -131,6 +141,7 @@ public class BigIntValue {
 
 # Represents Numeric SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class NumericValue {
     public int|float|decimal? value;
 
@@ -141,6 +152,7 @@ public class NumericValue {
 
 # Represents Decimal SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class DecimalValue {
     public int|decimal? value;
 
@@ -151,6 +163,7 @@ public class DecimalValue {
 
 # Represents Real SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class RealValue {
     public int|float|decimal? value;
 
@@ -161,6 +174,7 @@ public class RealValue {
 
 # Represents Float SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class FloatValue {
     public int|float? value;
 
@@ -171,6 +185,7 @@ public class FloatValue {
 
 # Represents Double SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class DoubleValue {
     public int|float|decimal? value;
 
@@ -181,6 +196,7 @@ public class DoubleValue {
 
 # Represents Bit SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class BitValue {
     public boolean|int? value;
 
@@ -191,6 +207,7 @@ public class BitValue {
 
 # Represents Boolean SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class BooleanValue {
     public boolean? value;
 
@@ -201,6 +218,7 @@ public class BooleanValue {
 
 # Represents Binary SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class BinaryValue {
     public byte[]|io:ReadableByteChannel? value;
 
@@ -211,6 +229,7 @@ public class BinaryValue {
 
 # Represents VarBinary SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class VarBinaryValue {
     public byte[]|io:ReadableByteChannel? value;
 
@@ -221,6 +240,7 @@ public class VarBinaryValue {
 
 # Represents Blob SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class BlobValue {
     public byte[]|io:ReadableByteChannel? value;
 
@@ -231,6 +251,7 @@ public class BlobValue {
 
 # Represents Date SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class DateValue {
     public string|int|time:Time? value;
 
@@ -241,6 +262,7 @@ public class DateValue {
 
 # Represents Time SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class TimeValue {
     public string|int|time:Time? value;
 
@@ -251,6 +273,7 @@ public class TimeValue {
 
 # Represents DateTime SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class DateTimeValue {
     public string|int|time:Time? value;
 
@@ -261,6 +284,7 @@ public class DateTimeValue {
 
 # Represents Timestamp SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class TimestampValue {
     public string|int|time:Time? value;
 
@@ -271,6 +295,7 @@ public class TimestampValue {
 
 # Represents ArrayValue SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class ArrayValue {
     public string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value;
 
@@ -281,6 +306,7 @@ public class ArrayValue {
 
 # Represents Ref SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class RefValue {
     public record {}? value;
 
@@ -291,6 +317,7 @@ public class RefValue {
 
 # Represents Struct SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class StructValue {
     public record {}? value;
 
@@ -301,6 +328,7 @@ public class StructValue {
 
 # Represents Row SQL field.
 #
+# + value - Value of parameter passed into the SQL statement
 public class RowValue {
     public byte[]? value;
 
