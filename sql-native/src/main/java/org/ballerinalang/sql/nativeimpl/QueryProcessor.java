@@ -53,18 +53,27 @@ public class QueryProcessor {
 
     public static BStream nativeQuery(BObject client, Object paramSQLString,
                                       Object recordType) {
-        DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
+        DefaultStatementParameterProcessor statementParameterProcessor = DefaultStatementParameterProcessor
                 .getInstance();
-        DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
+        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor
                 .getInstance();
-        return nativeQuery(client, paramSQLString, recordType, statementParametersProcessor, resultParametersProcessor);
+        return nativeQuery(client, paramSQLString, recordType, statementParameterProcessor, resultParameterProcessor);
     }
 
+    /**
+     * Query the database and return results.
+     * @param client client object
+     * @param paramSQLString SQL string of the query
+     * @param recordType type description of the result record       
+     * @param statementParameterProcessor pre-processor of the statement
+     * @param resultParameterProcessor post-processeor of the result
+     * @return result stream or error
+     */
     public static BStream nativeQuery(
             BObject client, Object paramSQLString,
             Object recordType,
-            DefaultStatementParameterProcessor statementParametersProcessor,
-            DefaultResultParameterProcessor resultParametersProcessor) {
+            DefaultStatementParameterProcessor statementParameterProcessor,
+            DefaultResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -82,7 +91,7 @@ public class QueryProcessor {
                 connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
                 if (paramSQLString instanceof BObject) {
-                    statementParametersProcessor.setParams(connection, statement, (BObject) paramSQLString);
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
                 }
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
@@ -95,7 +104,7 @@ public class QueryProcessor {
                     columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 }
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint),
-                        resultParametersProcessor.createRecordIterator(resultSet, statement, connection,
+                        resultParameterProcessor.createRecordIterator(resultSet, statement, connection,
                                 columnDefinitions, streamConstraint));
             } catch (SQLException e) {
                 Utils.closeResources(trxResourceManager, resultSet, statement, connection);

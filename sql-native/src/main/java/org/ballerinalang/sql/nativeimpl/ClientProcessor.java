@@ -52,7 +52,14 @@ public class ClientProcessor {
         }
         return null;
     }
-
+    
+    /**
+     * Create the client used to connect with the database.
+     * @param client client object
+     * @param sqlDatasourceParams datasource parameters required to retrieve the JDBC URL for datasource lookup and
+     *                            initialization of the newly created datasource if it doesn't exists
+    * @return null if client is successfully created else error         
+     */
     public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         try {
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);

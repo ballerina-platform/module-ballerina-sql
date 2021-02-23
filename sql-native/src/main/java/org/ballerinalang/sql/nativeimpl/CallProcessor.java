@@ -76,6 +76,15 @@ public class CallProcessor {
             DefaultResultParameterProcessor.getInstance());
     }
 
+    /**
+     * Execute a call query and return the results.
+     * @param client client object
+     * @param paramSQLString SQL string for the call statement
+     * @param recordTypes type description of the result record                
+     * @param statementParameterProcessor pre-processor of the statement
+     * @param resultParameterProcessor post-processeor of the result
+     * @return procedure call result or error
+     */
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
             DefaultStatementParameterProcessor statementParameterProcessor, 
             DefaultResultParameterProcessor resultParameterProcessor) {

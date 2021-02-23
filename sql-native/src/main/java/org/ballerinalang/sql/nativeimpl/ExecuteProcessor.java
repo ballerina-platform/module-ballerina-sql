@@ -60,6 +60,15 @@ public class ExecuteProcessor {
     public static Object nativeExecute(BObject client, Object paramSQLString) {
         return nativeExecute(client, paramSQLString, DefaultStatementParameterProcessor.getInstance());
     }
+
+
+    /**
+     * Execute an SQL statement.
+     * @param client client object
+     * @param paramSQLString array of SQL string for the execute statement
+     * @param statementParameterProcessor pre-processor of the statement
+     * @return execution result or error
+     */
     public static Object nativeExecute(BObject client, Object paramSQLString,
                      DefaultStatementParameterProcessor statementParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
@@ -113,6 +122,13 @@ public class ExecuteProcessor {
         return nativeBatchExecute(client, paramSQLStrings, DefaultStatementParameterProcessor.getInstance());    
     }
 
+    /**
+     * Execute a batch of SQL statements.
+     * @param client client object
+     * @param paramSQLStrings array of SQL string for the execute statement
+     * @param statementParameterProcessor pre-processor of the statement
+     * @return execution result or error
+     */
     public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
                              DefaultStatementParameterProcessor statementParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
