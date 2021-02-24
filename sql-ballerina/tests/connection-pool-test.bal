@@ -103,10 +103,19 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() {
     // return an error
     int i = 0;
     while(i < 4) {
-        test:assertEquals(returnArray[i], [1, 1]);
+        if (returnArray[i][0] is anydata) {
+            test:assertEquals(returnArray[i][0], 1);
+            if (returnArray[i][1] is anydata) {
+               test:assertEquals(returnArray[i][1], 1);
+            } else {
+               test:assertFail("Expected second element of array an integer" + (<error> returnArray[i][1]).message());
+            }
+        } else {
+            test:assertFail("Expected first element of array an integer" + (<error> returnArray[i][0]).message());
+        }
         i = i + 1;
     }
-    validateConnectionTimeoutError(returnArray[4][2]);
+    validateConnectionTimeoutError(result2[2]);
 }
 
 @test:Config {
@@ -456,7 +465,11 @@ function testStopClientUsingGlobalPool() {
 function testLocalConnectionPoolShutDown() {
     int|error count1 = getOpenConnectionCount(poolDB_1);
     int|error count2 = getOpenConnectionCount(poolDB_2);
-    test:assertEquals(count1, count2);
+    if (count1 is int && count2 is int) {
+        test:assertEquals(count1, count2);
+    } else {
+        test:assertFail("Expected valid count of connection pool");
+    }
 }
 
 public type Variable record {

@@ -83,7 +83,7 @@ function testToJson() {
         BOOLEAN_TYPE: true,
         STRING_TYPE: "Hello"
     };
-    test:assertEquals(retVal, expectedData.cloneWithType(json), "Expected JSON did not match.");
+    test:assertEquals(retVal, checkpanic expectedData.cloneWithType(json), "Expected JSON did not match.");
 
     checkpanic dbClient.close();
 }
