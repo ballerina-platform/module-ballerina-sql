@@ -19,9 +19,7 @@
 package org.ballerinalang.sql.nativeimpl;
 
 import io.ballerina.runtime.api.values.BError;
-import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
 
@@ -35,11 +33,6 @@ import java.util.UUID;
 public class ClientProcessor {
 
     private ClientProcessor() {
-    }
-
-    public static Object createSqlClient(BObject client, BMap<BString, Object> sqlDatasourceParams,
-                                         BMap<BString, Object> globalConnectionPool) {
-        return createClient(client, SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
     }
 
     public static Object close(BObject client) {
