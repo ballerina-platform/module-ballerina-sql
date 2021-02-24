@@ -83,7 +83,12 @@ function testToJson() {
         BOOLEAN_TYPE: true,
         STRING_TYPE: "Hello"
     };
-    test:assertEquals(retVal, checkpanic expectedData.cloneWithType(json), "Expected JSON did not match.");
+    json|error expectedDataJson = expectedData.cloneWithType(json);
+    if (expectedDataJson is json) {
+        test:assertEquals(retVal, expectedDataJson, "Expected JSON did not match.");
+    } else {
+        test:assertFail("Error in cloning record to JSON" + expectedDataJson.message());
+    }
 
     checkpanic dbClient.close();
 }
