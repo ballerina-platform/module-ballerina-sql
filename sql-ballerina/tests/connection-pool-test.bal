@@ -465,10 +465,14 @@ function testStopClientUsingGlobalPool() {
 function testLocalConnectionPoolShutDown() {
     int|error count1 = getOpenConnectionCount(poolDB_1);
     int|error count2 = getOpenConnectionCount(poolDB_2);
-    if (count1 is int && count2 is int) {
-        test:assertEquals(count1, count2);
+    if (count1 is error) {
+        if (count2 is error) {
+            test:assertEquals(count1.message(), count2.message());
+        } else {
+            test:assertFail("Expected invalid count of connection pool" + count2.toString());
+        }
     } else {
-        test:assertFail("Expected valid count of connection pool");
+        test:assertFail("Expected invalid count of connection pool" + count1.toString());
     }
 }
 
