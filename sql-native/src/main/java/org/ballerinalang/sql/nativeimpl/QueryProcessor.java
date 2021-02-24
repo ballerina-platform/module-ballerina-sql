@@ -51,13 +51,7 @@ import java.util.List;
  */
 public class QueryProcessor {
 
-    public static BStream nativeQuery(BObject client, Object paramSQLString,
-                                      Object recordType) {
-        DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
-                .getInstance();
-        DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
-                .getInstance();
-        return nativeQuery(client, paramSQLString, recordType, statementParametersProcessor, resultParametersProcessor);
+    private QueryProcessor() {
     }
 
     public static BStream nativeQuery(
