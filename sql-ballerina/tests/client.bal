@@ -92,29 +92,29 @@ type SQLParams record {|
 
 function createSqlClient(Client sqlClient, SQLParams sqlParams, ConnectionPool globalConnPool)
 returns Error? = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.ClientProcessor"
+    'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
 } external;
 
 function nativeQuery(Client sqlClient, string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType)
 returns stream <record {}, Error> = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.QueryProcessor"
+    'class: "org.ballerinalang.sql.testutils.QueryTestUtils"
 } external;
 
 function nativeExecute(Client sqlClient, string|ParameterizedQuery sqlQuery)
 returns ExecutionResult|Error = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.ExecuteProcessor"
+    'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
 } external;
 
 function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.ExecuteProcessor"
+    'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
 } external;
 
 function nativeCall(Client sqlClient, string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes)
 returns ProcedureCallResult|Error = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.CallProcessor"
+    'class: "org.ballerinalang.sql.testutils.CallTestUtils"
 } external;
 
 function close(Client Client) returns Error? = @java:Method {
-    'class: "org.ballerinalang.sql.nativeimpl.ClientProcessor"
+    'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
 } external;
