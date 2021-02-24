@@ -813,3 +813,4 @@ public type CustomResultIterator object {
     isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
 };
+
