@@ -10,6 +10,13 @@ artifactId = "sql-native"
 version = "@project.version@"
 
 [[platform.java11.dependency]]
+path = "../sql-test-utils/build/libs/sql-test-utils-@project.version@.jar"
+groupId = "org.ballerinalang"
+scope = "testOnly"
+artifactId = "sql"
+version = "@project.version@"
+
+[[platform.java11.dependency]]
 path = "./lib/HikariCP-3.3.1.jar"
 groupId = "com.zaxxer"
 artifactId = "HikariCP"
