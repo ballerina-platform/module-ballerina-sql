@@ -13,7 +13,7 @@ plugins {
 
 rootProject.name = 'ballerina-sql'
 include(':build-config:checkstyle')
-include ':sql-native', ':sql-ballerina'
+include ':sql-native', ':sql-ballerina', ':sql-test-utils'
 
 gradleEnterprise {
     buildScan {
