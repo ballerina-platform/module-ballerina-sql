@@ -53,6 +53,9 @@ import static org.ballerinalang.sql.utils.Utils.getString;
  */
 public class OutParameterProcessor {
 
+    private OutParameterProcessor() {
+    }
+
     public static Object get(BObject result, BTypedesc typeDesc) {
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
     }
