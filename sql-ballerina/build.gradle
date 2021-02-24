@@ -138,8 +138,12 @@ task initializeVariables {
     }
 
     gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(":${packageName}-ballerina:build") || graph.hasTask(":${packageName}-ballerina:publish")) {
+        if (graph.hasTask(":${packageName}-ballerina:build") ||
+                graph.hasTask(":${packageName}-ballerina:publish") ||
+                graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
             ballerinaTest.enabled = false
+        } else {
+            ballerinaTest.enabled = true
         }
 
         if (graph.hasTask(":${packageName}-ballerina:test")) {
@@ -220,28 +224,22 @@ task ballerinaBuild {
 
 task ballerinaPublish {
     doLast {
-        // Publish to central
-        if (!project.hasProperty("publishToCentral")) {
+        if (project.version.endsWith('-SNAPSHOT')) {
             return
         }
-
-        if (project.version.endsWith('-SNAPSHOT')) {
-            throw new GradleException("Stdlib not pushed to central for snapshot version '${project.version}'.")
-        } else {
-            if (ballerinaCentralAccessToken == null) {
-                throw new GradleException("Central push failed invalid access token.")
-            }
-
+        if (ballerinaCentralAccessToken != null) {
             println("Publishing to the ballerina central..")
             exec {
                 workingDir project.projectDir
                 environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
                 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    commandLine 'cmd', '/c', "$distributionBinPath/bal.bat push ${packageName} && exit %%ERRORLEVEL%%"
+                    commandLine 'cmd', '/c', "$distributionBinPath/bal.bat push && exit %%ERRORLEVEL%%"
                 } else {
-                    commandLine 'sh', '-c', "$distributionBinPath/bal push ${packageName}"
+                    commandLine 'sh', '-c', "$distributionBinPath/bal push"
                 }
             }
+        } else {
+            throw new InvalidUserDataException("Central Access Token is Not Present")
         }
     }
 }
@@ -289,5 +287,9 @@ ballerinaBuild.dependsOn ":${packageName}-native:build"
 ballerinaBuild.finalizedBy revertTomlFile
 build.dependsOn ballerinaBuild
 
+ballerinaPublish.finalizedBy revertTomlFile
+ballerinaPublish.dependsOn initializeVariables
+ballerinaPublish.dependsOn updateTomlFile
+ballerinaPublish.dependsOn ":${packageName}-native:build"
 ballerinaPublish.dependsOn ballerinaBuild
 publish.dependsOn ballerinaPublish
