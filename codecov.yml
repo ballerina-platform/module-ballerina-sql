@@ -1,0 +1,8 @@
+fixes:
+  - "ballerina/sql/*/::sql-ballerina/"
+
+ignore:
+  - "**/tests"
+
+codecov:
+  require_ci_to_pass: no
