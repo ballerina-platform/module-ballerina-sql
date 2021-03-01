@@ -25,13 +25,12 @@ import io.ballerina.runtime.api.types.Type;
  * @since 1.2.0
  */
 public class ColumnDefinition {
-    private String columnName;
-    private String ballerinaFieldName;
-    private int sqlType;
-    private String sqlName;
-    private Type ballerinaType;
-    private boolean isNullable;
-
+    private final String columnName;
+    private final String ballerinaFieldName;
+    private final int sqlType;
+    private final String sqlName;
+    private final Type ballerinaType;
+    private final boolean isNullable;
 
     ColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
                      Type ballerinaType, boolean isNullable) {

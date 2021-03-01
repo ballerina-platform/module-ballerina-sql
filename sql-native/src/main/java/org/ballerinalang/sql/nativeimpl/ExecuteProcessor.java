@@ -15,7 +15,8 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.ballerinalang.sql.utils;
+
+package org.ballerinalang.sql.nativeimpl;
 
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -26,8 +27,10 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.datasource.SQLDatasource;
-import org.ballerinalang.sql.datasource.SQLDatasourceUtils;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.parameterprocessor.DefaultStatementParameterProcessor;
+import org.ballerinalang.sql.utils.ErrorGenerator;
+import org.ballerinalang.sql.utils.ModuleUtils;
 
 import java.io.IOException;
 import java.sql.BatchUpdateException;
@@ -46,16 +49,26 @@ import java.util.Map;
 import static org.ballerinalang.sql.utils.Utils.closeResources;
 import static org.ballerinalang.sql.utils.Utils.getGeneratedKeys;
 import static org.ballerinalang.sql.utils.Utils.getSqlQuery;
-import static org.ballerinalang.sql.utils.Utils.setParams;
+
 
 /**
- * This class holds the utility methods involved with executing the query which does not return rows.
+ * This class contains methods for executing SQL queries.
  *
- * @since 1.2.0
+ * @since 0.5.6
  */
-public class ExecuteUtils {
+public class ExecuteProcessor {
+    private ExecuteProcessor() {
+    }
 
-    public static Object nativeExecute(BObject client, Object paramSQLString) {
+    /**
+     * Execute an SQL statement.
+     * @param client client object
+     * @param paramSQLString array of SQL string for the execute statement
+     * @param statementParameterProcessor pre-processor of the statement
+     * @return execution result or error
+     */
+    public static Object nativeExecute(BObject client, Object paramSQLString,
+                     DefaultStatementParameterProcessor statementParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -70,10 +83,10 @@ public class ExecuteUtils {
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 if (paramSQLString instanceof BObject) {
-                    setParams(connection, statement, (BObject) paramSQLString);
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
                 }
                 int count = statement.executeUpdate();
                 Object lastInsertedId = null;
@@ -103,7 +116,15 @@ public class ExecuteUtils {
         }
     }
 
-    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings) {
+    /**
+     * Execute a batch of SQL statements.
+     * @param client client object
+     * @param paramSQLStrings array of SQL string for the execute statement
+     * @param statementParameterProcessor pre-processor of the statement
+     * @return execution result or error
+     */
+    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
+                             DefaultStatementParameterProcessor statementParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -130,10 +151,10 @@ public class ExecuteUtils {
                                 "commands. These has to be executed in different function calls");
                     }
                 }
-                connection = SQLDatasourceUtils.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 for (BObject param : parameters) {
-                    setParams(connection, statement, param);
+                    statementParameterProcessor.setParams(connection, statement, param);
                     statement.addBatch();
                 }
                 int[] counts = statement.executeBatch();

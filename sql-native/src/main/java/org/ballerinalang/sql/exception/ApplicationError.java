@@ -25,7 +25,6 @@ import java.sql.SQLException;
  * @since 1.2.0
  */
 public class ApplicationError extends Exception {
-
     public ApplicationError(String message) {
         super(message);
     }
@@ -33,5 +32,4 @@ public class ApplicationError extends Exception {
     public ApplicationError(String message, SQLException error) {
         super(message, error);
     }
-
 }
