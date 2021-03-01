@@ -6,11 +6,11 @@ Ballerina SQL Library
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/sql.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The SQL library is one of the standard library modules of the<a target="_blank" href="https://ballerina.io/"> Ballerina</a> language.
+The SQL library is one of the standard library packages of the<a target="_blank" href="https://ballerina.io/"> Ballerina</a> language.
 
-It provides the common interface and functionality to interact with a database. The corresponding database clients can be created by using specific database modules such as MySQL or using the Java Database Connectivity module JDBC.
+It provides the common interface and functionality to interact with a database. The corresponding database clients can be created by using specific database packages such as MySQL or using the Java Database Connectivity package JDBC.
 
-For more information on the operations supported by the `sql:Client`, which include the below, go to [The SQL Module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/sql/).
+For more information on the operations supported by the `sql:Client`, which include the below, go to [The SQL Package](https://ballerina.io/learn/api-docs/ballerina/sql/).
 
 - Pooling connections
 - Querying data
@@ -21,13 +21,13 @@ For more information on the operations supported by the `sql:Client`, which incl
 - Executing stored procedures
 - Closing the client
 
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/mysql-init-options.html).
+For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/mysql-init-options.html).
 
 ## Issues and Projects 
 
 Issues and Projects tabs are disabled for this repository as this is part of the Ballerina Standard Library. To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina Standard Library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library). 
 
-This repository only contains the source code for the module.
+This repository only contains the source code for the package.
 
 ## Building from the Source
 
@@ -56,7 +56,7 @@ Execute the commands below to build from source.
 
         ./gradlew clean test
 
-3. To build the module without the tests:
+3. To build the package without the tests:
 
         ./gradlew clean build -x test
 
@@ -81,6 +81,10 @@ Execute the commands below to build from source.
 6. To debug the tests:
 
         ./gradlew clean build -Pdebug=<port>
+
+7. To debug the package with Ballerina language:
+
+        ./gradlew clean build -PbalJavaDebug=<port>     
 
 ## Contributing to Ballerina
 

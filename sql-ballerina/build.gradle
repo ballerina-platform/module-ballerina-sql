@@ -19,15 +19,31 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 description = 'Ballerina - SQL Ballerina Generator'
 
+def packageName = "sql"
+def packageOrg = "ballerina"
+def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
+def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
+def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
+def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
+def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
+def snapshotVersion = "-SNAPSHOT"
+def tomlVersion = project.version.replace("${snapshotVersion}", "")
+def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
+def distributionPath =  project.projectDir.absolutePath + "/build/target/jballerina-tools-${ballerinaLangVersion}"
+def distributionBinPath = distributionPath + "/bin"
+def originalConfig = ballerinaConfigFile.text
+def originalDependencies = ballerinaDependencyFile.text
+
 configurations {
     jbalTools
 }
 
 dependencies {
-    jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+    jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-    compile project(':sql-native')
+    compile project(":${packageName}-native")
 }
 
 clean {
@@ -36,8 +52,7 @@ clean {
 
 jar {
     manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
     }
 }
 
@@ -47,7 +62,6 @@ task copyToLib(type: Copy) {
 }
 
 task unpackJballerinaTools(type: Copy) {
-    dependsOn(copyToLib)
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
         into new File("${buildDir}/target")
@@ -55,7 +69,6 @@ task unpackJballerinaTools(type: Copy) {
 }
 
 task unpackStdLibs() {
-    dependsOn(unpackJballerinaTools)
     doLast {
         configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             copy {
@@ -66,29 +79,13 @@ task unpackStdLibs() {
     }
 }
 
-def packageName = "sql"
-def packageOrg = "ballerina"
-def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
-def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
-def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
-def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
-def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def tomlVersion = project.version.split("-")[0].toString()
-def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
-def distributionPath =  project.projectDir.absolutePath + "/build/target/jballerina-tools-${ballerinaLangVersion}"
-def distributionBinPath = distributionPath + "/bin"
-def originalConfig = ballerinaConfigFile.text
-def originalDependencies = ballerinaDependencyFile.text
-
 task copyStdlibs(type: Copy) {
-    dependsOn(unpackStdLibs)
-
     into distributionPath
     /* Standard Libraries */
     configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         def artifactExtractedPath = "${buildDir}/target/" + artifact.name + "-zip"
-        into("repo/balo") {
-            from "${artifactExtractedPath}/balo/"
+        into("repo/bala") {
+            from "${artifactExtractedPath}/bala/"
         }
         into("repo/cache") {
             from "${artifactExtractedPath}/cache"
@@ -98,8 +95,8 @@ task copyStdlibs(type: Copy) {
 
 task updateTomlFile {
     doLast {
-        def stdlibDependentIoVersion = project.stdlibIoVersion.split('-')[0].toString()
-        def stdlibTimeVersion = project.stdlibTimeVersion.split("-")[0].toString()
+        def stdlibDependentIoVersion = project.stdlibIoVersion.replace("${snapshotVersion}", "")
+        def stdlibTimeVersion = project.stdlibTimeVersion.replace("${snapshotVersion}", "")
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version.toString())
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
@@ -120,66 +117,82 @@ task revertTomlFile {
     }
 }
 
-assemble {
-    dependsOn(copyStdlibs)
-    dependsOn(":sql-native:build")
-}
+def groupParams = ""
+def disableGroups = ""
+def debugParams = ""
+def balJavaDebugParam = ""
+def testParams = ""
 
-task ballerinaTest {
-    dependsOn(assemble)
-    dependsOn(updateTomlFile)
-    finalizedBy(revertTomlFile)
-
-    def groupParams = ""
+task initializeVariables {
     if (project.hasProperty("groups")) {
         groupParams = "--groups ${project.findProperty("groups")}"
-    } else if (project.hasProperty("disable-groups")) {
-        groupParams = "--disable-groups ${project.findProperty("disable-groups")}"
     }
-
-    def debugParams = ""
+    if (project.hasProperty("disable")) {
+        disableGroups = "--disable-groups ${project.findProperty("disable")}"
+    }
     if (project.hasProperty("debug")) {
         debugParams = "--debug ${project.findProperty("debug")}"
     }
+    if (project.hasProperty("balJavaDebug")) {
+        balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
+    }
 
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.hasTask(":${packageName}-ballerina:build") ||
+                graph.hasTask(":${packageName}-ballerina:publish") ||
+                graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
+            ballerinaTest.enabled = false
+        } else {
+            ballerinaTest.enabled = true
+        }
+
+        if (graph.hasTask(":${packageName}-ballerina:test")) {
+            testParams = "--code-coverage --includes=*"
+        } else {
+            testParams = "--skip-tests"
+        }
+
+        if (graph.hasTask(":${packageName}-ballerina:publish")) {
+            ballerinaPublish.enabled = true
+        } else {
+            ballerinaPublish.enabled = false
+        }
+    }
+}
+
+task ballerinaTest {
     doLast {
         exec {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+            environment "STDLIB_VERSION", tomlVersion
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$distributionBinPath/bal.bat test ${groupParams} ${debugParams} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$distributionBinPath/bal test ${groupParams} ${debugParams}"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams}"
             }
         }
     }
 }
 
-test {
-    dependsOn(ballerinaTest)
-}
-
 task ballerinaBuild {
-    mustRunAfter(test)
-    dependsOn(assemble)
-    dependsOn(updateTomlFile)
-    finalizedBy(revertTomlFile)
-
     inputs.dir file(project.projectDir)
+
     doLast {
         // Build and populate caches
         exec {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+            environment "STDLIB_VERSION", tomlVersion
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$distributionBinPath/bal.bat build --skip-tests -c && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat build ${testParams} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$distributionBinPath/bal build --skip-tests -c"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal build ${testParams} ${debugParams}"
             }
         }
         copy {
-            from file("$project.projectDir/target/balo")
-            into file("$artifactCacheParent/balo/${packageOrg}/${packageName}/${tomlVersion}")
+            from file("$project.projectDir/target/bala")
+            into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}")
         }
         copy {
             from file("$project.projectDir/target/cache")
@@ -209,25 +222,12 @@ task ballerinaBuild {
     outputs.dir artifactLibParent
 }
 
-build {
-    dependsOn(ballerinaBuild)
-}
-
-task ballerinaPush {
-    dependsOn(build)
+task ballerinaPublish {
     doLast {
-        // Publish to central
-        if (!project.hasProperty("publishToCentral")) {
+        if (project.version.endsWith('-SNAPSHOT')) {
             return
         }
-
-        if (project.version.endsWith('-SNAPSHOT')) {
-            throw new GradleException("Stdlib not pushed to central for snapshot version '${project.version}'.")
-        } else {
-            if (ballerinaCentralAccessToken == null) {
-                throw new GradleException("Central push failed invalid access token.")
-            }
-
+        if (ballerinaCentralAccessToken != null) {
             println("Publishing to the ballerina central..")
             exec {
                 workingDir project.projectDir
@@ -238,12 +238,10 @@ task ballerinaPush {
                     commandLine 'sh', '-c', "$distributionBinPath/bal push"
                 }
             }
+        } else {
+            throw new InvalidUserDataException("Central Access Token is Not Present")
         }
     }
-}
-
-publish {
-    dependsOn(ballerinaPush)
 }
 
 task createArtifactZip(type: Zip) {
@@ -253,14 +251,15 @@ task createArtifactZip(type: Zip) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        maven(MavenPublication) {
             artifact source: createArtifactZip, extension: 'zip'
+            artifact source: artifactCodeCoverageReport, classifier: 'jacoco'
         }
     }
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerina-sql")
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-${packageOrg}-${packageName}")
             credentials {
                 username = System.getenv("packageUser")
                 password = System.getenv("packagePAT")
@@ -268,3 +267,29 @@ publishing {
         }
     }
 }
+
+unpackJballerinaTools.dependsOn copyToLib
+unpackStdLibs.dependsOn unpackJballerinaTools
+copyStdlibs.dependsOn unpackStdLibs
+updateTomlFile.dependsOn copyStdlibs
+
+ballerinaTest.dependsOn updateTomlFile
+ballerinaTest.dependsOn initializeVariables
+ballerinaTest.dependsOn ":${packageName}-native:build"
+ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.finalizedBy revertTomlFile
+test.dependsOn ballerinaTest
+
+ballerinaBuild.dependsOn test
+ballerinaBuild.dependsOn updateTomlFile
+ballerinaBuild.dependsOn initializeVariables
+ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaBuild.finalizedBy revertTomlFile
+build.dependsOn ballerinaBuild
+
+ballerinaPublish.finalizedBy revertTomlFile
+ballerinaPublish.dependsOn initializeVariables
+ballerinaPublish.dependsOn updateTomlFile
+ballerinaPublish.dependsOn ":${packageName}-native:build"
+ballerinaPublish.dependsOn ballerinaBuild
+publish.dependsOn ballerinaPublish
