@@ -99,47 +99,34 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_STRING);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof Boolean) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_BOOLEAN);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof Integer) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_INT);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof Long) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_INT);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof Float) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_FLOAT);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof Double) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_FLOAT);
-            for (int i = 0; i < length; i++) {
-                refValueArray.add(i, dataArray[i]);
-            }
         } else if (firstNonNullElement instanceof BigDecimal) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_DECIMAL);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i,
                         dataArray[i] != null ? ValueCreator.createDecimalValue((BigDecimal) dataArray[i]) : null);
             }
+            return refValueArray;
         } else if (firstNonNullElement == null) {
             refValueArray = createEmptyBBRefValueArray(type);
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, firstNonNullElement);
             }
+            return refValueArray;
         } else {
-            createAndPopulateCustomBBRefValueArray(firstNonNullElement, dataArray, type);
+            return createAndPopulateCustomBBRefValueArray(firstNonNullElement, dataArray, type);
+        }
+        for (int i = 0; i < length; i++) {
+            refValueArray.add(i, dataArray[i]);
         }
         return refValueArray;
     }
@@ -287,28 +274,22 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 + structType.getName() + " record.");
     }
 
-    protected static Object[] validateNullable(Object[] objects) {
-        Object[] returnResult = new Object[2];
-        boolean foundNull = false;
-        Object nonNullObject = null;
+    protected static boolean containsNullObject(Object[] objects) {
         for (Object object : objects) {
-            if (object != null) {
-                if (nonNullObject == null) {
-                    nonNullObject = object;
-                }
-                if (foundNull) {
-                    break;
-                }
-            } else {
-                foundNull = true;
-                if (nonNullObject != null) {
-                    break;
-                }
+            if (object == null) {
+                return true;
             }
         }
-        returnResult[0] = nonNullObject;
-        returnResult[1] = foundNull;
-        return returnResult;
+        return false;
+    }
+
+    protected static Object firstNonNullObject(Object[] objects) {
+        for (Object object : objects) {
+            if (object != null) {
+                return object;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -320,9 +301,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 return null;
             }
 
-            Object[] result = validateNullable(dataArray);
-            Object firstNonNullElement = result[0];
-            boolean containsNull = (boolean) result[1];
+            Object firstNonNullElement = firstNonNullObject(dataArray);
+            boolean containsNull = containsNullObject(dataArray);
 
             if (containsNull) {
                 // If there are some null elements, return a union-type element array
