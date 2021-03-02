@@ -135,7 +135,7 @@ function testWithConnectionPool() {
     if (err is error) {
         test:assertFail("DB connection not created properly.");
     } else {
-        test:assertEquals(connectionPool.maxConnectionLifeTimeInSeconds, <decimal> 2000.5);
+        test:assertEquals(connectionPool.maxConnectionLifeTime, <decimal> 2000.5);
         test:assertEquals(connectionPool.minIdleConnections, 5);
     }
 }

@@ -17,7 +17,7 @@
 import ballerina/jballerina.java;
 
 final configurable int maxOpenConnections = 15;
-final configurable decimal maxConnectionLifeTimeInSeconds = 1800.0;
+final configurable decimal maxConnectionLifeTime = 1800.0;
 final configurable int minIdleConnections = 15;
 
 # Represents the properties which are used to configure DB connection pool.
@@ -26,16 +26,16 @@ final configurable int minIdleConnections = 15;
 # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have, including
 #                        both idle and in-use connections. Default value is 15 and it can be changed through the
 #                        configuration API with the key `b7a.sql.pool.maxOpenConnections`.
-# + maxConnectionLifeTimeInSeconds - The maximum lifetime of a connection in the pool. Default value is 1800 seconds
-#                                  (30 minutes) and it can be changed through the configuration API with the
-#                                  key `b7a.sql.pool.maxConnectionLifeTimeInSeconds`. A value of 0 indicates unlimited maximum
+# + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. Default value is 1800
+#                                  seconds (30 minutes) and it can be changed through the configuration API with the
+#                                  key `b7a.sql.pool.maxConnectionLifeTime`. A value of 0 indicates unlimited maximum
 #                                  lifetime (infinite lifetime).
 # + minIdleConnections - The minimum number of idle connections that pool tries to maintain in the pool. Default
 #                        is the same as maxOpenConnections and it can be changed through the configuration
 #                        API with the key `b7a.sql.pool.minIdleConnections`.
 public type ConnectionPool record {|
     int maxOpenConnections = maxOpenConnections;
-    decimal maxConnectionLifeTimeInSeconds = maxConnectionLifeTimeInSeconds;
+    decimal maxConnectionLifeTime = maxConnectionLifeTime;
     int minIdleConnections = minIdleConnections;
 |};
 

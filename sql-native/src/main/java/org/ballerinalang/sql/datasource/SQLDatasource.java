@@ -331,7 +331,7 @@ public class SQLDatasource {
                 }
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
+                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec instanceof BDecimal) {
                     BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
                     if (connLifeTime.floatValue() > 0) {
@@ -388,7 +388,7 @@ public class SQLDatasource {
                 }
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
+                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec instanceof BDecimal) {
                     BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
                     if (connLifeTime.floatValue() > 0) {
