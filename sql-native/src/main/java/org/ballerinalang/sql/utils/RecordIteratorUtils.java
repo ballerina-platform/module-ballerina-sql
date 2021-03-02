@@ -115,7 +115,8 @@ public class RecordIteratorUtils {
                 if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
                     return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
                 } else {
-                    return resultParameterProcessor.convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
+                    return resultParameterProcessor.convertChar(resultSet.getString(columnIndex),
+                            sqlType, ballerinaType);
                 }
             case Types.BINARY:
             case Types.VARBINARY:
