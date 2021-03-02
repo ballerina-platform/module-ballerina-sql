@@ -112,7 +112,12 @@ public class RecordIteratorUtils {
             case Types.NCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                return resultParameterProcessor.convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
+                if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
+                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
+                } else {
+                    return resultParameterProcessor.convertChar(resultSet.getString(columnIndex),
+                            sqlType, ballerinaType);
+                }
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
@@ -222,16 +227,22 @@ public class RecordIteratorUtils {
                     return resultParameterProcessor.convertXml(
                             resultSet.getSQLXML(columnIndex), sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    String jsonString = resultParameterProcessor.convertChar(
-                            resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
-                    Reader reader = new StringReader(jsonString);
-                    try {
-                        return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
-                    } catch (BError e) {
-                        throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
-                    }
+                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
                 }
                 return resultParameterProcessor.getCustomResult(resultSet, columnIndex, columnDefinition);
+        }
+    }
+
+    public static Object getJson(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
+                                 DefaultResultParameterProcessor resultParameterProcessor)
+            throws ApplicationError, SQLException {
+        String jsonString = resultParameterProcessor.convertChar(
+                resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
+        Reader reader = new StringReader(jsonString);
+        try {
+            return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
+        } catch (BError e) {
+            throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
         }
     }
 
