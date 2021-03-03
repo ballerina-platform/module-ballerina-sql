@@ -17,6 +17,6 @@
 #
 
 [sql]
-maxOpenConnections= 10
-maxConnectionLifeTimeInSeconds= 2000.5
-minIdleConnections= 5
+maxOpenConnections=10
+maxConnectionLifeTime=2000.5
+minIdleConnections=5
