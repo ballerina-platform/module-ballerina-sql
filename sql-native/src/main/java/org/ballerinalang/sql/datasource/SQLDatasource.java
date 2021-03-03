@@ -20,9 +20,6 @@ package org.ballerinalang.sql.datasource;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.types.Type;
-import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -348,12 +345,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry -> {
-                    if (isSupportedDbOptionType(entry.getValue())) {
-                        config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue());
-                    } else {
-                        throw ErrorGenerator.getSQLApplicationError("unsupported type " + entry.getKey()
-                                + " for the db option");
-                    }
+                    config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue());
                 });
             }
             hikariDataSource = new HikariDataSource(config);
@@ -399,12 +391,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry -> {
-                    if (isSupportedDbOptionType(entry.getValue())) {
-                        xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString());
-                    } else {
-                        throw ErrorGenerator.getSQLApplicationError("unsupported type " + entry.getKey()
-                                + " for the db option");
-                    }
+                    xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString());
                 });
             }
 
@@ -416,18 +403,6 @@ public class SQLDatasource {
         } catch (Throwable t) {
             throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
         }
-    }
-
-    private static boolean isSupportedDbOptionType(Object value) {
-        boolean supported = false;
-        if (value != null) {
-            Type type = TypeUtils.getType(value);
-            int typeTag = type.getTag();
-            supported = (typeTag == TypeTags.STRING_TAG || typeTag == TypeTags.INT_TAG || typeTag == TypeTags.FLOAT_TAG
-                    || typeTag == TypeTags.BOOLEAN_TAG || typeTag == TypeTags.DECIMAL_TAG
-                    || typeTag == TypeTags.BYTE_TAG);
-        }
-        return supported;
     }
 
     private String buildErrorMessage (Throwable t) {
