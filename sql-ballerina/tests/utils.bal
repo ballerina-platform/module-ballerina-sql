@@ -17,8 +17,8 @@
 import ballerina/io;
 import ballerina/file;
 import ballerina/lang.runtime as runtime;
-import ballerina/os;
 import ballerina/test;
+import ballerina/jballerina.java;
 
 string scriptPath = checkpanic file:getAbsolutePath("tests/resources/sql");
 
@@ -26,17 +26,19 @@ string user = "test";
 string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
-function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, string scriptName) {
-    os:Process process;
+function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
+        string scriptName) {
     int exitCode = 1;
-    process = checkpanic os:exec(
-        "docker", {}, scriptPath, "run", "--rm", "-d", "--name", containerName,
+    setModuleForTest();
+    Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm",
+        "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
         "-e", "HSQLDB_USER=test",
         "-v", checkpanic file:joinPath(scriptPath, resFolder) + ":/scripts",
-        "-p", port + ":9001", "blacklabelops/hsqldb"
-    );
-    exitCode = checkpanic process.waitForExit();
+        "-p", port + ":9001", "blacklabelops/hsqldb");
+    Process result = checkpanic execResult;
+    int waitForExit = checkpanic result.waitForExit();
+    exitCode = checkpanic result.exitCode();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
     io:println("Docker container for Database '" + dbAlias +"' created.");
     runtime:sleep(20);
@@ -45,14 +47,16 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     exitCode = 1;
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5);
-        process = checkpanic os:exec(
+        execResult = exec(
             "docker", {}, scriptPath, "exec", containerName,
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
             "--autoCommit",
             "--inlineRc", "url=" + urlPrefix + "9001/" +  dbAlias + ",user=test,password=", 
             "/scripts/" + scriptName
         );
-        exitCode = checkpanic process.waitForExit();
+        result = checkpanic execResult;
+        waitForExit = checkpanic result.waitForExit();
+        exitCode =checkpanic result.exitCode();
         counter = counter + 1;
     }
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
@@ -60,8 +64,11 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
 }
 
 function cleanDockerContainer(string containerName) {
-    os:Process process = checkpanic os:exec("docker", {}, scriptPath, "stop", containerName);
-    int exitCode = checkpanic process.waitForExit();
+    Process|error execResult = exec("docker", {}, scriptPath, "stop", containerName);
+    Process result = checkpanic execResult;
+    int waitForExit = checkpanic result.waitForExit();
+
+    int exitCode = checkpanic result.exitCode();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
     io:println("Cleaned docker container '" + containerName +"'.");
 }
@@ -99,3 +106,14 @@ returns @tainted record {}? {
     checkpanic dbClient.close();
     return value;
 }
+
+function exec(@untainted string command, @untainted map<string> env = {},
+                     @untainted string? dir = (), @untainted string... args) returns Process|error = @java:Method {
+    name: "exec",
+    'class: "org.ballerinalang.sql.testutils.nativeimpl.Exec"
+} external;
+
+isolated function setModuleForTest() = @java:Method {
+    name: "setModule",
+    'class: "org.ballerinalang.sql.testutils.nativeimpl.ModuleUtils"
+} external;
