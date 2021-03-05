@@ -28,7 +28,6 @@ repositories {
 dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}"
     compile project(":sql-native")
 }
 

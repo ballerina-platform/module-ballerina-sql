@@ -28,9 +28,3 @@ groupId = "org.hsqldb"
 scope = "testOnly"
 artifactId = "hsqldb"
 version = "2.5.1"
-
-[[platform.java11.dependency]]
-path = "./lib/io-native-@io.native.version@.jar"
-groupId = "org.ballerinalang"
-artifactId = "io-native"
-version = "@io.native.version@"
