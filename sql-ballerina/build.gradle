@@ -101,7 +101,6 @@ task updateTomlFile {
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version.toString())
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
-        newConfig = newConfig.replace("@io.native.version@", project.stdlibIoVersion)
         newConfig = newConfig.replace("@project.path@", distributionPath)
 
         ballerinaConfigFile.text = newConfig
