@@ -26,10 +26,20 @@ string user = "test";
 string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
+@test:BeforeSuite
+function beforeSuite() {
+    setModuleForTest();
+    io:println("Test suite initiated");
+}
+
+@test:AfterSuite {}
+function afterSuite() {
+    io:println("Test suite finished");
+}
+
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
         string scriptName) {
     int exitCode = 1;
-    setModuleForTest();
     Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm",
         "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
