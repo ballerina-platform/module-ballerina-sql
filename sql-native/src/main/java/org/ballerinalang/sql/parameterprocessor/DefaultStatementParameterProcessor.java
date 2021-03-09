@@ -185,7 +185,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         Object value = typedValue.get(Constants.TypedValueFields.VALUE);
         switch (sqlType) {
             case Constants.SqlTypes.VARCHAR:
-                setVarchar(preparedStatement, index, value.toString());
+                setVarchar(preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.CHAR:
                 setChar(preparedStatement, index, value);

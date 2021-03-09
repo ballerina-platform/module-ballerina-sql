@@ -80,7 +80,7 @@ public class CallProcessor {
      * @param paramSQLString SQL string for the call statement
      * @param recordTypes type description of the result record                
      * @param statementParameterProcessor pre-processor of the statement
-     * @param resultParameterProcessor post-processeor of the result
+     * @param resultParameterProcessor post-processor of the result
      * @return procedure call result or error
      */
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
