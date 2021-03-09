@@ -72,8 +72,8 @@ public final class Constants {
      */
     public static final class ConnectionPool {
         public static final BString MAX_OPEN_CONNECTIONS = fromString("maxOpenConnections");
-        public static final BString MAX_CONNECTION_LIFE_TIME_SECONDS = fromString(
-                "maxConnectionLifeTimeInSeconds");
+        public static final BString MAX_CONNECTION_LIFE_TIME = fromString(
+                "maxConnectionLifeTime");
         public static final BString MIN_IDLE_CONNECTIONS = fromString("minIdleConnections");
     }
 

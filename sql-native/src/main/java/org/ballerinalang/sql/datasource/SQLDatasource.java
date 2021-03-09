@@ -20,11 +20,18 @@ package org.ballerinalang.sql.datasource;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.transactions.BallerinaTransactionContext;
+import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
+import org.ballerinalang.sql.transaction.SQLTransactionContext;
 import org.ballerinalang.sql.utils.ErrorGenerator;
 
 import java.sql.Connection;
@@ -39,6 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
+import javax.transaction.xa.XAResource;
 
 /**
  * SQL datasource representation.
@@ -54,6 +62,7 @@ public class SQLDatasource {
     private AtomikosDataSourceBean atomikosDataSourceBean;
     private HikariDataSource hikariDataSource;
     private XADataSource xaDataSource;
+    private static final String POOL_MAP_KEY = UUID.randomUUID().toString();
 
     private SQLDatasource(SQLDatasourceParams sqlDatasourceParams) {
 
@@ -95,6 +104,18 @@ public class SQLDatasource {
         }
     }
 
+    public static synchronized Map<PoolKey, SQLDatasource> putDatasourceContainer(
+            BMap<BString, Object> poolOptions,
+            ConcurrentHashMap<PoolKey, SQLDatasource> datasourceMap) {
+        Map<PoolKey, SQLDatasource> existingDataSourceMap =
+                (Map<PoolKey, SQLDatasource>) poolOptions.getNativeData(POOL_MAP_KEY);
+        if (existingDataSourceMap != null) {
+            return existingDataSourceMap;
+        }
+        poolOptions.addNativeData(POOL_MAP_KEY, datasourceMap);
+        return datasourceMap;
+    }
+
     /**
      * Retrieve the {@link SQLDatasource}} object corresponding to the provided  URL in
      * {@link SQLDatasource.SQLDatasourceParams}.
@@ -106,12 +127,11 @@ public class SQLDatasource {
      */
     public static SQLDatasource retrieveDatasource(SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         PoolKey poolKey = new PoolKey(sqlDatasourceParams.url, sqlDatasourceParams.options);
-        Map<PoolKey, SQLDatasource> hikariDatasourceMap = SQLDatasourceUtils
-                .retrieveDatasourceContainer(sqlDatasourceParams.connectionPool);
+        Map<PoolKey, SQLDatasource> hikariDatasourceMap = (Map<PoolKey, SQLDatasource>) sqlDatasourceParams
+                .connectionPool.getNativeData(POOL_MAP_KEY);
         // map could be null only in a local pool creation scenario
         if (hikariDatasourceMap == null) {
-            hikariDatasourceMap = SQLDatasourceUtils.putDatasourceContainer(sqlDatasourceParams.connectionPool,
-                    new ConcurrentHashMap<>());
+            hikariDatasourceMap = putDatasourceContainer(sqlDatasourceParams.connectionPool, new ConcurrentHashMap<>());
         }
         SQLDatasource existingSqlDatasource = hikariDatasourceMap.get(poolKey);
         SQLDatasource sqlDatasourceToBeReturned = existingSqlDatasource;
@@ -135,28 +155,106 @@ public class SQLDatasource {
         return sqlDatasourceToBeReturned;
     }
 
+    public static Connection getConnection(TransactionResourceManager trxResourceManager, BObject client,
+            SQLDatasource datasource)
+            throws SQLException {
+        Connection conn;
+        try {
+            if (!trxResourceManager.isInTransaction()) {
+                return datasource.getConnection();
+            } else {
+                //This is when there is an infected transaction block. But this is not participated to the transaction
+                //since the action call is outside of the transaction block.
+                if (!trxResourceManager.getCurrentTransactionContext().hasTransactionBlock()) {
+                    return datasource.getConnection();
+                }
+            }
+            String connectorId = (String) client.getNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID);
+            boolean isXAConnection = datasource.isXADataSource();
+            TransactionLocalContext transactionLocalContext = trxResourceManager.getCurrentTransactionContext();
+            String globalTxId = transactionLocalContext.getGlobalTransactionId();
+            String currentTxBlockId = transactionLocalContext.getCurrentTransactionBlockId();
+            BallerinaTransactionContext txContext = transactionLocalContext.getTransactionContext(connectorId);
+            if (txContext == null) {
+                if (isXAConnection && !trxResourceManager.getTransactionManagerEnabled()) {
+                    XAConnection xaConn = datasource.getXAConnection();
+                    XAResource xaResource = xaConn.getXAResource();
+                    TransactionResourceManager.getInstance()
+                            .beginXATransaction(globalTxId, currentTxBlockId, xaResource);
+                    conn = xaConn.getConnection();
+                    txContext = new SQLTransactionContext(conn, xaResource);
+                } else if (isXAConnection) {
+                    TransactionResourceManager.getInstance()
+                            .beginXATransaction(globalTxId, currentTxBlockId, null);
+                    conn = datasource.getConnection();
+                    conn.setAutoCommit(false);
+                    txContext = new SQLTransactionContext(conn);
+                } else {
+                    conn = datasource.getConnection();
+                    conn.setAutoCommit(false);
+                    txContext = new SQLTransactionContext(conn);
+                }
+                transactionLocalContext.registerTransactionContext(connectorId, txContext);
+                TransactionResourceManager.getInstance().register(globalTxId, currentTxBlockId, txContext);
+            } else {
+                conn = ((SQLTransactionContext) txContext).getConnection();
+            }
+        } catch (SQLException e) {
+            throw new SQLException("error while getting the connection for " + Constants.CONNECTOR_NAME + ". "
+                    + e.getMessage(), e.getSQLState(), e.getErrorCode());
+        }
+        return conn;
+    }
+
+    public static SQLDatasourceParams createSQLDatasourceParams(BMap<BString, Object> sqlDatasourceParams,
+            BMap<BString, Object> globalConnectionPool) {
+        BMap<BString, Object> connPoolProps = (BMap<BString, Object>) sqlDatasourceParams
+                .getMapValue(Constants.SQLParamsFields.CONNECTION_POOL_OPTIONS);
+        Properties poolProperties = null;
+        if (connPoolProps != null) {
+            poolProperties = new Properties();
+            for (BString key : connPoolProps.getKeys()) {
+                poolProperties.setProperty(key.getValue(), connPoolProps.getStringValue(key).getValue());
+            }
+        }
+        BString userVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.USER);
+        String user = userVal == null ? null : userVal.getValue();
+        BString passwordVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.PASSWORD);
+        String password = passwordVal == null ? null : passwordVal.getValue();
+        BString dataSourceNamVal = sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.DATASOURCE_NAME);
+        String datasourceName = dataSourceNamVal == null ? null : dataSourceNamVal.getValue();
+        return new SQLDatasource.SQLDatasourceParams()
+                .setUrl(sqlDatasourceParams.getStringValue(Constants.SQLParamsFields.URL).getValue())
+                .setUser(user)
+                .setPassword(password)
+                .setDatasourceName(datasourceName)
+                .setOptions(sqlDatasourceParams.getMapValue(Constants.SQLParamsFields.OPTIONS))
+                .setConnectionPool(sqlDatasourceParams.getMapValue(Constants.SQLParamsFields.CONNECTION_POOL),
+                        globalConnectionPool)
+                .setPoolProperties(poolProperties);
+    }
+
     private static SQLDatasource createAndInitDatasource(SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         SQLDatasource newSqlDatasource = new SQLDatasource(sqlDatasourceParams);
         newSqlDatasource.incrementClientCounter();
         return newSqlDatasource;
     }
 
-    Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
       if (atomikosDataSourceBean != null) {
           return atomikosDataSourceBean.getConnection();
       }
-
       return hikariDataSource.getConnection();
     }
 
-    public XAConnection getXAConnection() throws SQLException {
+    private XAConnection getXAConnection() throws SQLException {
         if (isXADataSource()) {
             return xaDataSource.getXAConnection();
         }
         return null;
     }
 
-    public boolean isXADataSource() {
+    private boolean isXADataSource() {
         return xaConn;
     }
 
@@ -233,7 +331,7 @@ public class SQLDatasource {
                 }
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
+                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec instanceof BDecimal) {
                     BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
                     if (connLifeTime.floatValue() > 0) {
@@ -250,7 +348,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry -> {
-                    if (SQLDatasourceUtils.isSupportedDbOptionType(entry.getValue())) {
+                    if (isSupportedDbOptionType(entry.getValue())) {
                         config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue());
                     } else {
                         throw ErrorGenerator.getSQLApplicationError("unsupported type " + entry.getKey()
@@ -262,16 +360,7 @@ public class SQLDatasource {
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return hikariDataSource;
         } catch (Throwable t) {
-            StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
-            String lastCauseMessage;
-            int count = 0;
-            while (t.getCause() != null && count < 3) {
-                lastCauseMessage = t.getCause().getMessage();
-                message.append(" Caused by :").append(lastCauseMessage);
-                count++;
-                t = t.getCause();
-            }
-            throw ErrorGenerator.getSQLApplicationError(message.toString());
+            throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
         }
     }
 
@@ -299,7 +388,7 @@ public class SQLDatasource {
                 }
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME_SECONDS);
+                        .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec instanceof BDecimal) {
                     BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
                     if (connLifeTime.floatValue() > 0) {
@@ -310,7 +399,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry -> {
-                    if (SQLDatasourceUtils.isSupportedDbOptionType(entry.getValue())) {
+                    if (isSupportedDbOptionType(entry.getValue())) {
                         xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString());
                     } else {
                         throw ErrorGenerator.getSQLApplicationError("unsupported type " + entry.getKey()
@@ -325,17 +414,33 @@ public class SQLDatasource {
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return atomikosDataSource;
         } catch (Throwable t) {
-            StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
-            String lastCauseMessage;
-            int count = 0;
-            while (t.getCause() != null && count < 3) {
-                lastCauseMessage = t.getCause().getMessage();
-                message.append(" Caused by :").append(lastCauseMessage);
-                count++;
-                t = t.getCause();
-            }
-            throw ErrorGenerator.getSQLApplicationError(message.toString());
+            throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
         }
+    }
+
+    private static boolean isSupportedDbOptionType(Object value) {
+        boolean supported = false;
+        if (value != null) {
+            Type type = TypeUtils.getType(value);
+            int typeTag = type.getTag();
+            supported = (typeTag == TypeTags.STRING_TAG || typeTag == TypeTags.INT_TAG || typeTag == TypeTags.FLOAT_TAG
+                    || typeTag == TypeTags.BOOLEAN_TAG || typeTag == TypeTags.DECIMAL_TAG
+                    || typeTag == TypeTags.BYTE_TAG);
+        }
+        return supported;
+    }
+
+    private String buildErrorMessage (Throwable t) {
+        StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
+        String lastCauseMessage;
+        int count = 0;
+        while (t.getCause() != null && count < 3) {
+            lastCauseMessage = t.getCause().getMessage();
+            message.append(" Caused by :").append(lastCauseMessage);
+            count++;
+            t = t.getCause();
+        }
+        return message.toString();
     }
 
     /**
@@ -346,7 +451,7 @@ public class SQLDatasource {
         private String user;
         private String password;
         private String datasourceName;
-        private BMap connectionPool;
+        private BMap connectionPool = null;
         private BMap options;
         private Properties poolProperties;
 
