@@ -81,7 +81,7 @@ public class PoolKey {
                         break;
                     case TypeTags.BYTE_TAG:
                     case TypeTags.INT_TAG:
-                        // Assert to convince spotbugs that it's a number
+                        // Assert to convince spotbugs that value is a number
                         assert value instanceof Number;
                         long longValue = (Long) value;
                         valueHashCode = (int) (longValue ^ (longValue >>> 32));
