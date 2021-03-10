@@ -26,10 +26,10 @@ type TransactionResultCount record {
 
 public class SQLDefaultRetryManager {
     private int count;
-    public function init(int count = 2) {
+    public isolated function init(int count = 2) {
         self.count = count;
     }
-    public function shouldRetry(error? e) returns boolean {
+    public isolated function shouldRetry(error? e) returns boolean {
         if e is error && self.count >  0 {
             self.count -= 1;
             return true;
@@ -458,7 +458,7 @@ function testLocalTransactionSuccessWithFailed() {
     test:assertEquals(count, 2);
 }
 
-function testLocalTransactionSuccessWithFailedHelper(string status,MockClient dbClient) returns string|error {
+isolated function testLocalTransactionSuccessWithFailedHelper(string status,MockClient dbClient) returns string|error {
     int i = 0;
     string a = status;
     retry<SQLDefaultRetryManager>(3) transaction {
@@ -479,7 +479,7 @@ function testLocalTransactionSuccessWithFailedHelper(string status,MockClient db
     return a;
 }
 
-function getCount(MockClient dbClient, string id) returns @tainted int {
+isolated function getCount(MockClient dbClient, string id) returns @tainted int {
     stream<TransactionResultCount, Error> streamData = <stream<TransactionResultCount, Error>> dbClient->query("Select COUNT(*) as " +
         "countval from Customers where registrationID = "+ id, TransactionResultCount);
         record {|TransactionResultCount value;|}? data = checkpanic streamData.next();
