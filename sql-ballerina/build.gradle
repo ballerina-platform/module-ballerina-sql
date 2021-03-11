@@ -123,6 +123,7 @@ def disableGroups = ""
 def debugParams = ""
 def balJavaDebugParam = ""
 def testParams = ""
+def testCoverageParam = "--code-coverage --includes=org.ballerinalang.sql.*:ballerina.*"
 
 task initializeVariables {
     if (project.hasProperty("groups")) {
@@ -148,7 +149,7 @@ task initializeVariables {
         }
 
         if (graph.hasTask(":${packageName}-ballerina:test")) {
-            testParams = "--code-coverage --includes=*"
+            testParams = "${testCoverageParam}"
         } else {
             testParams = "--skip-tests"
         }
@@ -168,9 +169,9 @@ task ballerinaTest {
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             environment "STDLIB_VERSION", tomlVersion
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test ${testCoverageParam} ${groupParams} ${disableGroups} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams}"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test ${testCoverageParam} ${groupParams} ${disableGroups} ${debugParams}"
             }
         }
     }
