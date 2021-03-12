@@ -39,7 +39,7 @@ import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import org.ballerinalang.sql.Constants;
 import org.ballerinalang.sql.exception.ApplicationError;
-import org.ballerinalang.stdlib.time.util.TimeUtils;
+import org.ballerinalang.stdlib.time.util.TimeValueHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -144,8 +144,8 @@ public class Utils {
         }
     }
 
-    public static BMap<BString, Object> createTimeStruct(long millis) {
-        return TimeUtils.createTimeRecord(millis, Constants.TIMEZONE_UTC);
+    public static BArray createTimeStruct(long millis) {
+        return TimeValueHandler.createUtcFromMilliSeconds(millis);
     }
 
     public static String getString(java.util.Date value) {
@@ -156,9 +156,7 @@ public class Utils {
         calendar.clear();
         calendar.setTime(value);
 
-        if (!calendar.isSet(Calendar.ZONE_OFFSET)) {
-            calendar.setTimeZone(TimeZone.getDefault());
-        }
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         StringBuffer datetimeString = new StringBuffer(28);
         if (value instanceof Date) {
             //'-'? yyyy '-' mm '-' dd zzzzzz?
