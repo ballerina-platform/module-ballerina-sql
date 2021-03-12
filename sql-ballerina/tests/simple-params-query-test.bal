@@ -505,21 +505,21 @@ function queryDateStringInvalidParam() {
     }
 }
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryDateLongParam() {
-    time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
-    DateValue typeVal = new (date.time);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryDateLongParam() {
+//    time:Utc date = checkpanic time:parse("2017-02-03T00:00:00.00Z");
+//    DateValue typeVal = new (date.time);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryDateTimeRecordParam() {
-    time:Time date = checkpanic time:parse("2017-02-03", "yyyy-MM-dd");
+    time:Utc date = checkpanic time:utcFromString("2017-02-03T00:00:00.00Z");
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
@@ -529,7 +529,7 @@ function queryDateTimeRecordParam() {
     groups: ["query", "query-simple-params"]
 }
 function queryDateTimeRecordWithTimeZoneParam() {
-    time:Time date = checkpanic time:parse("2017-02-03T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    time:Utc date = checkpanic time:utcFromString("2017-02-03T09:46:22.000-05:00");
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
@@ -561,35 +561,25 @@ function queryTimeStringInvalidParam() {
     }
 }
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimeLongParam() {
-    time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
-    TimeValue typeVal = new (date.time);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryTimeTimeRecordParam() {
+//    time:Utc date = checkpanic time:utcFromString("2017-02-03T11:35:45.00Z");
+//    TimeValue typeVal = new (date);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimeTimeRecordParam() {
-    time:Time date = checkpanic time:parse("11:35:45", "HH:mm:ss");
-    TimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimeTimeRecordWithTimeZoneParam() {
-    time:Time date = checkpanic time:parse("2017-02-03T11:35:45", "yyyy-MM-dd'T'HH:mm:ss");
-    TimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryTimeTimeRecordWithTimeZoneParam() {
+//    time:Utc date = checkpanic time:utcFromString("2017-02-03T11:35:45.00Z");
+//    TimeValue typeVal = new (date);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
 @test:Config {
     groups: ["query", "query-simple-params"]
@@ -616,51 +606,51 @@ function queryTimestampStringInvalidParam() {
         test:assertFail("ApplicationError Error expected.");
     }}
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimestampLongParam() {
-    time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
-    TimestampValue typeVal = new (date.time);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryTimestampLongParam() {
+//    time:Utc date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
+//    TimestampValue typeVal = new (date.time);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimestampTimeRecordParam() {
-    time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryTimestampTimeRecordParam() {
+//    time:Utc date = checkpanic time:utcFromString("2017-02-03T11:53:00.00Z");
+//    TimestampValue typeVal = new (date);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimestampTimeRecordWithTimeZoneParam() {
-    time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryTimestampTimeRecordWithTimeZoneParam() {
+//    time:Utc date = checkpanic time:utcFromString("2017-02-03T11:53:00.00Z");
+//    TimestampValue typeVal = new (date);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryDateTimeTimeRecordWithTimeZoneParam() {
-    time:Time date = checkpanic time:parse("2017-02-03 11:53:00", "yyyy-MM-dd HH:mm:ss");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
+//@test:Config {
+//    groups: ["query", "query-simple-params"]
+//}
+//function queryDateTimeTimeRecordWithTimeZoneParam() {
+//    time:Utc date = checkpanic time:utcFromString("2017-02-03T11:53:00.00Z");
+//    TimestampValue typeVal = new (date);
+//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
+//    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+//}
 
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimestampTimeRecordWithTimeZone2Param() {
-    time:Time date = checkpanic time:parse("2008-08-08 20:08:08+0800", "yyyy-MM-dd HH:mm:ssZ");
+    time:Utc date = checkpanic time:utcFromString("2008-08-08T20:08:08+08:00");
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));

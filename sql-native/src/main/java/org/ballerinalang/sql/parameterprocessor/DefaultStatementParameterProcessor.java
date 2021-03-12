@@ -37,7 +37,7 @@ import org.ballerinalang.stdlib.io.channels.base.CharacterChannel;
 import org.ballerinalang.stdlib.io.readers.CharacterChannelReader;
 import org.ballerinalang.stdlib.io.utils.IOConstants;
 import org.ballerinalang.stdlib.io.utils.IOUtils;
-import org.ballerinalang.stdlib.time.util.TimeUtils;
+import org.ballerinalang.stdlib.time.util.TimeValueHandler;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -546,15 +546,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 timestamp = Timestamp.valueOf(value.toString());
             } else if (value instanceof Long) {
                 timestamp = new Timestamp((Long) value);
-            } else if (value instanceof BMap) {
-                BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
-                if (dateTimeStruct.getType().getName()
-                        .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
-                    ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
-                    timestamp = new Timestamp(zonedDateTime.toInstant().toEpochMilli());
-                } else {
-                    throw throwInvalidParameterError(value, sqlType);
-                }
+            } else if (value instanceof BArray) {
+                BArray dateTimeStruct = (BArray) value;
+                ZonedDateTime zonedDateTime = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
+                timestamp = new Timestamp(zonedDateTime.toInstant().toEpochMilli());
             } else {
                 throw throwInvalidParameterError(value, sqlType);
             }
@@ -810,15 +805,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 date = Date.valueOf(value.toString());
             } else if (value instanceof Long) {
                 date = new Date((Long) value);
-            } else if (value instanceof BMap) {
-                BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
-                if (dateTimeStruct.getType().getName()
-                        .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
-                    ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
-                    date = new Date(zonedDateTime.toInstant().toEpochMilli());
-                } else {
-                    throw throwInvalidParameterError(value, sqlType);
-                }
+            } else if (value instanceof BArray) {
+                BArray dateTimeStruct = (BArray) value;
+                ZonedDateTime zonedDateTime = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
+                date = new Date(zonedDateTime.toInstant().toEpochMilli());
             } else {
                 throw throwInvalidParameterError(value, sqlType);
             }
@@ -837,15 +827,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 time = Time.valueOf(value.toString());
             } else if (value instanceof Long) {
                 time = new Time((Long) value);
-            } else if (value instanceof BMap) {
-                BMap<BString, Object> dateTimeStruct = (BMap<BString, Object>) value;
-                if (dateTimeStruct.getType().getName()
-                        .equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.STRUCT_TYPE_TIME)) {
-                    ZonedDateTime zonedDateTime = TimeUtils.getZonedDateTime(dateTimeStruct);
-                    time = new Time(zonedDateTime.toInstant().toEpochMilli());
-                } else {
-                    throw throwInvalidParameterError(value, sqlType);
-                }
+            } else if (value instanceof BArray) {
+                BArray dateTimeStruct = (BArray) value;
+                ZonedDateTime zonedDateTime = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
+                time = new Time(zonedDateTime.toInstant().toEpochMilli());
             } else {
                 throw throwInvalidParameterError(value, sqlType);
             }

@@ -13,9 +13,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/regex;
+//import ballerina/io;
+//import ballerina/regex;
 import ballerina/test;
-import ballerina/time;
+//import ballerina/time;
 
 string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
@@ -256,22 +257,9 @@ function testDateTime() {
     record{}? value = data?.value;
     checkpanic dbClient.close();
 
-    time:Time now = time:currentTime();
-    time:TimeZone systemTimeZone = now.zone;
-
-    time:Time dateTime = checkpanic time:createTime(2017, 5, 23, 0, 0, 0, 0, systemTimeZone.id);
-    string dateType = checkpanic time:format(dateTime, "yyyy-MM-ddXXX");
-    dateType = regex:replaceAll(dateType, "Z", "+00:00");
-
-    time:Time timeType = checkpanic time:createTime(2017, 5, 23, 14, 15, 23, 0, "UTC");
-    time:Time newTime = checkpanic time:toTimeZone(timeType, systemTimeZone.id);
-    string timeTypeString = checkpanic time:format(newTime, "HH:mm:ss.SSSXXX");
-    timeTypeString = regex:replaceAll(timeTypeString, "Z", "+00:00");
-
-    time:Time insertedTimeType = checkpanic time:createTime(2017, 1, 25, 16, 33, 55, 0, "UTC");
-    time:Time insertedOffsetTime = checkpanic time:toTimeZone(insertedTimeType, systemTimeZone.id);
-    string insertedTimeString = checkpanic time:format(insertedOffsetTime, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-    insertedTimeString = regex:replaceAll(insertedTimeString, "Z", "+00:00");
+    string dateType = "2017-05-23+00:00";
+    string timeTypeString = "14:15:23.000+00:00";
+    string insertedTimeString = "2017-01-25T16:33:55.000+00:00";
 
     ResultDates expected = {
         DATE_TYPE: dateType,
