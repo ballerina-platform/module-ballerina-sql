@@ -253,9 +253,9 @@ public class BlobValue {
 #
 # + value - Value of parameter passed into the SQL statement
 public class DateValue {
-    public string|int|time:Time? value;
+    public string|int|time:Date? value;
 
-    public isolated function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Date? value = ()) {
         self.value = value;
     }
 }
@@ -264,9 +264,9 @@ public class DateValue {
 #
 # + value - Value of parameter passed into the SQL statement
 public class TimeValue {
-    public string|int|time:Time? value;
+    public string|int|time:TimeOfDay? value;
 
-    public isolated function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:TimeOfDay? value = ()) {
         self.value = value;
     }
 }
@@ -275,9 +275,9 @@ public class TimeValue {
 #
 # + value - Value of parameter passed into the SQL statement
 public class DateTimeValue {
-    public string|int|time:Time? value;
+    public string|int|time:Civil? value;
 
-    public isolated function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Civil? value = ()) {
         self.value = value;
     }
 }
@@ -286,9 +286,9 @@ public class DateTimeValue {
 #
 # + value - Value of parameter passed into the SQL statement
 public class TimestampValue {
-    public string|int|time:Time? value;
+    public string|int|time:Utc? value;
 
-    public isolated function init(string|int|time:Time? value = ()) {
+    public isolated function init(string|int|time:Utc? value = ()) {
         self.value = value;
     }
 }
