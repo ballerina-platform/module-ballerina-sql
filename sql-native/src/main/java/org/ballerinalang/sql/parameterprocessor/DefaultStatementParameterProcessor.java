@@ -903,7 +903,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             } else {
                 throw throwInvalidParameterError(value, sqlType);
             }
-            preparedStatement.setTime(index, time);
+            if (value instanceof BString || value instanceof BMap) {
+                preparedStatement.setTime(index, time);
+            } else {
+                preparedStatement.setTime(index, time, Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+            }
         }
     }
 

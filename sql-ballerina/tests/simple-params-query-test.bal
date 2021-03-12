@@ -564,6 +564,16 @@ function queryTimeStringInvalidParam() {
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
+function queryTimeLongParam() {
+    //1577878545000: 2020:01:01 11:35:45
+    TimeValue typeVal = new (1577878545000);
+    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
 function queryTimeTimeRecordParam() {
     time:TimeOfDay date = {hour: 11, minute: 35, second:45};
     TimeValue typeVal = new (date);

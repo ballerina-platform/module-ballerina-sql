@@ -13,10 +13,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//import ballerina/io;
-//import ballerina/regex;
 import ballerina/test;
-//import ballerina/time;
 
 string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
