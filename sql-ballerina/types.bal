@@ -737,7 +737,7 @@ public type ParameterizedCallQuery object {
 #                          of the nextResult method. 
 # + err - Used to hold any error to be returned 
 # + isClosed - The boolean flag used to indicate that the result iterator is closed 
-class ResultIterator {
+public class ResultIterator {
     private boolean isClosed = false;
     private Error? err;
     public CustomResultIterator? customResultIterator;
