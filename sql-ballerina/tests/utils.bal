@@ -27,13 +27,13 @@ string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
 @test:BeforeSuite
-function beforeSuite() {
+isolated function beforeSuite() {
     setModuleForTest();
     io:println("Test suite initiated");
 }
 
 @test:AfterSuite {}
-function afterSuite() {
+isolated function afterSuite() {
     io:println("Test suite finished");
 }
 
@@ -83,17 +83,17 @@ function cleanDockerContainer(string containerName) {
     io:println("Cleaned docker container '" + containerName +"'.");
 }
 
-function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
+isolated function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
     io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/byteValue.txt");
     return byteChannel;
 }
 
-function getBlobColumnChannel() returns @untainted io:ReadableByteChannel {
+isolated function getBlobColumnChannel() returns @untainted io:ReadableByteChannel {
     io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/blobValue.txt");
     return byteChannel;
 }
 
-function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
+isolated function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
     io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/clobValue.txt");
     io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
     return sourceChannel;

@@ -36,7 +36,7 @@ client class MockClient {
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
 
-    remote function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
+    remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
     returns @tainted stream <record {}, Error> {
         if (self.clientActive) {
             return nativeQuery(self, sqlQuery, rowType);
@@ -46,7 +46,7 @@ client class MockClient {
         }
     }
 
-    remote function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
+    remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
         if (self.clientActive) {
             return nativeExecute(self, sqlQuery);
         } else {
@@ -54,7 +54,7 @@ client class MockClient {
         }
     }
 
-    remote function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
+    remote isolated function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
@@ -65,7 +65,7 @@ client class MockClient {
         }
     }
 
-    remote function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote isolated function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error {
         if (self.clientActive) {
             return nativeCall(self, sqlQuery, rowTypes);
@@ -74,7 +74,7 @@ client class MockClient {
         }
     }
 
-    public function close() returns Error? {
+    public isolated function close() returns Error? {
         self.clientActive = false;
         return close(self);
     }
@@ -95,26 +95,26 @@ returns Error? = @java:Method {
     'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
 } external;
 
-function nativeQuery(Client sqlClient, string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType)
+isolated function nativeQuery(Client sqlClient, string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType)
 returns stream <record {}, Error> = @java:Method {
     'class: "org.ballerinalang.sql.testutils.QueryTestUtils"
 } external;
 
-function nativeExecute(Client sqlClient, string|ParameterizedQuery sqlQuery)
+isolated function nativeExecute(Client sqlClient, string|ParameterizedQuery sqlQuery)
 returns ExecutionResult|Error = @java:Method {
     'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
 } external;
 
-function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
+isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
     'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
 } external;
 
-function nativeCall(Client sqlClient, string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes)
+isolated function nativeCall(Client sqlClient, string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes)
 returns ProcedureCallResult|Error = @java:Method {
     'class: "org.ballerinalang.sql.testutils.CallTestUtils"
 } external;
 
-function close(Client Client) returns Error? = @java:Method {
+isolated function close(Client Client) returns Error? = @java:Method {
     'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
 } external;
