@@ -34,15 +34,17 @@ public type DatabaseErrorDetail record {
     string sqlState;
 };
 
+//Level 1
+# Defines the common error type for the module
+public type Error distinct error;
+
+//Level 2
 # Represents an error caused by an issue related to database accessibility, erroneous queries, constraint violations,
 # database resource clean-up, and other similar scenarios.
-public type DatabaseError distinct error<DatabaseErrorDetail>;
+public type DatabaseError distinct Error & error<DatabaseErrorDetail>;
 
 # Represents an error occurred when a batch execution is running.
-public type BatchExecuteError distinct error<BatchExecuteErrorDetail>;
+public type BatchExecuteError distinct Error & error<BatchExecuteErrorDetail>;
 
 # Represents an error originating from application-level causes.
-public type ApplicationError distinct error;
-
-# Represents a database or application level error returned from SQL client remote functions.
-public type Error DatabaseError|BatchExecuteError|ApplicationError;
+public type ApplicationError distinct Error;
