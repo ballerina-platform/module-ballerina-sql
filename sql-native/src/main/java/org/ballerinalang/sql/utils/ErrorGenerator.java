@@ -61,8 +61,8 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLApplicationError(String errorMessage) {
-        return ErrorCreator.createDistinctError(Constants.APPLICATION_ERROR, ModuleUtils.getModule(),
-                StringUtils.fromString(errorMessage));
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.APPLICATION_ERROR,
+                StringUtils.fromString(errorMessage), null, null);
     }
 
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
@@ -73,12 +73,13 @@ public class ErrorGenerator {
         valueMap.put(Constants.ErrorRecordFields.EXECUTION_RESULTS,
                 ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
-                                Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0))));
+                                Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(),
+                                0, false, 0))));
 
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(ModuleUtils.getModule(), Constants.BATCH_EXECUTE_ERROR_DETAIL, valueMap);
-        return ErrorCreator.createDistinctError(Constants.BATCH_EXECUTE_ERROR, ModuleUtils.getModule(),
-                StringUtils.fromString(message), sqlClientErrorDetailRecord);
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.BATCH_EXECUTE_ERROR,
+                StringUtils.fromString(message), null, sqlClientErrorDetailRecord);
     }
 
     private static BError getSQLDatabaseError(String message, int vendorCode, String sqlState) {
@@ -87,7 +88,7 @@ public class ErrorGenerator {
         valueMap.put(Constants.ErrorRecordFields.SQL_STATE, sqlState);
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(ModuleUtils.getModule(), Constants.DATABASE_ERROR_DETAILS, valueMap);
-        return ErrorCreator.createDistinctError(Constants.DATABASE_ERROR, ModuleUtils.getModule(),
-                StringUtils.fromString(message), sqlClientErrorDetailRecord);
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.DATABASE_ERROR,
+                StringUtils.fromString(message), null,  sqlClientErrorDetailRecord);
     }
 }
