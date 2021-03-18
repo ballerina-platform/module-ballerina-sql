@@ -54,7 +54,7 @@ public class ColumnDefinition {
         return sqlType;
     }
 
-    Type getBallerinaType() {
+    public Type getBallerinaType() {
         return ballerinaType;
     }
 
