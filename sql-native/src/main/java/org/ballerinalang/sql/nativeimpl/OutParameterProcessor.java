@@ -149,7 +149,7 @@ public class OutParameterProcessor {
                 case Types.SQLXML:
                     return resultParameterProcessor.convertXml((SQLXML) value, sqlType, ballerinaType);
                 default:
-                    return resultParameterProcessor.getCustomOutParameters(value, sqlType, ballerinaType);
+                    return resultParameterProcessor.getCustomOutParameters(result, sqlType, ballerinaType);
             }
         } catch (ApplicationError | IOException applicationError) {
             return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
