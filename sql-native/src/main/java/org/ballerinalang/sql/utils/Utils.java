@@ -559,7 +559,8 @@ public class Utils {
                         type.getTag() == TypeTags.XML_TAG ||
                         type.getTag() == TypeTags.FLOAT_TAG ||
                         type.getTag() == TypeTags.DECIMAL_TAG ||
-                        type.getTag() == TypeTags.JSON_TAG;
+                        type.getTag() == TypeTags.JSON_TAG ||
+                        type.getTag() == TypeTags.RECORD_TYPE_TAG;
         }
     }
 }
