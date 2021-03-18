@@ -439,20 +439,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    private void setFloatAndReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError {
-        if (value == null) {
-            preparedStatement.setNull(index, Types.FLOAT);
-        } else if (value instanceof Double || value instanceof Long ||
-                value instanceof Float || value instanceof Integer) {
-            preparedStatement.setFloat(index, ((Number) value).floatValue());
-        } else if (value instanceof BDecimal) {
-            preparedStatement.setFloat(index, ((BDecimal) value).decimalValue().floatValue());
-        } else {
-            throw throwInvalidParameterError(value, sqlType);
-        }
-    }
-
     private void setNumericAndDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -720,13 +706,32 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     @Override
     protected void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
-        setFloatAndReal(preparedStatement, sqlType, index, value);
+        if (value == null) {
+            preparedStatement.setNull(index, Types.FLOAT);
+        } else if (value instanceof Double || value instanceof Long ||
+                value instanceof Float || value instanceof Integer) {
+            preparedStatement.setFloat(index, ((Number) value).floatValue());
+        } else if (value instanceof BDecimal) {
+            preparedStatement.setFloat(index, ((BDecimal) value).decimalValue().floatValue());
+        } else {
+            throw throwInvalidParameterError(value, sqlType);
+        }
     }
 
     @Override
     protected void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
-        setFloatAndReal(preparedStatement, sqlType, index, value);
+        if (value == null) {
+            preparedStatement.setNull(index, Types.FLOAT);
+        } else if (value instanceof Double) {
+            preparedStatement.setDouble(index, ((Number) value).doubleValue());
+        } else if (value instanceof Long || value instanceof Float || value instanceof Integer) {
+            preparedStatement.setFloat(index, ((Number) value).floatValue());
+        } else if (value instanceof BDecimal) {
+            preparedStatement.setFloat(index, ((BDecimal) value).decimalValue().floatValue());
+        } else {
+            throw throwInvalidParameterError(value, sqlType);
+        }
     }
 
     @Override

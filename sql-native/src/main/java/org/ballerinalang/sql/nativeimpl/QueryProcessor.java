@@ -60,7 +60,7 @@ public class QueryProcessor {
      * @param paramSQLString SQL string of the query
      * @param recordType type description of the result record       
      * @param statementParameterProcessor pre-processor of the statement
-     * @param resultParameterProcessor post-processeor of the result
+     * @param resultParameterProcessor post-processor of the result
      * @return result stream or error
      */
     public static BStream nativeQuery(
