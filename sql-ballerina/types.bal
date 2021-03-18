@@ -830,6 +830,6 @@ public class ProcedureCallResult {
 # implementations for nextResult and getNextQueryResult in the connector modules.
 # 
 public type CustomResultIterator object {
-    isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
-    isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
+    public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
+    public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
 };
