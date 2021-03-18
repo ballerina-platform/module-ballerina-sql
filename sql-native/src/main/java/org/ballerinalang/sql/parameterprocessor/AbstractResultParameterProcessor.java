@@ -189,7 +189,7 @@ public abstract class AbstractResultParameterProcessor {
     public abstract void populateCustomOutParameters(
             CallableStatement statement, BObject parameter, int paramIndex, int sqlType) throws ApplicationError;
 
-    protected abstract Object getCustomOutParameters(Object value, int sqlType, Type ballerinaType);
+    protected abstract Object getCustomOutParameters(BObject result, int sqlType, Type ballerinaType);
 
     public abstract BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,

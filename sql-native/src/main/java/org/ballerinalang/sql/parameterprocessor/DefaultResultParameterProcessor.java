@@ -707,7 +707,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object getCustomOutParameters(Object value, int sqlType, Type ballerinaType) {
+    public Object getCustomOutParameters(BObject result, int sqlType, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
     }
 
