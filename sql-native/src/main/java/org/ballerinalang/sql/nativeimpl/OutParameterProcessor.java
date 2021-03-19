@@ -18,7 +18,6 @@
 
 package org.ballerinalang.sql.nativeimpl;
 
-import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
@@ -29,12 +28,10 @@ import org.ballerinalang.sql.utils.ErrorGenerator;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
-import java.sql.JDBCType;
 import java.sql.NClob;
 import java.sql.RowId;
 import java.sql.SQLException;
@@ -78,14 +75,7 @@ public class OutParameterProcessor {
                 case Types.BINARY:
                 case Types.VARBINARY:
                 case Types.LONGVARBINARY:
-                    if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
-                        return resultParameterProcessor.convertChar((String) value, sqlType, ballerinaType);
-                    } else {
-                        return resultParameterProcessor.convertByteArray(
-                                ((String) value).getBytes(Charset.defaultCharset()), sqlType, ballerinaType,
-                                JDBCType.valueOf(sqlType).getName()
-                        );
-                    }
+                    return resultParameterProcessor.convertBinary(value, sqlType, ballerinaType);
                 case Types.ARRAY:
                     return resultParameterProcessor.convertArray((Array) value, sqlType, ballerinaType);
                 case Types.BLOB:

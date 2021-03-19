@@ -42,10 +42,12 @@ import org.ballerinalang.sql.utils.ModuleUtils;
 import org.ballerinalang.sql.utils.Utils;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -336,6 +338,17 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             return ValueCreator.createArrayValue(value);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public Object convertBinary(Object value, int sqlType, Type ballerinaType) throws ApplicationError {
+        if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
+            return convertChar((String) value, sqlType, ballerinaType);
+        } else {
+            return convertByteArray(((String) value).getBytes(Charset.defaultCharset()), sqlType, ballerinaType,
+                    JDBCType.valueOf(sqlType).getName()
+            );
         }
     }
 
