@@ -1,9 +1,2 @@
-fixes:
-  - "ballerina/sql/*/::sql-ballerina/"
-
 ignore:
-  - "**/tests"
   - "sql-test-utils/"
-
-codecov:
-  require_ci_to_pass: no
