@@ -393,11 +393,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                         objectValue.getType().getQualifiedName() + " in column index: " + index);
             }
         } else if (object instanceof BXml) {
-            preparedStatement.setObject(index, ((BXml) object).getTextValue(), Types.SQLXML);
+            setXml(preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else {
             throw new ApplicationError("Unsupported type passed in column index: " + index);
         }
+    }
+
+    protected void setXml(PreparedStatement preparedStatement, int index, BXml value) throws SQLException {
+        preparedStatement.setObject(index, value.getTextValue(), Types.SQLXML);
     }
 
     private void setString(PreparedStatement preparedStatement, int index, Object value)
