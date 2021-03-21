@@ -315,7 +315,6 @@ function queryTypeFloatDoubleParam() {
 }
 
 @test:Config {
-    enable: false,
     groups: ["query", "query-simple-params"]
 }
 function queryTypeRealDoubleParam() {
