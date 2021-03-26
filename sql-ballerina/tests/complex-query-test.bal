@@ -14,6 +14,7 @@
 // under the License.
 
 import ballerina/test;
+//import ballerina/time;
 
 string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
@@ -108,7 +109,7 @@ function testToJsonComplexTypes() {
         CLOB_TYPE: "very long text",
         BINARY_TYPE: "wso2 ballerina binary test.".toBytes()
     };
-    test:assertEquals(value, complexStringType, "Expected record did not match."); 
+    test:assertEquals(value, complexStringType, "Expected record did not match.");
 }
 
 @test:Config {
@@ -148,8 +149,8 @@ function testArrayRetrieval() {
         INT_TYPE: 1,
         INT_ARRAY: [1, 2, 3],
         LONG_TYPE:9223372036854774807,
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
-        BOOLEAN_TYPE: true, 
+        LONG_ARRAY: [100000000, 200000000, 300000000],
+        BOOLEAN_TYPE: true,
         STRING_TYPE: "Hello",
         STRING_ARRAY: ["Hello", "Ballerina"],
         BOOLEAN_ARRAY: [true, false, true]
@@ -183,14 +184,13 @@ function testComplexWithStructDef() {
     TestTypeData mixTypesExpected = {
         int_type: 1,
         int_array: [1, 2, 3],
-        long_type: 9223372036854774807, 
-        long_array:[100000000, 200000000, 300000000], 
-        boolean_type: true, 
+        long_type: 9223372036854774807,
+        long_array:[100000000, 200000000, 300000000],
+        boolean_type: true,
         string_type: "Hello",
         boolean_array: [true, false, true],
         string_array: ["Hello", "Ballerina"]
     };
-    
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
 
@@ -211,10 +211,10 @@ function testMultipleRecoredRetrieval() {
 
     ResultMap mixTypesExpected = {
         INT_ARRAY: [1, 2, 3],
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
+        LONG_ARRAY: [100000000, 200000000, 300000000],
         STRING_ARRAY: ["Hello", "Ballerina"],
         BOOLEAN_ARRAY: [true, false, true]
-    }; 
+    };
 
     ResultMap? mixTypesActual = ();
     int counter = 0;
@@ -238,6 +238,8 @@ type ResultDates record {
     string TIME_TYPE;
     string TIMESTAMP_TYPE;
     string DATETIME_TYPE;
+    string TIME_TZ_TYPE;
+    string TIMESTAMP_TZ_TYPE;
 };
 
 @test:Config {
@@ -245,27 +247,72 @@ type ResultDates record {
 }
 function testDateTime() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    string insertQuery = string `Insert into DateTimeTypes (row_id, date_type, time_type, timestamp_type, datetime_type)
-     values (1,'2017-05-23','14:15:23','2017-01-25 16:33:55','2017-01-25 16:33:55')`;
+    string insertQuery = string `INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
+            datetime_type, time_tz_type, timestamp_tz_type) VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
+            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00')`;
     ExecutionResult? result = checkpanic dbClient->execute(insertQuery);
     stream<record{}, error> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
-       + " from DateTimeTypes where row_id = 1", ResultDates);
+       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates);
     record{| record{} value; |}? data =  checkpanic queryResult.next();
     record{}? value = data?.value;
     checkpanic dbClient.close();
 
-    string dateType = "2017-05-23+00:00";
-    string timeTypeString = "14:15:23.000+00:00";
-    string insertedTimeString = "2017-01-25T16:33:55.000+00:00";
+    string dateTypeString = "2017-05-23";
+    string timeTypeString = "14:15:23";
+    string timestampTypeString = "2017-01-25 16:33:55.0";
+    string timeWithTimezone = "16:33:55+06:30";
+    string timestampWithTimezone = "2017-01-25T16:33:55-08:00";
 
     ResultDates expected = {
-        DATE_TYPE: dateType,
+        DATE_TYPE: dateTypeString,
         TIME_TYPE: timeTypeString,
-        TIMESTAMP_TYPE: insertedTimeString,
-        DATETIME_TYPE: insertedTimeString
+        TIMESTAMP_TYPE: timestampTypeString,
+        DATETIME_TYPE: timestampTypeString,
+        TIME_TZ_TYPE: timeWithTimezone,
+        TIMESTAMP_TZ_TYPE: timestampWithTimezone
     };
-    test:assertEquals(value, expected, "Expected record did not match."); 
+    test:assertEquals(value, expected, "Expected record did not match.");
 }
+
+//type ResultDatesAsRecords record {
+//    time:Date DATE_TYPE;
+//    time:TimeOfDay TIME_TYPE;
+//    string TIMESTAMP_TYPE;
+//    time:Civil DATETIME_TYPE;
+//    string TIME_TZ_TYPE;
+//    string TIMESTAMP_TZ_TYPE;
+//};
+//
+//@test:Config {
+//    enable: false,
+//    groups: ["query", "query-complex-params"]
+//}
+//function testDateTimeRecords() {
+//    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
+//    stream<record{}, error> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
+//       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDatesAsRecords);
+//    record{| record{} value; |}? data =  checkpanic queryResult.next();
+//    record{}? value = data?.value;
+//    checkpanic dbClient.close();
+//
+//    time:Date dateTypeRecord = {year: 2017, month:5, day: 23};
+//    time:TimeOfDay timeTypeRecord = {hour:14, minute:15, second:23};
+//    time:Utc timestampTypeRecord = checkpanic time:utcFromString("2017-01-25T16:33:55.000+00:00");
+//    string timestampTypeString = "2017-01-25T16:33:55.000+00:00";
+//    time:Civil dateTimeTypeRecord = {year: 2017, month:1, day: 25, hour: 16, minute: 33, second:55};
+//    string timeWithTimezone = "16:33:55.000+00:00";
+//    string timestampWithTimezone = "2017-01-25T16:33:55.000+00:00";
+//
+//    ResultDatesAsRecords expected = {
+//        DATE_TYPE: dateTypeRecord,
+//        TIME_TYPE: timeTypeRecord,
+//        TIMESTAMP_TYPE: timestampTypeString,
+//        DATETIME_TYPE: dateTimeTypeRecord,
+//        TIME_TZ_TYPE: timeWithTimezone,
+//        TIMESTAMP_TZ_TYPE: timestampWithTimezone
+//    };
+//    test:assertEquals(value, expected, "Expected record did not match.");
+//}
 
 type ResultSetTestAlias record {
     int INT_TYPE;
@@ -297,7 +344,7 @@ function testColumnAlias() {
     int counter = 0;
     error? e = queryResult.forEach(function (record{} value) {
         if (value is ResultSetTestAlias) {
-            test:assertEquals(value, expectedData, "Expected record did not match."); 
+            test:assertEquals(value, expectedData, "Expected record did not match.");
             counter = counter + 1;
         } else{
             test:assertFail("Expected data type is ResultSetTestAlias");
@@ -306,7 +353,7 @@ function testColumnAlias() {
     if(e is error) {
         test:assertFail("Query failed");
     }
-    test:assertEquals(counter, 1, "Expected only one data row."); 
+    test:assertEquals(counter, 1, "Expected only one data row.");
     checkpanic dbClient.close();
 }
 
@@ -325,7 +372,7 @@ function testQueryRowId() {
         "LONG_ARRAY": [100000000, 200000000, 300000000],
         "BOOLEAN_ARRAY": [true, false, true],
         "STRING_ARRAY": ["Hello", "Ballerina"]
-    }; 
+    };
 
     record{}? mixTypesActual = ();
     int counter = 0;

@@ -26,13 +26,16 @@ public type TypedValue object {
     public anydata|object {}? value;
 };
 
+type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
+
 # Possible type of parameters that can be passed into the SQL query.
-public type Value string|int|boolean|float|decimal|byte[]|xml|TypedValue?;
+public type Value string|int|boolean|float|decimal|byte[]|xml|DateTimeType|TypedValue?;
 
 # Represents Varchar SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class VarcharValue {
+public distinct class VarcharValue {
+    *TypedValue;
     public string? value;
 
     public isolated function init(string? value = ()) {
@@ -43,7 +46,8 @@ public class VarcharValue {
 # Represents NVarchar SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class NVarcharValue {
+public distinct class NVarcharValue {
+    *TypedValue;
     public string? value;
 
     public isolated function init(string? value = ()) {
@@ -54,7 +58,8 @@ public class NVarcharValue {
 # Represents Char SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class CharValue {
+public distinct class CharValue {
+    *TypedValue;
     public string? value;
 
     public isolated function init(string? value = ()) {
@@ -65,7 +70,8 @@ public class CharValue {
 # Represents NChar SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class NCharValue {
+public distinct class NCharValue {
+    *TypedValue;
     public string? value;
 
     public isolated function init(string? value = ()) {
@@ -76,7 +82,8 @@ public class NCharValue {
 # Represents Text SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class TextValue {
+public distinct class TextValue {
+    *TypedValue;
     public io:ReadableCharacterChannel|string? value;
 
     public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
@@ -87,7 +94,8 @@ public class TextValue {
 # Represents Clob SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class ClobValue {
+public distinct class ClobValue {
+    *TypedValue;
     public io:ReadableCharacterChannel|string? value;
 
     public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
@@ -98,7 +106,8 @@ public class ClobValue {
 # Represents NClob SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class NClobValue {
+public distinct class NClobValue {
+    *TypedValue;
     public io:ReadableCharacterChannel|string? value;
 
     public isolated function init(io:ReadableCharacterChannel|string? value = ()) {
@@ -109,7 +118,8 @@ public class NClobValue {
 # Represents SmallInt SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class SmallIntValue {
+public distinct class SmallIntValue {
+    *TypedValue;
     public int? value;
 
     public isolated function init(int? value = ()) {
@@ -120,7 +130,8 @@ public class SmallIntValue {
 # Represents Integer SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class IntegerValue {
+public distinct class IntegerValue {
+    *TypedValue;
     public int? value;
 
     public isolated function init(int? value = ()) {
@@ -131,7 +142,8 @@ public class IntegerValue {
 # Represents BigInt SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class BigIntValue {
+public distinct class BigIntValue {
+    *TypedValue;
     public int? value;
 
     public isolated function init(int? value = ()) {
@@ -142,7 +154,8 @@ public class BigIntValue {
 # Represents Numeric SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class NumericValue {
+public distinct class NumericValue {
+    *TypedValue;
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
@@ -153,7 +166,8 @@ public class NumericValue {
 # Represents Decimal SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class DecimalValue {
+public distinct class DecimalValue {
+    *TypedValue;
     public int|decimal? value;
 
     public isolated function init(int|decimal? value = ()) {
@@ -164,7 +178,8 @@ public class DecimalValue {
 # Represents Real SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class RealValue {
+public distinct class RealValue {
+    *TypedValue;
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
@@ -175,7 +190,8 @@ public class RealValue {
 # Represents Float SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class FloatValue {
+public distinct class FloatValue {
+    *TypedValue;
     public int|float? value;
 
     public isolated function init(int|float? value = ()) {
@@ -186,7 +202,8 @@ public class FloatValue {
 # Represents Double SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class DoubleValue {
+public distinct class DoubleValue {
+    *TypedValue;
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
@@ -197,7 +214,8 @@ public class DoubleValue {
 # Represents Bit SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class BitValue {
+public distinct class BitValue {
+    *TypedValue;
     public boolean|int? value;
 
     public isolated function init(boolean|int? value = ()) {
@@ -208,7 +226,8 @@ public class BitValue {
 # Represents Boolean SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class BooleanValue {
+public distinct class BooleanValue {
+    *TypedValue;
     public boolean? value;
 
     public isolated function init(boolean? value = ()) {
@@ -219,7 +238,8 @@ public class BooleanValue {
 # Represents Binary SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class BinaryValue {
+public distinct class BinaryValue {
+    *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
 
     public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
@@ -230,7 +250,8 @@ public class BinaryValue {
 # Represents VarBinary SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class VarBinaryValue {
+public distinct class VarBinaryValue {
+    *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
 
     public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
@@ -241,7 +262,8 @@ public class VarBinaryValue {
 # Represents Blob SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class BlobValue {
+public distinct class BlobValue {
+    *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
 
     public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
@@ -252,10 +274,11 @@ public class BlobValue {
 # Represents Date SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class DateValue {
-    public string|int|time:Date? value;
+public distinct class DateValue {
+    *TypedValue;
+    public string|time:Date? value;
 
-    public isolated function init(string|int|time:Date? value = ()) {
+    public isolated function init(string|time:Date? value = ()) {
         self.value = value;
     }
 }
@@ -263,10 +286,11 @@ public class DateValue {
 # Represents Time SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class TimeValue {
-    public string|int|time:TimeOfDay? value;
+public distinct class TimeValue {
+    *TypedValue;
+    public string|time:TimeOfDay? value;
 
-    public isolated function init(string|int|time:TimeOfDay? value = ()) {
+    public isolated function init(string|time:TimeOfDay? value = ()) {
         self.value = value;
     }
 }
@@ -274,10 +298,11 @@ public class TimeValue {
 # Represents DateTime SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class DateTimeValue {
-    public string|int|time:Civil? value;
+public distinct class DateTimeValue {
+    *TypedValue;
+    public string|time:Civil? value;
 
-    public isolated function init(string|int|time:Civil? value = ()) {
+    public isolated function init(string|time:Civil? value = ()) {
         self.value = value;
     }
 }
@@ -285,10 +310,11 @@ public class DateTimeValue {
 # Represents Timestamp SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class TimestampValue {
-    public string|int|time:Utc? value;
+public distinct class TimestampValue {
+    *TypedValue;
+    public string|time:Utc? value;
 
-    public isolated function init(string|int|time:Utc? value = ()) {
+    public isolated function init(string|time:Utc? value = ()) {
         self.value = value;
     }
 }
@@ -296,7 +322,8 @@ public class TimestampValue {
 # Represents ArrayValue SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class ArrayValue {
+public distinct class ArrayValue {
+    *TypedValue;
     public string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value;
 
     public isolated function init(string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value = ()) {
@@ -307,7 +334,8 @@ public class ArrayValue {
 # Represents Ref SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class RefValue {
+public distinct class RefValue {
+    *TypedValue;
     public record {}? value;
 
     public isolated function init(record {}? value = ()) {
@@ -318,7 +346,8 @@ public class RefValue {
 # Represents Struct SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class StructValue {
+public distinct class StructValue {
+    *TypedValue;
     public record {}? value;
 
     public isolated function init(record {}? value = ()) {
@@ -329,7 +358,8 @@ public class StructValue {
 # Represents Row SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
-public class RowValue {
+public distinct class RowValue {
+    *TypedValue;
     public byte[]? value;
 
     public isolated function init(byte[]? value = ()) {

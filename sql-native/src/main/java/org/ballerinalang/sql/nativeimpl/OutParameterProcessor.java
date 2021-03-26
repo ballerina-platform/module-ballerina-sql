@@ -40,6 +40,8 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 
 import static org.ballerinalang.sql.utils.Utils.getString;
 
@@ -89,11 +91,15 @@ public class OutParameterProcessor {
                 case Types.DATE:
                     return resultParameterProcessor.convertDate((Date) value, sqlType, ballerinaType);
                 case Types.TIME:
+                    return resultParameterProcessor.convertTime((Time) value, sqlType, ballerinaType);
                 case Types.TIME_WITH_TIMEZONE:
-                    return resultParameterProcessor.convertDate((Time) value, sqlType, ballerinaType);
+                    return resultParameterProcessor.convertTimeWithTimezone((OffsetTime) value, sqlType,
+                            ballerinaType);
                 case Types.TIMESTAMP:
+                    return resultParameterProcessor.convertTimeStamp((Timestamp) value, sqlType, ballerinaType);
                 case Types.TIMESTAMP_WITH_TIMEZONE:
-                    return resultParameterProcessor.convertDate((Timestamp) value, sqlType, ballerinaType);
+                    return resultParameterProcessor.convertTimestampWithTimezone((OffsetDateTime) value, sqlType,
+                            ballerinaType);
                 case Types.ROWID:
                     return resultParameterProcessor.convertByteArray(
                             ((RowId) value).getBytes(), sqlType, ballerinaType, "SQL RowID"
