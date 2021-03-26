@@ -17,6 +17,7 @@
 import ballerina/io;
 import ballerina/time;
 import ballerina/jballerina.java;
+import ballerina/lang.'object as obj;
 
 # Represents a parameter for the SQL Client remote functions when a variable needs to be passed
 # to the remote function.
@@ -371,7 +372,8 @@ public distinct class RowValue {
 #
 # + strings - The separated parts of the sql query
 # + insertions - The values that should be filled in between the parts
-public type ParameterizedQuery object {
+public type ParameterizedQuery distinct object {
+    *obj:RawTemplate;
     public (string[] & readonly) strings;
     public Value[] insertions;
 };
@@ -755,7 +757,8 @@ public type Parameter Value|InOutParameter|OutParameter;
 #
 # + strings - The separated parts of the sql call query
 # + insertions - The values that should be filled in between the parts
-public type ParameterizedCallQuery object {
+public type ParameterizedCallQuery distinct object {
+    *obj:RawTemplate;
     public (string[] & readonly) strings;
     public Parameter[] insertions;
 };

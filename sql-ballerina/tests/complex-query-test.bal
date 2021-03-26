@@ -14,7 +14,6 @@
 // under the License.
 
 import ballerina/test;
-//import ballerina/time;
 
 string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
@@ -273,46 +272,6 @@ function testDateTime() {
     };
     test:assertEquals(value, expected, "Expected record did not match.");
 }
-
-//type ResultDatesAsRecords record {
-//    time:Date DATE_TYPE;
-//    time:TimeOfDay TIME_TYPE;
-//    string TIMESTAMP_TYPE;
-//    time:Civil DATETIME_TYPE;
-//    string TIME_TZ_TYPE;
-//    string TIMESTAMP_TZ_TYPE;
-//};
-//
-//@test:Config {
-//    enable: false,
-//    groups: ["query", "query-complex-params"]
-//}
-//function testDateTimeRecords() {
-//    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-//    stream<record{}, error> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
-//       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDatesAsRecords);
-//    record{| record{} value; |}? data =  checkpanic queryResult.next();
-//    record{}? value = data?.value;
-//    checkpanic dbClient.close();
-//
-//    time:Date dateTypeRecord = {year: 2017, month:5, day: 23};
-//    time:TimeOfDay timeTypeRecord = {hour:14, minute:15, second:23};
-//    time:Utc timestampTypeRecord = checkpanic time:utcFromString("2017-01-25T16:33:55.000+00:00");
-//    string timestampTypeString = "2017-01-25T16:33:55.000+00:00";
-//    time:Civil dateTimeTypeRecord = {year: 2017, month:1, day: 25, hour: 16, minute: 33, second:55};
-//    string timeWithTimezone = "16:33:55.000+00:00";
-//    string timestampWithTimezone = "2017-01-25T16:33:55.000+00:00";
-//
-//    ResultDatesAsRecords expected = {
-//        DATE_TYPE: dateTypeRecord,
-//        TIME_TYPE: timeTypeRecord,
-//        TIMESTAMP_TYPE: timestampTypeString,
-//        DATETIME_TYPE: dateTimeTypeRecord,
-//        TIME_TZ_TYPE: timeWithTimezone,
-//        TIMESTAMP_TZ_TYPE: timestampWithTimezone
-//    };
-//    test:assertEquals(value, expected, "Expected record did not match.");
-//}
 
 type ResultSetTestAlias record {
     int INT_TYPE;

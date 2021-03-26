@@ -423,12 +423,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     BMap<BString, Object> dateMap = ValueCreator.createRecordValue(
                             org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
                             org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD);
-                    dateMap.put(StringUtils.fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR),
-                            dateObj.getYear());
-                    dateMap.put(StringUtils.fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),
-                            dateObj.getMonthValue());
-                    dateMap.put(StringUtils.fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),
-                            dateObj.getDayOfMonth());
+                    dateMap.put(StringUtils.fromString(
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR),dateObj.getYear());
+                    dateMap.put(StringUtils.fromString(
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),dateObj.getMonthValue());
+                    dateMap.put(StringUtils.fromString(
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),dateObj.getDayOfMonth());
                     return dateMap;
                     } else {
                         return date.toString();
