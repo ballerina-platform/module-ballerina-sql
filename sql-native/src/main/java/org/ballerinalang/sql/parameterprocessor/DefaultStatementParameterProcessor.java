@@ -43,6 +43,7 @@ import org.ballerinalang.stdlib.time.util.TimeValueHandler;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.Array;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -54,6 +55,11 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -534,38 +540,36 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         if (value == null) {
             preparedStatement.setTimestamp(index, null);
         } else {
-            Timestamp timestamp;
-            ZonedDateTime zonedDt;
             if (value instanceof BString) {
                 preparedStatement.setString(index, value.toString());
             }  else if (value instanceof BArray) {
                 //this is mapped to time:Utc
                 BArray dateTimeStruct = (BArray) value;
-                zonedDt = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
-                timestamp = new Timestamp(zonedDt.toInstant().toEpochMilli());
+                ZonedDateTime zonedDt = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
+                Timestamp timestamp = new Timestamp(zonedDt.toInstant().toEpochMilli());
                 preparedStatement.setTimestamp(index, timestamp, Calendar
                         .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue())));
             } else if (value instanceof BMap) {
                 //this is mapped to time:Civil
                 BMap dateMap = (BMap) value;
-                long year = Math.toIntExact(dateMap.getIntValue(StringUtils.
-                        fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR)));
-                long month = Math.toIntExact(dateMap.getIntValue(StringUtils.
-                        fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH)));
-                long day = Math.toIntExact(dateMap.getIntValue(StringUtils.
-                        fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY)));
-                long hour = Math.toIntExact(dateMap.getIntValue(StringUtils.
-                        fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR)));
-                long minute = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                int year = Math.toIntExact(dateMap.getIntValue(StringUtils
+                        .fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR)));
+                int month = Math.toIntExact(dateMap.getIntValue(StringUtils
+                        .fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH)));
+                int day = Math.toIntExact(dateMap.getIntValue(StringUtils
+                        .fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY)));
+                int hour = Math.toIntExact(dateMap.getIntValue(StringUtils
+                        .fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR)));
+                int minute = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE)));
                 BDecimal second = BDecimal.valueOf(0);
-                if (dateMap.containsKey(StringUtils.
-                        fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND))) {
+                if (dateMap.containsKey(StringUtils
+                        .fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND))) {
                     second = ((BDecimal) dateMap.get(StringUtils.
                             fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND)));
                 }
-                long zoneHours = 0;
-                long zoneMinutes = 0;
+                int zoneHours = 0;
+                int zoneMinutes = 0;
                 BDecimal zoneSeconds = BDecimal.valueOf(0);
                 boolean timeZone = false;
                 if (dateMap.containsKey(StringUtils.
@@ -583,16 +587,20 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                                 fromString(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)));
                     }
                 }
-                zonedDt = TimeValueHandler.createZoneDateTimeFromCivilValues(year, month, day, hour,
-                        minute, second, zoneHours, zoneMinutes, zoneSeconds);
-                timestamp = Timestamp.valueOf(zonedDt.getYear() + "-" + zonedDt.getMonthValue() + "-" +
-                        zonedDt.getDayOfMonth() + " " + zonedDt.getHour() + ":" + zonedDt.getMinute() +
-                        ":" + zonedDt.getSecond() + "." + zonedDt.getNano());
+                int intSecond = second.decimalValue().setScale(0, RoundingMode.FLOOR).intValue();
+                int intNanoSecond = second.decimalValue().subtract(new BigDecimal(intSecond))
+                        .multiply(org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA)
+                        .setScale(0, RoundingMode.HALF_UP).intValue();
+                LocalDateTime localDateTime = LocalDateTime
+                        .of(year, month, day, hour, minute, intSecond, intNanoSecond);
                 if (timeZone) {
-                    preparedStatement.setTimestamp(index, timestamp, Calendar
-                            .getInstance(TimeZone.getTimeZone(zonedDt.getZone())));
+                    int intZoneSecond = zoneSeconds.decimalValue().setScale(0, RoundingMode.HALF_UP)
+                            .intValue();
+                    OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime,
+                            ZoneOffset.ofHoursMinutesSeconds(zoneHours, zoneMinutes, intZoneSecond));
+                    preparedStatement.setObject(index, offsetDateTime, Types.TIMESTAMP_WITH_TIMEZONE);
                 } else {
-                    preparedStatement.setTimestamp(index, timestamp);
+                    preparedStatement.setTimestamp(index, Timestamp.valueOf(localDateTime));
                 }
             } else {
                 throw throwInvalidParameterError(value, sqlType);
@@ -890,12 +898,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             if (value instanceof BString) {
                 preparedStatement.setString(index, value.toString());
             } else if (value instanceof BMap) {
-                Time time;
-                ZonedDateTime zonedTime;
                 BMap timeMap = (BMap) value;
-                long hour = Math.toIntExact(timeMap.getIntValue(StringUtils.
+                int hour = Math.toIntExact(timeMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR)));
-                long minute = Math.toIntExact(timeMap.getIntValue(StringUtils.
+                int minute = Math.toIntExact(timeMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE)));
                 BDecimal second = BDecimal.valueOf(0);
                 if (timeMap.containsKey(StringUtils
@@ -903,8 +909,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     second = ((BDecimal) timeMap.get(StringUtils
                             .fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND)));
                 }
-                long zoneHours = 0;
-                long zoneMinutes = 0;
+                int zoneHours = 0;
+                int zoneMinutes = 0;
                 BDecimal zoneSeconds = BDecimal.valueOf(0);
                 boolean timeZone = false;
                 if (timeMap.containsKey(StringUtils.
@@ -922,14 +928,19 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                                 fromString(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)));
                     }
                 }
-                zonedTime = TimeValueHandler.createZoneDateTimeFromCivilValues(1970, 1, 1, hour,
-                        minute, second, zoneHours, zoneMinutes, zoneSeconds);
-                time = Time.valueOf(zonedTime.getHour() + ":" + zonedTime.getMinute() + ":" + zonedTime.getSecond());
+                int intSecond = second.decimalValue().setScale(0, RoundingMode.FLOOR).intValue();
+                int intNanoSecond = second.decimalValue().subtract(new BigDecimal(intSecond))
+                        .multiply(org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA)
+                        .setScale(0, RoundingMode.HALF_UP).intValue();
+                LocalTime localTime = LocalTime.of(hour, minute, intSecond, intNanoSecond);
                 if (timeZone) {
-                    preparedStatement.setTime(index, time,
-                            Calendar.getInstance(TimeZone.getTimeZone(zonedTime.getZone())));
+                    int intZoneSecond = zoneSeconds.decimalValue().setScale(0, RoundingMode.HALF_UP)
+                            .intValue();
+                    OffsetTime offsetTime = OffsetTime.of(localTime,
+                            ZoneOffset.ofHoursMinutesSeconds(zoneHours, zoneMinutes, intZoneSecond));
+                    preparedStatement.setObject(index, offsetTime, Types.TIME_WITH_TIMEZONE);
                 } else {
-                    preparedStatement.setTime(index, time);
+                    preparedStatement.setTime(index, Time.valueOf(localTime));
                 }
             } else {
                 throw throwInvalidParameterError(value, sqlType);

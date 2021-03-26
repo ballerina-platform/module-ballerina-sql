@@ -62,9 +62,9 @@ function testLocalTransaction() {
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
     retry<SQLDefaultRetryManager>(1) transaction {
-        var res = dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
+        var res = checkpanic dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
                                 "values ('James', 'Clerk', 200, 5000.75, 'USA')");
-        res = dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
+        res = checkpanic dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
                                 "values ('James', 'Clerk', 200, 5000.75, 'USA')");
         transInfo = transactions:info();
         var commitResult = commit;
@@ -90,7 +90,7 @@ int retryValRWC = -1;
 }
 function testTransactionRollbackWithCheck() {
     MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
-    var result = testTransactionRollbackWithCheckHelper(dbClient);
+    var result = checkpanic testTransactionRollbackWithCheckHelper(dbClient);
     int count = getCount(dbClient, "210");
     checkpanic dbClient.close();
 
@@ -181,7 +181,7 @@ int returnValRGK = 0;
 }
 function testLocalTransactionRollbackWithGeneratedKeys() {
     MockClient dbClient = checkpanic new (url = localTransactionDB, user = user, password = password);
-    var result = testLocalTransactionRollbackWithGeneratedKeysHelper(dbClient);
+    var result = checkpanic testLocalTransactionRollbackWithGeneratedKeysHelper(dbClient);
     //check whether update action is performed
     int count = getCount(dbClient, "615");
     checkpanic dbClient.close();
@@ -221,9 +221,9 @@ function testTransactionAbort() {
     retry<SQLDefaultRetryManager>(1) transaction {
         transInfo = transactions:info();
         transactions:onRollback(abortFunc);
-        var e1 = dbClient->execute("Insert into Customers " +
+        var e1 = checkpanic dbClient->execute("Insert into Customers " +
          "(firstName,lastName,registrationID,creditLimit,country) values ('James', 'Clerk', 220, 5000.75, 'USA')");
-        var e2 =  dbClient->execute("Insert into Customers " +
+        var e2 = checkpanic dbClient->execute("Insert into Customers " +
         "(firstName,lastName,registrationID,creditLimit,country) values ('James', 'Clerk', 220, 5000.75, 'USA')");
         int i = 0;
         if (i == 0) {
@@ -271,14 +271,14 @@ function testTransactionErrorPanicHelper(MockClient dbClient) {
     transactions:Info transInfo;
     retry<SQLDefaultRetryManager>(1) transaction {
         transInfo = transactions:info();
-        var e1 = dbClient->execute("Insert into Customers (firstName,lastName," +
+        var e1 = checkpanic dbClient->execute("Insert into Customers (firstName,lastName," +
                               "registrationID,creditLimit,country) values ('James', 'Clerk', 260, 5000.75, 'USA')");
         int i = 0;
         if (i == 0) {
             error e = error("error");
             panic e;
         } else {
-            var r = commit;
+            var r = checkpanic commit;
         }
     }
     io:println("exec");
@@ -296,7 +296,7 @@ function testTransactionErrorPanicAndTrap() {
     transactions:Info transInfo;
     retry<SQLDefaultRetryManager>(1) transaction {
         transInfo = transactions:info();
-        var e1 = dbClient->execute("Insert into Customers (firstName,lastName,registrationID," +
+        var e1 = checkpanic dbClient->execute("Insert into Customers (firstName,lastName,registrationID," +
                  "creditLimit,country) values ('James', 'Clerk', 250, 5000.75, 'USA')");
         var ret = trap testTransactionErrorPanicAndTrapHelper(0);
         if (ret is error) {
@@ -341,9 +341,9 @@ function testTwoTransactions() {
 
      retry<SQLDefaultRetryManager>(1) transaction {
          transInfo2 = transactions:info();
-         var e1 = dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
+         var e1 = checkpanic dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
                              "values ('James', 'Clerk', 400, 5000.75, 'USA')");
-         var e2 = dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
+         var e2 = checkpanic dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
                              "values ('James', 'Clerk', 400, 5000.75, 'USA')");
          checkpanic commit;
      }

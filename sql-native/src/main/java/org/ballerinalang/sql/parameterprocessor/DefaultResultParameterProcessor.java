@@ -424,11 +424,11 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
                             org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD);
                     dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR),dateObj.getYear());
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR), dateObj.getYear());
                     dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),dateObj.getMonthValue());
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH), dateObj.getMonthValue());
                     dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),dateObj.getDayOfMonth());
+                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY), dateObj.getDayOfMonth());
                     return dateMap;
                     } else {
                         return date.toString();
