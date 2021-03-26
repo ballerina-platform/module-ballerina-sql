@@ -548,15 +548,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             } else if (value instanceof BMap) {
                 //this is mapped to time:Civil
                 BMap dateMap = (BMap) value;
-                int year = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                long year = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR)));
-                int month = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                long month = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH)));
-                int day = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                long day = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY)));
-                int hour = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                long hour = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR)));
-                int minute = Math.toIntExact(dateMap.getIntValue(StringUtils.
+                long minute = Math.toIntExact(dateMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE)));
                 BDecimal second = BDecimal.valueOf(0);
                 if (dateMap.containsKey(StringUtils.
@@ -564,8 +564,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     second = ((BDecimal) dateMap.get(StringUtils.
                             fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND)));
                 }
-                int zoneHours = 0;
-                int zoneMinutes = 0;
+                long zoneHours = 0;
+                long zoneMinutes = 0;
                 BDecimal zoneSeconds = BDecimal.valueOf(0);
                 boolean timeZone = false;
                 if (dateMap.containsKey(StringUtils.
@@ -893,9 +893,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 Time time;
                 ZonedDateTime zonedTime;
                 BMap timeMap = (BMap) value;
-                int hour = Math.toIntExact(timeMap.getIntValue(StringUtils.
+                long hour = Math.toIntExact(timeMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR)));
-                int minute = Math.toIntExact(timeMap.getIntValue(StringUtils.
+                long minute = Math.toIntExact(timeMap.getIntValue(StringUtils.
                         fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE)));
                 BDecimal second = BDecimal.valueOf(0);
                 if (timeMap.containsKey(StringUtils
@@ -903,8 +903,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     second = ((BDecimal) timeMap.get(StringUtils
                             .fromString(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND)));
                 }
-                int zoneHours = 0;
-                int zoneMinutes = 0;
+                long zoneHours = 0;
+                long zoneMinutes = 0;
                 BDecimal zoneSeconds = BDecimal.valueOf(0);
                 boolean timeZone = false;
                 if (timeMap.containsKey(StringUtils.
