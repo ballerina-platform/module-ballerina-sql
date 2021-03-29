@@ -88,10 +88,6 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
     private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
 
-    private static final Calendar calendar = Calendar
-            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
-
-
     public static DefaultResultParameterProcessor getInstance() {
         if (instance == null) {
             synchronized (lock) {
@@ -822,13 +818,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public void populateDate(CallableStatement statement, BObject parameter, int paramIndex) throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getDate(paramIndex, calendar));
+                statement.getDate(paramIndex));
     }
 
     @Override
     public void populateTime(CallableStatement statement, BObject parameter, int paramIndex) throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getTime(paramIndex, calendar));
+                statement.getTime(paramIndex));
     }
 
     @Override
@@ -842,7 +838,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     public void populateTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getTimestamp(paramIndex, calendar));
+                statement.getTimestamp(paramIndex));
     }
 
     @Override

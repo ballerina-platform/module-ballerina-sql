@@ -68,8 +68,6 @@ import static org.ballerinalang.sql.utils.Utils.updateProcedureCallExecutionResu
  * @since 0.5.6
  */
 public class CallProcessor {
-    private static final Calendar calendar = Calendar
-            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     private CallProcessor() {
     }
