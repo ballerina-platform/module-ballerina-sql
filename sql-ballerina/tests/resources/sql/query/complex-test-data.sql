@@ -108,6 +108,8 @@ CREATE TABLE IF NOT EXISTS DateTimeTypes(
   time_type      TIME,
   timestamp_type timestamp,
   datetime_type  datetime,
+  time_tz_type      TIME WITH TIME ZONE,
+  timestamp_tz_type TIMESTAMP WITH TIME ZONE,
   PRIMARY KEY (row_id)
 );
 

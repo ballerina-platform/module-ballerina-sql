@@ -507,16 +507,6 @@ function queryDateStringInvalidParam() {
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
-function queryDateLongParam() {
-    // 1486080000000: 2017:02:03
-    DateValue typeVal = new (1486080000000);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
 function queryDateTimeRecordParam() {
     time:Date date = {year: 2017, month:2, day: 3};
     DateValue typeVal = new (date);
@@ -552,22 +542,12 @@ function queryTimeStringInvalidParam() {
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if (result is ApplicationError) {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
-                "DateTimeTypes WHERE time_type =  ? . java.lang.IllegalArgumentException"));
+    if (result is DatabaseError) {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
+        "WHERE time_type =  ? . data exception: invalid datetime format."));
     } else {
-        test:assertFail("ApplicationError Error expected.");
+        test:assertFail("DatabaseError Error expected.");
     }
-}
-
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimeLongParam() {
-    //1577878545000: 2020:01:01 11:35:45
-    TimeValue typeVal = new (1577878545000);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -608,22 +588,12 @@ function queryTimestampStringInvalidParam() {
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if (result is ApplicationError) {
-        test:assertEquals(result.message(), "Error while executing SQL query: SELECT * from " +
-        "DateTimeTypes WHERE timestamp_type =  ? . Timestamp format must be yyyy-mm-dd hh:mm:ss[.fffffffff]");
+    if (result is DatabaseError) {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
+        "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
     } else {
-        test:assertFail("ApplicationError Error expected.");
+        test:assertFail("DatabaseError Error expected.");
     }}
-
-@test:Config {
-    groups: ["query", "query-simple-params"]
-}
-function queryTimestampLongParam() {
-    //1486122780000 : 2017-02-03 11:53:00
-    TimestampValue typeVal = new (1486122780000);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(queryMockClient(simpleParamsDb, sqlQuery));
-}
 
 @test:Config {
     groups: ["query", "query-simple-params"]

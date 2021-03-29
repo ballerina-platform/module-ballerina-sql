@@ -80,6 +80,17 @@ public abstract class AbstractResultParameterProcessor {
 
     protected abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
 
+    protected abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
+
+    protected abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
+            throws ApplicationError;
+
+    protected abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
+            throws ApplicationError;
+
+    protected abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
+                                                           Type type)throws ApplicationError;
+
     protected abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
