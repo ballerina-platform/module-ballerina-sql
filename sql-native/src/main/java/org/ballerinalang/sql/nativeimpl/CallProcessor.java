@@ -43,11 +43,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import static org.ballerinalang.sql.Constants.CONNECTION_NATIVE_DATA_FIELD;
 import static org.ballerinalang.sql.Constants.DATABASE_CLIENT;
