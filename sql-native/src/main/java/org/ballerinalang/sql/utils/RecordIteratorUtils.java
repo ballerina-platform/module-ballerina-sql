@@ -47,9 +47,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
@@ -61,8 +59,6 @@ import static org.ballerinalang.sql.utils.Utils.getString;
  * @since 1.2.0
  */
 public class RecordIteratorUtils {
-    private static final Calendar calendar = Calendar
-            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nextResult(BObject recordIterator) {
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
