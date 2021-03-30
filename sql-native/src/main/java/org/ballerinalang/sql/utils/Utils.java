@@ -513,7 +513,7 @@ public class Utils {
                 return type.getTag() == TypeTags.STRING_TAG ||
                         type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
                         type.getTag() == TypeTags.RECORD_TYPE_TAG ||
-                        type.getTag() == TypeTags.INTERSECTION_TAG||
+                        type.getTag() == TypeTags.INTERSECTION_TAG ||
                         type.getTag() == TypeTags.INT_TAG;
             case Types.TINYINT:
             case Types.SMALLINT:
