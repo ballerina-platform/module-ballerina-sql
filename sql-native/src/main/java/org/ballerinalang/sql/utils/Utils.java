@@ -503,12 +503,17 @@ public class Utils {
                         type.getTag() == TypeTags.JSON_TAG;
             case Types.DATE:
             case Types.TIME:
-            case Types.TIMESTAMP:
-            case Types.TIMESTAMP_WITH_TIMEZONE:
             case Types.TIME_WITH_TIMEZONE:
                 return type.getTag() == TypeTags.STRING_TAG ||
                         type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
                         type.getTag() == TypeTags.RECORD_TYPE_TAG ||
+                        type.getTag() == TypeTags.INT_TAG;
+            case Types.TIMESTAMP:
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+                return type.getTag() == TypeTags.STRING_TAG ||
+                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
+                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
+                        type.getTag() == TypeTags.INTERSECTION_TAG ||
                         type.getTag() == TypeTags.INT_TAG;
             case Types.TINYINT:
             case Types.SMALLINT:

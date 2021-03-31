@@ -64,10 +64,8 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA;
@@ -87,10 +85,6 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
     private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
     private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
-
-    private static final Calendar calendar = Calendar
-            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
-
 
     public static DefaultResultParameterProcessor getInstance() {
         if (instance == null) {
@@ -580,6 +574,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     }
                 case TypeTags.INT_TAG:
                     return timestamp.getTime();
+                case TypeTags.INTERSECTION_TAG:
+                    return Utils.createTimeStruct(timestamp.getTime());
             }
         }
         return null;
@@ -661,6 +657,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     }
                 case TypeTags.INT_TAG:
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
+                case TypeTags.INTERSECTION_TAG:
+                    return Utils.createTimeStruct(Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime());
             }
         }
         return null;
@@ -822,13 +820,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public void populateDate(CallableStatement statement, BObject parameter, int paramIndex) throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getDate(paramIndex, calendar));
+                statement.getDate(paramIndex));
     }
 
     @Override
     public void populateTime(CallableStatement statement, BObject parameter, int paramIndex) throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getTime(paramIndex, calendar));
+                statement.getTime(paramIndex));
     }
 
     @Override
@@ -842,7 +840,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     public void populateTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException {
         parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA,
-                statement.getTimestamp(paramIndex, calendar));
+                statement.getTimestamp(paramIndex));
     }
 
     @Override
