@@ -545,7 +545,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(timestamp.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equalsIgnoreCase(Constants.SqlTypes.DATETIME)
+                    if (type.getName().equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD)
                             && timestamp instanceof Timestamp) {
                         LocalDateTime dateTimeObj = ((Timestamp) timestamp).toLocalDateTime();
                         BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
@@ -591,7 +591,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(offsetDateTime.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equalsIgnoreCase(Constants.SqlTypes.DATETIME)) {
+                    if (type.getName().equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD)) {
                         BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
                                 org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
                                 org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD);
