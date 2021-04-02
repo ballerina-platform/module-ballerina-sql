@@ -45,7 +45,7 @@ type SelectTestAlias record {
 
 function testGetPrimitiveTypes() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query(
+    stream<record{}, error?> streamData = dbClient->query(
 	"SELECT int_type, long_type, double_type,"
         + "boolean_type, string_type from DataTable WHERE row_id = 1");
     record {|record {} value;|}? data = checkpanic streamData.next();
@@ -68,7 +68,7 @@ function testGetPrimitiveTypes() {
 }
 function testToJson() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query(
+    stream<record{}, error?> streamData = dbClient->query(
 	"SELECT int_type, long_type, double_type, boolean_type, string_type from DataTable WHERE row_id = 1");
     record {|record {} value;|}? data = checkpanic streamData.next();
     checkpanic streamData.close();
@@ -96,7 +96,7 @@ function testToJson() {
 }
 function testToJsonComplexTypes() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from" +
+    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from" +
         " ComplexTypes where row_id = 1");
     record {|record {} value;|}? data = checkpanic streamData.next();
     checkpanic streamData.close();
@@ -108,7 +108,7 @@ function testToJsonComplexTypes() {
         CLOB_TYPE: "very long text",
         BINARY_TYPE: "wso2 ballerina binary test.".toBytes()
     };
-    test:assertEquals(value, complexStringType, "Expected record did not match."); 
+    test:assertEquals(value, complexStringType, "Expected record did not match.");
 }
 
 @test:Config {
@@ -116,7 +116,7 @@ function testToJsonComplexTypes() {
 }
 function testComplexTypesNil() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from " +
+    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from " +
         " ComplexTypes where row_id = 2");
     record {|record {} value;|}? data = checkpanic streamData.next();
     checkpanic streamData.close();
@@ -135,7 +135,7 @@ function testComplexTypesNil() {
 }
 function testArrayRetrieval() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, " +
+    stream<record{}, error?> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, " +
         "boolean_type, string_type, string_array, boolean_array " +
         "from MixTypes where row_id =1");
     record {|record {} value;|}? data = checkpanic streamData.next();
@@ -148,8 +148,8 @@ function testArrayRetrieval() {
         INT_TYPE: 1,
         INT_ARRAY: [1, 2, 3],
         LONG_TYPE:9223372036854774807,
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
-        BOOLEAN_TYPE: true, 
+        LONG_ARRAY: [100000000, 200000000, 300000000],
+        BOOLEAN_TYPE: true,
         STRING_TYPE: "Hello",
         STRING_ARRAY: ["Hello", "Ballerina"],
         BOOLEAN_ARRAY: [true, false, true]
@@ -173,7 +173,7 @@ type TestTypeData record {
 }
 function testComplexWithStructDef() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, "
+    stream<record{}, error?> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, "
         + "boolean_type, string_type, boolean_array, string_array "
         + "from MixTypes where row_id =1", TestTypeData);
     record {|record {} value;|}? data = checkpanic streamData.next();
@@ -183,14 +183,13 @@ function testComplexWithStructDef() {
     TestTypeData mixTypesExpected = {
         int_type: 1,
         int_array: [1, 2, 3],
-        long_type: 9223372036854774807, 
-        long_array:[100000000, 200000000, 300000000], 
-        boolean_type: true, 
+        long_type: 9223372036854774807,
+        long_array:[100000000, 200000000, 300000000],
+        boolean_type: true,
         string_type: "Hello",
         boolean_array: [true, false, true],
         string_array: ["Hello", "Ballerina"]
     };
-    
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
 
@@ -206,15 +205,15 @@ type ResultMap record {
 }
 function testMultipleRecoredRetrieval() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> streamData = dbClient->query("SELECT int_array, long_array, boolean_array," +
+    stream<record{}, error?> streamData = dbClient->query("SELECT int_array, long_array, boolean_array," +
         "string_array from ArrayTypes", ResultMap);
 
     ResultMap mixTypesExpected = {
         INT_ARRAY: [1, 2, 3],
-        LONG_ARRAY: [100000000, 200000000, 300000000], 
+        LONG_ARRAY: [100000000, 200000000, 300000000],
         STRING_ARRAY: ["Hello", "Ballerina"],
         BOOLEAN_ARRAY: [true, false, true]
-    }; 
+    };
 
     ResultMap? mixTypesActual = ();
     int counter = 0;
@@ -238,6 +237,8 @@ type ResultDates record {
     string TIME_TYPE;
     string TIMESTAMP_TYPE;
     string DATETIME_TYPE;
+    string TIME_TZ_TYPE;
+    string TIMESTAMP_TZ_TYPE;
 };
 
 @test:Config {
@@ -245,26 +246,31 @@ type ResultDates record {
 }
 function testDateTime() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    string insertQuery = string `Insert into DateTimeTypes (row_id, date_type, time_type, timestamp_type, datetime_type)
-     values (1,'2017-05-23','14:15:23','2017-01-25 16:33:55','2017-01-25 16:33:55')`;
+    string insertQuery = string `INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
+            datetime_type, time_tz_type, timestamp_tz_type) VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
+            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00')`;
     ExecutionResult? result = checkpanic dbClient->execute(insertQuery);
-    stream<record{}, error> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
-       + " from DateTimeTypes where row_id = 1", ResultDates);
+    stream<record{}, error?> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
+       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates);
     record{| record{} value; |}? data =  checkpanic queryResult.next();
     record{}? value = data?.value;
     checkpanic dbClient.close();
 
-    string dateType = "2017-05-23+00:00";
-    string timeTypeString = "14:15:23.000+00:00";
-    string insertedTimeString = "2017-01-25T16:33:55.000+00:00";
+    string dateTypeString = "2017-05-23";
+    string timeTypeString = "14:15:23";
+    string timestampTypeString = "2017-01-25 16:33:55.0";
+    string timeWithTimezone = "16:33:55+06:30";
+    string timestampWithTimezone = "2017-01-25T16:33:55-08:00";
 
     ResultDates expected = {
-        DATE_TYPE: dateType,
+        DATE_TYPE: dateTypeString,
         TIME_TYPE: timeTypeString,
-        TIMESTAMP_TYPE: insertedTimeString,
-        DATETIME_TYPE: insertedTimeString
+        TIMESTAMP_TYPE: timestampTypeString,
+        DATETIME_TYPE: timestampTypeString,
+        TIME_TZ_TYPE: timeWithTimezone,
+        TIMESTAMP_TZ_TYPE: timestampWithTimezone
     };
-    test:assertEquals(value, expected, "Expected record did not match."); 
+    test:assertEquals(value, expected, "Expected record did not match.");
 }
 
 type ResultSetTestAlias record {
@@ -282,7 +288,7 @@ type ResultSetTestAlias record {
 }
 function testColumnAlias() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error> queryResult = dbClient->query("SELECT dt1.int_type, dt1.long_type, dt1.float_type," +
+    stream<record{}, error?> queryResult = dbClient->query("SELECT dt1.int_type, dt1.long_type, dt1.float_type," +
            "dt1.double_type,dt1.boolean_type, dt1.string_type,dt2.int_type as dt2int_type from DataTable dt1 " +
            "left join DataTableRep dt2 on dt1.row_id = dt2.row_id WHERE dt1.row_id = 1;", ResultSetTestAlias);
     ResultSetTestAlias expectedData = {
@@ -297,7 +303,7 @@ function testColumnAlias() {
     int counter = 0;
     error? e = queryResult.forEach(function (record{} value) {
         if (value is ResultSetTestAlias) {
-            test:assertEquals(value, expectedData, "Expected record did not match."); 
+            test:assertEquals(value, expectedData, "Expected record did not match.");
             counter = counter + 1;
         } else{
             test:assertFail("Expected data type is ResultSetTestAlias");
@@ -306,7 +312,7 @@ function testColumnAlias() {
     if(e is error) {
         test:assertFail("Query failed");
     }
-    test:assertEquals(counter, 1, "Expected only one data row."); 
+    test:assertEquals(counter, 1, "Expected only one data row.");
     checkpanic dbClient.close();
 }
 
@@ -316,7 +322,7 @@ function testColumnAlias() {
 function testQueryRowId() {
     MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
     ExecutionResult result = checkpanic dbClient->execute("SET DATABASE SQL SYNTAX ORA TRUE");
-    stream<record{}, error> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, boolean_array," +
+    stream<record{}, error?> streamData = dbClient->query("SELECT ROWNUM, int_array, long_array, boolean_array," +
          "string_array from ArrayTypes");
 
     record{} mixTypesExpected = {
@@ -325,7 +331,7 @@ function testQueryRowId() {
         "LONG_ARRAY": [100000000, 200000000, 300000000],
         "BOOLEAN_ARRAY": [true, false, true],
         "STRING_ARRAY": ["Hello", "Ballerina"]
-    }; 
+    };
 
     record{}? mixTypesActual = ();
     int counter = 0;

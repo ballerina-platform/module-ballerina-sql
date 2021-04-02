@@ -47,9 +47,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.utils.Utils.cleanUpConnection;
@@ -61,8 +59,6 @@ import static org.ballerinalang.sql.utils.Utils.getString;
  * @since 1.2.0
  */
 public class RecordIteratorUtils {
-    private static final Calendar calendar = Calendar
-            .getInstance(TimeZone.getTimeZone(Constants.TIMEZONE_UTC.getValue()));
 
     public static Object nextResult(BObject recordIterator) {
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
@@ -137,36 +133,20 @@ public class RecordIteratorUtils {
                 String nClobValue = getString(resultSet.getNClob(columnIndex));
                 return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
             case Types.DATE:
-                Date date = resultSet.getDate(columnIndex, calendar);
+                Date date = resultSet.getDate(columnIndex);
                 return resultParameterProcessor.convertDate(date, sqlType, ballerinaType);
             case Types.TIME:
-                Time time = resultSet.getTime(columnIndex, calendar);
-                return resultParameterProcessor.convertDate(time, sqlType, ballerinaType);
+                Time time = resultSet.getTime(columnIndex);
+                return resultParameterProcessor.convertTime(time, sqlType, ballerinaType);
             case Types.TIME_WITH_TIMEZONE:
-                try {
-                    time = resultSet.getTime(columnIndex, calendar);
-                    return resultParameterProcessor.convertDate(time, sqlType, ballerinaType);
-                } catch (SQLException ex) {
-                    //Some database drivers do not support getTime operation,
-                    // therefore falling back to getObject method.
-                    OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
-                    return resultParameterProcessor.convertDate(Time.valueOf(offsetTime.toLocalTime()), 
-                           sqlType, ballerinaType);
-                }
+                OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
+                return resultParameterProcessor.convertTimeWithTimezone(offsetTime, sqlType, ballerinaType);
             case Types.TIMESTAMP:
-                Timestamp timestamp = resultSet.getTimestamp(columnIndex, calendar);
-                return resultParameterProcessor.convertDate(timestamp, sqlType, ballerinaType);
+                Timestamp timestamp = resultSet.getTimestamp(columnIndex);
+                return resultParameterProcessor.convertTimeStamp(timestamp, sqlType, ballerinaType);
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                try {
-                    timestamp = resultSet.getTimestamp(columnIndex, calendar);
-                    return resultParameterProcessor.convertDate(timestamp, sqlType, ballerinaType);
-                } catch (SQLException ex) {
-                    //Some database drivers do not support getTimestamp operation,
-                    // therefore falling back to getObject method.
-                    OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
-                    return resultParameterProcessor.convertDate(Timestamp.valueOf(offsetDateTime.toLocalDateTime()),
-                            sqlType, ballerinaType);
-                }
+                OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
+                return resultParameterProcessor.convertTimestampWithTimezone(offsetDateTime, sqlType, ballerinaType);
             case Types.ROWID:
                 return resultParameterProcessor.convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType, 
                             ballerinaType, "SQL RowID");
