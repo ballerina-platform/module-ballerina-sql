@@ -415,7 +415,8 @@ public type OutParameter object {
 };
 
 # Represents Char Out Parameter used in procedure calls
-public class CharOutParameter {
+public distinct class CharOutParameter {
+    *OutParameter;
     # Parses returned Char SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -426,7 +427,8 @@ public class CharOutParameter {
 }
 
 # Represents Varchar Out Parameter used in procedure calls
-public class VarcharOutParameter {
+public distinct class VarcharOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -437,7 +439,8 @@ public class VarcharOutParameter {
 }
 
 # Represents NChar Out Parameter used in procedure calls
-public class NCharOutParameter {
+public distinct class NCharOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -448,7 +451,8 @@ public class NCharOutParameter {
 }
 
 # Represents NVarchar Out Parameter used in procedure calls
-public class NVarcharOutParameter {
+public distinct class NVarcharOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -459,7 +463,8 @@ public class NVarcharOutParameter {
 }
 
 # Represents Binary Out Parameter used in procedure calls
-public class BinaryOutParameter {
+public distinct class BinaryOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -470,7 +475,8 @@ public class BinaryOutParameter {
 }
 
 # Represents VarBinary Out Parameter used in procedure calls
-public class VarBinaryOutParameter {
+public distinct class VarBinaryOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -481,7 +487,8 @@ public class VarBinaryOutParameter {
 }
 
 # Represents Text Out Parameter used in procedure calls
-public class TextOutParameter {
+public distinct class TextOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -492,7 +499,8 @@ public class TextOutParameter {
 }
 
 # Represents Blob Out Parameter used in procedure calls
-public class BlobOutParameter {
+public distinct class BlobOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -503,7 +511,8 @@ public class BlobOutParameter {
 }
 
 # Represents Clob Out Parameter used in procedure calls
-public class ClobOutParameter {
+public distinct class ClobOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -514,7 +523,8 @@ public class ClobOutParameter {
 }
 
 # Represents NClob Out Parameter used in procedure calls
-public class NClobOutParameter {
+public distinct class NClobOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -525,7 +535,8 @@ public class NClobOutParameter {
 }
 
 # Represents Date Out Parameter used in procedure calls
-public class DateOutParameter {
+public distinct class DateOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -536,7 +547,8 @@ public class DateOutParameter {
 }
 
 # Represents Time Out Parameter used in procedure calls
-public class TimeOutParameter {
+public distinct class TimeOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -547,7 +559,8 @@ public class TimeOutParameter {
 }
 
 # Represents DateTime Out Parameter used in procedure calls
-public class DateTimeOutParameter {
+public distinct class DateTimeOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -558,7 +571,8 @@ public class DateTimeOutParameter {
 }
 
 # Represents Timestamp Out Parameter used in procedure calls
-public class TimestampOutParameter {
+public distinct class TimestampOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -569,7 +583,8 @@ public class TimestampOutParameter {
 }
 
 # Represents Array Out Parameter used in procedure calls
-public class ArrayOutParameter {
+public distinct class ArrayOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -580,7 +595,8 @@ public class ArrayOutParameter {
 }
 
 # Represents Row Out Parameter used in procedure calls
-public class RowOutParameter {
+public distinct class RowOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -591,7 +607,8 @@ public class RowOutParameter {
 }
 
 # Represents SmallInt Out Parameter used in procedure calls
-public class SmallIntOutParameter {
+public distinct class SmallIntOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -602,7 +619,8 @@ public class SmallIntOutParameter {
 }
 
 # Represents Integer Out Parameter used in procedure calls
-public class IntegerOutParameter {
+public distinct class IntegerOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -613,7 +631,8 @@ public class IntegerOutParameter {
 }
 
 # Represents BigInt Out Parameter used in procedure calls
-public class BigIntOutParameter {
+public distinct class BigIntOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -624,7 +643,8 @@ public class BigIntOutParameter {
 }
 
 # Represents Real Out Parameter used in procedure calls
-public class RealOutParameter {
+public distinct class RealOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -635,7 +655,8 @@ public class RealOutParameter {
 }
 
 # Represents Float Out Parameter used in procedure calls
-public class FloatOutParameter {
+public distinct class FloatOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -646,7 +667,8 @@ public class FloatOutParameter {
 }
 
 # Represents Double Out Parameter used in procedure calls
-public class DoubleOutParameter {
+public distinct class DoubleOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -657,7 +679,8 @@ public class DoubleOutParameter {
 }
 
 # Represents Numeric Out Parameter used in procedure calls
-public class NumericOutParameter {
+public distinct class NumericOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -668,7 +691,8 @@ public class NumericOutParameter {
 }
 
 # Represents Decimal Out Parameter used in procedure calls
-public class DecimalOutParameter {
+public distinct class DecimalOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -679,7 +703,8 @@ public class DecimalOutParameter {
 }
 
 # Represents Bit Out Parameter used in procedure calls
-public class BitOutParameter {
+public distinct class BitOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -690,7 +715,8 @@ public class BitOutParameter {
 }
 
 # Represents Boolean Out Parameter used in procedure calls
-public class BooleanOutParameter {
+public distinct class BooleanOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -701,7 +727,8 @@ public class BooleanOutParameter {
 }
 
 # Represents Ref Out Parameter used in procedure calls
-public class RefOutParameter {
+public distinct class RefOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -712,7 +739,8 @@ public class RefOutParameter {
 }
 
 # Represents Struct Out Parameter used in procedure calls
-public class StructOutParameter {
+public distinct class StructOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted
@@ -723,7 +751,8 @@ public class StructOutParameter {
 }
 
 # Represents XML Out Parameter used in procedure calls
-public class XMLOutParameter {
+public distinct class XMLOutParameter {
+    *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
     # + typeDesc - Type description of the data that need to be converted

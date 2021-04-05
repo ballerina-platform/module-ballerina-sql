@@ -414,18 +414,21 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 case TypeTags.RECORD_TYPE_TAG:
                     if (date instanceof Date) {
                          LocalDate dateObj = ((Date) date).toLocalDate();
-                    BMap<BString, Object> dateMap = ValueCreator.createRecordValue(
-                            org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD);
-                    dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR), dateObj.getYear());
-                    dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH), dateObj.getMonthValue());
-                    dateMap.put(StringUtils.fromString(
-                            org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY), dateObj.getDayOfMonth());
-                    return dateMap;
+                        BMap<BString, Object> dateMap = ValueCreator.createRecordValue(
+                                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD);
+                        dateMap.put(StringUtils.fromString(
+                                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR),
+                                dateObj.getYear());
+                        dateMap.put(StringUtils.fromString(
+                                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),
+                                dateObj.getMonthValue());
+                        dateMap.put(StringUtils.fromString(
+                                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),
+                                dateObj.getDayOfMonth());
+                        return dateMap;
                     } else {
-                        return date.toString();
+                        return fromString(date.toString());
                     }
                 case TypeTags.INT_TAG:
                     return date.getTime();
@@ -459,7 +462,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                                 .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
                         return timeMap;
                     } else {
-                        return toString();
+                        return fromString(time.toString());
                     }
                 case TypeTags.INT_TAG:
                     return time.getTime();
