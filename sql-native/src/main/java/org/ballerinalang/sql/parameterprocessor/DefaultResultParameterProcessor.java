@@ -433,7 +433,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         }
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Date Data type.");
+                            type.getName() + " for SQL Date data type.");
                     }
                 case TypeTags.INT_TAG:
                     return date.getTime();
@@ -472,7 +472,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         }
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Time Data type.");
+                            type.getName() + " for SQL Time data type.");
                     }
                 case TypeTags.INT_TAG:
                     return time.getTime();
@@ -547,7 +547,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         return timeMap;
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Time with timezone Data type.");
+                            type.getName() + " for SQL Time with timezone data type.");
                     }
                 case TypeTags.INT_TAG:
                     return Time.valueOf(offsetTime.toLocalTime()).getTime();
@@ -591,7 +591,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         return civilMap;
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Timestamp Data type.");
+                            type.getName() + " for SQL Timestamp data type.");
                     }
                 case TypeTags.INT_TAG:
                     return timestamp.getTime();
@@ -672,7 +672,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         return civilMap;
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Timestamp with timezone Data type.");
+                            type.getName() + " for SQL Timestamp with timezone data type.");
                     }
                 case TypeTags.INT_TAG:
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
