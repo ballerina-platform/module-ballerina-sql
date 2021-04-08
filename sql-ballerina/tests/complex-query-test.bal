@@ -246,17 +246,13 @@ type ResultDates record {
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
-function testDateTime() {
-    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    string insertQuery = string `INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
-            datetime_type, time_tz_type, timestamp_tz_type) VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
-            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00')`;
-    ExecutionResult? result = checkpanic dbClient->execute(insertQuery);
+function testDateTime() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type"
        + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates);
-    record{| record{} value; |}? data =  checkpanic queryResult.next();
+    record{| record{} value; |}? data =  check queryResult.next();
     record{}? value = data?.value;
-    checkpanic dbClient.close();
+    check dbClient.close();
 
     string dateTypeString = "2017-05-23";
     string timeTypeString = "14:15:23";
@@ -276,28 +272,24 @@ function testDateTime() {
 }
 
 type ResultDates2 record {
-    time:Date DATE_TYPE;
-    time:TimeOfDay TIME_TYPE;
-    time:Civil TIMESTAMP_TYPE;
-    time:Civil DATETIME_TYPE;
-    time:TimeOfDay TIME_TZ_TYPE;
-    time:Civil TIMESTAMP_TZ_TYPE;
+    time:Date date_type;
+    time:TimeOfDay time_type;
+    time:Civil timestamp_type;
+    time:Civil datetime_type;
+    time:TimeOfDay time_tz_type;
+    time:Civil timestamp_tz_type;
 };
 
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
-function testDateTime2() {
-    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    string insertQuery = string `INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
-            datetime_type, time_tz_type, timestamp_tz_type) VALUES (2, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
-            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00')`;
-    ExecutionResult? result = checkpanic dbClient->execute(insertQuery);
+function testDateTime2() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type, "
-            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 2", ResultDates2);
-    record{| record{} value; |}? data =  checkpanic queryResult.next();
+            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates2);
+    record{| record{} value; |}? data =  check queryResult.next();
     record{}? value = data?.value;
-    checkpanic dbClient.close();
+    check dbClient.close();
 
     time:Date dateTypeRecord = {year: 2017, month: 5, day: 23};
     time:TimeOfDay timeTypeRecord = {hour: 14, minute: 15, second:23};
@@ -307,12 +299,12 @@ function testDateTime2() {
                                         month:1, day:25, hour: 16, minute: 33, second:55};
 
     ResultDates2 expected = {
-        DATE_TYPE: dateTypeRecord,
-        TIME_TYPE: timeTypeRecord,
-        TIMESTAMP_TYPE: timestampTypeRecord,
-        DATETIME_TYPE: timestampTypeRecord,
-        TIME_TZ_TYPE: timeWithTimezone,
-        TIMESTAMP_TZ_TYPE: timestampWithTimezone
+        date_type: dateTypeRecord,
+        time_type: timeTypeRecord,
+        timestamp_type: timestampTypeRecord,
+        datetime_type: timestampTypeRecord,
+        time_tz_type: timeWithTimezone,
+        timestamp_tz_type: timestampWithTimezone
     };
     test:assertEquals(value, expected, "Expected record did not match.");
 }
@@ -322,56 +314,52 @@ type RandomType record {|
 |};
 
 type ResultDates3 record {
-    RandomType DATE_TYPE;
-    RandomType TIME_TYPE;
-    RandomType TIMESTAMP_TYPE;
-    RandomType DATETIME_TYPE;
-    RandomType TIME_TZ_TYPE;
-    RandomType TIMESTAMP_TZ_TYPE;
+    RandomType date_type;
+    RandomType time_type;
+    RandomType timestamp_type;
+    RandomType datetime_type;
+    RandomType time_tz_type;
+    RandomType timestamp_tz_type;
 };
 
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
-function testDateTime3() {
+function testDateTime3() returns error? {
     stream<record{}, error?> queryResult;
     record {|record {} value;|} | error? result;
-    MockClient dbClient = checkpanic new (url = complexQueryDb, user = user, password = password);
-    string insertQuery = string `INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
-            datetime_type, time_tz_type, timestamp_tz_type) VALUES (3, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
-            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00')`;
-    ExecutionResult? executionResult = checkpanic dbClient->execute(insertQuery);
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
 
-    queryResult = dbClient->query("SELECT date_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT date_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Date type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT time_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT time_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Time type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time type.");
 
-    queryResult = dbClient->query("SELECT timestamp_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT timestamp_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Timestamp type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp type.");
 
-    queryResult = dbClient->query("SELECT datetime_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT datetime_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Datetime type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Datetime type.");
 
-    queryResult = dbClient->query("SELECT time_tz_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT time_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Time with Timezone type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time with Timezone type.");
     
-    queryResult = dbClient->query("SELECT timestamp_tz_type from DateTimeTypes where row_id = 2", ResultDates3);
+    queryResult = dbClient->query("SELECT timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Exected for Timestamp with Timezone type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp with Timezone type.");
-    checkpanic dbClient.close();
+    check dbClient.close();
 }
 
 type ResultSetTestAlias record {
