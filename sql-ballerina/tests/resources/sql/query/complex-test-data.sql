@@ -113,6 +113,10 @@ CREATE TABLE IF NOT EXISTS DateTimeTypes(
   PRIMARY KEY (row_id)
 );
 
+INSERT INTO DateTimeTypes (row_id, date_type, time_type, timestamp_type,
+            datetime_type, time_tz_type, timestamp_tz_type) VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55',
+            '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00');
+
 CREATE TABLE IF NOT EXISTS IntegerTypes (
   id INTEGER,
   intData INTEGER,
