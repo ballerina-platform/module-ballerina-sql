@@ -22,21 +22,21 @@ string executeParamsDb = urlPrefix + "9007/executeparams";
 @test:BeforeGroups {
 	value: ["execute-params"]
 } 
-function initExecuteParamsContainer() {
-    initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+function initExecuteParamsContainer() returns error? {
+    check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
 }
 
 @test:AfterGroups {
 	value: ["execute-params"]
 } 
-function cleanExecuteParamsContainer() {
-    cleanDockerContainer("sql-execute-params");
+function cleanExecuteParamsContainer() returns error? {
+    check cleanDockerContainer("sql-execute-params");
 }
 
 @test:Config {
     groups: ["execute", "execute-params"]
 }
-function insertIntoDataTable() {
+function insertIntoDataTable() returns error? {
     int rowId = 4;
     int intType = 1;
     int longType = 9223372036854774807;
@@ -49,24 +49,24 @@ function insertIntoDataTable() {
     ParameterizedQuery sqlQuery =
       `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDataTable]
 }
-function insertIntoDataTable2() {
+function insertIntoDataTable2() returns error? {
     int rowId = 5;
     ParameterizedQuery sqlQuery = `INSERT INTO DataTable (row_id) VALUES(${rowId})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDataTable2]
 }
-function insertIntoDataTable3() {
+function insertIntoDataTable3() returns error? {
     int rowId = 6;
     int intType = 1;
     int longType = 9223372036854774807;
@@ -79,14 +79,14 @@ function insertIntoDataTable3() {
     ParameterizedQuery sqlQuery =
       `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDataTable3]
 }
-function insertIntoDataTable4() {
+function insertIntoDataTable4() returns error? {
     IntegerValue rowId = new (7);
     IntegerValue intType = new (2);
     BigIntValue longType = new (9372036854774807);
@@ -100,14 +100,14 @@ function insertIntoDataTable4() {
     ParameterizedQuery sqlQuery =
       `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDataTable4]
 }
-function deleteDataTable1() {
+function deleteDataTable1() returns error? {
     int rowId = 1;
     int intType = 1;
     int longType = 9223372036854774807;
@@ -121,24 +121,24 @@ function deleteDataTable1() {
             `DELETE FROM DataTable where row_id=${rowId} AND int_type=${intType} AND long_type=${longType}
               AND float_type=${floatType} AND double_type=${doubleType} AND boolean_type=${boolType}
               AND string_type=${stringType} AND decimal_type=${decimalType}`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [deleteDataTable1]
 }
-function deleteDataTable2() {
+function deleteDataTable2() returns error? {
     int rowId = 2;
     ParameterizedQuery sqlQuery = `DELETE FROM DataTable where row_id = ${rowId}`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [deleteDataTable2]
 }
-function deleteDataTable3() {
+function deleteDataTable3() returns error? {
     IntegerValue rowId = new (3);
     IntegerValue intType = new (1);
     BigIntValue longType = new (9372036854774807);
@@ -153,31 +153,31 @@ function deleteDataTable3() {
             `DELETE FROM DataTable where row_id=${rowId} AND int_type=${intType} AND long_type=${longType}
               AND double_type=${doubleType} AND boolean_type=${boolType}
               AND string_type=${stringType} AND decimal_type=${decimalType}`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"]
 }
-function insertIntoComplexTable() {
-    record {}? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+function insertIntoComplexTable() returns error? {
+    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
     string stringType = "very long text";
     ParameterizedQuery sqlQuery =
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${binaryData}, CONVERT(${stringType}, CLOB), ${binaryData}, ${binaryData})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoComplexTable]
 }
-function insertIntoComplexTable2() {
-    io:ReadableByteChannel blobChannel = getBlobColumnChannel();
-    io:ReadableCharacterChannel clobChannel = getClobColumnChannel();
-    io:ReadableByteChannel byteChannel = getByteColumnChannel();
+function insertIntoComplexTable2() returns error? {
+    io:ReadableByteChannel blobChannel = check getBlobColumnChannel();
+    io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
+    io:ReadableByteChannel byteChannel = check getByteColumnChannel();
 
     BlobValue blobType = new (blobChannel);
     ClobValue clobType = new (clobChannel);
@@ -187,41 +187,41 @@ function insertIntoComplexTable2() {
     ParameterizedQuery sqlQuery =
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${blobType}, CONVERT(${clobType}, CLOB), ${binaryType}, ${binaryType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoComplexTable2]
 }
-function insertIntoComplexTable3() {
+function insertIntoComplexTable3() returns error? {
     int rowId = 7;
     var nilType = ();
     ParameterizedQuery sqlQuery =
             `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
             ${rowId}, ${nilType}, CONVERT(${nilType}, CLOB), ${nilType}, ${nilType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoComplexTable3]
 }
-function deleteComplexTable() {
-    record {}|error? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+function deleteComplexTable() returns error? {
+    record {}|error? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
 
     int rowId = 2;
     ParameterizedQuery sqlQuery =
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${binaryData}`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [deleteComplexTable]
 }
-function deleteComplexTable2() {
+function deleteComplexTable2() returns error? {
     BlobValue blobType = new ();
     ClobValue clobType = new ();
     BinaryValue binaryType = new ();
@@ -230,13 +230,13 @@ function deleteComplexTable2() {
     int rowId = 4;
     ParameterizedQuery sqlQuery =
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${blobType} AND clob_type=${clobType}`;
-    validateResult(executeQueryMockClient(sqlQuery), 0);
+    validateResult(check executeQueryMockClient(sqlQuery), 0);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"]
 }
-function insertIntoNumericTable() {
+function insertIntoNumericTable() returns error? {
     BitValue bitType = new (1);
     int rowId = 3;
     int intType = 2147483647;
@@ -249,28 +249,28 @@ function insertIntoNumericTable() {
         `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
         numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
         ${bitType},${decimalType},${decimalType},${decimalType},${decimalType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1, 2);
+    validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoNumericTable]
 }
-function insertIntoNumericTable2() {
+function insertIntoNumericTable2() returns error? {
     int rowId = 4;
     var nilType = ();
     ParameterizedQuery sqlQuery =
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
             numeric_type, float_type, real_type) VALUES(${nilType},${nilType},${nilType},${nilType},
             ${nilType},${nilType},${nilType},${nilType},${nilType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1, 2);
+    validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoNumericTable2]
 }
-function insertIntoNumericTable3() {
+function insertIntoNumericTable3() returns error? {
     IntegerValue id = new (5);
     IntegerValue intType = new (2147483647);
     BigIntValue bigIntType = new (9223372036854774807);
@@ -287,13 +287,13 @@ function insertIntoNumericTable3() {
         `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
         numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
         ${bitType},${decimalType},${numbericType},${floatType},${realType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1, 2);
+    validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"]
 }
-function insertIntoDateTimeTable() {
+function insertIntoDateTimeTable() returns error? {
     int rowId = 2;
     string dateType = "2017-02-03";
     string timeType = "11:35:45";
@@ -303,14 +303,14 @@ function insertIntoDateTimeTable() {
     ParameterizedQuery sqlQuery =
         `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
         VALUES(${rowId}, ${dateType}, ${timeType}, ${dateTimeType}, ${timeStampType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDateTimeTable]
 }
-function insertIntoDateTimeTable2() {
+function insertIntoDateTimeTable2() returns error? {
     DateValue dateVal = new ("2017-02-03");
     TimeValue timeVal = new ("11:35:45");
     DateTimeValue dateTimeVal =  new ("2017-02-03 11:53:00");
@@ -320,14 +320,14 @@ function insertIntoDateTimeTable2() {
     ParameterizedQuery sqlQuery =
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDateTimeTable2]
 }
-function insertIntoDateTimeTable3() {
+function insertIntoDateTimeTable3() returns error? {
     DateValue dateVal = new ();
     TimeValue timeVal = new ();
     DateTimeValue dateTimeVal =  new ();
@@ -337,27 +337,27 @@ function insertIntoDateTimeTable3() {
     ParameterizedQuery sqlQuery =
                 `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
                 VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoDateTimeTable3]
 }
-function insertIntoDateTimeTable4() {
+function insertIntoDateTimeTable4() returns error? {
     int rowId = 5;
     var nilType = ();
 
     ParameterizedQuery sqlQuery =
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${nilType}, ${nilType}, ${nilType}, ${nilType})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"]
 }
-function insertIntoArrayTable() {
+function insertIntoArrayTable() returns error? {
     int[] dataint = [1, 2, 3];
     int[] datalong = [100000000, 200000000, 300000000];
     float[] datafloat = [245.23, 5559.49, 8796.123];
@@ -366,7 +366,7 @@ function insertIntoArrayTable() {
     string[] datastring = ["Hello", "Ballerina"];
     boolean[] databoolean = [true, false, true];
 
-    record {}? value = queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
     byte[][] dataBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
 
     ArrayValue paraInt = new (dataint);
@@ -383,14 +383,14 @@ function insertIntoArrayTable() {
         `INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraBlob})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 @test:Config {
     groups: ["execute", "execute-params"],
     dependsOn: [insertIntoArrayTable]
 }
-function insertIntoArrayTable2() {
+function insertIntoArrayTable2() returns error? {
     ArrayValue paraInt = new ();
     ArrayValue paraLong = new ();
     ArrayValue paraFloat = new ();
@@ -405,14 +405,14 @@ function insertIntoArrayTable2() {
         `INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraBlob})`;
-    validateResult(executeQueryMockClient(sqlQuery), 1);
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
 function executeQueryMockClient(ParameterizedQuery sqlQuery)
-returns ExecutionResult {
-    MockClient dbClient = checkpanic new (url = executeParamsDb, user = user, password = password);
-    ExecutionResult result = checkpanic dbClient->execute(sqlQuery);
-    checkpanic dbClient.close();
+returns ExecutionResult | error {
+    MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
+    ExecutionResult result = check dbClient->execute(sqlQuery);
+    check dbClient.close();
     return result;
 }
 

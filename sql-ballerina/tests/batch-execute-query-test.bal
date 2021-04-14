@@ -22,21 +22,21 @@ string batchExecuteDB = urlPrefix + "9005/batchexecute";
 @test:BeforeGroups {
 	value: ["batch-execute"]	
 } 
-function initBatchExecuteContainer() {
-	initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
+function initBatchExecuteContainer() returns error? {
+	check initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
 }
 
 @test:AfterGroups {
 	value: ["batch-execute"]	
 } 
-function cleanBatchExecuteContainer() {
-	cleanDockerContainer("sql-batch-execute");
+function cleanBatchExecuteContainer() returns error? {
+	check cleanDockerContainer("sql-batch-execute");
 }
 
 @test:Config {
     groups: ["batch-execute"]
 }
-function batchInsertIntoDataTable() {
+function batchInsertIntoDataTable() returns error? {
     var data = [
         {intVal:3, longVal:9223372036854774807, floatVal:123.34},
         {intVal:4, longVal:9223372036854774807, floatVal:123.34},
@@ -45,18 +45,18 @@ function batchInsertIntoDataTable() {
     ParameterizedQuery[] sqlQueries =
         from var row in data
         select `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (${row.intVal}, ${row.longVal}, ${row.floatVal})`;
-    validateBatchExecutionResult(batchExecuteQueryMockClient(sqlQueries), [1, 1, 1], [2,3,4]);
+    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 1, 1], [2,3,4]);
 }
 
 @test:Config {
     groups: ["batch-execute"],
     dependsOn: [batchInsertIntoDataTable]
 }
-function batchInsertIntoDataTable2() {
+function batchInsertIntoDataTable2() returns error? {
     int intType = 6;
     ParameterizedQuery sqlQuery = `INSERT INTO DataTable (int_type) VALUES(${intType})`;
     ParameterizedQuery[] sqlQueries = [sqlQuery];
-    validateBatchExecutionResult(batchExecuteQueryMockClient(sqlQueries), [1], [5]);
+    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1], [5]);
 }
 
 @test:Config {
@@ -103,9 +103,9 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
 }
 
 function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries)
-returns ExecutionResult[] {
-    MockClient dbClient = checkpanic new (url = batchExecuteDB, user = user, password = password);
-    ExecutionResult[] result = checkpanic dbClient->batchExecute(sqlQueries);
-    checkpanic dbClient.close();
+returns ExecutionResult[] | error {
+    MockClient dbClient = check new (url = batchExecuteDB, user = user, password = password);
+    ExecutionResult[] result = check dbClient->batchExecute(sqlQueries);
+    check dbClient.close();
     return result;
 }
