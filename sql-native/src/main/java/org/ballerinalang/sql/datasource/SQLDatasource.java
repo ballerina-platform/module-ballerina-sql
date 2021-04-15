@@ -406,6 +406,11 @@ public class SQLDatasource {
     }
 
     private String buildErrorMessage (Throwable t) {
+        if (t.getCause() instanceof ClassNotFoundException) {
+            return "Error while loading database driver. This may be because the database driver path is " +
+                    "not configured correctly in the `Ballerina.toml` file or provided database driver " +
+                    "version is not supported by the connector";
+        }
         StringBuilder message = new StringBuilder("Error in SQL connector configuration: " + t.getMessage() + "");
         String lastCauseMessage;
         int count = 0;
