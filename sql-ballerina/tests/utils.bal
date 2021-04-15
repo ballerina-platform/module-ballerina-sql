@@ -20,7 +20,7 @@ import ballerina/lang.runtime as runtime;
 import ballerina/test;
 import ballerina/jballerina.java;
 
-string scriptPath = checkpanic file:getAbsolutePath("tests/resources/sql");
+string scriptPath = check file:getAbsolutePath("tests/resources/sql");
 
 string user = "test";
 string password = "";
@@ -38,17 +38,17 @@ isolated function afterSuite() {
 }
 
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
-        string scriptName) {
+        string scriptName) returns error? {
     int exitCode = 1;
     Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm",
         "-d", "--name", containerName,
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
         "-e", "HSQLDB_USER=test",
-        "-v", checkpanic file:joinPath(scriptPath, resFolder) + ":/scripts",
+        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts",
         "-p", port + ":9001", "blacklabelops/hsqldb");
-    Process result = checkpanic execResult;
-    int waitForExit = checkpanic result.waitForExit();
-    exitCode = checkpanic result.exitCode();
+    Process result = check execResult;
+    int waitForExit = check result.waitForExit();
+    exitCode = check result.exitCode();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
     io:println("Docker container for Database '" + dbAlias +"' created.");
     runtime:sleep(20);
@@ -64,37 +64,37 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
             "--inlineRc", "url=" + urlPrefix + "9001/" +  dbAlias + ",user=test,password=", 
             "/scripts/" + scriptName
         );
-        result = checkpanic execResult;
-        waitForExit = checkpanic result.waitForExit();
-        exitCode =checkpanic result.exitCode();
+        result = check execResult;
+        waitForExit = check result.waitForExit();
+        exitCode =check result.exitCode();
         counter = counter + 1;
     }
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
     io:println("Docker container for Database '" + dbAlias +"' initialised with the script.");
 }
 
-function cleanDockerContainer(string containerName) {
+function cleanDockerContainer(string containerName) returns error? {
     Process|error execResult = exec("docker", {}, scriptPath, "stop", containerName);
-    Process result = checkpanic execResult;
-    int waitForExit = checkpanic result.waitForExit();
+    Process result = check execResult;
+    int waitForExit = check result.waitForExit();
 
-    int exitCode = checkpanic result.exitCode();
+    int exitCode = check result.exitCode();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
     io:println("Cleaned docker container '" + containerName +"'.");
 }
 
-isolated function getByteColumnChannel() returns @untainted io:ReadableByteChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/byteValue.txt");
+isolated function getByteColumnChannel() returns @untainted io:ReadableByteChannel | error {
+    io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/byteValue.txt");
     return byteChannel;
 }
 
-isolated function getBlobColumnChannel() returns @untainted io:ReadableByteChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/blobValue.txt");
+isolated function getBlobColumnChannel() returns @untainted io:ReadableByteChannel | error {
+    io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/blobValue.txt");
     return byteChannel;
 }
 
-isolated function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel {
-    io:ReadableByteChannel byteChannel = checkpanic io:openReadableFile("./tests/resources/files/clobValue.txt");
+isolated function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel | error {
+    io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/clobValue.txt");
     io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
     return sourceChannel;
 }
@@ -107,13 +107,13 @@ isolated function getUntaintedData(record {}|error? value, string fieldName) ret
 }
 
 function queryMockClient(string url, @untainted string|ParameterizedQuery sqlQuery)
-returns @tainted record {}? {
-    MockClient dbClient = checkpanic new (url = url, user = user, password = password);
+returns @tainted record {} | error? {
+    MockClient dbClient = check new (url = url, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(sqlQuery);
-    record {|record {} value;|}? data = checkpanic streamData.next();
-    checkpanic streamData.close();
+    record {|record {} value;|}? data = check streamData.next();
+    check streamData.close();
     record {}? value = data?.value;
-    checkpanic dbClient.close();
+    check dbClient.close();
     return value;
 }
 

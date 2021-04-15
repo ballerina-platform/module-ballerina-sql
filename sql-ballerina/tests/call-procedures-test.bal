@@ -34,15 +34,15 @@ type StringDataSingle record {
 @test:BeforeGroups {
 	value: ["procedures"]	
 } 
-function initproceduresContainer() {
-	initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
+function initproceduresContainer() returns error? {
+	check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
 }
 
 @test:AfterGroups {
 	value: ["procedures"]	
 } 
-function cleanproceduresContainer() {
-	cleanDockerContainer("sql-procedures");
+function cleanproceduresContainer() returns error? {
+	check cleanDockerContainer("sql-procedures");
 }
 
 @test:Config {
@@ -51,8 +51,8 @@ function cleanproceduresContainer() {
 }
 function testCallWithStringTypes() returns @tainted record {}|error? {
     int id = 2;
-    MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult ret = checkpanic dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
@@ -75,17 +75,17 @@ function testCallWithStringTypes() returns @tainted record {}|error? {
         };
         test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     }
-    checkpanic dbClient.close();
+    check dbClient.close();
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCallWithStringTypes]
 }
-function testCallWithStringTypesInParams() {
+function testCallWithStringTypesInParams() returns error? {
     int id = 3;
-    MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult ret = checkpanic dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
@@ -108,14 +108,14 @@ function testCallWithStringTypesInParams() {
         };
         test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     }
-    checkpanic dbClient.close();
+    check dbClient.close();
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCallWithStringTypesInParams,testCreateProcedures2]
 }
-function testCallWithStringTypesOutParams() {
+function testCallWithStringTypesOutParams() returns error? {
     IntegerValue paraID = new(1);
     VarcharOutParameter paraVarchar = new;
     CharOutParameter paraCharmax = new;
@@ -127,8 +127,8 @@ function testCallWithStringTypesOutParams() {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithOutParams(${paraID}, ${paraVarchar},
                             ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
-    checkpanic ret.close();
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
 
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
     test:assertEquals(paraCharmax.get(string), "test1     ", "3rd out parameter of procedure did not match.");
@@ -142,7 +142,7 @@ function testCallWithStringTypesOutParams() {
     groups: ["procedures"],
     dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
 }
-function testCallWithNumericTypesOutParams() {
+function testCallWithNumericTypesOutParams() returns error? {
     IntegerValue paraID = new(1);
     IntegerOutParameter paraInt = new;
     BigIntOutParameter paraBigInt = new;
@@ -159,8 +159,8 @@ function testCallWithNumericTypesOutParams() {
                         ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                         ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
-    checkpanic ret.close();
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
 
     decimal paraDecimalVal= 1234.56;
 
@@ -171,8 +171,8 @@ function testCallWithNumericTypesOutParams() {
     test:assertEquals(paraBit.get(boolean), true, "6th out parameter of procedure did not match.");
     test:assertEquals(paraDecimal.get(decimal), paraDecimalVal, "7th out parameter of procedure did not match.");
     test:assertEquals(paraNumeric.get(decimal), paraDecimalVal, "8th out parameter of procedure did not match.");
-    test:assertTrue((checkpanic paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
-    test:assertTrue((checkpanic paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
+    test:assertTrue((check paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
+    test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
 }
 
@@ -180,7 +180,7 @@ function testCallWithNumericTypesOutParams() {
     groups: ["procedures"],
     dependsOn: [testCallWithNumericTypesOutParams,testCreateProcedures4]
 }
-function testCallWithStringTypesInoutParams() {
+function testCallWithStringTypesInoutParams() returns error? {
     IntegerValue paraID = new(1);
     InOutParameter paraVarchar = new("test varchar");
     InOutParameter paraCharmax = new("test char");
@@ -192,8 +192,8 @@ function testCallWithStringTypesInoutParams() {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithInoutParams(${paraID}, ${paraVarchar},
                              ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
-    checkpanic ret.close();
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
 
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
     test:assertEquals(paraCharmax.get(string), "test1     ", "3rd out parameter of procedure did not match.");
@@ -208,7 +208,7 @@ function testCallWithStringTypesInoutParams() {
     groups: ["procedures"],
     dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
 }
-function testCallWithNumericTypesInoutParams() {
+function testCallWithNumericTypesInoutParams() returns error? {
     decimal paraInDecimalVal= -1234.56;
 
     IntegerValue paraID = new(1);
@@ -227,8 +227,8 @@ function testCallWithNumericTypesInoutParams() {
                                 ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                                  ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = getProcedureCallResultFromMockClient(callProcedureQuery);
-    checkpanic ret.close();
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
 
     decimal paraDecimalVal= 1234.56;
 
@@ -239,15 +239,15 @@ function testCallWithNumericTypesInoutParams() {
     test:assertEquals(paraBit.get(boolean), true, "6th out parameter of procedure did not match.");
     test:assertEquals(paraDecimal.get(decimal), paraDecimalVal, "7th out parameter of procedure did not match.");
     test:assertEquals(paraNumeric.get(decimal), paraDecimalVal, "8th out parameter of procedure did not match.");
-    test:assertTrue((checkpanic paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
-    test:assertTrue((checkpanic paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
+    test:assertTrue((check paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
+    test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
 }
 
 @test:Config {
     groups: ["procedures"]
 }
-function testCreateProcedures1() {
+function testCreateProcedures1() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE InsertStringData(IN p_id INTEGER,
                                   IN p_varchar_type VARCHAR(255),
@@ -260,14 +260,14 @@ function testCreateProcedures1() {
               INSERT INTO StringTypes(id, varchar_type, charmax_type, char_type, charactermax_type, character_type, nvarcharmax_type)
               VALUES (p_id, p_varchar_type, p_charmax_type, p_char_type, p_charactermax_type, p_character_type, p_nvarcharmax_type);
     `;
-    validateProcedureResult(createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures1]
 }
-function testCreateProcedures2() {
+function testCreateProcedures2() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectStringDataWithOutParams (IN p_id INT, OUT p_varchar_type VARCHAR(255),
                                                 OUT p_charmax_type CHAR(10), OUT p_char_type CHAR, OUT p_charactermax_type CHARACTER(10),
@@ -282,14 +282,14 @@ function testCreateProcedures2() {
                 SELECT nvarcharmax_type INTO p_nvarcharmax_type FROM StringTypes where id = p_id;
             END
         `;
-    validateProcedureResult(createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures2]
 }
-function testCreateProcedures3() {
+function testCreateProcedures3() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectNumericDataWithOutParams (IN p_id INT, OUT p_int_type INT,OUT p_bigint_type BIGINT,
                                                  OUT p_smallint_type SMALLINT, OUT p_tinyint_type TINYINT,OUT p_bit_type BIT, OUT p_decimal_type DECIMAL(10,2),
@@ -308,14 +308,14 @@ function testCreateProcedures3() {
                 SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
             END
         `;
-    validateProcedureResult(createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures3]
 }
-function testCreateProcedures4() {
+function testCreateProcedures4() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectStringDataWithInoutParams (IN p_id INT, INOUT p_varchar_type VARCHAR(255),
                                                 INOUT p_charmax_type CHAR(10), INOUT p_char_type CHAR, INOUT p_charactermax_type CHARACTER(10),
@@ -330,14 +330,14 @@ function testCreateProcedures4() {
                 SELECT nvarcharmax_type INTO p_nvarcharmax_type FROM StringTypes where id = p_id;
             END
         `;
-    validateProcedureResult(createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures4]
 }
-function testCreateProcedures5() {
+function testCreateProcedures5() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectNumericDataWithInoutParams (IN p_id INT, INOUT p_int_type INT,INOUT p_bigint_type BIGINT,
                                                  INOUT p_smallint_type SMALLINT, INOUT p_tinyint_type TINYINT,INOUT p_bit_type BIT, INOUT p_decimal_type DECIMAL(10,2),
@@ -356,23 +356,23 @@ function testCreateProcedures5() {
                 SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
             END
         `;
-    validateProcedureResult(createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery)
-returns ProcedureCallResult {
-    MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult result = checkpanic dbClient->call(sqlQuery);
-    checkpanic dbClient.close();
+returns ProcedureCallResult | error {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(sqlQuery);
+    check dbClient.close();
     return result;
 }
 
 function createSqlProcedure(ParameterizedQuery sqlQuery)
-returns ExecutionResult|Error {
-    MockClient dbClient = checkpanic new (url = proceduresDB, user = user, password = password);
-    ExecutionResult result = checkpanic dbClient->execute(sqlQuery);
-    checkpanic dbClient.close();
+returns ExecutionResult | Error {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ExecutionResult result = check dbClient->execute(sqlQuery);
+    check dbClient.close();
     return result;
 }
 
@@ -396,4 +396,3 @@ isolated function validateProcedureResult(ExecutionResult|Error result, int rowC
     }
     
 }
-

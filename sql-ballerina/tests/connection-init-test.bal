@@ -20,41 +20,41 @@ string connectDB = urlPrefix + "9001/connection";
 @test:BeforeGroups {
 	value: ["connection"]	
 } 
-function initConnectionContainer() {
-	initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
+function initConnectionContainer() returns error? {
+	check initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
 }
 
 @test:AfterGroups {
 	value: ["connection"]	
 } 
-function cleanConnectionContainer() {
-	cleanDockerContainer("sql-connection");
+function cleanConnectionContainer() returns error? {
+	check cleanDockerContainer("sql-connection");
 }
 
 @test:Config {
     groups: ["connection"]
 }
-function testConnection1() {
-    MockClient testDB = checkpanic new (url = connectDB, user = user, password = password);
+function testConnection1() returns error? {
+    MockClient testDB = check new (url = connectDB, user = user, password = password);
     test:assertExactEquals(testDB.close(), (), "Initialising connection failure.");
 }
 
 @test:Config {
     groups: ["connection"]
 }
-function testConnection2() {
-    MockClient testDB = checkpanic new (connectDB, user, password);
+function testConnection2() returns error? {
+    MockClient testDB = check new (connectDB, user, password);
     test:assertExactEquals(testDB.close(), (), "Initialising connection failure.");
 }
 
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionInvalidUrl() {
+function testConnectionInvalidUrl() returns error? {
     string invalidUrl = urlPrefix;
     MockClient|Error dbClient = new (invalidUrl);
     if (!(dbClient is Error)) {
-        checkpanic dbClient.close();
+        check dbClient.close();
         test:assertFail("Invalid does not throw DatabaseError");
     } 
 }
@@ -62,10 +62,10 @@ function testConnectionInvalidUrl() {
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionNoUserPassword() {
+function testConnectionNoUserPassword() returns error? {
     MockClient|Error dbClient = new (connectDB);
     if (!(dbClient is Error)) {
-        checkpanic dbClient.close();
+        check dbClient.close();
         test:assertFail("No username does not throw DatabaseError");
     } 
 }
@@ -73,23 +73,23 @@ function testConnectionNoUserPassword() {
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionWithValidDriver() {
+function testConnectionWithValidDriver() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource");
     if (dbClient is Error) {
         test:assertFail("Valid driver throws DatabaseError");
     } else {
-        checkpanic dbClient.close();
+        check dbClient.close();
     }
 }
 
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionWithInvalidDriver() {
+function testConnectionWithInvalidDriver() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password,
         "org.hsqldb.jdbc.JDBCDataSourceInvalid");
     if (!(dbClient is Error)) {
-        checkpanic dbClient.close();
+        check dbClient.close();
         test:assertFail("Invalid driver does not throw DatabaseError");
     }
 }
@@ -97,27 +97,27 @@ function testConnectionWithInvalidDriver() {
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionWithDatasourceOptions() {
+function testConnectionWithDatasourceOptions() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"loginTimeout": 5000});
     if (dbClient is Error) {
         test:assertFail("Datasource options throws DatabaseError");
     } else {
-        checkpanic dbClient.close();
+        check dbClient.close();
     }
 }
 
 @test:Config {
     groups: ["connection"]
 }
-function testConnectionWithDatasourceInvalidProperty() {
+function testConnectionWithDatasourceInvalidProperty() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"invalidProperty": 10});
     if (dbClient is Error) {
         test:assertEquals(dbClient.message(), 
         "Error in SQL connector configuration: Property invalidProperty does not exist on target class org.hsqldb.jdbc.JDBCDataSource");
     } else {
-        checkpanic dbClient.close();
+        check dbClient.close();
         test:assertFail("Invalid driver does not throw DatabaseError");
     }
 }
@@ -125,11 +125,11 @@ function testConnectionWithDatasourceInvalidProperty() {
 @test:Config {
     groups: ["connection"]
 }
-function testWithConnectionPool() {
+function testWithConnectionPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = checkpanic new (url = connectDB, user = user,
+    MockClient dbClient = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
     error? err = dbClient.close();
     if (err is error) {
@@ -143,15 +143,15 @@ function testWithConnectionPool() {
 @test:Config {
     groups: ["connection"]
 }
-function testWithSharedConnPool() {
+function testWithSharedConnPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient1 = checkpanic new (url = connectDB, user = user,
+    MockClient dbClient1 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
-    MockClient dbClient2 = checkpanic new (url = connectDB, user = user,
+    MockClient dbClient2 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
-    MockClient dbClient3 = checkpanic new (url = connectDB, user = user,
+    MockClient dbClient3 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
 
     test:assertEquals(dbClient1.close(), (), "HSQLDB connection failure.");
@@ -162,11 +162,11 @@ function testWithSharedConnPool() {
 @test:Config {
     groups: ["connection"]
 }
-function testWithAllParams() {
+function testWithAllParams() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = checkpanic new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
+    MockClient dbClient = check new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"loginTimeout": 5000}, connectionPool);
     test:assertEquals(dbClient.close(), (), "HSQLDB connection failure.");
 }

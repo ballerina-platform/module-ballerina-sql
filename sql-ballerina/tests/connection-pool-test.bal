@@ -33,38 +33,38 @@ map<anydata> connectionPoolOptions = {
 @test:BeforeGroups {
 	value: ["pool"]	
 } 
-function initPoolContainer() {
-	initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
-	initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
+function initPoolContainer() returns error? {
+	check initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
+	check initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
 }
 
 @test:AfterGroups {
 	value: ["pool"]	
 } 
-function cleanPoolContainer() {
-	cleanDockerContainer("sql-pool1");
-	cleanDockerContainer("sql-pool2");
+function cleanPoolContainer() returns error? {
+	check cleanDockerContainer("sql-pool1");
+	check cleanDockerContainer("sql-pool2");
 }
 
 @test:Config {
     groups: ["pool"]
 }
-function testGlobalConnectionPoolSingleDestination() {
-    drainGlobalPool(poolDB_1);
+function testGlobalConnectionPoolSingleDestination() returns error? {
+    check drainGlobalPool(poolDB_1);
 }
 
 @test:Config {
     groups: ["pool"]
 }
-function testGlobalConnectionPoolsMultipleDestinations() {
-    drainGlobalPool(poolDB_1);
-    drainGlobalPool(poolDB_2);
+function testGlobalConnectionPoolsMultipleDestinations() returns error? {
+    check drainGlobalPool(poolDB_1);
+    check drainGlobalPool(poolDB_2);
 }
 
 @test:Config {
     groups: ["pool"]
 }
-function testGlobalConnectionPoolSingleDestinationConcurrent() {
+function testGlobalConnectionPoolSingleDestinationConcurrent() returns error? {
     worker w1 returns [stream<record{}, error?>, stream<record{}, error?>]|error {
         return testGlobalConnectionPoolConcurrentHelper1(poolDB_1);
     }
@@ -88,14 +88,14 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() {
         [stream<record{}, error?>, stream<record{}, error?>]|error w4;
     } results = wait {w1, w2, w3, w4};
 
-    var result2 = testGlobalConnectionPoolConcurrentHelper2(poolDB_1);
+    var result2 = check testGlobalConnectionPoolConcurrentHelper2(poolDB_1);
 
     (int|error)[][] returnArray = [];
     // Connections will be released here as we fully consume the data in the following conversion function calls
-    returnArray[0] = checkpanic getCombinedReturnValue(results.w1);
-    returnArray[1] = checkpanic getCombinedReturnValue(results.w2);
-    returnArray[2] = checkpanic getCombinedReturnValue(results.w3);
-    returnArray[3] = checkpanic getCombinedReturnValue(results.w4);
+    returnArray[0] = check getCombinedReturnValue(results.w1);
+    returnArray[1] = check getCombinedReturnValue(results.w2);
+    returnArray[2] = check getCombinedReturnValue(results.w3);
+    returnArray[3] = check getCombinedReturnValue(results.w4);
     returnArray[4] = result2;
 
     // All 5 clients are supposed to use the same pool. Default maximum no of connections is 10.
@@ -121,13 +121,13 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() {
 @test:Config {
     groups: ["pool"]
 }
-function testLocalSharedConnectionPoolConfigSingleDestination() {
+function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
     ConnectionPool pool = {maxOpenConnections: 5};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
     
     (stream<record{}, error?>)[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
@@ -145,11 +145,11 @@ function testLocalSharedConnectionPoolConfigSingleDestination() {
         i += 1;
     }
 
-    checkpanic dbClient1.close();
-    checkpanic dbClient2.close();
-    checkpanic dbClient3.close();
-    checkpanic dbClient4.close();
-    checkpanic dbClient5.close();
+    check dbClient1.close();
+    check dbClient2.close();
+    check dbClient3.close();
+    check dbClient4.close();
+    check dbClient5.close();
 
     // All 5 clients are supposed to use the same pool created with the configurations given by the
     // custom pool options. Since each select operation holds up one connection each, the last select
@@ -165,24 +165,24 @@ function testLocalSharedConnectionPoolConfigSingleDestination() {
 @test:Config {
     groups: ["pool"]
 }
-function testLocalSharedConnectionPoolConfigDifferentDbOptions() {
+function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? {
     ConnectionPool pool = {maxOpenConnections: 3};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient6 = checkpanic new (url = poolDB_1, user = user, password = password,
+    MockClient dbClient6 = check new (url = poolDB_1, user = user, password = password,
         datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
 
@@ -205,12 +205,12 @@ function testLocalSharedConnectionPoolConfigDifferentDbOptions() {
         i += 1;
     }
 
-    checkpanic dbClient1.close();
-    checkpanic dbClient2.close();
-    checkpanic dbClient3.close();
-    checkpanic dbClient4.close();
-    checkpanic dbClient5.close();
-    checkpanic dbClient6.close();
+    check dbClient1.close();
+    check dbClient2.close();
+    check dbClient3.close();
+    check dbClient4.close();
+    check dbClient5.close();
+    check dbClient6.close();
 
     // Since max pool size is 3, the last select function call going through each pool should fail.
     i = 0;
@@ -227,14 +227,14 @@ function testLocalSharedConnectionPoolConfigDifferentDbOptions() {
 @test:Config {
     groups: ["pool"]
 }
-function testLocalSharedConnectionPoolConfigMultipleDestinations() {
+function testLocalSharedConnectionPoolConfigMultipleDestinations() returns error? {
     ConnectionPool pool = {maxOpenConnections: 3};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = checkpanic new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = checkpanic new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient6 = checkpanic new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient4 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient5 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient6 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
 
     stream<record {} , error>[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
@@ -255,12 +255,12 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() {
         i += 1;
     }
 
-    checkpanic dbClient1.close();
-    checkpanic dbClient2.close();
-    checkpanic dbClient3.close();
-    checkpanic dbClient4.close();
-    checkpanic dbClient5.close();
-    checkpanic dbClient6.close();
+    check dbClient1.close();
+    check dbClient2.close();
+    check dbClient3.close();
+    check dbClient4.close();
+    check dbClient5.close();
+    check dbClient6.close();
 
     // Since max pool size is 3, the last select function call going through each pool should fail.
     i = 0;
@@ -276,10 +276,10 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() {
 @test:Config {
     groups: ["pool"]
 }
-function testLocalSharedConnectionPoolCreateClientAfterShutdown() {
+function testLocalSharedConnectionPoolCreateClientAfterShutdown() returns error? {
     ConnectionPool pool = {maxOpenConnections: 2};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
 
     var dt1 = dbClient1->query("SELECT count(*) as val from Customers where registrationID = 1", Result);
     var dt2 = dbClient2->query("SELECT count(*) as val from Customers where registrationID = 1", Result);
@@ -287,21 +287,21 @@ function testLocalSharedConnectionPoolCreateClientAfterShutdown() {
     int|error result2 = getReturnValue(dt2);
 
     // Since both clients are stopped the pool is supposed to shutdown.
-    checkpanic dbClient1.close();
-    checkpanic dbClient2.close();
+    check dbClient1.close();
+    check dbClient2.close();
 
     // This call should return an error as pool is shutdown
     var dt3 = dbClient1->query("SELECT count(*) as val from Customers where registrationID = 1", Result);
     int|error result3 = getReturnValue(dt3);
 
     // Now a new pool should be created
-    MockClient dbClient3 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
 
     // This call should be successful
     var dt4 = dbClient3->query("SELECT count(*) as val from Customers where registrationID = 1", Result);
     int|error result4 = getReturnValue(dt4);
 
-    checkpanic dbClient3.close();
+    check dbClient3.close();
 
     test:assertEquals(result1, 1);
     test:assertEquals(result2, 1);
@@ -314,7 +314,7 @@ ConnectionPool pool1 = {maxOpenConnections: 2};
 @test:Config {
     groups: ["pool"]
 }
-function testLocalSharedConnectionPoolStopInitInterleave() {
+function testLocalSharedConnectionPoolStopInitInterleave() returns error? {
     worker w1 returns error? {
         check testLocalSharedConnectionPoolStopInitInterleaveHelper1(poolDB_1);
     }
@@ -322,7 +322,7 @@ function testLocalSharedConnectionPoolStopInitInterleave() {
         return testLocalSharedConnectionPoolStopInitInterleaveHelper2(poolDB_1);
     }
 
-    checkpanic wait w1;
+    check wait w1;
     int|error result = wait w2;
     test:assertEquals(result, 1);
 }
@@ -349,14 +349,14 @@ returns @tainted int|error {
 @test:Config {
     groups: ["pool"]
 }
-function testShutDownUnsharedLocalConnectionPool() {
+function testShutDownUnsharedLocalConnectionPool() returns error? {
     ConnectionPool pool = {maxOpenConnections: 2};
-    MockClient dbClient = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
 
     var result = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
     int|error retVal1 = getReturnValue(result);
     // Pool should be shutdown as the only client using it is stopped.
-    checkpanic dbClient.close();
+    check dbClient.close();
     // This should result in an error return.
     var resultAfterPoolShutDown = dbClient->query("select count(*) as val from Customers where registrationID = 1",
         Result);
@@ -369,10 +369,10 @@ function testShutDownUnsharedLocalConnectionPool() {
 @test:Config {
     groups: ["pool"]
 }
-function testShutDownSharedConnectionPool() {
+function testShutDownSharedConnectionPool() returns error? {
     ConnectionPool pool = {maxOpenConnections: 1};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions, connectionPool = pool);
 
     var result1 = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     int|error retVal1 = getReturnValue(result1);
@@ -381,7 +381,7 @@ function testShutDownSharedConnectionPool() {
     int|error retVal2 = getReturnValue(result2);
 
     // Only one client is closed so pool should not shutdown.
-    checkpanic dbClient1.close();
+    check dbClient1.close();
 
     // This should be successful as pool is still up.
     var result3 = dbClient2->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -392,7 +392,7 @@ function testShutDownSharedConnectionPool() {
     int|error retVal4 = getReturnValue(result4);
 
     // Now pool should be shutdown as the only remaining client is stopped.
-    checkpanic dbClient2.close();
+    check dbClient2.close();
 
     // This should fail because this client is stopped.
     var result5 = dbClient2->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -408,10 +408,10 @@ function testShutDownSharedConnectionPool() {
 @test:Config {
     groups: ["pool"]
 }
-function testShutDownPoolCorrespondingToASharedPoolConfig() {
+function testShutDownPoolCorrespondingToASharedPoolConfig() returns error? {
     ConnectionPool pool = {maxOpenConnections: 1};
-    MockClient dbClient1 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = checkpanic new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
 
     var result1 = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     int|error retVal1 = getReturnValue(result1);
@@ -420,7 +420,7 @@ function testShutDownPoolCorrespondingToASharedPoolConfig() {
     int|error retVal2 = getReturnValue(result2);
 
     // This should result in stopping the pool used by this client as it was the only client using that pool.
-    checkpanic dbClient1.close();
+    check dbClient1.close();
 
     // This should be successful as the pool belonging to this client is up.
     var result3 = dbClient2->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -430,7 +430,7 @@ function testShutDownPoolCorrespondingToASharedPoolConfig() {
     var result4 = dbClient1->query("select count(*) as val from Customers where registrationID = 2", Result);
     int|error retVal4 = getReturnValue(result4);
 
-    checkpanic dbClient2.close();
+    check dbClient2.close();
 
     test:assertEquals(retVal1, 1);
     test:assertEquals(retVal2, 1);
@@ -441,15 +441,15 @@ function testShutDownPoolCorrespondingToASharedPoolConfig() {
 @test:Config {
     groups: ["pool"]
 }
-function testStopClientUsingGlobalPool() {
+function testStopClientUsingGlobalPool() returns error? {
     // This client doesn't have pool config specified therefore, global pool will be used.
-    MockClient dbClient = checkpanic new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient = check new (url = poolDB_1, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
 
     var result1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
     int|error retVal1 = getReturnValue(result1);
 
     // This will merely stop this client and will not have any effect on the pool because it is the global pool.
-    checkpanic dbClient.close();
+    check dbClient.close();
 
     // This should fail because this client was stopped, even though the pool is up.
     var result2 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
@@ -497,8 +497,8 @@ function testGlobalConnectionPoolConcurrentHelper1(string url) returns
     return [dt1, dt2];
 }
 
-function testGlobalConnectionPoolConcurrentHelper2(string url) returns @tainted (int|error)[] {
-    MockClient dbClient = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+function testGlobalConnectionPoolConcurrentHelper2(string url) returns @tainted (int|error)[] | error {
+    MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     (int|error)[] returnArray = [];
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
     var dt2 = dbClient->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -540,12 +540,12 @@ isolated function getIntVariableValue(stream<record{}, error?> queryResult) retu
 }
 
 
-function drainGlobalPool(string url) {
-    MockClient dbClient1 = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = checkpanic new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+function drainGlobalPool(string url) returns error? {
+    MockClient dbClient1 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient2 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient3 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient4 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
+    MockClient dbClient5 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
 
     stream<record{}, error?>[] resultArray = [];
 
