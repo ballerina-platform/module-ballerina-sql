@@ -497,7 +497,7 @@ function testGlobalConnectionPoolConcurrentHelper1(string url) returns
     return [dt1, dt2];
 }
 
-function testGlobalConnectionPoolConcurrentHelper2(string url) returns @tainted (int|error)[] | error{
+function testGlobalConnectionPoolConcurrentHelper2(string url) returns @tainted (int|error)[] | error {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     (int|error)[] returnArray = [];
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
