@@ -21,7 +21,7 @@
 # + executionResults - Result of execution of commands
 public type BatchExecuteErrorDetail record {
     int errorCode;
-    string sqlState;
+    string? sqlState;
     ExecutionResult[] executionResults;
 };
 
@@ -31,7 +31,7 @@ public type BatchExecuteErrorDetail record {
 # + sqlState - SQL state
 public type DatabaseErrorDetail record {
     int errorCode;
-    string sqlState;
+    string? sqlState;
 };
 
 //Level 1
