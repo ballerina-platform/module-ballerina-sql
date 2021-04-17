@@ -24,7 +24,7 @@ import ballerina/lang.'object as obj;
 #
 # + value - Value of parameter passed into the SQL statement
 public type TypedValue object {
-    public anydata|object {}? value;
+    public anydata|object {}|Value[]? value;
 };
 
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
@@ -325,9 +325,9 @@ public distinct class TimestampValue {
 # + value - Value of parameter passed into the SQL statement
 public distinct class ArrayValue {
     *TypedValue;
-    public string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value;
+    public Value[]? value;
 
-    public isolated function init(string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value = ()) {
+    public isolated function init(Value[]? value = ()) {
         self.value = value;
     }
 }

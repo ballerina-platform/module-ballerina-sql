@@ -86,7 +86,7 @@ abstract class AbstractStatementParameterProcessor {
     protected abstract void setRef(Connection connection, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError;
     protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index, 
-            Object value) throws SQLException, ApplicationError;
+            Object value) throws SQLException, ApplicationError, IOException;
     protected abstract void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
     protected abstract void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)

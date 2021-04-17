@@ -15,7 +15,9 @@
 // under the License.
 
 import ballerina/io;
+import ballerina/lang.'string as strings;
 import ballerina/test;
+import ballerina/time;
 
 string executeParamsDb = urlPrefix + "9007/executeparams";
 
@@ -406,6 +408,368 @@ function insertIntoArrayTable2() returns error? {
          string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraBlob})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable3() returns error? {
+    float float1 = 19.21;
+    float float2 = 492.98;
+    SmallIntValue smallintValue1 = new (1211);
+    SmallIntValue smallintValue2 = new (478);
+    SmallIntValue[] datasmallint = [smallintValue1, smallintValue2];
+    IntegerValue integerValue1 = new (121);
+    IntegerValue integerValue2 = new (498);
+    IntegerValue[] dataint = [integerValue1, integerValue2];
+    BigIntValue bigIntValue1 = new (121);
+    BigIntValue bigIntValue2 = new (498);
+    BigIntValue[] datalong = [bigIntValue1, bigIntValue2];
+    FloatValue floatValue1 = new (float1);
+    FloatValue floatValue2 = new (float2);
+    FloatValue[] datafloat = [floatValue1, floatValue2];
+    DoubleValue doubleValue1 = new (float1);
+    DoubleValue doubleValue2 = new (float2);
+    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
+    RealValue realValue1 = new (float1);
+    RealValue realValue2 = new (float2);
+    RealValue[] dataReal = [realValue1, realValue2];
+    DecimalValue decimalValue1 = new (<decimal> 12.245);
+    DecimalValue decimalValue2 = new (<decimal> 13.245);
+    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
+    NumericValue numericValue1 = new (float1);
+    NumericValue numericValue2 = new (float2);
+    NumericValue[] dataNumeric = [numericValue1, numericValue2];
+    CharValue charValue1 = new ("Char value");
+    CharValue charValue2 = new ("Character");
+    CharValue[] dataChar = [charValue1, charValue2];
+    VarcharValue varcharValue1 = new ("Varchar value");
+    VarcharValue varcharValue2 = new ("Varying Char");
+    VarcharValue[] dataVarchar = [varcharValue1, varcharValue2];
+    NVarcharValue nvarcharValue1 = new ("NVarchar value");
+    NVarcharValue nvarcharValue2 = new ("Varying NChar");
+    NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
+    string[] datastring = ["Hello", "Ballerina"];
+    BooleanValue trueValue = new (true);
+    BooleanValue falseValue = new (false);
+    BooleanValue[] databoolean = [trueValue, falseValue, trueValue];
+    DateValue date1 = new ("2021-12-18");
+    DateValue date2 = new ("2021-12-19");
+    DateValue[] dataDate = [date1, date2];
+    time:TimeOfDay time = {hour: 20, minute: 8, second: 12};
+    TimeValue time1 = new (time);
+    TimeValue time2 = new (time);
+    TimeValue[] dataTime = [time1, time2];
+    time:Civil datetime = {year: 2021, month: 12, day: 18, hour: 20, minute: 8, second: 12};
+    DateTimeValue datetime1 = new (datetime);
+    DateTimeValue datetime2 = new (datetime);
+    DateTimeValue[] dataDatetime = [datetime1, datetime2];
+    time:Utc timestampUtc = [12345600, 12];
+    TimestampValue timestamp1 = new (timestampUtc);
+    TimestampValue timestamp2 = new (timestampUtc);
+    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+    byte[] byteArray1 = [1, 2, 3];
+    byte[] byteArray2 = [4, 5, 6];
+    BinaryValue binary1 = new (byteArray1);
+    BinaryValue binary2 = new (byteArray2);
+    BinaryValue[] dataBinary = [binary1, binary2];
+    VarBinaryValue varBinary1 = new (byteArray1);
+    VarBinaryValue varBinary2 = new (byteArray2);
+    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
+    io:ReadableByteChannel byteChannel = check getBlobColumnChannel();
+    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    byte[][] dataBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
+
+    ArrayValue paraSmallint = new (datasmallint);
+    ArrayValue paraInt = new (dataint);
+    ArrayValue paraLong = new (datalong);
+    ArrayValue paraFloat = new (datafloat);
+    ArrayValue paraReal = new (dataReal);
+    ArrayValue paraDecimal = new (datadecimal);
+    ArrayValue paraNumeric = new (dataNumeric);
+    ArrayValue paraDouble = new (datadouble);
+    ArrayValue paraChar = new (dataChar);
+    ArrayValue paraVarchar = new (dataVarchar);
+    ArrayValue paraNVarchar = new (dataNVarchar);
+    ArrayValue paraString = new (datastring);
+    ArrayValue paraBool = new (databoolean);
+    ArrayValue paraDate = new (dataDate);
+    ArrayValue paraTime = new (dataTime);
+    ArrayValue paraDatetime = new (dataDatetime);
+    ArrayValue paraTimestamp = new (dataTimestamp);
+    ArrayValue paraBinary = new (dataBinary);
+    ArrayValue paraVarBinary = new (dataVarBinary);
+    ArrayValue paraBlob = new (dataBlob);
+    int rowId = 7;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
+         string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
+         ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable4() returns error? {
+    ArrayValue paraSmallint = new ();
+    ArrayValue paraInt = new ();
+    ArrayValue paraLong = new ();
+    ArrayValue paraFloat = new ();
+    ArrayValue paraReal = new ();
+    ArrayValue paraDecimal = new ();
+    ArrayValue paraNumeric = new ();
+    ArrayValue paraDouble = new ();
+    ArrayValue paraChar = new ();
+    ArrayValue paraVarchar = new ();
+    ArrayValue paraNVarchar = new ();
+    ArrayValue paraString = new ();
+    ArrayValue paraBool = new ();
+    ArrayValue paraDate = new ();
+    ArrayValue paraTime = new ();
+    ArrayValue paraDatetime = new ();
+    ArrayValue paraTimestamp = new ();
+    ArrayValue paraBinary = new ();
+    ArrayValue paraVarBinary = new ();
+    ArrayValue paraBlob = new ();
+    int rowId = 8;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
+         string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
+         ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable5() returns error? {
+    SmallIntValue smallintValue1 = new ();
+    SmallIntValue smallintValue2 = new ();
+    SmallIntValue[] datasmallint = [smallintValue1, smallintValue2];
+    IntegerValue integerValue1 = new ();
+    IntegerValue integerValue2 = new ();
+    IntegerValue[] dataint = [integerValue1, integerValue2];
+    BigIntValue bigIntValue1 = new ();
+    BigIntValue bigIntValue2 = new ();
+    BigIntValue[] datalong = [bigIntValue1, bigIntValue2];
+    FloatValue floatValue1 = new ();
+    FloatValue floatValue2 = new ();
+    FloatValue[] datafloat = [floatValue1, floatValue2];
+    DoubleValue doubleValue1 = new ();
+    DoubleValue doubleValue2 = new ();
+    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
+    RealValue realValue1 = new ();
+    RealValue realValue2 = new ();
+    RealValue[] dataReal = [realValue1, realValue2];
+    DecimalValue decimalValue1 = new ();
+    DecimalValue decimalValue2 = new ();
+    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
+    NumericValue numericValue1 = new ();
+    NumericValue numericValue2 = new ();
+    NumericValue[] dataNumeric = [numericValue1, numericValue2];
+    CharValue charValue1 = new ();
+    CharValue charValue2 = new ();
+    CharValue[] dataChar = [charValue1, charValue2];
+    VarcharValue varcharValue1 = new ();
+    VarcharValue varcharValue2 = new ();
+    VarcharValue[] dataVarchar = [varcharValue1, varcharValue2];
+    NVarcharValue nvarcharValue1 = new ();
+    NVarcharValue nvarcharValue2 = new ();
+    NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
+    BooleanValue trueValue = new ();
+    BooleanValue falseValue = new ();
+    BooleanValue[] databoolean = [trueValue, falseValue, trueValue];
+    DateValue date1 = new ();
+    DateValue date2 = new ();
+    DateValue[] dataDate = [date1, date2];
+    TimeValue time1 = new ();
+    TimeValue time2 = new ();
+    TimeValue[] dataTime = [time1, time2];
+    DateTimeValue datetime1 = new ();
+    DateTimeValue datetime2 = new ();
+    DateTimeValue[] dataDatetime = [datetime1, datetime2];
+    TimestampValue timestamp1 = new ();
+    TimestampValue timestamp2 = new ();
+    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+    BinaryValue binary1 = new ();
+    BinaryValue binary2 = new ();
+    BinaryValue[] dataBinary = [binary1, binary2];
+    VarBinaryValue varBinary1 = new ();
+    VarBinaryValue varBinary2 = new ();
+    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
+
+    ArrayValue paraSmallint = new (datasmallint);
+    ArrayValue paraInt = new (dataint);
+    ArrayValue paraLong = new (datalong);
+    ArrayValue paraFloat = new (datafloat);
+    ArrayValue paraReal = new (dataReal);
+    ArrayValue paraDecimal = new (datadecimal);
+    ArrayValue paraNumeric = new (dataNumeric);
+    ArrayValue paraDouble = new (datadouble);
+    ArrayValue paraChar = new (dataChar);
+    ArrayValue paraVarchar = new (dataVarchar);
+    ArrayValue paraNVarchar = new (dataNVarchar);
+    ArrayValue paraBool = new (databoolean);
+    ArrayValue paraDate = new (dataDate);
+    ArrayValue paraTime = new (dataTime);
+    ArrayValue paraDatetime = new (dataDatetime);
+    ArrayValue paraTimestamp = new (dataTimestamp);
+    ArrayValue paraBinary = new (dataBinary);
+    ArrayValue paraVarBinary = new (dataVarBinary);
+    int rowId = 9;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
+         smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
+         ${paraBool}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable6() returns error? {
+    decimal decimal1 = 19.21;
+    decimal decimal2 = 492.98;
+    FloatValue floatValue1 = new (1);
+    FloatValue floatValue2 = new (4);
+    FloatValue[] datafloat = [floatValue1, floatValue2];
+    DoubleValue doubleValue1 = new (decimal1);
+    DoubleValue doubleValue2 = new (decimal2);
+    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
+    RealValue realValue1 = new (decimal1);
+    RealValue realValue2 = new (decimal2);
+    RealValue[] dataReal = [realValue1, realValue2];
+    DecimalValue decimalValue1 = new (decimal1);
+    DecimalValue decimalValue2 = new (decimal2);
+    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
+    NumericValue numericValue1 = new (decimal1);
+    NumericValue numericValue2 = new (decimal2);
+    NumericValue[] dataNumeric = [numericValue1, numericValue2];
+    DateValue date1 = new ("2021-12-18");
+    DateValue date2 = new ("2021-12-19");
+    DateValue[] dataDate = [date1, date2];
+    TimeValue time1 = new ("20:08:59");
+    TimeValue time2 = new ("21:18:59");
+    TimeValue[] dataTime = [time1, time2];
+    DateTimeValue datetime1 = new ("2008-08-08 20:08:08");
+    DateTimeValue datetime2 = new ("2009-09-09 23:09:09");
+    DateTimeValue[] dataDatetime = [datetime1, datetime2];
+    TimestampValue timestamp1 = new ("2008-08-08 20:08:08");
+    TimestampValue timestamp2 = new ("2008-08-08 20:08:09");
+    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+    io:ReadableByteChannel byteChannel1 = check getByteColumnChannel();
+    io:ReadableByteChannel byteChannel2 = check getByteColumnChannel();
+    BinaryValue binary1 = new (byteChannel1);
+    BinaryValue binary2 = new (byteChannel2);
+    io:ReadableByteChannel varbinaryChannel1 = check getBlobColumnChannel();
+    io:ReadableByteChannel varbinaryChannel2 = check getBlobColumnChannel();
+    BinaryValue[] dataBinary = [binary1, binary2];
+    VarBinaryValue varBinary1 = new (varbinaryChannel1);
+    VarBinaryValue varBinary2 = new (varbinaryChannel2);
+    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
+
+    ArrayValue paraFloat = new (datafloat);
+    ArrayValue paraReal = new (dataReal);
+    ArrayValue paraDecimal = new (datadecimal);
+    ArrayValue paraNumeric = new (dataNumeric);
+    ArrayValue paraDouble = new (datadouble);
+    ArrayValue paraDate = new (dataDate);
+    ArrayValue paraTime = new (dataTime);
+    ArrayValue paraDatetime = new (dataDatetime);
+    ArrayValue paraTimestamp = new (dataTimestamp);
+    ArrayValue paraBinary = new (dataBinary);
+    ArrayValue paraVarBinary = new (dataVarBinary);
+    int rowId = 10;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id,float_array, double_array, decimal_array,
+         numeric_array, real_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
+         ${paraNumeric}, ${paraReal}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable7() returns error? {
+    int int1 = 19;
+    int int2 = 492;
+    DoubleValue doubleValue1 = new (int1);
+    DoubleValue doubleValue2 = new (int2);
+    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
+    RealValue realValue1 = new (int1);
+    RealValue realValue2 = new (int2);
+    RealValue[] dataReal = [realValue1, realValue2];
+    DecimalValue decimalValue1 = new (int1);
+    DecimalValue decimalValue2 = new (int2);
+    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
+    NumericValue numericValue1 = new (int1);
+    NumericValue numericValue2 = new (int2);
+    NumericValue[] dataNumeric = [numericValue1, numericValue2];
+
+    ArrayValue paraReal = new (dataReal);
+    ArrayValue paraDecimal = new (datadecimal);
+    ArrayValue paraNumeric = new (dataNumeric);
+    ArrayValue paraDouble = new (datadouble);
+    int rowId = 11;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, double_array, decimal_array,
+         numeric_array, real_array) VALUES(${rowId}, ${paraDouble}, ${paraDecimal},
+         ${paraNumeric}, ${paraReal})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable8() returns error? {
+    DateValue date1 = new ("2021-12-18+8.00");
+    DateValue date2 = new ("2021-12-19+8.00");
+    DateValue[] dataDate = [date1, date2];
+    TimeValue time1 = new ("20:08:59+8.00");
+    TimeValue time2 = new ("21:18:59+8.00");
+    TimeValue[] dataTime = [time1, time2];
+    DateTimeValue datetime1 = new ("2008-08-08 20:08:08+8.00");
+    DateTimeValue datetime2 = new ("2009-09-09 23:09:09+8.00");
+    DateTimeValue[] dataDatetime = [datetime1, datetime2];
+    TimestampValue timestamp1 = new ("2008-08-08 20:08:08+8.00");
+    TimestampValue timestamp2 = new ("2008-08-08 20:08:09+8.00");
+    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+
+    ArrayValue paraDate = new (dataDate);
+    ArrayValue paraTime = new (dataTime);
+    ArrayValue paraDatetime = new (dataDatetime);
+    ArrayValue paraTimestamp = new (dataTimestamp);
+    int rowId = 12;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, date_array) VALUES(${rowId}, ${paraDate})`;
+    ExecutionResult | error result = executeQueryMockClient(sqlQuery);
+    test:assertTrue(result is error, "Error Expected for date array");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+
+    sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, time_array) VALUES(${rowId}, ${paraTime})`;
+    result = executeQueryMockClient(sqlQuery);
+    test:assertTrue(result is error, "Error Expected for time array");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+
+    sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, datetime_array) VALUES(${rowId}, ${paraDatetime})`;
+    result = executeQueryMockClient(sqlQuery);
+    test:assertTrue(result is error, "Error Expected for datetime array");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+
+    sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, timestamp_array) VALUES(${rowId}, ${paraTimestamp})`;
+    result = executeQueryMockClient(sqlQuery);
+    test:assertTrue(result is error, "Error Expected for timestamp array");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
 }
 
 function executeQueryMockClient(ParameterizedQuery sqlQuery)
