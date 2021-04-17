@@ -126,6 +126,7 @@ def testParams = ""
 def needSeparateTest = false
 def needBuildWithTest = false
 def needPublishToCentral = false
+def needPublishToLocalCentral = false
 def testCoverageParam = "--code-coverage --includes=org.ballerinalang.sql.*:ballerina.*"
 
 task initializeVariables {
@@ -141,22 +142,21 @@ task initializeVariables {
     if (project.hasProperty("balJavaDebug")) {
         balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
     }
+    if (project.hasProperty("publishToLocalCentral") && (project.findProperty("publishToLocalCentral") == "true")) {
+        needPublishToLocalCentral = true
+    }
+    if (project.hasProperty("publishToCentral") && (project.findProperty("publishToCentral") == "true")) {
+        needPublishToCentral = true
+    }
 
     gradle.taskGraph.whenReady { graph ->
         if (graph.hasTask(":${packageName}-ballerina:build") ||
                 graph.hasTask(":${packageName}-ballerina:publish") ||
                 graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
             needSeparateTest = false
-
-            if (graph.hasTask(":${packageName}-ballerina:build")) {
-                needBuildWithTest = true
-            }
+            needBuildWithTest = true
             if (graph.hasTask(":${packageName}-ballerina:publish")) {
-                needBuildWithTest = true
                 needPublishToCentral = true
-            }
-            if (graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
-                needBuildWithTest = true
             }
         } else {
             needSeparateTest = true
@@ -248,6 +248,19 @@ task ballerinaBuild {
                 throw new InvalidUserDataException("Central Access Token is Not Present")
             }
         }
+
+        if (needPublishToLocalCentral) {
+            println("Publishing to the ballerina local central repository..")
+            exec {
+                workingDir project.projectDir
+                environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    commandLine 'cmd', '/c', "$distributionBinPath/bal.bat push && exit %%ERRORLEVEL%% --repository=local"
+                } else {
+                    commandLine 'sh', '-c', "$distributionBinPath/bal push --repository=local"
+                }
+            }
+        }
     }
 
     outputs.dir artifactCacheParent
@@ -290,23 +303,13 @@ unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
 updateTomlFile.dependsOn copyStdlibs
 
-ballerinaTest.dependsOn updateTomlFile
-ballerinaTest.dependsOn initializeVariables
-ballerinaTest.dependsOn ":${packageName}-native:build"
-ballerinaTest.dependsOn ":${packageName}-test-utils:build"
-ballerinaTest.finalizedBy revertTomlFile
-test.dependsOn ballerinaTest
-
-ballerinaBuild.dependsOn test
 ballerinaBuild.dependsOn updateTomlFile
 ballerinaBuild.dependsOn initializeVariables
 ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaBuild.dependsOn ":${packageName}-test-utils:build"
 ballerinaBuild.finalizedBy revertTomlFile
+test.dependsOn ballerinaBuild
 build.dependsOn ballerinaBuild
 
-ballerinaPublish.finalizedBy revertTomlFile
-ballerinaPublish.dependsOn initializeVariables
-ballerinaPublish.dependsOn updateTomlFile
-ballerinaPublish.dependsOn ":${packageName}-native:build"
-ballerinaPublish.dependsOn ballerinaBuild
-publish.dependsOn ballerinaPublish
+publishToMavenLocal.dependsOn build
+publish.dependsOn build
