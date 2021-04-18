@@ -46,11 +46,11 @@ import java.util.List;
  */
 public abstract class AbstractResultParameterProcessor {
 
-    protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Object[] dataArray, 
-            Type type, Array array) throws ApplicationError;
+    protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type,
+            Array array) throws ApplicationError, SQLException;
 
-    protected abstract BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
-            Type type, Array array) throws ApplicationError;
+    protected abstract BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type,
+            Array array) throws ApplicationError, SQLException;
 
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws ApplicationError;

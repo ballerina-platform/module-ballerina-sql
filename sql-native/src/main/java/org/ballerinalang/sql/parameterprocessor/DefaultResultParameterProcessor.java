@@ -94,7 +94,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BArray createAndPopulateBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                      Type type, Array array) throws ApplicationError {
+                                                      Type type, Array array) throws ApplicationError, SQLException {
         BArray refValueArray = null;
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
@@ -204,7 +204,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return refValueArray;
         } else {
-            return createAndPopulateCustomBBRefValueArray(firstNonNullElement, dataArray, type, array);
+            return createAndPopulateCustomBBRefValueArray(firstNonNullElement, type, array);
         }
         for (int i = 0; i < length; i++) {
             refValueArray.add(i, dataArray[i]);
@@ -212,7 +212,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         return refValueArray;
     }
 
-    protected BArray createEmptyBBRefValueArray(Type type) {
+    public BArray createEmptyBBRefValueArray(Type type) {
         List<Type> memberTypes = new ArrayList<>(2);
         memberTypes.add(type);
         memberTypes.add(PredefinedTypes.TYPE_NULL);
@@ -221,13 +221,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    protected BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
-            Type type, Array array) {
+    protected BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type, Array array) 
+            throws ApplicationError, SQLException {
         return null;
     }
 
     protected BArray createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray,
-            Type type, Array array) throws ApplicationError {
+            Type type, Array array) throws ApplicationError, SQLException {
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
             BArray stringDataArray = ValueCreator.createArrayValue(stringArrayType);
@@ -323,13 +323,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return mapDataArray;
         } else {
-            return createAndPopulateCustomValueArray(firstNonNullElement, dataArray, type, array);
+            return createAndPopulateCustomValueArray(firstNonNullElement, type, array);
         }
     }
 
     @Override
-    protected BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Object[] dataArray,
-         Type type, Array array) {
+    protected BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type, Array array)
+         throws ApplicationError, SQLException {
         return null;
     }
 
@@ -433,7 +433,6 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             if (dataArray == null || dataArray.length == 0) {
                 return null;
             }
-
             Object firstNonNullElement = firstNonNullObject(dataArray);
             boolean containsNull = containsNullObject(dataArray);
 

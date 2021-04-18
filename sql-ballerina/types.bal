@@ -325,9 +325,9 @@ public distinct class TimestampValue {
 # + value - Value of parameter passed into the SQL statement
 public distinct class ArrayValue {
     *TypedValue;
-    public Value[]? value;
+    public Value[]|anydata[]? value;
 
-    public isolated function init(Value[]? value = ()) {
+    public isolated function init(anydata[]|Value[]? value = ()) {
         self.value = value;
     }
 }
