@@ -141,7 +141,33 @@ public final class Constants {
         public static final String REF = "RefValue";
         public static final String ROW = "RowValue";
         public static final String STRUCT = "StructValue";
+    }
 
+    /**
+     * Constants related to SQL Arrays supported.
+     */
+    public static final class SqlArrays {
+        public static final String VARCHAR = "VARCHAR";
+        public static final String CHAR = "CHAR";
+        public static final String NVARCHAR = "NVARCHAR";
+        public static final String SMALLINT = "SMALLINT";
+        public static final String INTEGER = "INTEGER";
+        public static final String BIGINT = "BIGINT";
+        public static final String NUMERIC = "NUMERIC";
+        public static final String DECIMAL = "DECIMAL";
+        public static final String REAL = "REAL";
+        public static final String FLOAT = "FLOAT";
+        public static final String DOUBLE = "DOUBLE";
+        public static final String BIT = "BIT";
+        public static final String BOOLEAN = "BOOLEAN";
+        public static final String BINARY = "BINARY";
+        public static final String VARBINARY = "VARBINARY";
+        public static final String DATE = "DATE";
+        public static final String TIME = "TIME";
+        public static final String DATETIME = "DATETIME";
+        public static final String TIMESTAMP = "TIMESTAMP";
+        public static final String TIME_WITH_TIMEZONE = "TIME_WITH_TIMEZONE";
+        public static final String TIMESTAMP_WITH_TIMEZONE = "TIME_WITH_TIMEZONE";
     }
 
     /**

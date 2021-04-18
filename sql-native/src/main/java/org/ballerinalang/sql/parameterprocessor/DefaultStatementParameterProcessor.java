@@ -289,8 +289,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
         Type elementType = ((ArrayType) type).getElementType();
         int typeTag = elementType.getTag();
-        Object[] arrayData;
-        int arrayLength;
         switch (typeTag) {
             case TypeTags.INT_TAG:
                 return getIntArrayData(value);
@@ -367,7 +365,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Smallint Array");
             }            
         }        
-        return new Object[]{arrayData, "SMALLINT"};
+        return new Object[]{arrayData, Constants.SqlArrays.SMALLINT};
     }
 
     protected Object[] getIntValueArrayData(Object value) throws ApplicationError {        
@@ -386,7 +384,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Int Array");
             }            
         }        
-        return new Object[]{arrayData, "INT"};
+        return new Object[]{arrayData, Constants.SqlArrays.INTEGER};
     }
 
     protected Object[] getBigIntValueArrayData(Object value) throws ApplicationError {        
@@ -405,7 +403,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Bigint Array");
             }            
         }        
-        return new Object[]{arrayData, "BIGINT"};
+        return new Object[]{arrayData, Constants.SqlArrays.BIGINT};
     }
 
     protected Object[] getDecimalValueArrayData(Object value) throws ApplicationError {
@@ -428,7 +426,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Decimal Array");
             }            
         }        
-        return new Object[]{arrayData, "DECIMAL"};
+        return new Object[]{arrayData, Constants.SqlArrays.DECIMAL};
     }
     
     protected Object[] getRealValueArrayData(Object value) throws ApplicationError {        
@@ -451,7 +449,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Real Array");
             }            
         }        
-        return new Object[]{arrayData, "REAL"};
+        return new Object[]{arrayData, Constants.SqlArrays.REAL};
     }
 
     protected Object[] getNumericValueArrayData(Object value) throws ApplicationError {
@@ -474,7 +472,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Numeric Array");
             }            
         }        
-        return new Object[]{arrayData, "NUMERIC"};
+        return new Object[]{arrayData, Constants.SqlArrays.NUMERIC};
     }
     
     protected Object[] getDoubleValueArrayData(Object value) throws ApplicationError {        
@@ -497,7 +495,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Double Array");
             }            
         }        
-        return new Object[]{arrayData, "DOUBLE"};
+        return new Object[]{arrayData, Constants.SqlArrays.DOUBLE};
     }
 
     protected Object[] getFloatValueArrayData(Object value) throws ApplicationError {        
@@ -520,19 +518,19 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Float Array");
             }            
         }        
-        return new Object[]{arrayData, "FLOAT"};
+        return new Object[]{arrayData, Constants.SqlArrays.FLOAT};
     }
 
     protected Object[] getCharValueArrayData(Object value) throws ApplicationError {
-        return getStringValueArrayData(value, "CHAR");
+        return getStringValueArrayData(value, Constants.SqlArrays.CHAR);
     }
 
     protected Object[] getVarcharValueArrayData(Object value) throws ApplicationError {
-        return getStringValueArrayData(value, "VARCHAR");
+        return getStringValueArrayData(value, Constants.SqlArrays.VARCHAR);
     }
 
     protected Object[] getNvarcharValueArrayData(Object value) throws ApplicationError {
-        return getStringValueArrayData(value, "NVARCHAR");
+        return getStringValueArrayData(value, Constants.SqlArrays.NVARCHAR);
     }
 
     protected Object[] getDateTimeValueArrayData(Object value) throws ApplicationError {
@@ -544,7 +542,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     protected Object[] getBooleanValueArrayData(Object value) throws ApplicationError {
-        return getBitAndBooleanValueArrayData(value, "Boolean");
+        return getBitAndBooleanValueArrayData(value, Constants.SqlArrays.BOOLEAN);
     }
 
     protected Object[] getDateValueArrayData(Object value) throws ApplicationError {        
@@ -577,7 +575,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(innerValue, "Date Array");
             }            
         }        
-        return new Object[]{arrayData, "DATE"};
+        return new Object[]{arrayData, Constants.SqlArrays.DATE};
     }
 
     protected Object[] getTimeValueArrayData(Object value) throws ApplicationError {        
@@ -650,22 +648,22 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             }            
         }        
         if (containsTimeZone) {
-            return new Object[]{arrayData, "TIME WITH TIMEZONE"};
+            return new Object[]{arrayData, Constants.SqlArrays.TIME_WITH_TIMEZONE};
         } else {
-            return new Object[]{arrayData, "TIME"};
+            return new Object[]{arrayData, Constants.SqlArrays.TIME};
         }
     }
 
     protected Object[] getBinaryValueArrayData(Object value) throws ApplicationError, IOException {
-        return getBinaryAndBlobValueArrayData(value, "BINARY");
+        return getBinaryAndBlobValueArrayData(value, Constants.SqlArrays.BINARY);
     }
 
     protected Object[] getVarbinaryValueArrayData(Object value) throws ApplicationError, IOException {        
-        return getBinaryAndBlobValueArrayData(value, "VARBINARY");
+        return getBinaryAndBlobValueArrayData(value, Constants.SqlArrays.VARBINARY);
     }
 
     protected Object[] getBitValueArrayData(Object value) throws ApplicationError {
-        return getBitAndBooleanValueArrayData(value, "BIT");
+        return getBitAndBooleanValueArrayData(value, Constants.SqlArrays.BIT);
     }
 
     private Object[] getBitAndBooleanValueArrayData(Object value, String type) throws ApplicationError {        
@@ -827,9 +825,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             }            
         }        
         if (containsTimeZone) {
-            return new Object[]{arrayData, "TIMESTAMP WITH TIMEZONE"};
+            return new Object[]{arrayData, Constants.SqlArrays.TIMESTAMP_WITH_TIMEZONE};
         } else {
-            return new Object[]{arrayData, "TIMESTAMP"};
+            return new Object[]{arrayData, Constants.SqlArrays.TIMESTAMP};
         }
     }
 

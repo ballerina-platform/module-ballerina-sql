@@ -16,8 +16,6 @@
 import ballerina/lang.'string as strings;
 import ballerina/test;
 import ballerina/time;
-import ballerina/io;
-import ballerina/time;
 
 string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 
