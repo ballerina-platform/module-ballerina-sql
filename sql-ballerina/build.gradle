@@ -198,9 +198,7 @@ task ballerinaBuild {
                     commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test ${testCoverageParam} ${groupParams} ${disableGroups} ${debugParams}"
                 }
             }
-        }
-
-        if (needBuildWithTest) {
+        } else if (needBuildWithTest) {
             exec {
                 workingDir project.projectDir
                 environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
@@ -260,9 +258,7 @@ task ballerinaBuild {
             } else {
                 throw new InvalidUserDataException("Central Access Token is Not Present")
             }
-        }
-
-        if (needPublishToLocalCentral) {
+        } else if (needPublishToLocalCentral) {
             println("Publishing to the ballerina local central repository..")
             exec {
                 workingDir project.projectDir
