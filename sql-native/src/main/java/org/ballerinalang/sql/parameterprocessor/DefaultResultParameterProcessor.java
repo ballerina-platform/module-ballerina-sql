@@ -81,6 +81,18 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     private static final ArrayType mapArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_MAP);
     private static final ArrayType byteArrayType = TypeCreator.createArrayType(
         TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE));
+    private static final RecordType civilRecordType = TypeCreator.createRecordType(
+        org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD,
+        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+    private static final ArrayType civilArrayType = TypeCreator.createArrayType(civilRecordType);
+    private static final RecordType timeRecordType = TypeCreator.createRecordType(
+        org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD,
+        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+    private static final ArrayType timeArrayType = TypeCreator.createArrayType(timeRecordType);
+    private static final RecordType dateRecordType = TypeCreator.createRecordType(
+        org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD,
+        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+    private static final ArrayType dateArrayType = TypeCreator.createArrayType(dateRecordType);
 
     public static DefaultResultParameterProcessor getInstance() {
         if (instance == null) {
@@ -128,7 +140,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             return refValueArray;
         } else if (firstNonNullElement instanceof java.util.Date) {
             if (firstNonNullElement instanceof Date) {
-                refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_MAP);
+                refValueArray = createEmptyBBRefValueArray(dateRecordType);
                 for (int i = 0; i < length; i++) {                    
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
@@ -139,7 +151,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else if (firstNonNullElement instanceof Time) {
-                refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_MAP);
+                refValueArray = createEmptyBBRefValueArray(timeRecordType);
                 for (int i = 0; i < length; i++) {                    
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
@@ -150,8 +162,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else if (firstNonNullElement instanceof Timestamp) {
-                refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_MAP);
-                for (int i = 0; i < length; i++) {                    
+                refValueArray = createEmptyBBRefValueArray(civilRecordType);
+                for (int i = 0; i < length; i++) {
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
                     } else {
@@ -164,7 +176,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 throw new ApplicationError("Error while retrieving Date Array");
             } 
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {
-            refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_MAP);
+            refValueArray = createEmptyBBRefValueArray(timeRecordType);
             for (int i = 0; i < length; i++) {                
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
@@ -176,7 +188,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return refValueArray;
         } else if (firstNonNullElement instanceof java.time.OffsetDateTime) {
-            refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_MAP);
+            refValueArray = createEmptyBBRefValueArray(civilRecordType);
             for (int i = 0; i < length; i++) {                
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
@@ -284,20 +296,23 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return byteDataArray;
         } else if (firstNonNullElement instanceof java.util.Date) {            
-            BArray mapDataArray = ValueCreator.createArrayValue(mapArrayType);
+            BArray mapDataArray;
             if (firstNonNullElement instanceof Date) {
+                mapDataArray = ValueCreator.createArrayValue(dateArrayType);
                 for (int i = 0; i < dataArray.length; i++) {                    
                     BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
                     mapDataArray.add(i, dateMap);
                 }
                 return mapDataArray;
             } else if (firstNonNullElement instanceof Time) {
-                for (int i = 0; i < dataArray.length; i++) {                    
+                mapDataArray = ValueCreator.createArrayValue(timeArrayType);
+                for (int i = 0; i < dataArray.length; i++) {                 
                     BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
                     mapDataArray.add(i, timeMap);
                 }
                 return mapDataArray;
             } else if (firstNonNullElement instanceof Timestamp) {                
+                mapDataArray = ValueCreator.createArrayValue(civilArrayType);              
                 for (int i = 0; i < dataArray.length; i++) {                    
                     BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
                     mapDataArray.add(i, civilMap);
@@ -307,7 +322,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 throw new ApplicationError("Error while retrieving Date Array");
             } 
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {            
-            BArray mapDataArray = ValueCreator.createArrayValue(mapArrayType);
+            BArray mapDataArray = ValueCreator.createArrayValue(timeArrayType);
             for (int i = 0; i < dataArray.length; i++) {                
                 BMap<BString, Object> civilMap = 
                     Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
@@ -315,7 +330,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return mapDataArray;
         } else if (firstNonNullElement instanceof java.time.OffsetDateTime) {            
-            BArray mapDataArray = ValueCreator.createArrayValue(mapArrayType);
+            BArray mapDataArray = ValueCreator.createArrayValue(civilArrayType);
             for (int i = 0; i < dataArray.length; i++) {                
                 BMap<BString, Object> civilMap = 
                     Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);

@@ -486,10 +486,10 @@ function testGetArrayTypes() returns error? {
         char_array: ["Hello          ", "Ballerina      "],
         nvarchar_array: ["Hello", "Ballerina"],
         boolean_array: [true, false, true],
-        date_array: [{year: 2017, month: 2, day: 3}, {year: 2017, month: 2, day: 3}],
-        time_array: [{hour: 11, minute: 22, second: 42}, {hour: 12, minute: 23, second: 45}],
-        datetime_array: [{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0},{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
-        timestamp_array: [{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0},{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
+        date_array: [<time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
+        time_array: [<time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
+        datetime_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        timestamp_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
@@ -555,10 +555,10 @@ function testGetArrayTypes3() returns error? {
         char_array: [null, "Hello          ", "Ballerina      "],
         nvarchar_array: [null, "Hello", "Ballerina"],
         boolean_array: [null, true, false, true],
-        date_array: [null, {year: 2017, month: 2, day: 3}, {year: 2017, month: 2, day: 3}],
-        time_array: [null, {hour: 11, minute: 22, second: 42}, {hour: 12, minute: 23, second: 45}],
-        datetime_array: [null, {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0},{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
-        timestamp_array: [null, {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0},{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
+        date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
+        time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
+        datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        timestamp_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
