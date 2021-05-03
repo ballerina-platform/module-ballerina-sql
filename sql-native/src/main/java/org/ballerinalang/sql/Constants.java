@@ -160,8 +160,10 @@ public final class Constants {
         public static final String NCLOB = "NClobOutParameter";
         public static final String DATE = "DateOutParameter";
         public static final String TIME = "TimeOutParameter";
+        public static final String TIMEWITHTIMEZONE = "TimeWithTimezoneOutParameter";
         public static final String DATETIME = "DateTimeOutParameter";
         public static final String TIMESTAMP = "TimestampOutParameter";
+        public static final String TIMESTAMPWITHTIMEZONE = "TimestampWithTimezoneOutParameter";
         public static final String ARRAY = "ArrayOutParameter";
         public static final String ROW = "RowOutParameter";
         public static final String SMALLINT = "SmallIntOutParameter";
