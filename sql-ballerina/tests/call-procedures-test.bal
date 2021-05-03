@@ -15,6 +15,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/io;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -247,6 +248,26 @@ function testCallWithNumericTypesInoutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
+    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
+}
+function testErroneousCallWithNumericTypesInoutParams() returns error? {
+    IntegerValue paraID = new(1);
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithInoutParams(${paraID})`;
+    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    test:assertTrue(ret is error);
+
+    if (ret is DatabaseError) {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: call " +
+        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
+        "[call SelectNumericDataWithInoutParams( ? )]."));
+    } else {
+        test:assertFail("DatabaseError Error expected.");
+    }
+}
+
+@test:Config {
+    groups: ["procedures"],
     dependsOn: [testCreateProcedures6]
 }
 function testCallWithDateTimeTypesWithOutParams() returns error? {
@@ -437,16 +458,14 @@ function testCreateProcedures6() returns error? {
         validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
-function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery)
-returns ProcedureCallResult | error {
+function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(sqlQuery);
     check dbClient.close();
     return result;
 }
 
-function createSqlProcedure(ParameterizedQuery sqlQuery)
-returns ExecutionResult | Error {
+function createSqlProcedure(ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ExecutionResult result = check dbClient->execute(sqlQuery);
     check dbClient.close();
@@ -456,8 +475,7 @@ returns ExecutionResult | Error {
 isolated function validateProcedureResult(ExecutionResult|Error result, int rowCount, int? lastId = ()) {
     if(result is Error){
         test:assertFail("Procedure creation failed");
-    }
-    else{
+    } else {
         test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
         if (lastId is ()) {
@@ -471,5 +489,4 @@ isolated function validateProcedureResult(ExecutionResult|Error result, int rowC
             }
         }
     }
-    
 }
