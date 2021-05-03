@@ -15,7 +15,6 @@
 
 import ballerina/test;
 import ballerina/time;
-import ballerina/io;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -258,7 +257,7 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     test:assertTrue(ret is error);
 
     if (ret is DatabaseError) {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: call " +
+        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
         "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
         "[call SelectNumericDataWithInoutParams( ? )]."));
     } else {
