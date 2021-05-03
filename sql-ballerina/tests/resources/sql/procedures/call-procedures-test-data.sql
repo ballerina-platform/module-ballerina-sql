@@ -43,4 +43,15 @@ CREATE TABLE IF NOT EXISTS StringTypesSecond (
                              nvarcharmax_type NVARCHAR(255),
                              PRIMARY KEY (id)
                     );
+CREATE TABLE IF NOT EXISTS DateTimeTypes (
+                             id INT IDENTITY,
+                             date_type DATE,
+                             time_type TIME,
+                             timewithtz_type TIME WITH TIME ZONE,
+                             timestamp_type TIMESTAMP,
+                             timestampwithtz_type TIMESTAMP WITH TIME ZONE,
+                             PRIMARY KEY (id)
+                    );
 
+INSERT INTO DateTimeTypes (id, date_type, time_type, timestamp_type, timewithtz_type, timestampwithtz_type)
+ VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00');

@@ -793,6 +793,18 @@ public distinct class TimeOutParameter {
     } external;
 }
 
+# Represents Time With Timezone Out Parameter used in procedure calls
+public distinct class TimeWithTimezoneOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "org.ballerinalang.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents DateTime Out Parameter used in procedure calls
 public distinct class DateTimeOutParameter {
     *OutParameter;
@@ -807,6 +819,18 @@ public distinct class DateTimeOutParameter {
 
 # Represents Timestamp Out Parameter used in procedure calls
 public distinct class TimestampOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "org.ballerinalang.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Timestamp with Timezone Out Parameter used in procedure calls
+public distinct class TimestampWithTimezoneOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
