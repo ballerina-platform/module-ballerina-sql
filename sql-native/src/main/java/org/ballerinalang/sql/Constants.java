@@ -114,6 +114,7 @@ public final class Constants {
      */
     public static final class SqlTypes {
         public static final String VARCHAR = "VarcharValue";
+        public static final String VARCHAR_ARRAY = "VarcharArrayValue";
         public static final String CHAR = "CharValue";
         public static final String TEXT = "TextValue";
         public static final String CLOB = "ClobValue";

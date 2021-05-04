@@ -196,6 +196,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             case Constants.SqlTypes.VARCHAR:
                 setVarchar(preparedStatement, index, value);
                 break;
+            case Constants.SqlTypes.VARCHAR_ARRAY:
+                setVarcharArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.CHAR:
                 setChar(preparedStatement, index, value);
                 break;
@@ -836,16 +839,24 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new String[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
-            if (innerValue == null) {
+            Object arrayValue = array.get(i);
+            if (arrayValue == null) {
                 arrayData[i] = null;
-            } else if (innerValue instanceof BString) {
-                arrayData[i] = innerValue.toString();
+            } else if (arrayValue instanceof BString) {
+                arrayData[i] = arrayValue.toString();
             } else {
-                throw throwInvalidParameterError(value, type + " Array");
-            }            
+                objectValue = (BObject) arrayValue;
+                innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+                if (innerValue == null) {
+                    arrayData[i] = null;
+                } else if (innerValue instanceof BString) {
+                    arrayData[i] = innerValue.toString();
+                } else {
+                    throw throwInvalidParameterError(value, type + " Array");
+                }
+            }
         }        
         return new Object[]{arrayData, type};
     }
@@ -1190,6 +1201,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getVarcharValueArrayData(value));
+    }
+
+    @Override
     protected void setText(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setString(preparedStatement, index, value);
@@ -1384,7 +1401,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     @Override
     protected void setArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError, IOException {
-        Object[] arrayData = getArrayData(value);
+        setPreparedStatement(conn, preparedStatement, index, getArrayData(value));
+    }
+
+    private void setPreparedStatement(Connection conn, PreparedStatement preparedStatement, int index,
+                                      Object[] arrayData) throws SQLException {
         if (arrayData[0] != null) {
             Array array = conn.createArrayOf((String) arrayData[1], (Object[]) arrayData[0]);
             preparedStatement.setArray(index, array);

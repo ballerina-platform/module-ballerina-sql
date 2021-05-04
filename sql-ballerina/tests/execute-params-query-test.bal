@@ -443,9 +443,6 @@ function insertIntoArrayTable3() returns error? {
     CharValue charValue1 = new ("Char value");
     CharValue charValue2 = new ("Character");
     CharValue[] dataChar = [charValue1, charValue2];
-    VarcharValue varcharValue1 = new ("Varchar value");
-    VarcharValue varcharValue2 = new ("Varying Char");
-    VarcharValue[] dataVarchar = [varcharValue1, varcharValue2];
     NVarcharValue nvarcharValue1 = new ("NVarchar value");
     NVarcharValue nvarcharValue2 = new ("Varying NChar");
     NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
@@ -489,7 +486,7 @@ function insertIntoArrayTable3() returns error? {
     ArrayValue paraNumeric = new (dataNumeric);
     ArrayValue paraDouble = new (datadouble);
     ArrayValue paraChar = new (dataChar);
-    ArrayValue paraVarchar = new (dataVarchar);
+    VarcharArrayValue paraVarchar = new (["Varchar value", "Varying Char"]);
     ArrayValue paraNVarchar = new (dataNVarchar);
     ArrayValue paraString = new (datastring);
     ArrayValue paraBool = new (databoolean);
@@ -573,9 +570,6 @@ function insertIntoArrayTable5() returns error? {
     CharValue charValue1 = new ();
     CharValue charValue2 = new ();
     CharValue[] dataChar = [charValue1, charValue2];
-    VarcharValue varcharValue1 = new ();
-    VarcharValue varcharValue2 = new ();
-    VarcharValue[] dataVarchar = [varcharValue1, varcharValue2];
     NVarcharValue nvarcharValue1 = new ();
     NVarcharValue nvarcharValue2 = new ();
     NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
@@ -610,7 +604,7 @@ function insertIntoArrayTable5() returns error? {
     ArrayValue paraNumeric = new (dataNumeric);
     ArrayValue paraDouble = new (datadouble);
     ArrayValue paraChar = new (dataChar);
-    ArrayValue paraVarchar = new (dataVarchar);
+    VarcharArrayValue paraVarchar = new ([(), ()]);
     ArrayValue paraNVarchar = new (dataNVarchar);
     ArrayValue paraBool = new (databoolean);
     ArrayValue paraDate = new (dataDate);

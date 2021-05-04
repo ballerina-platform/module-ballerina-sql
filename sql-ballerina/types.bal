@@ -24,7 +24,7 @@ import ballerina/lang.'object as obj;
 #
 # + value - Value of parameter passed into the SQL statement
 public type TypedValue object {
-    public anydata|object {}|TypedValue[]? value;
+    public anydata|object {}|anydata[]|object{}[]? value;
 };
 
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
@@ -40,6 +40,18 @@ public distinct class VarcharValue {
     public string? value;
 
     public isolated function init(string? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Varchar arraygit  SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class VarcharArrayValue {
+    *TypedValue;
+    public string?[] value;
+
+    public isolated function init(string?[] value = []) {
         self.value = value;
     }
 }

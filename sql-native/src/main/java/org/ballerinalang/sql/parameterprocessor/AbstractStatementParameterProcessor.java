@@ -44,6 +44,8 @@ abstract class AbstractStatementParameterProcessor {
             throws SQLException, ApplicationError;
     protected abstract void setVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException;
+    protected abstract void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setText(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
     protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
     protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
