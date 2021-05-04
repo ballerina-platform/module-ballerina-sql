@@ -454,7 +454,40 @@ function testCreateProcedures6() returns error? {
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
             END
         `;
-        validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
+
+@test:Config {
+    groups: ["procedures"]
+}
+function testMultipleRecords() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectMultipleRecordsWithOutParameters (IN p_country_code VARCHAR(10), OUT p_name VARCHAR(255),
+            OUT p_age INT, OUT p_birthday DATE)
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT name INTO p_name FROM MultipleRecords where country_code = p_country_code;
+                SELECT age INTO p_age FROM MultipleRecords where country_code = p_country_code;
+                SELECT birthday INTO p_birthday FROM MultipleRecords where country_code = p_country_code;
+            END
+        `;
+
+    _ = check createSqlProcedure(createProcedure);
+
+    VarcharValue paraCountryCode = new("US");
+    VarcharOutParameter paraName = new;
+    IntegerOutParameter paraAge = new;
+    DateOutParameter paraBirthday = new;
+    ParameterizedCallQuery callProcedureQuery = `call SelectMultipleRecordsWithOutParameters(${paraCountryCode},
+                                    ${paraName}, ${paraAge}, ${paraBirthday})`;
+
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(callProcedureQuery);
+    test:assertEquals(paraName.get(string), "Bob", "return of procedure did not match.");
+    _ = check getNextQueryResult(result);
+    test:assertEquals(paraName.get(string), "Bob", "return of procedure did not match.");
+    check result.close();
+    check dbClient.close();
 }
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
