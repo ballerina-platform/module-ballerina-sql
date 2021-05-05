@@ -1,6 +1,6 @@
 ignore:
   - "sql-test-utils/"
-  
+
 coverage:
   precision: 2
   round: down

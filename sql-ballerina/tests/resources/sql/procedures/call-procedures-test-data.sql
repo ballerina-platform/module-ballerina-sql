@@ -67,3 +67,5 @@ CREATE TABLE IF NOT EXISTS MultipleRecords (
 
 INSERT INTO MultipleRecords (id, name, age, birthday, country_code)
     VALUES(1, 'Bob', 20, '2017-05-23', 'US');
+INSERT INTO MultipleRecords (id, name, age, birthday, country_code)
+    VALUES(2, 'John', 25, '2012-10-12', 'US');

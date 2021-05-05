@@ -462,30 +462,27 @@ function testCreateProcedures6() returns error? {
 }
 function testMultipleRecords() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE SelectMultipleRecordsWithOutParameters (IN p_country_code VARCHAR(10), OUT p_name VARCHAR(255),
-            OUT p_age INT, OUT p_birthday DATE)
-            READS SQL DATA DYNAMIC RESULT SETS 2
+        CREATE PROCEDURE FetchMultipleRecords (IN p_country_code VARCHAR(10))
+            READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
-                SELECT name INTO p_name FROM MultipleRecords where country_code = p_country_code;
-                SELECT age INTO p_age FROM MultipleRecords where country_code = p_country_code;
-                SELECT birthday INTO p_birthday FROM MultipleRecords where country_code = p_country_code;
+                declare curs cursor for select name, age, birthday from MultipleRecords where country_code = p_country_code;
+                open curs;
             END
         `;
 
     _ = check createSqlProcedure(createProcedure);
 
     VarcharValue paraCountryCode = new("US");
-    VarcharOutParameter paraName = new;
-    IntegerOutParameter paraAge = new;
-    DateOutParameter paraBirthday = new;
-    ParameterizedCallQuery callProcedureQuery = `call SelectMultipleRecordsWithOutParameters(${paraCountryCode},
-                                    ${paraName}, ${paraAge}, ${paraBirthday})`;
+    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords(${paraCountryCode})`;
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(callProcedureQuery);
-    test:assertEquals(paraName.get(string), "Bob", "return of procedure did not match.");
-    _ = check getNextQueryResult(result);
-    test:assertEquals(paraName.get(string), "Bob", "return of procedure did not match.");
+    stream<record {}, Error>? streamData = result.queryResult;
+    if (streamData is stream<record {}, Error>){
+        record {|record {} value;|}? data = check streamData.next();
+        record {}? value = data?.value;
+    }
+    test:assertTrue(streamData is (), "streamData is not nil.");
     check result.close();
     check dbClient.close();
 }
