@@ -61,7 +61,7 @@ client class MockClient {
         if (self.clientActive) {
             return nativeBatchExecute(self, sqlQueries);
         } else {
-            return error ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
+            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
         }
     }
 
@@ -70,7 +70,7 @@ client class MockClient {
         if (self.clientActive) {
             return nativeCall(self, sqlQuery, rowTypes);
         } else {
-            return error ApplicationError("JDBC Client is already closed, hence further operations are not allowed");
+            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
         }
     }
 
