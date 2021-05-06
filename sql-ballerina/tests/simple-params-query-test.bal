@@ -636,6 +636,42 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
 }
 
+//Can not test the SQL type TEXT with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingTextValue() returns error? {
+    TextValue textValue = new("Text Value Field");
+    test:assertTrue(textValue.value is string);
+}
+
+//Can not test SQL type STRUCT with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingStuctValue() returns error? {
+    StructValue structValue = new({"key":"value"});
+    test:assertTrue(structValue.value is record {});
+}
+
+//Can not test SQL type REF with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingRefValue() returns error? {
+    RefValue refValue = new({"key":"value"});
+    test:assertTrue(refValue.value is record {});
+}
+
+//Can not test SQL type ROW with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingRowValue() returns error? {
+    RowValue rowValue = new([1, 2]);
+    test:assertTrue(rowValue.value is byte[]);
+}
+
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
