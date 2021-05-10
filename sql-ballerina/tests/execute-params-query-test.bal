@@ -437,7 +437,7 @@ function insertIntoArrayTable4() returns error? {
     CharArrayValue paraChar = new ([]);
     VarcharArrayValue paraVarchar = new ([]);
     NVarcharArrayValue paraNVarchar = new ([]);
-    string?[] paraString = [];
+    string[] paraString = [];
     BooleanArrayValue paraBool = new ([]);
     DateArrayValue paraDate = new (<string?[]>[]);
     TimeArrayValue paraTime = new (<string?[]>[]);
@@ -445,7 +445,7 @@ function insertIntoArrayTable4() returns error? {
     TimestampArrayValue paraTimestamp = new (<string?[]>[]);
     BinaryArrayValue paraBinary = new (<byte[]?[]>[]);
     VarBinaryArrayValue paraVarBinary = new (<byte[]?[]>[]);
-    byte[]?[] paraBlob = [];
+    byte[][] paraBlob = [];
     int rowId = 8;
 
     ParameterizedQuery sqlQuery =
