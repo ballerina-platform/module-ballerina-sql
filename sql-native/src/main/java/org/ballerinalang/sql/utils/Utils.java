@@ -44,6 +44,8 @@ import org.ballerinalang.stdlib.time.util.TimeValueHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -55,6 +57,9 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -65,10 +70,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
 import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
+import static org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA;
 
 /**
  * This class has the utility methods to process and convert the SQL types into ballerina types,
@@ -567,5 +574,180 @@ public class Utils {
                         type.getTag() == TypeTags.JSON_TAG ||
                         type.getTag() == TypeTags.RECORD_TYPE_TAG;
         }
+    }
+
+    public static BMap<BString, Object> createDateRecord(Date date) {
+        LocalDate dateObj = ((Date) date).toLocalDate();
+        BMap<BString, Object> dateMap = ValueCreator.createRecordValue(
+                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD);
+        dateMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR),
+                dateObj.getYear());
+        dateMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),
+                dateObj.getMonthValue());
+        dateMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),
+                dateObj.getDayOfMonth());
+        return dateMap;
+    }
+
+    public static BMap<BString, Object> createTimeRecord(Time time) {
+        LocalTime timeObj = ((Time) time).toLocalTime();
+        BMap<BString, Object> timeMap = ValueCreator.createRecordValue(
+                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD);
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_HOUR), timeObj.getHour());
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_MINUTE) , timeObj.getMinute());
+        BigDecimal second = new BigDecimal(timeObj.getSecond());
+        second = second.add(new BigDecimal(timeObj.getNano())
+                .divide(ANALOG_GIGA, MathContext.DECIMAL128));
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        return timeMap;
+    }
+
+    public static BMap<BString, Object> createTimeWithTimezoneRecord(java.time.OffsetTime offsetTime) {
+        BMap<BString, Object> timeMap = ValueCreator.createRecordValue(
+                                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                                org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD);
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_HOUR), offsetTime.getHour());
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_MINUTE), offsetTime.getMinute());
+        BigDecimal second = new BigDecimal(offsetTime.getSecond());
+        second = second.add(new BigDecimal(offsetTime.getNano()).divide(ANALOG_GIGA,
+                MathContext.DECIMAL128));
+        timeMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        Map<String, Integer> zoneInfo = TimeValueHandler
+                .zoneOffsetMapFromString(offsetTime.getOffset().toString());
+        BMap<BString, Object> zoneMap = ValueCreator.createRecordValue(
+                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                org.ballerinalang.stdlib.time.util.Constants.READABLE_ZONE_OFFSET_RECORD);
+        if (zoneInfo
+            .get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR) != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR),
+                    zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)
+                            .longValue());
+        } else {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR), 0);
+        }
+        if (zoneInfo
+            .get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE) != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE),
+                    zoneInfo
+                        .get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE)
+                        .longValue());
+        } else {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE), 0);
+        }
+        if (zoneInfo
+            .get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND) != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND),
+                    zoneInfo
+                    .get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)
+                    .longValue());
+        }
+        zoneMap.freezeDirect();
+        timeMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET), zoneMap);
+        timeMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD_TIME_ABBREV),
+                fromString(offsetTime.getOffset().toString()));
+        return timeMap;
+    }
+
+    public static BMap<BString, Object> createTimestampRecord(Timestamp timestamp) {
+        LocalDateTime dateTimeObj = ((Timestamp) timestamp).toLocalDateTime();
+        BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
+                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD);
+        civilMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_YEAR), dateTimeObj.getYear());
+        civilMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_MONTH),
+                dateTimeObj.getMonthValue());
+        civilMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD_DAY),
+                dateTimeObj.getDayOfMonth());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_HOUR), dateTimeObj.getHour());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_MINUTE), dateTimeObj.getMinute());
+        BigDecimal second = new BigDecimal(dateTimeObj.getSecond());
+        second = second.add(new BigDecimal(dateTimeObj.getNano())
+                .divide(ANALOG_GIGA, MathContext.DECIMAL128));
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        return civilMap;
+    }
+
+    public static BMap<BString, Object> createTimestampWithTimezoneRecord(java.time.OffsetDateTime offsetDateTime) {
+        BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
+            org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+            org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD);
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                        .DATE_RECORD_YEAR), offsetDateTime.getYear());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                        .DATE_RECORD_MONTH), offsetDateTime.getMonthValue());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                        .DATE_RECORD_DAY), offsetDateTime.getDayOfMonth());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_HOUR), offsetDateTime.getHour());
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_MINUTE), offsetDateTime.getMinute());
+        BigDecimal second = new BigDecimal(offsetDateTime.getSecond());
+        second = second.add(new BigDecimal(offsetDateTime.getNano()).divide(ANALOG_GIGA,
+                MathContext.DECIMAL128));
+        civilMap.put(fromString(org.ballerinalang.stdlib.time.util.Constants
+                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        Map<String, Integer> zoneInfo = TimeValueHandler
+                .zoneOffsetMapFromString(offsetDateTime.getOffset().toString());
+        BMap<BString, Object> zoneMap = ValueCreator.createRecordValue(
+                org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(),
+                org.ballerinalang.stdlib.time.util.Constants.READABLE_ZONE_OFFSET_RECORD);
+        if (zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)
+                != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR),
+                    zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)
+                            .longValue());
+        } else {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR), 0);
+        }
+        if (zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE)
+                != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE),
+                    zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE)
+                            .longValue());
+        } else {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE), 0);
+        }
+        if (zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)
+                != null) {
+            zoneMap.put(fromString(
+                    org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND),
+                    zoneInfo.get(org.ballerinalang.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)
+                            .longValue());
+        }
+        zoneMap.freezeDirect();
+        civilMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET), zoneMap);
+        civilMap.put(fromString(
+                org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD_TIME_ABBREV),
+                fromString(offsetDateTime.getOffset().toString()));
+        return civilMap;
     }
 }

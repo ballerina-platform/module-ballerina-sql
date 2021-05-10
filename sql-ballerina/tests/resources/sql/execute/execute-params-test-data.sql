@@ -105,3 +105,33 @@ INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array
 INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, string_array, blob_array)
   VALUES (4, ARRAY[NULL, NULL, NULL], ARRAY[NULL, NULL, NULL], ARRAY[NULL, NULL, NULL],
   ARRAY[NULL, NULL, NULL], ARRAY[NULL , NULL, NULL], ARRAY[NULL , NULL, NULL], ARRAY[NULL, NULL], ARRAY[NULL, NULL]);
+
+CREATE TABLE IF NOT EXISTS ArrayTypes2 (
+  row_id        INTEGER NOT NULL,
+  smallint_array SMALLINT ARRAY,
+  int_array     INTEGER ARRAY,
+  long_array    BIGINT ARRAY,
+  float_array   FLOAT ARRAY,
+  double_array  DOUBLE ARRAY,
+  real_array  REAL ARRAY,
+  decimal_array  DECIMAL(16,4) ARRAY,
+  numeric_array    NUMERIC(16,12) ARRAY,
+  boolean_array BOOLEAN ARRAY,
+  char_array CHAR(15) ARRAY,
+  varchar_array VARCHAR(15) ARRAY,
+  nvarchar_array NVARCHAR(15) ARRAY,
+  string_array  VARCHAR(20) ARRAY,
+  date_array DATE ARRAY,
+  time_array TIME ARRAY,
+  datetime_array DATETIME ARRAY,
+  timestamp_array DATETIME ARRAY,
+  binary_array VARBINARY(27) ARRAY,
+  varbinary_array VARBINARY(2048) ARRAY,
+  blob_array VARBINARY(27) ARRAY,
+  PRIMARY KEY (row_id)
+);
+
+INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array)
+  VALUES (1, ARRAY [1, 2, 3], ARRAY [100000000, 200000000, 300000000], ARRAY[245.23, 5559.49, 8796.123],
+  ARRAY[245.23, 5559.49, 8796.123], ARRAY[245, 5559, 8796], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina'],
+  ARRAY[12, 232], ARRAY[12.323, 232.21], ARRAY[199.33, 2399.1], ARRAY['Hello', 'Ballerina'], ARRAY['Hello', 'Ballerina'], ARRAY['Hello', 'Ballerina'], ARRAY['2017-02-03', '2017-02-03'], ARRAY['11:53:00', '11:53:02'], ARRAY['2017-02-03 11:53:00', '2019-04-05 12:33:10'], ARRAY['2017-02-03 11:53:00', '2019-04-05 12:33:10'], ARRAY[X'77736F322062616C6C6572696E6120626C6F6220746573742E'], ARRAY[X'77736F322062616C6C6572696E6120626C6F6220746573742E'], ARRAY[X'77736F322062616C6C6572696E6120626C6F6220746573742E']);

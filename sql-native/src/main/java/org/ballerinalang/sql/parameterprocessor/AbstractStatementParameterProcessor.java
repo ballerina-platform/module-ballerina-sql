@@ -44,35 +44,65 @@ abstract class AbstractStatementParameterProcessor {
             throws SQLException, ApplicationError;
     protected abstract void setVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException;
+    protected abstract void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setText(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
     protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+    protected abstract void setCharArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                             Object value) throws SQLException, ApplicationError;
     protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
     protected abstract void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException;
+    protected abstract void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                             Object value) throws SQLException, ApplicationError;
     protected abstract void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setBitArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                           Object value) throws SQLException, ApplicationError;
     protected abstract void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setBooleanArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setInteger(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setIntegerArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setBigIntArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setSmallInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setSmallIntArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                             Object value) throws SQLException, ApplicationError;
     protected abstract void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setFloatArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                         Object value) throws SQLException, ApplicationError;
     protected abstract void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setRealArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                         Object value) throws SQLException, ApplicationError;
     protected abstract void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setDoubleArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                         Object value) throws SQLException, ApplicationError;
     protected abstract void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setNumericArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setDecimalArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                            Object value) throws SQLException, ApplicationError;
     protected abstract void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
+    protected abstract void setBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                           Object value) throws SQLException, ApplicationError, IOException;
     protected abstract void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
+    protected abstract void setVarBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                              Object value) throws SQLException, ApplicationError, IOException;
     protected abstract void setBlob(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException;
     protected abstract void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
@@ -86,15 +116,23 @@ abstract class AbstractStatementParameterProcessor {
     protected abstract void setRef(Connection connection, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError;
     protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index, 
-            Object value) throws SQLException, ApplicationError;
+            Object value) throws SQLException, ApplicationError, IOException;
     protected abstract void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setDateTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                              Object value) throws SQLException, ApplicationError;
     protected abstract void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setTimestampArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                         Object value) throws SQLException, ApplicationError;
     protected abstract void setDate(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setDateArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                              Object value) throws SQLException, ApplicationError;
     protected abstract void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError;
+    protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
+                                              Object value) throws SQLException, ApplicationError;
     protected abstract Object[] getIntArrayData(Object value) throws ApplicationError;
     protected abstract Object[] getFloatArrayData(Object value) throws ApplicationError;
     protected abstract Object[] getDecimalArrayData(Object value) throws ApplicationError;
