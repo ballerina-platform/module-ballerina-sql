@@ -360,48 +360,18 @@ function insertIntoDateTimeTable4() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable() returns error? {
-    int[] dataint = [1, 2, 3];
-    int[] datalong = [100000000, 200000000, 300000000];
-    float[] datafloat = [245.23, 5559.49, 8796.123];
-    float[] datadouble = [245.23, 5559.49, 8796.123];
-    decimal[] datadecimal = [245, 5559, 8796];
-    string[] datastring = ["Hello", "Ballerina"];
-    boolean[] databoolean = [true, false, true];
+    int[] paraInt = [1, 2, 3];
+    int[] paraLong = [100000000, 200000000, 300000000];
+    float[] paraFloat = [245.23, 5559.49, 8796.123];
+    float[] paraDouble = [245.23, 5559.49, 8796.123];
+    decimal[] paraDecimal = [245, 5559, 8796];
+    string[] paraString = ["Hello", "Ballerina"];
+    boolean[] paraBool = [true, false, true];
 
     record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
-    byte[][] dataBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
+    byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
 
-    ArrayValue paraInt = new (dataint);
-    ArrayValue paraLong = new (datalong);
-    ArrayValue paraFloat = new (datafloat);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraDouble = new (datadouble);
-    ArrayValue paraString = new (datastring);
-    ArrayValue paraBool = new (databoolean);
-    ArrayValue paraBlob = new (dataBlob);
     int rowId = 5;
-
-    ParameterizedQuery sqlQuery =
-        `INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
-         string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
-         ${paraBool}, ${paraString}, ${paraBlob})`;
-    validateResult(check executeQueryMockClient(sqlQuery), 1);
-}
-
-@test:Config {
-    groups: ["execute", "execute-params"],
-    dependsOn: [insertIntoArrayTable]
-}
-function insertIntoArrayTable2() returns error? {
-    ArrayValue paraInt = new ();
-    ArrayValue paraLong = new ();
-    ArrayValue paraFloat = new ();
-    ArrayValue paraDecimal = new ();
-    ArrayValue paraDouble = new ();
-    ArrayValue paraString = new ();
-    ArrayValue paraBool = new ();
-    ArrayValue paraBlob = new ();
-    int rowId = 6;
 
     ParameterizedQuery sqlQuery =
         `INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
@@ -416,87 +386,33 @@ function insertIntoArrayTable2() returns error? {
 function insertIntoArrayTable3() returns error? {
     float float1 = 19.21;
     float float2 = 492.98;
-    SmallIntValue smallintValue1 = new (1211);
-    SmallIntValue smallintValue2 = new (478);
-    SmallIntValue[] datasmallint = [smallintValue1, smallintValue2];
-    IntegerValue integerValue1 = new (121);
-    IntegerValue integerValue2 = new (498);
-    IntegerValue[] dataint = [integerValue1, integerValue2];
-    BigIntValue bigIntValue1 = new (121);
-    BigIntValue bigIntValue2 = new (498);
-    BigIntValue[] datalong = [bigIntValue1, bigIntValue2];
-    FloatValue floatValue1 = new (float1);
-    FloatValue floatValue2 = new (float2);
-    FloatValue[] datafloat = [floatValue1, floatValue2];
-    DoubleValue doubleValue1 = new (float1);
-    DoubleValue doubleValue2 = new (float2);
-    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
-    RealValue realValue1 = new (float1);
-    RealValue realValue2 = new (float2);
-    RealValue[] dataReal = [realValue1, realValue2];
-    DecimalValue decimalValue1 = new (<decimal> 12.245);
-    DecimalValue decimalValue2 = new (<decimal> 13.245);
-    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
-    NumericValue numericValue1 = new (float1);
-    NumericValue numericValue2 = new (float2);
-    NumericValue[] dataNumeric = [numericValue1, numericValue2];
-    CharValue charValue1 = new ("Char value");
-    CharValue charValue2 = new ("Character");
-    CharValue[] dataChar = [charValue1, charValue2];
-    NVarcharValue nvarcharValue1 = new ("NVarchar value");
-    NVarcharValue nvarcharValue2 = new ("Varying NChar");
-    NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
-    string[] datastring = ["Hello", "Ballerina"];
-    BooleanValue trueValue = new (true);
-    BooleanValue falseValue = new (false);
-    BooleanValue[] databoolean = [trueValue, falseValue, trueValue];
-    DateValue date1 = new ("2021-12-18");
-    DateValue date2 = new ("2021-12-19");
-    DateValue[] dataDate = [date1, date2];
+    SmallIntArrayValue paraSmallint = new([1211, 478]);
+    IntegerArrayValue paraInt = new([121, 498]);
+    BigIntArrayValue paraLong = new ([121, 498]);
+    float[] paraFloat = [19.21, 492.98];
+    DoubleArrayValue paraDouble = new ([float1, float2]);
+    RealArrayValue paraReal = new ([float1, float2]);
+    DecimalArrayValue paraDecimal = new ([<decimal> 12.245, <decimal> 13.245]);
+    NumericArrayValue paraNumeric = new ([float1, float2]);
+    CharArrayValue paraChar = new (["Char value", "Character"]);
+    VarcharArrayValue paraVarchar = new (["Varchar value", "Varying Char"]);
+    NVarcharArrayValue paraNVarchar = new (["NVarchar value", "Varying NChar"]);
+    string[] paraString = ["Hello", "Ballerina"];
+    BooleanArrayValue paraBool = new ([true, false]);
+    DateArrayValue paraDate = new (["2021-12-18", "2021-12-19"]);
     time:TimeOfDay time = {hour: 20, minute: 8, second: 12};
-    TimeValue time1 = new (time);
-    TimeValue time2 = new (time);
-    TimeValue[] dataTime = [time1, time2];
+    TimeArrayValue paraTime = new ([time, time]);
     time:Civil datetime = {year: 2021, month: 12, day: 18, hour: 20, minute: 8, second: 12};
-    DateTimeValue datetime1 = new (datetime);
-    DateTimeValue datetime2 = new (datetime);
-    DateTimeValue[] dataDatetime = [datetime1, datetime2];
+    DateTimeArrayValue paraDatetime = new ([datetime, datetime]);
     time:Utc timestampUtc = [12345600, 12];
-    TimestampValue timestamp1 = new (timestampUtc);
-    TimestampValue timestamp2 = new (timestampUtc);
-    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+    TimestampArrayValue paraTimestamp = new ([timestampUtc, timestampUtc]);
     byte[] byteArray1 = [1, 2, 3];
     byte[] byteArray2 = [4, 5, 6];
-    BinaryValue binary1 = new (byteArray1);
-    BinaryValue binary2 = new (byteArray2);
-    BinaryValue[] dataBinary = [binary1, binary2];
-    VarBinaryValue varBinary1 = new (byteArray1);
-    VarBinaryValue varBinary2 = new (byteArray2);
-    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
+    BinaryArrayValue paraBinary = new ([byteArray1, byteArray2]);
+    VarBinaryArrayValue paraVarBinary = new ([byteArray1, byteArray2]);
     io:ReadableByteChannel byteChannel = check getBlobColumnChannel();
     record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
-    byte[][] dataBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
-
-    ArrayValue paraSmallint = new (datasmallint);
-    ArrayValue paraInt = new (dataint);
-    ArrayValue paraLong = new (datalong);
-    ArrayValue paraFloat = new (datafloat);
-    ArrayValue paraReal = new (dataReal);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraNumeric = new (dataNumeric);
-    ArrayValue paraDouble = new (datadouble);
-    ArrayValue paraChar = new (dataChar);
-    VarcharArrayValue paraVarchar = new (["Varchar value", "Varying Char"]);
-    ArrayValue paraNVarchar = new (dataNVarchar);
-    ArrayValue paraString = new (datastring);
-    ArrayValue paraBool = new (databoolean);
-    ArrayValue paraDate = new (dataDate);
-    ArrayValue paraTime = new (dataTime);
-    ArrayValue paraDatetime = new (dataDatetime);
-    ArrayValue paraTimestamp = new (dataTimestamp);
-    ArrayValue paraBinary = new (dataBinary);
-    ArrayValue paraVarBinary = new (dataVarBinary);
-    ArrayValue paraBlob = new (dataBlob);
+    byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
     int rowId = 7;
 
     ParameterizedQuery sqlQuery =
@@ -510,26 +426,26 @@ function insertIntoArrayTable3() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable4() returns error? {
-    ArrayValue paraSmallint = new ();
-    ArrayValue paraInt = new ();
-    ArrayValue paraLong = new ();
-    ArrayValue paraFloat = new ();
-    ArrayValue paraReal = new ();
-    ArrayValue paraDecimal = new ();
-    ArrayValue paraNumeric = new ();
-    ArrayValue paraDouble = new ();
-    ArrayValue paraChar = new ();
-    ArrayValue paraVarchar = new ();
-    ArrayValue paraNVarchar = new ();
-    ArrayValue paraString = new ();
-    ArrayValue paraBool = new ();
-    ArrayValue paraDate = new ();
-    ArrayValue paraTime = new ();
-    ArrayValue paraDatetime = new ();
-    ArrayValue paraTimestamp = new ();
-    ArrayValue paraBinary = new ();
-    ArrayValue paraVarBinary = new ();
-    ArrayValue paraBlob = new ();
+    SmallIntArrayValue paraSmallint = new ([]);
+    IntegerArrayValue paraInt = new ([]);
+    BigIntArrayValue paraLong = new ([]);
+    FloatArrayValue paraFloat = new (<int?[]>[]);
+    RealArrayValue paraReal = new (<int?[]>[]);
+    DecimalArrayValue paraDecimal = new (<int?[]>[]);
+    NumericArrayValue paraNumeric = new (<int?[]>[]);
+    DoubleArrayValue paraDouble = new (<int?[]>[]);
+    CharArrayValue paraChar = new ([]);
+    VarcharArrayValue paraVarchar = new ([]);
+    NVarcharArrayValue paraNVarchar = new ([]);
+    string?[] paraString = [];
+    BooleanArrayValue paraBool = new ([]);
+    DateArrayValue paraDate = new (<string?[]>[]);
+    TimeArrayValue paraTime = new (<string?[]>[]);
+    DateTimeArrayValue paraDatetime = new (<string?[]>[]);
+    TimestampArrayValue paraTimestamp = new (<string?[]>[]);
+    BinaryArrayValue paraBinary = new (<byte[]?[]>[]);
+    VarBinaryArrayValue paraVarBinary = new (<byte[]?[]>[]);
+    byte[]?[] paraBlob = [];
     int rowId = 8;
 
     ParameterizedQuery sqlQuery =
@@ -543,76 +459,24 @@ function insertIntoArrayTable4() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable5() returns error? {
-    SmallIntValue smallintValue1 = new ();
-    SmallIntValue smallintValue2 = new ();
-    SmallIntValue[] datasmallint = [smallintValue1, smallintValue2];
-    IntegerValue integerValue1 = new ();
-    IntegerValue integerValue2 = new ();
-    IntegerValue[] dataint = [integerValue1, integerValue2];
-    BigIntValue bigIntValue1 = new ();
-    BigIntValue bigIntValue2 = new ();
-    BigIntValue[] datalong = [bigIntValue1, bigIntValue2];
-    FloatValue floatValue1 = new ();
-    FloatValue floatValue2 = new ();
-    FloatValue[] datafloat = [floatValue1, floatValue2];
-    DoubleValue doubleValue1 = new ();
-    DoubleValue doubleValue2 = new ();
-    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
-    RealValue realValue1 = new ();
-    RealValue realValue2 = new ();
-    RealValue[] dataReal = [realValue1, realValue2];
-    DecimalValue decimalValue1 = new ();
-    DecimalValue decimalValue2 = new ();
-    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
-    NumericValue numericValue1 = new ();
-    NumericValue numericValue2 = new ();
-    NumericValue[] dataNumeric = [numericValue1, numericValue2];
-    CharValue charValue1 = new ();
-    CharValue charValue2 = new ();
-    CharValue[] dataChar = [charValue1, charValue2];
-    NVarcharValue nvarcharValue1 = new ();
-    NVarcharValue nvarcharValue2 = new ();
-    NVarcharValue[] dataNVarchar = [nvarcharValue1, nvarcharValue2];
-    BooleanValue trueValue = new ();
-    BooleanValue falseValue = new ();
-    BooleanValue[] databoolean = [trueValue, falseValue, trueValue];
-    DateValue date1 = new ();
-    DateValue date2 = new ();
-    DateValue[] dataDate = [date1, date2];
-    TimeValue time1 = new ();
-    TimeValue time2 = new ();
-    TimeValue[] dataTime = [time1, time2];
-    DateTimeValue datetime1 = new ();
-    DateTimeValue datetime2 = new ();
-    DateTimeValue[] dataDatetime = [datetime1, datetime2];
-    TimestampValue timestamp1 = new ();
-    TimestampValue timestamp2 = new ();
-    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
-    BinaryValue binary1 = new ();
-    BinaryValue binary2 = new ();
-    BinaryValue[] dataBinary = [binary1, binary2];
-    VarBinaryValue varBinary1 = new ();
-    VarBinaryValue varBinary2 = new ();
-    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
-
-    ArrayValue paraSmallint = new (datasmallint);
-    ArrayValue paraInt = new (dataint);
-    ArrayValue paraLong = new (datalong);
-    ArrayValue paraFloat = new (datafloat);
-    ArrayValue paraReal = new (dataReal);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraNumeric = new (dataNumeric);
-    ArrayValue paraDouble = new (datadouble);
-    ArrayValue paraChar = new (dataChar);
+    SmallIntArrayValue paraSmallint = new ([null, null]);
+    IntegerArrayValue paraInt = new ([null, null]);
+    BigIntArrayValue paraLong = new ([null, null]);
+    FloatArrayValue paraFloat = new (<int?[]>[null, null]);
+    RealArrayValue paraReal = new (<int?[]>[null, null]);
+    DecimalArrayValue paraDecimal = new (<int?[]>[null, null]);
+    NumericArrayValue paraNumeric = new (<int?[]>[null, null]);
+    DoubleArrayValue paraDouble = new (<int?[]>[null, null]);
+    CharArrayValue paraChar = new ([null, null]);
     VarcharArrayValue paraVarchar = new ([(), ()]);
-    ArrayValue paraNVarchar = new (dataNVarchar);
-    ArrayValue paraBool = new (databoolean);
-    ArrayValue paraDate = new (dataDate);
-    ArrayValue paraTime = new (dataTime);
-    ArrayValue paraDatetime = new (dataDatetime);
-    ArrayValue paraTimestamp = new (dataTimestamp);
-    ArrayValue paraBinary = new (dataBinary);
-    ArrayValue paraVarBinary = new (dataVarBinary);
+    NVarcharArrayValue paraNVarchar = new ([null, null]);
+    BooleanArrayValue paraBool = new ([null, null]);
+    DateArrayValue paraDate = new (<string?[]>[null, null]);
+    TimeArrayValue paraTime = new (<string?[]>[null, null]);
+    DateTimeArrayValue paraDatetime = new (<string?[]>[null, null]);
+    TimestampArrayValue paraTimestamp = new (<string?[]>[null, null]);
+    BinaryArrayValue paraBinary = new (<byte[]?[]>[null, null]);
+    VarBinaryArrayValue paraVarBinary = new (<byte[]?[]>[null, null]);
     int rowId = 9;
 
     ParameterizedQuery sqlQuery =
@@ -628,55 +492,23 @@ function insertIntoArrayTable5() returns error? {
 function insertIntoArrayTable6() returns error? {
     decimal decimal1 = 19.21;
     decimal decimal2 = 492.98;
-    FloatValue floatValue1 = new (1);
-    FloatValue floatValue2 = new (4);
-    FloatValue[] datafloat = [floatValue1, floatValue2];
-    DoubleValue doubleValue1 = new (decimal1);
-    DoubleValue doubleValue2 = new (decimal2);
-    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
-    RealValue realValue1 = new (decimal1);
-    RealValue realValue2 = new (decimal2);
-    RealValue[] dataReal = [realValue1, realValue2];
-    DecimalValue decimalValue1 = new (decimal1);
-    DecimalValue decimalValue2 = new (decimal2);
-    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
-    NumericValue numericValue1 = new (decimal1);
-    NumericValue numericValue2 = new (decimal2);
-    NumericValue[] dataNumeric = [numericValue1, numericValue2];
-    DateValue date1 = new ("2021-12-18");
-    DateValue date2 = new ("2021-12-19");
-    DateValue[] dataDate = [date1, date2];
-    TimeValue time1 = new ("20:08:59");
-    TimeValue time2 = new ("21:18:59");
-    TimeValue[] dataTime = [time1, time2];
-    DateTimeValue datetime1 = new ("2008-08-08 20:08:08");
-    DateTimeValue datetime2 = new ("2009-09-09 23:09:09");
-    DateTimeValue[] dataDatetime = [datetime1, datetime2];
-    TimestampValue timestamp1 = new ("2008-08-08 20:08:08");
-    TimestampValue timestamp2 = new ("2008-08-08 20:08:09");
-    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
+    int int1 = 1;
+    int int2 = 4;
+    FloatArrayValue paraFloat = new ([int1, int2]);
+    RealArrayValue paraReal = new ([decimal1, decimal2]);
+    DecimalArrayValue paraDecimal = new ([decimal1, decimal2]);
+    NumericArrayValue paraNumeric = new ([decimal1, decimal2]);
+    DoubleArrayValue paraDouble = new ([decimal1, decimal2]);
+    DateArrayValue paraDate = new (["2021-12-18", "2021-12-19"]);
+    TimeArrayValue paraTime = new (["20:08:59", "21:18:59"]);
+    DateTimeArrayValue paraDatetime = new (["2008-08-08 20:08:08", "2009-09-09 23:09:09"]);
+    TimestampArrayValue paraTimestamp = new (["2008-08-08 20:08:08", "2008-08-08 20:08:09"]);
     io:ReadableByteChannel byteChannel1 = check getByteColumnChannel();
     io:ReadableByteChannel byteChannel2 = check getByteColumnChannel();
-    BinaryValue binary1 = new (byteChannel1);
-    BinaryValue binary2 = new (byteChannel2);
+    BinaryArrayValue paraBinary = new ([byteChannel1, byteChannel2]);
     io:ReadableByteChannel varbinaryChannel1 = check getBlobColumnChannel();
     io:ReadableByteChannel varbinaryChannel2 = check getBlobColumnChannel();
-    BinaryValue[] dataBinary = [binary1, binary2];
-    VarBinaryValue varBinary1 = new (varbinaryChannel1);
-    VarBinaryValue varBinary2 = new (varbinaryChannel2);
-    VarBinaryValue[] dataVarBinary = [varBinary1, varBinary2];
-
-    ArrayValue paraFloat = new (datafloat);
-    ArrayValue paraReal = new (dataReal);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraNumeric = new (dataNumeric);
-    ArrayValue paraDouble = new (datadouble);
-    ArrayValue paraDate = new (dataDate);
-    ArrayValue paraTime = new (dataTime);
-    ArrayValue paraDatetime = new (dataDatetime);
-    ArrayValue paraTimestamp = new (dataTimestamp);
-    ArrayValue paraBinary = new (dataBinary);
-    ArrayValue paraVarBinary = new (dataVarBinary);
+    VarBinaryArrayValue paraVarBinary = new ([varbinaryChannel1, varbinaryChannel2]);
     int rowId = 10;
 
     ParameterizedQuery sqlQuery =
@@ -692,23 +524,10 @@ function insertIntoArrayTable6() returns error? {
 function insertIntoArrayTable7() returns error? {
     int int1 = 19;
     int int2 = 492;
-    DoubleValue doubleValue1 = new (int1);
-    DoubleValue doubleValue2 = new (int2);
-    DoubleValue[] datadouble = [doubleValue1, doubleValue2];
-    RealValue realValue1 = new (int1);
-    RealValue realValue2 = new (int2);
-    RealValue[] dataReal = [realValue1, realValue2];
-    DecimalValue decimalValue1 = new (int1);
-    DecimalValue decimalValue2 = new (int2);
-    DecimalValue[] datadecimal = [decimalValue1, decimalValue2];
-    NumericValue numericValue1 = new (int1);
-    NumericValue numericValue2 = new (int2);
-    NumericValue[] dataNumeric = [numericValue1, numericValue2];
-
-    ArrayValue paraReal = new (dataReal);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraNumeric = new (dataNumeric);
-    ArrayValue paraDouble = new (datadouble);
+    DoubleArrayValue paraReal = new ([int1, int2]);
+    RealArrayValue paraDecimal = new ([int1, int2]);
+    DecimalArrayValue paraNumeric = new ([int1, int2]);
+    NumericArrayValue paraDouble = new ([int1, int2]);
     int rowId = 11;
 
     ParameterizedQuery sqlQuery =
@@ -722,23 +541,10 @@ function insertIntoArrayTable7() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable8() returns error? {
-    DateValue date1 = new ("2021-12-18+8.00");
-    DateValue date2 = new ("2021-12-19+8.00");
-    DateValue[] dataDate = [date1, date2];
-    TimeValue time1 = new ("20:08:59+8.00");
-    TimeValue time2 = new ("21:18:59+8.00");
-    TimeValue[] dataTime = [time1, time2];
-    DateTimeValue datetime1 = new ("2008-08-08 20:08:08+8.00");
-    DateTimeValue datetime2 = new ("2009-09-09 23:09:09+8.00");
-    DateTimeValue[] dataDatetime = [datetime1, datetime2];
-    TimestampValue timestamp1 = new ("2008-08-08 20:08:08+8.00");
-    TimestampValue timestamp2 = new ("2008-08-08 20:08:09+8.00");
-    TimestampValue[] dataTimestamp = [timestamp1, timestamp2];
-
-    ArrayValue paraDate = new (dataDate);
-    ArrayValue paraTime = new (dataTime);
-    ArrayValue paraDatetime = new (dataDatetime);
-    ArrayValue paraTimestamp = new (dataTimestamp);
+    DateArrayValue paraDate = new (["2021-12-18+8.00", "2021-12-19+8.00"]);
+    TimeArrayValue paraTime = new (["20:08:59+8.00", "21:18:59+8.00"]);
+    DateTimeArrayValue paraDatetime = new (["2008-08-08 20:08:08+8.00", "2009-09-09 23:09:09+8.00"]);
+    TimestampArrayValue paraTimestamp = new (["2008-08-08 20:08:08+8.00", "2008-08-08 20:08:09+8.00"]);
     int rowId = 12;
 
     ParameterizedQuery sqlQuery =

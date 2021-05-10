@@ -639,24 +639,16 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryArrayBasicParams() returns error? {
-    int[] dataint = [1, 2, 3];
-    int[] datalong = [100000000, 200000000, 300000000];
-    float[] datafloat = [245.23, 5559.49, 8796.123];
-    float[] datadouble = [245.23, 5559.49, 8796.123];
-    decimal[] datadecimal = [245, 5559, 8796];
-    string[] datastring = ["Hello", "Ballerina"];
-    boolean[] databoolean = [true, false, true];
-    ArrayValue paraInt = new (dataint);
-    ArrayValue paraLong = new (datalong);
-    ArrayValue paraFloat = new (datafloat);
-    ArrayValue paraDecimal = new (datadecimal);
-    ArrayValue paraDouble = new (datadouble);
-    ArrayValue paraString = new (datastring);
-    ArrayValue paraBool = new (databoolean);
+    int[] paraInt = [1, 2, 3];
+    int[] paraLong = [100000000, 200000000, 300000000];
+    float[] paraFloat = [245.23, 5559.49, 8796.123];
+    float[] paraDouble = [245.23, 5559.49, 8796.123];
+    decimal[] paraDecimal = [245, 5559, 8796];
+    string[] paraString = ["Hello", "Ballerina"];
+    boolean[] paraBool = [true, false, true];
 
     ParameterizedQuery sqlQuery =
     `SELECT * from ArrayTypes WHERE int_array = ${paraInt}
-                                AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
                                 AND double_array = ${paraDouble}
                                 AND decimal_array = ${paraDecimal}

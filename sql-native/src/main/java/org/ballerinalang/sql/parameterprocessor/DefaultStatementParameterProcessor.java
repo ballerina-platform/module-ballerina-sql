@@ -202,11 +202,17 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             case Constants.SqlTypes.CHAR:
                 setChar(preparedStatement, index, value);
                 break;
+            case Constants.SqlTypes.CHAR_ARRAY:
+                setCharArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.TEXT:
                 setText(preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.NCHAR:
                 setNChar(preparedStatement, index, value);
+                break;
+            case Constants.SqlTypes.NVARCHAR_ARRAY:
+                setNVarcharArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.NVARCHAR:
                 setNVarchar(preparedStatement, index, value);
@@ -214,38 +220,74 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             case Constants.SqlTypes.BIT:
                 setBit(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.BIT_ARRAY:
+                setBitArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.BOOLEAN:
                 setBoolean(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.BOOLEAN_ARRAY:
+                setBooleanArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.INTEGER:
                 setInteger(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.INTEGER_ARRAY:
+                setIntegerArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.BIGINT:
                 setBigInt(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.BIGINT_ARRAY:
+                setBigIntArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.SMALLINT:
                 setSmallInt(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.SMALLINT_ARRAY:
+                setSmallIntArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.FLOAT:
                 setFloat(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.FLOAT_ARRAY:
+                setFloatArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.REAL:
                 setReal(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.REAL_ARRAY:
+                setRealArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.DOUBLE:
                 setDouble(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.DOUBLE_ARRAY:
+                setDoubleArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.NUMERIC:
                 setNumeric(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.NUMERIC_ARRAY:
+                setNumericArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.DECIMAL:
                 setDecimal(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.DECIMAL_ARRAY:
+                setDecimalArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.BINARY:
                 setBinary(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.BINARY_ARRAY:
+                setBinaryArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.VARBINARY:
                 setVarBinary(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.VARBINARY_ARRAY:
+                setVarBinaryArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.BLOB:
                 setBlob(preparedStatement, sqlType, index, value);
@@ -259,14 +301,26 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             case Constants.SqlTypes.DATE:
                 setDate(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.DATE_ARRAY:
+                setDateArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.TIME:
                 setTime(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.TIME_ARRAY:
+                setTimeArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.TIMESTAMP:
                 setTimestamp(preparedStatement, sqlType, index, value);
                 break;
+            case Constants.SqlTypes.TIMESTAMP_ARRAY:
+                setTimestampArray(connection, preparedStatement, index, value);
+                break;
             case Constants.SqlTypes.DATETIME:
                 setDateTime(preparedStatement, sqlType, index, value);
+                break;
+            case Constants.SqlTypes.DATETIME_ARRAY:
+                setDateTimeArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.ARRAY:
                 setArray(connection, preparedStatement, index, value);
@@ -285,7 +339,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    private Object[] getArrayData(Object value) throws ApplicationError, IOException {
+    private Object[] getArrayData(Object value) throws ApplicationError {
         Type type = TypeUtils.getType(value);
         if (value == null || type.getTag() != TypeTags.ARRAY_TAG) {
             return new Object[]{null, null};
@@ -305,118 +359,36 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 return getBooleanArrayData(value);
             case TypeTags.ARRAY_TAG:
                 return getNestedArrayData(value);
-            case TypeTags.OBJECT_TYPE_TAG:
-                if (elementType.getName().equals(Constants.SqlTypes.DECIMAL)) {
-                    return getDecimalValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.REAL)) {
-                    return getRealValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.SMALLINT)) {
-                    return getSmallIntValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.INTEGER)) {
-                    return getIntValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.BIGINT)) {
-                    return getBigIntValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.NUMERIC)) {
-                    return getNumericValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.DOUBLE)) {
-                    return getDoubleValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.FLOAT)) {
-                    return getFloatValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.CHAR)) {
-                    return getCharValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.VARCHAR)) {
-                    return getVarcharValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.NVARCHAR)) {
-                    return getNvarcharValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.BOOLEAN)) {
-                    return getBooleanValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.DATE)) {
-                    return getDateValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.TIME)) {
-                    return getTimeValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.DATETIME)) {
-                    return getDateTimeValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.TIMESTAMP)) {
-                    return getTimestampValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.BINARY)) {
-                    return getBinaryValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.VARBINARY)) {
-                    return getVarbinaryValueArrayData(value);
-                } else if (elementType.getName().equals(Constants.SqlTypes.BIT)) {
-                    return getBitValueArrayData(value);
-                } else {
-                    return getCustomArrayData(value);
-                }
             default:
                 return getCustomArrayData(value);
         }
     }
 
-    protected Object[] getSmallIntValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getIntValueArrayData(Object value, String type, String dataType) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Short[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Integer || innerValue instanceof Long) {
                 arrayData[i] = ((Number) innerValue).shortValue();
             } else {
-                throw throwInvalidParameterError(innerValue, "Smallint Array");
-            }            
+                throw throwInvalidParameterError(innerValue, dataType);
+            }
         }        
-        return new Object[]{arrayData, Constants.SqlArrays.SMALLINT};
-    }
-
-    protected Object[] getIntValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
-        int arrayLength = ((BArray) value).size();
-        Object innerValue;
-        Object[] arrayData = new Integer[arrayLength];
-        for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
-            if (innerValue == null) {
-                arrayData[i] = null;
-            } else if (innerValue instanceof Integer || innerValue instanceof Long) {
-                arrayData[i] = ((Number) innerValue).intValue();
-            } else {
-                throw throwInvalidParameterError(innerValue, "Int Array");
-            }            
-        }        
-        return new Object[]{arrayData, Constants.SqlArrays.INTEGER};
-    }
-
-    protected Object[] getBigIntValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
-        int arrayLength = ((BArray) value).size();
-        Object innerValue;
-        Object[] arrayData = new Long[arrayLength];
-        for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
-            if (innerValue == null) {
-                arrayData[i] = null;
-            } else if (innerValue instanceof Integer || innerValue instanceof Long) {
-                arrayData[i] = ((Number) innerValue).longValue();
-            } else {
-                throw throwInvalidParameterError(innerValue, "Bigint Array");
-            }            
-        }        
-        return new Object[]{arrayData, Constants.SqlArrays.BIGINT};
+        return new Object[]{arrayData, type};
     }
 
     protected Object[] getDecimalValueArrayData(Object value) throws ApplicationError {
-        BObject objectValue;
         int arrayLength = ((BArray) value).size();
         Object innerValue;
-        Object[] arrayData = new BigDecimal[arrayLength];        
+        Object[] arrayData = new BigDecimal[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);            
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Double || innerValue instanceof Long) {
@@ -432,14 +404,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, Constants.SqlArrays.DECIMAL};
     }
     
-    protected Object[] getRealValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getRealValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Double[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Double) {
@@ -456,13 +427,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     protected Object[] getNumericValueArrayData(Object value) throws ApplicationError {
-        BObject objectValue;
         int arrayLength = ((BArray) value).size();
         Object innerValue;
-        Object[] arrayData = new BigDecimal[arrayLength];        
+        Object[] arrayData = new BigDecimal[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Double || innerValue instanceof Long) {
@@ -478,14 +448,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, Constants.SqlArrays.NUMERIC};
     }
     
-    protected Object[] getDoubleValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getDoubleValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Double[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Double) {
@@ -501,14 +470,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, Constants.SqlArrays.DOUBLE};
     }
 
-    protected Object[] getFloatValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getFloatValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Double[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof Double) {
@@ -548,14 +516,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return getBitAndBooleanValueArrayData(value, Constants.SqlArrays.BOOLEAN);
     }
 
-    protected Object[] getDateValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getDateValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Date[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof BString) {
@@ -581,15 +548,14 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, Constants.SqlArrays.DATE};
     }
 
-    protected Object[] getTimeValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    protected Object[] getTimeValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Object[arrayLength];
-        boolean containsTimeZone = false; 
+        boolean containsTimeZone = false;
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof BString) {
@@ -669,14 +635,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return getBitAndBooleanValueArrayData(value, Constants.SqlArrays.BIT);
     }
 
-    private Object[] getBitAndBooleanValueArrayData(Object value, String type) throws ApplicationError {        
-        BObject objectValue;
+    private Object[] getBitAndBooleanValueArrayData(Object value, String type) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Boolean[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof BString) {
@@ -704,9 +669,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         int arrayLength = ((BArray) value).size();
         Object innerValue;
         Object[] arrayData = new Object[arrayLength];
+        BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);            
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof BArray) {                
@@ -743,15 +708,14 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return os.toByteArray();
     }
 
-    private Object[] getDateTimeAndTimestampValueArrayData(Object value) throws ApplicationError {        
-        BObject objectValue;
+    private Object[] getDateTimeAndTimestampValueArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
-        boolean containsTimeZone = false; 
+        boolean containsTimeZone = false;
+        BArray array = ((BArray) value);
         Object[] arrayData = new Object[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
-            objectValue = (BObject) ((BArray) value).get(i);
-            innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
+            innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
             } else if (innerValue instanceof BString) {
@@ -834,10 +798,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    private Object[] getStringValueArrayData(Object value, String type) throws ApplicationError {        
-        BObject objectValue;
+    private Object[] getStringValueArrayData(Object value, String type) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
-        Object innerValue;
         Object[] arrayData = new String[arrayLength];
         BArray array = ((BArray) value);
         for (int i = 0; i < arrayLength; i++) {
@@ -847,15 +809,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             } else if (arrayValue instanceof BString) {
                 arrayData[i] = arrayValue.toString();
             } else {
-                objectValue = (BObject) arrayValue;
-                innerValue = objectValue.get(Constants.TypedValueFields.VALUE);
-                if (innerValue == null) {
-                    arrayData[i] = null;
-                } else if (innerValue instanceof BString) {
-                    arrayData[i] = innerValue.toString();
-                } else {
-                    throw throwInvalidParameterError(value, type + " Array");
-                }
+                throw throwInvalidParameterError(value, type + " Array");
             }
         }        
         return new Object[]{arrayData, type};
@@ -931,13 +885,34 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             return Types.BOOLEAN;
         } else if (object instanceof BArray) {
             BArray objectArray = (BArray) object;
+            String type = objectArray.getElementType().getName();
             if (objectArray.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.BYTE) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
+                return Types.VARBINARY;
+            } else if (objectArray.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.UNION ||
+                    type.equals(Constants.SqlTypes.OPTIONAL_BYTE)) {
+                setBinaryArray(connection, preparedStatement, index, objectArray);
+                return Types.VARBINARY;
+            } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
+                setVarcharArray(connection, preparedStatement, index, objectArray);
+                return Types.VARCHAR;
+            } else if (type.equals(Constants.SqlTypes.INT) || type.equals(Constants.SqlTypes.OPTIONAL_INT)) {
+                setIntegerArray(connection, preparedStatement, index, objectArray);
+                return Types.INTEGER;
+            } else if (type.equals(Constants.SqlTypes.BOOLEAN_TYPE) ||
+                    type.equals(Constants.SqlTypes.OPTIONAL_BOOLEAN)) {
+                setBooleanArray(connection, preparedStatement, index, objectArray);
+                return Types.BOOLEAN;
+            } else if (type.equals(Constants.SqlTypes.FLOAT_TYPE) || type.equals(Constants.SqlTypes.OPTIONAL_FLOAT)) {
+                setFloatArray(connection, preparedStatement, index, objectArray);
+                return Types.FLOAT;
+            } else if (type.equals(Constants.SqlTypes.DECIMAL_TYPE) ||
+                    type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
+                setDecimalArray(connection, preparedStatement, index, objectArray);
+                return Types.DECIMAL;
             } else {
-                throw new ApplicationError("Only byte[] is supported can be set directly into " +
-                        "ParameterizedQuery, any other array types should be wrapped as sql:Value");
+               throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
             }
-            return Types.VARBINARY;
         } else if (object instanceof BObject) {
             BObject objectValue = (BObject) object;
             if ((objectValue.getType().getTag() == TypeTags.OBJECT_TYPE_TAG)) {
@@ -1219,6 +1194,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setCharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getCharValueArrayData(value));
+    }
+
+    @Override
     protected void setNChar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setNstring(preparedStatement, index, value);
@@ -1231,15 +1212,33 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getNvarcharValueArrayData(value));
+    }
+
+    @Override
     protected void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setBooleanValue(preparedStatement, sqlType, index, value);
     }
 
     @Override
+    protected void setBitArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getBitValueArrayData(value));
+    }
+
+    @Override
     protected void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setBooleanValue(preparedStatement, sqlType, index, value);
+    }
+
+    @Override
+    protected void setBooleanArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getBooleanValueArrayData(value));
     }
 
     @Override
@@ -1255,6 +1254,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setIntegerArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.INTEGER,
+                "Int Array"));
+    }
+
+    @Override
     protected void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1264,6 +1270,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         } else {
             throw throwInvalidParameterError(value, sqlType);
         }
+    }
+
+    @Override
+    protected void setBigIntArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.BIGINT,
+                "Bigint Array"));
     }
 
     @Override
@@ -1279,6 +1292,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setSmallIntArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.SMALLINT,
+                "Smallint Array"));
+    }
+
+    @Override
     protected void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1291,6 +1311,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         } else {
             throw throwInvalidParameterError(value, sqlType);
         }
+    }
+
+    @Override
+    protected void setFloatArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getFloatValueArrayData(value));
     }
 
     @Override
@@ -1310,6 +1336,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setRealArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getRealValueArrayData(value));
+    }
+
+    @Override
     protected void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1325,9 +1357,21 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setDoubleArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getDoubleValueArrayData(value));
+    }
+
+    @Override
     protected void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setNumericAndDecimal(preparedStatement, sqlType, index, value);
+    }
+
+    @Override
+    protected void setNumericArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getNumericValueArrayData(value));
     }
 
     @Override
@@ -1337,15 +1381,33 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setDecimalArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getDecimalValueArrayData(value));
+    }
+
+    @Override
     protected void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
     }
 
     @Override
+    protected void setBinaryArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError, IOException {
+        setPreparedStatement(conn, preparedStatement, index, getBinaryValueArrayData(value));
+    }
+
+    @Override
     protected void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
+    }
+
+    @Override
+    protected void setVarBinaryArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError, IOException {
+        setPreparedStatement(conn, preparedStatement, index, getVarbinaryValueArrayData(value));
     }
 
     @Override
@@ -1421,9 +1483,21 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
+    protected void setDateTimeArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getDateTimeValueArrayData(value));
+    }
+
+    @Override
     protected void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setDateTimeAndTimestamp(preparedStatement, sqlType, index, value);
+    }
+
+    @Override
+    protected void setTimestampArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getTimestampValueArrayData(value));
     }
 
     @Override
@@ -1449,6 +1523,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             }
             preparedStatement.setDate(index, date);
         }
+    }
+
+    @Override
+    protected void setDateArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getDateValueArrayData(value));
     }
 
     @Override
@@ -1508,6 +1588,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 throw throwInvalidParameterError(value, sqlType);
             }
         }
+    }
+
+    @Override
+    protected void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
+            throws SQLException, ApplicationError {
+        setPreparedStatement(conn, preparedStatement, index, getTimeValueArrayData(value));
     }
 
     @Override

@@ -29,8 +29,10 @@ public type TypedValue object {
 
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
 
+type ArrayValueType string?[]|int?[]|boolean?[]|float?[]|decimal?[]|byte[]?[];
+
 # Possible type of parameters that can be passed into the SQL query.
-public type Value string|int|boolean|float|decimal|byte[]|xml|DateTimeType|TypedValue?;
+public type Value string|int|boolean|float|decimal|byte[]|xml|DateTimeType|ArrayValueType|TypedValue?;
 
 # Represents Varchar SQL field.
 #
@@ -44,7 +46,7 @@ public distinct class VarcharValue {
     }
 }
 
-# Represents Varchar arraygit  SQL field.
+# Represents Varchar array  SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
 public distinct class VarcharArrayValue {
@@ -68,6 +70,18 @@ public distinct class NVarcharValue {
     }
 }
 
+# Represents Varchar NVarchar  SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class NVarcharArrayValue {
+    *TypedValue;
+    public string?[] value;
+
+    public isolated function init(string?[] value = []) {
+        self.value = value;
+    }
+}
+
 # Represents Char SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -76,6 +90,18 @@ public distinct class CharValue {
     public string? value;
 
     public isolated function init(string? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Char array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class CharArrayValue {
+    *TypedValue;
+    public string?[] value;
+
+    public isolated function init(string?[] value = []) {
         self.value = value;
     }
 }
@@ -140,6 +166,18 @@ public distinct class SmallIntValue {
     }
 }
 
+# Represents SmallInt array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class SmallIntArrayValue {
+    *TypedValue;
+    public int?[] value;
+
+    public isolated function init(int?[] value = []) {
+        self.value = value;
+    }
+}
+
 # Represents Integer SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -148,6 +186,18 @@ public distinct class IntegerValue {
     public int? value;
 
     public isolated function init(int? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Integer array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class IntegerArrayValue {
+    *TypedValue;
+    public int?[] value;
+
+    public isolated function init(int?[] value = []) {
         self.value = value;
     }
 }
@@ -164,6 +214,18 @@ public distinct class BigIntValue {
     }
 }
 
+# Represents BigInt array  SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class BigIntArrayValue {
+    *TypedValue;
+    public int?[] value;
+
+    public isolated function init(int?[] value = []) {
+        self.value = value;
+    }
+}
+
 # Represents Numeric SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -172,6 +234,18 @@ public distinct class NumericValue {
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Numeric array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class NumericArrayValue {
+    *TypedValue;
+    public int?[]|float?[]|decimal?[] value;
+
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
         self.value = value;
     }
 }
@@ -188,6 +262,18 @@ public distinct class DecimalValue {
     }
 }
 
+# Represents Decimal array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class DecimalArrayValue {
+    *TypedValue;
+    public int?[]|decimal?[] value;
+
+    public isolated function init(int?[]|decimal?[] value = <int?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents Real SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -196,6 +282,18 @@ public distinct class RealValue {
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Real array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class RealArrayValue {
+    *TypedValue;
+    public int?[]|float?[]|decimal?[] value;
+
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
         self.value = value;
     }
 }
@@ -212,6 +310,18 @@ public distinct class FloatValue {
     }
 }
 
+# Represents Float array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class FloatArrayValue {
+    *TypedValue;
+    public int?[]|float?[] value;
+
+    public isolated function init(int?[]|float?[] value = <int?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents Double SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -220,6 +330,18 @@ public distinct class DoubleValue {
     public int|float|decimal? value;
 
     public isolated function init(int|float|decimal? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Double array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class DoubleArrayValue {
+    *TypedValue;
+    public int?[]|float?[]|decimal?[] value;
+
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
         self.value = value;
     }
 }
@@ -236,6 +358,18 @@ public distinct class BitValue {
     }
 }
 
+# Represents Bit array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class BitArrayValue {
+    *TypedValue;
+    public boolean?[]|int?[] value;
+
+    public isolated function init(boolean?[]|int?[] value = <int?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents Boolean SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -244,6 +378,18 @@ public distinct class BooleanValue {
     public boolean? value;
 
     public isolated function init(boolean? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Boolean array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class BooleanArrayValue {
+    *TypedValue;
+    public boolean?[] value;
+
+    public isolated function init(boolean?[] value = []) {
         self.value = value;
     }
 }
@@ -260,6 +406,18 @@ public distinct class BinaryValue {
     }
 }
 
+# Represents Boolean array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class BinaryArrayValue {
+    *TypedValue;
+    public byte[]?[]|io:ReadableByteChannel[] value;
+
+    public isolated function init(io:ReadableByteChannel[]|byte[]?[] value = <byte[]?[]>[]) {
+        self.value = value;
+    }
+}
+
 # Represents VarBinary SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -268,6 +426,18 @@ public distinct class VarBinaryValue {
     public byte[]|io:ReadableByteChannel? value;
 
     public isolated function init(byte[]|io:ReadableByteChannel? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Boolean array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class VarBinaryArrayValue {
+    *TypedValue;
+    public byte[]?[]|io:ReadableByteChannel[] value;
+
+    public isolated function init(byte[]?[]|io:ReadableByteChannel[] value = <byte[]?[]>[]) {
         self.value = value;
     }
 }
@@ -296,6 +466,18 @@ public distinct class DateValue {
     }
 }
 
+# Represents Date array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class DateArrayValue {
+    *TypedValue;
+    public string?[]|time:Date?[] value;
+
+    public isolated function init(string?[]|time:Date?[] value = <string?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents Time SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -304,6 +486,18 @@ public distinct class TimeValue {
     public string|time:TimeOfDay? value;
 
     public isolated function init(string|time:TimeOfDay? value = ()) {
+        self.value = value;
+    }
+}
+
+# Represents Time array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class TimeArrayValue {
+    *TypedValue;
+    public string?[]|time:TimeOfDay?[] value;
+
+    public isolated function init(string?[]|time:TimeOfDay?[] value = <string?[]> []) {
         self.value = value;
     }
 }
@@ -320,6 +514,18 @@ public distinct class DateTimeValue {
     }
 }
 
+# Represents DateTime array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class DateTimeArrayValue {
+    *TypedValue;
+    public string?[]|time:Civil?[] value;
+
+    public isolated function init(string?[]|time:Civil?[] value = <string?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents Timestamp SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -332,14 +538,31 @@ public distinct class TimestampValue {
     }
 }
 
+# Represents Timestamp array SQL field.
+#
+# + value - Value of parameter passed into the SQL statement
+public distinct class TimestampArrayValue {
+    *TypedValue;
+    public string?[]|time:Utc?[] value;
+
+    public isolated function init(string?[]|time:Utc?[] value = <string?[]> []) {
+        self.value = value;
+    }
+}
+
 # Represents ArrayValue SQL field.
 #
 # + value - Value of parameter passed into the SQL statement
+#
+# # Deprecated
+# This `ArrayValue` class deprecated by introducing the a new `ArrayValueType` type.
+@deprecated
 public distinct class ArrayValue {
     *TypedValue;
-    public TypedValue[]|anydata[]? value;
+    public string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value;
 
-    public isolated function init(anydata[]|TypedValue[]? value = ()) {
+    @deprecated
+    public isolated function init(string[]|int[]|boolean[]|float[]|decimal[]|byte[][]? value = ()) {
         self.value = value;
     }
 }
