@@ -35,7 +35,7 @@ public type DatabaseErrorDetail record {
 };
 
 //Level 1
-# Defines the common error type for the module
+# Defines the common error type for the module.
 public type Error distinct error;
 
 //Level 2
