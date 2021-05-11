@@ -239,106 +239,105 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BArray createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray,
-            Type type, Array array) throws ApplicationError, SQLException {
+                                                          Type type, Array array)
+            throws ApplicationError, SQLException {
         int length = dataArray.length;
-        if (firstNonNullElement instanceof String) {
-            BArray stringDataArray = ValueCreator.createArrayValue(stringArrayType);
-            for (int i = 0; i < length; i++) {
-                stringDataArray.add(i, StringUtils.fromString((String) dataArray[i]));
-            }
-            return stringDataArray;
-        } else if (firstNonNullElement instanceof Boolean) {
-            BArray boolDataArray = ValueCreator.createArrayValue(booleanArrayType);
-            for (int i = 0; i < length; i++) {
-                boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
-            }
-            return boolDataArray;
-        } else if (firstNonNullElement instanceof Short) {            
-            BArray shortDataArray = ValueCreator.createArrayValue(intArrayType);
-            for (int i = 0; i < length; i++) {
-                shortDataArray.add(i, ((Short) dataArray[i]).intValue());
-            }
-            return shortDataArray;
-        } else if (firstNonNullElement instanceof Integer) {            
-            BArray intDataArray = ValueCreator.createArrayValue(intArrayType);
-            for (int i = 0; i < length; i++) {
-                intDataArray.add(i, ((Integer) dataArray[i]).intValue());
-            }
-            return intDataArray;
-        } else if (firstNonNullElement instanceof Long) {
-            BArray longDataArray = ValueCreator.createArrayValue(intArrayType);
-            for (int i = 0; i < length; i++) {
-                longDataArray.add(i, ((Long) dataArray[i]).longValue());
-            }
-            return longDataArray;
-        } else if (firstNonNullElement instanceof Float) {
-            BArray floatDataArray = ValueCreator.createArrayValue(floatArrayType);
-            for (int i = 0; i < length; i++) {
-                floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
-            }
-            return floatDataArray;
-        } else if (firstNonNullElement instanceof Double) {
-            BArray doubleDataArray = ValueCreator.createArrayValue(floatArrayType);
-            for (int i = 0; i < dataArray.length; i++) {
-                doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
-            }
-            return doubleDataArray;
-        } else if (firstNonNullElement instanceof BigDecimal) {
-            BArray decimalDataArray = ValueCreator.createArrayValue(decimalArrayType);
-            for (int i = 0; i < dataArray.length; i++) {
-                decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
-            }
-            return decimalDataArray;
-        } else if (firstNonNullElement instanceof byte[]) {            
-            BArray byteDataArray = ValueCreator.createArrayValue(byteArrayType);
-            for (int i = 0; i < dataArray.length; i++) {                
-                byteDataArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
-            }
-            return byteDataArray;
-        } else if (firstNonNullElement instanceof java.util.Date) {            
-            BArray mapDataArray;
-            if (firstNonNullElement instanceof Date) {
+        String elementType = firstNonNullElement.getClass().getCanonicalName();
+        switch (elementType) {
+            case Constants.Classes.STRING:
+                BArray stringDataArray = ValueCreator.createArrayValue(stringArrayType);
+                for (int i = 0; i < length; i++) {
+                    stringDataArray.add(i, fromString((String) dataArray[i]));
+                }
+                return stringDataArray;
+            case Constants.Classes.BOOLEAN:
+                BArray boolDataArray = ValueCreator.createArrayValue(booleanArrayType);
+                for (int i = 0; i < length; i++) {
+                    boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
+                }
+                return boolDataArray;
+            case Constants.Classes.SHORT:
+                BArray shortDataArray = ValueCreator.createArrayValue(intArrayType);
+                for (int i = 0; i < length; i++) {
+                    shortDataArray.add(i, ((Short) dataArray[i]).intValue());
+                }
+                return shortDataArray;
+            case Constants.Classes.INTEGER:
+                BArray intDataArray = ValueCreator.createArrayValue(intArrayType);
+                for (int i = 0; i < length; i++) {
+                    intDataArray.add(i, ((Integer) dataArray[i]).intValue());
+                }
+                return intDataArray;
+            case Constants.Classes.LONG:
+                BArray longDataArray = ValueCreator.createArrayValue(intArrayType);
+                for (int i = 0; i < length; i++) {
+                    longDataArray.add(i, ((Long) dataArray[i]).longValue());
+                }
+                return longDataArray;
+            case Constants.Classes.FLOAT:
+                BArray floatDataArray = ValueCreator.createArrayValue(floatArrayType);
+                for (int i = 0; i < length; i++) {
+                    floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
+                }
+                return floatDataArray;
+            case Constants.Classes.DOUBLE:
+                BArray doubleDataArray = ValueCreator.createArrayValue(floatArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
+                }
+                return doubleDataArray;
+            case Constants.Classes.BIG_DECIMAL:
+                BArray decimalDataArray = ValueCreator.createArrayValue(decimalArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
+                }
+                return decimalDataArray;
+            case Constants.Classes.BYTE:
+                BArray byteDataArray = ValueCreator.createArrayValue(byteArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    byteDataArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
+                }
+                return byteDataArray;
+            case Constants.Classes.DATE:
+                BArray mapDataArray;
                 mapDataArray = ValueCreator.createArrayValue(dateArrayType);
-                for (int i = 0; i < dataArray.length; i++) {                    
+                for (int i = 0; i < dataArray.length; i++) {
                     BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
                     mapDataArray.add(i, dateMap);
                 }
                 return mapDataArray;
-            } else if (firstNonNullElement instanceof Time) {
-                mapDataArray = ValueCreator.createArrayValue(timeArrayType);
-                for (int i = 0; i < dataArray.length; i++) {                 
-                    BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
-                    mapDataArray.add(i, timeMap);
-                }
-                return mapDataArray;
-            } else if (firstNonNullElement instanceof Timestamp) {                
-                mapDataArray = ValueCreator.createArrayValue(civilArrayType);              
-                for (int i = 0; i < dataArray.length; i++) {                    
+            case Constants.Classes.TIMESTAMP:
+                mapDataArray = ValueCreator.createArrayValue(civilArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
                     BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
                     mapDataArray.add(i, civilMap);
                 }
                 return mapDataArray;
-            } else {
-                throw new ApplicationError("Error while retrieving Date Array");
-            } 
-        } else if (firstNonNullElement instanceof java.time.OffsetTime) {            
-            BArray mapDataArray = ValueCreator.createArrayValue(timeArrayType);
-            for (int i = 0; i < dataArray.length; i++) {                
-                BMap<BString, Object> civilMap = 
-                    Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
-                mapDataArray.add(i, civilMap);
-            }
-            return mapDataArray;
-        } else if (firstNonNullElement instanceof java.time.OffsetDateTime) {            
-            BArray mapDataArray = ValueCreator.createArrayValue(civilArrayType);
-            for (int i = 0; i < dataArray.length; i++) {                
-                BMap<BString, Object> civilMap = 
-                    Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
-                mapDataArray.add(i, civilMap);
-            }
-            return mapDataArray;
-        } else {
-            return createAndPopulateCustomValueArray(firstNonNullElement, type, array);
+            case Constants.Classes.TIME:
+                mapDataArray = ValueCreator.createArrayValue(timeArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
+                    mapDataArray.add(i, timeMap);
+                }
+                return mapDataArray;
+            case Constants.Classes.OFFSET_TIME:
+                BArray mapTimeArray = ValueCreator.createArrayValue(timeArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    BMap<BString, Object> civilMap =
+                            Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
+                    mapTimeArray.add(i, civilMap);
+                }
+                return mapTimeArray;
+            case Constants.Classes.OFFSET_DATE_TIME:
+                BArray mapDateTimeArray = ValueCreator.createArrayValue(civilArrayType);
+                for (int i = 0; i < dataArray.length; i++) {
+                    BMap<BString, Object> civilMap =
+                            Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
+                    mapDateTimeArray.add(i, civilMap);
+                }
+                return mapDateTimeArray;
+            default:
+                return createAndPopulateCustomValueArray(firstNonNullElement, type, array);
         }
     }
 

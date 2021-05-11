@@ -640,7 +640,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
 }
 function queryArrayBasicParams() returns error? {
     int[] paraInt = [1, 2, 3];
-    int[] paraLong = [100000000, 200000000, 300000000];
+    int[] paraLong = [10000, 20000, 30000];
     float[] paraFloat = [245.23, 5559.49, 8796.123];
     float[] paraDouble = [245.23, 5559.49, 8796.123];
     decimal[] paraDecimal = [245, 5559, 8796];
@@ -649,6 +649,7 @@ function queryArrayBasicParams() returns error? {
 
     ParameterizedQuery sqlQuery =
     `SELECT * from ArrayTypes WHERE int_array = ${paraInt}
+                                AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
                                 AND double_array = ${paraDouble}
                                 AND decimal_array = ${paraDecimal}
@@ -657,7 +658,7 @@ function queryArrayBasicParams() returns error? {
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     if (returnData is record{}) {
         test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
-        test:assertEquals(returnData["LONG_ARRAY"], [100000000, 200000000, 300000000]);
+        test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
         test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
         test:assertEquals(returnData["STRING_ARRAY"], ["Hello", "Ballerina"]);
         test:assertNotEquals(returnData["FLOAT_ARRAY"], ());
