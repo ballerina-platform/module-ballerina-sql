@@ -1,4 +1,4 @@
-## overview
+## Module Overview
 
 This module provides the common interface and functionality to interact with a database. The corresponding database
 clients can be created by using specific database modules such as `MySQL` or using the Java Database Connectivity 
