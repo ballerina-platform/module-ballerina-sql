@@ -22,7 +22,7 @@ public type Client client object {
 
     # Queries the database with the query provided by the user, and returns the result as stream.
     #
-    # + sqlQuery - The query which needs to be executed as `string`, or `ParameterizedQuery` when the SQL query has
+    # + sqlQuery - The query which needs to be executed as `string`, or `sql:ParameterizedQuery` when the SQL query has
     #              params to be passed in
     # + rowType - The `typedesc` of the record that should be returned as a result. If this is not provided the default
     #             column names of the query result set be used for the record attributes
@@ -32,20 +32,20 @@ public type Client client object {
 
     # Executes the DDL or DML sql query provided by the user, and returns summary of the execution.
     #
-    # + sqlQuery - The DDL or DML query such as INSERT, DELETE, UPDATE, etc as `string`, or `ParameterizedQuery`
+    # + sqlQuery - The DDL or DML query such as INSERT, DELETE, UPDATE, etc as `string`, or `sql:ParameterizedQuery`
     #              when the query has params to be passed in
-    # + return - Summary of the sql update query as `ExecutionResult`, or an `Error`
+    # + return - Summary of the sql update query as `sql:ExecutionResult`, or an `sql:Error`
     #           if any error occurred when executing the query
     remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
 
     # Executes a batch of parameterized DDL or DML sql query provided by the user,
     # and returns the summary of the execution.
     #
-    # + sqlQueries - The DDL or DML query such as INSERT, DELETE, UPDATE, etc as `ParameterizedQuery` with an array
+    # + sqlQueries - The DDL or DML query such as INSERT, DELETE, UPDATE, etc as `sql:ParameterizedQuery` with an array
     #                of values passed in
-    # + return - Summary of the executed SQL queries as `ExecutionResult[]` which includes details such as
-    #            `affectedRowCount` and `lastInsertId`. If one of the commands in the batch fails, this function
-    #            will return `BatchExecuteError`, however the driver may or may not continue to process the
+    # + return - Summary of the executed SQL queries as `sql:ExecutionResult[]` which includes details such as
+    #            `affectedRowCount`, and `lastInsertId`. If one of the commands in the batch fails, this function
+    #            will return `sql:BatchExecuteError`, however the driver may or may not continue to process the
     #            remaining commands in the batch after a failure. The summary of the executed queries in case of error
     #            can be accessed as `(<sql:BatchExecuteError> result).detail()?.executionResults`
     remote isolated function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
@@ -55,7 +55,7 @@ public type Client client object {
     # + sqlQuery - The query to execute the SQL stored procedure
     # + rowTypes - The array of `typedesc` of the records that should be returned as a result. If this is not provided
     #               the default column names of the query result set be used for the record attributes
-    # + return - Summary of the execution is returned in `ProcedureCallResult`, or `sql:Error`
+    # + return - Summary of the execution is returned in `sql:ProcedureCallResult`, or `sql:Error`
     remote isolated function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
