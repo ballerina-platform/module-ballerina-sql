@@ -1117,7 +1117,7 @@ public class ProcedureCallResult {
 
     # Closes the `sql:ProcedureCallResult` object and releases resources.
     #
-    # + return - `Error` if any error occurred while closing
+    # + return - `sql:Error` if any error occurred while closing
     public isolated function close() returns Error? {
         return closeCallResult(self);
     }

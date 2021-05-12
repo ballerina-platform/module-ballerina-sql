@@ -17,8 +17,7 @@ provided by MySQL 8.0.x onwards. For more details, see the [MySQL module](https:
 
 ### Client
 
-The database client should be created using any of the above-listed database modules and once it is created, the 
-operations and functionality explained below can be used. 
+The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used. 
 
 #### Connection pool handling
 
@@ -76,11 +75,12 @@ operation. This will close the corresponding connection pool if it is not shared
 
 ```ballerina
 error? e = dbClient.close();
-if (e is error){
-    io:println("Error occured:", e);
-}
+```
+Or
+```ballerina
+check dbClient.close();
+```
 
-```    
 ### Database operations
 
 Once the client is created, database operations can be executed through that client. This module defines the interface 
@@ -94,13 +94,13 @@ The CREATE statement is executed via the `execute` remote function of the client
 
 ```ballerina
 // Create the ‘Students’ table with the  ‘id’, 'name' and ‘age’ fields.
-var ret = dbClient->execute("CREATE TABLE student(id INT AUTO_INCREMENT, " +
+sql:ExecutionResult|sql:Error ret = dbClient->execute("CREATE TABLE student(id INT AUTO_INCREMENT, " +
                          "age INT, name VARCHAR(255), PRIMARY KEY (id))");
-if (ret is sql:ExecutionResult) {
-    io:println("Students table create status in DB: ", ret.affectedRowCount);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Students table creation failed: ", err.message());
+    //an error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -113,13 +113,13 @@ In the first example, the query parameter values are passed directly into the qu
 remote function.
 
 ```ballerina
-var ret = dbClient->execute("INSERT INTO student(age, name) " +
+sql:ExecutionResult|sql:Error ret = dbClient->execute("INSERT INTO student(age, name) " +
                          "values (23, 'john')");
-if (ret is sql:ExecutionResult) {
-    io:println("Inserted row count to Students table: ", ret.affectedRowCount);
+if ret is sql:ExecutionResult {
+    //a value of type sql:ExecutionResult is returned for 'ret'. 
+    //any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Insert to Students table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -134,12 +134,12 @@ int age = 8;
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-var ret = dbClient->execute(query);
-if (ret is sql:ExecutionResult) {
-    io:println("Inserted row count to Students table: ", ret.affectedRowCount);
+sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Insert to Students table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -153,12 +153,12 @@ sql:IntegerValue age = new (10);
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-var ret = dbClient->execute(query);
-f (ret is sql:ExecutionResult) {
-    io:println("Inserted row count to Students table: ", ret.affectedRowCount);
+sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Insert to Students table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -173,15 +173,14 @@ string name = "Kate";
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-var ret = dbClient->execute(query);
-if (ret is sql:ExecutionResult) {
+sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
     int? count = ret.affectedRowCount;
     string|int? generatedKey = ret.lastInsertId;
-    io:println("Inserted row count: ", count);
-    io:println("Generated key: ", generatedKey);
 } else {
-    error err = ret;
-    io:println("Insert to table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -218,12 +217,10 @@ stream<Student, sql:Error> resultStream =
 
 // Iterating the returned table.
 error? e = resultStream.forEach(function(Student student) {
-   io:println("Student Id: ", student.id);
-   io:println("Student age: ", student.age);
-   io:println("Student name: ", student.name);
+   //Can perform any operations using 'student' and can access any fields in the returned record of type Student.
 });
-if (e is error) {
-   io:println("Query execution failed.", e);
+if e is error {
+   // An error value returned when iterating through the resultStream.
 }
 ```
 
@@ -243,18 +240,16 @@ stream<record{}, sql:Error> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
 error? e = resultStream.forEach(function(record{} student) {
-   io:println("Student Id: ", student["id"]);
-   io:println("Student age: ", student["age"]);
-   io:println("Student name: ", student["name"];
+    //Can perform any operations using 'student' and can access any fields in the returned record.
 });
-if (e is error) {
-   io:println("Query execution failed.", e);
+if e is error {
+   // An error value returned when iterating through the resultStream.
 }
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
 to only use the `next()` operation in the result `stream` and retrieve the first record. In such cases, the returned
-result stream will not be closed and you have to explicitly invoke the `close` operation on the 
+result stream will not be closed, and you have to explicitly invoke the `close` operation on the 
 `sql:Client` to release the connection resources and avoid a connection leak as shown below.
 
 ```ballerina
@@ -263,17 +258,17 @@ stream<record{}, sql:Error> resultStream =
 
 record {|record {} value;|}|error? result = resultStream.next();
 
-if (result is record {|record {} value;|}) {
-    io:println("Total students : ", result.value["total"]);
-} else if (result is error) {
-    io:println("Error encoutered when executing query. ", result);
+if result is record {|record {} value;|} {
+    //valid result is returned.
+} else if result is error {
+    // An error is returned as the result.
 } else {
-    io:println("Student table is empty");
+    // Student table must be empty.
 }
 
 error? e = resultStream.close();
 if(e is error){
-    io:println("Error when closing the stream", e);
+    // An error value returned when closing the resultStream.
 }
 ```
 
@@ -286,12 +281,12 @@ the client.
 int age = 23;
 sql:ParameterizedQuery query = `UPDATE students SET name = 'John' 
                                 WHERE age = ${age}`;
-var ret = dbClient->execute(query);
-if (ret is sql:ExecutionResult) {
-    io:println("Updated row count in Students table: ", ret.affectedRowCount);
+sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Update to students table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -303,12 +298,12 @@ the client.
 ```ballerina
 string name = "John";
 sql:ParameterizedQuery query = `DELETE from students WHERE name = ${name}`;
-var ret = dbClient->execute(query);
-if (ret is sql:ExecutionResult) {
-    io:println("Deleted student count: ", ret.affectedRowCount);
+sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
+if ret is sql:ExecutionResult {
+    //A value of type sql:ExecutionResult is returned for 'ret'. 
+    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
 } else {
-    error err = ret;
-    io:println("Delete from students table failed: ", err.message());
+    //An error of type sql:Error is returned for 'ret'.
 }
 ```
 
@@ -330,13 +325,12 @@ var data = [
 sql:ParameterizedQuery[] batch = from var row in data
                                  select `INSERT INTO students ('name', 'age')
                                  VALUES (${row.name}, ${row.age})`;
-var ret = dbClient->batchExecute(batch);
+sql:ExecutionResult[]|sql:Error ret = dbClient->batchExecute(batch);
 
-if (ret is error) {
-    io:println("Error occurred:", err.message());
+if ret is error {
+    //An error of type sql:Error is returned for 'ret'.
 } else {
-    io:println("Batch item 1 update count: ", ret[0].affectedRowCount);
-    io:println("Batch item 2 update count: ", ret[1].affectedRowCount);
+    //Array of type sql:ExecutionResult[] is returned for 'ret'.
 }
 ```
 
@@ -349,18 +343,17 @@ This example demonstrates how to execute a stored procedure with a single INSERT
 int uid = 10;
 sql:IntegerOutParameter insertId = new;
 
-var ret = dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
-if (ret is error) {
-    io:println("Error occurred:", err.message());
+sql:ProcedureCallResult|sql:Error ret = dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
+if ret is error {
+    //An error returned
 } else {
-    io:println("Outparameter insert id: ", insertId.get(int));
     stream<record{}, sql:Error>? resultStr = ret.queryResult;
-    if (!(resultStr is ())) {
+    if !(resultStr is ()) {
         sql:Error? e = resultStr.forEach(function(record{} result) {
-        io:println("Full Customer details: ", result);
+        //can perform operations using 'result'.
       });
     } else {
-        io:println("Stored  procedure does not return anything.");
+        //Stored  procedure does not return anything.
     }
     check ret.close();
 }
