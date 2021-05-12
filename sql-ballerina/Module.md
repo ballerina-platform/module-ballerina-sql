@@ -19,7 +19,7 @@ provided by MySQL 8.0.x onwards. For more details, see the [MySQL module](https:
 
 The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used. 
 
-#### Connection pool handling
+#### Connection Pool Handling
 
 All database modules share the same connection pooling concept and there are 3 possible scenarios for 
 connection pool handling.  For its properties and possible values, see the `sql:ConnectionPool`.  
@@ -68,7 +68,7 @@ connection pool handling.  For its properties and possible values, see the `sql:
                                connectionPool = connPool);
     ```
     
-#### Closing the client
+#### Closing the Client
 
 Once all the database operations are performed, you can close the database client you have created by invoking the `close()`
 operation. This will close the corresponding connection pool if it is not shared by any other database clients. 
@@ -81,13 +81,13 @@ Or
 check dbClient.close();
 ```
 
-### Database operations
+### Database Operations
 
 Once the client is created, database operations can be executed through that client. This module defines the interface 
 and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
-#### Creating tables
+#### Creating Tables
 
 This sample creates a table with two columns. One column is of type `int`and the other is of type `varchar`.
 The CREATE statement is executed via the `execute` remote function of the client.
@@ -104,7 +104,7 @@ if ret is sql:ExecutionResult {
 }
 ```
 
-#### Inserting data
+#### Inserting Data
 
 This sample shows three examples of data insertion by executing an INSERT statement using the `execute` remote function 
 of the client.
@@ -162,7 +162,7 @@ if ret is sql:ExecutionResult {
 }
 ```
 
-#### Inserting data with auto-generated keys
+#### Inserting Data With Auto-generated Keys
 
 This example demonstrates inserting data while returning the auto-generated keys. It achieves this by using the 
 `execute` remote function to execute the INSERT statement.
@@ -184,7 +184,7 @@ if ret is sql:ExecutionResult {
 }
 ```
 
-#### Querying data
+#### Querying Data
 
 This sample shows three examples to demonstrate the different usages of the `query` operation and query the
 database table and obtain the results. 
@@ -272,7 +272,7 @@ if(e is error){
 }
 ```
 
-#### Updating data
+#### Updating Data
 
 This example demonstrates modifying data by executing an UPDATE statement via the `execute` remote function of 
 the client.
@@ -290,7 +290,7 @@ if ret is sql:ExecutionResult {
 }
 ```
 
-#### Deleting data
+#### Deleting Data
 
 This example demonstrates deleting data by executing a DELETE statement via the `execute` remote function of 
 the client.
@@ -307,7 +307,7 @@ if ret is sql:ExecutionResult {
 }
 ```
 
-#### Batch updating data
+#### Batch Updating Data
 
 This example demonstrates how to insert multiple records with a single INSERT statement that is executed via the 
 `batchExecute` remote function of the client. This is done by creating a `table` with multiple records and 
@@ -334,7 +334,7 @@ if ret is error {
 }
 ```
 
-#### Execute SQL stored procedures
+#### Execute SQL Stored Procedures
 
 This example demonstrates how to execute a stored procedure with a single INSERT statement that is executed via the 
 `call` remote function of the client.
