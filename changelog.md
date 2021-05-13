@@ -7,4 +7,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add TimeWithTimezoneOutParameter and TimestampWithTimezoneOutParameter as new Out Parameter types
+
+- Newly introduce TimeWithTimezoneOutParameter and TimestampWithTimezoneOutParameter for using TimeWithTimeZone Type OutParameter
