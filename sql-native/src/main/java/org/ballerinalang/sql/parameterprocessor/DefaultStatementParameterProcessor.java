@@ -863,8 +863,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement,
-                    int index, Object object, boolean returnType)
-            throws SQLException, ApplicationError, IOException {
+                    int index, Object object, boolean returnType) throws SQLException, ApplicationError, IOException {
         if (object == null) {
             preparedStatement.setNull(index, Types.NULL);
             return Types.NULL;
@@ -885,7 +884,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             return Types.BOOLEAN;
         } else if (object instanceof BArray) {
             BArray objectArray = (BArray) object;
-            String type = objectArray.getElementType().getName();
+            String type = objectArray.getElementType().toString();
             if (objectArray.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.BYTE) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
                 return Types.VARBINARY;
@@ -911,7 +910,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 setDecimalArray(connection, preparedStatement, index, objectArray);
                 return Types.DECIMAL;
             } else {
-               throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
+                throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
             }
         } else if (object instanceof BObject) {
             BObject objectValue = (BObject) object;
@@ -1020,8 +1019,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     private void setClobAndNclob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index,
-            Object value)
-            throws SQLException, ApplicationError {
+            Object value) throws SQLException, ApplicationError {
         Clob clob;
         if (value == null) {
             preparedStatement.setNull(index, Types.CLOB);

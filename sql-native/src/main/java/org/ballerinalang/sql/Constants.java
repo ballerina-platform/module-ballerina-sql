@@ -262,4 +262,23 @@ public final class Constants {
         public static final BString IN_VALUE_FIELD = fromString("in");
     }
 
+    /**
+     * Constants for classes.
+     */
+    public static final class Classes {
+        public static final String STRING = "java.lang.String";
+        public static final String BOOLEAN = "java.lang.Boolean";
+        public static final String SHORT = "java.lang.Short";
+        public static final String INTEGER = "java.lang.Integer";
+        public static final String LONG = "java.lang.Long";
+        public static final String FLOAT = "java.lang.Float";
+        public static final String DOUBLE = "java.lang.Double";
+        public static final String BIG_DECIMAL = "java.math.BigDecimal";
+        public static final String BYTE = "byte[]";
+        public static final String DATE = "java.sql.Date";
+        public static final String TIMESTAMP = "java.sql.Timestamp";
+        public static final String TIME = "java.sql.Time";
+        public static final String OFFSET_TIME = "java.time.OffsetTime";
+        public static final String OFFSET_DATE_TIME = "java.time.OffsetDateTime";
+    }
 }

@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS ArrayTypes(
 );
 
 INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, string_array, blob_array)
-  VALUES (1, ARRAY [1, 2, 3], ARRAY [100000000, 200000000, 300000000], ARRAY[245.23, 5559.49, 8796.123],
+  VALUES (1, ARRAY [1, 2, 3], ARRAY [10000, 20000, 30000], ARRAY[245.23, 5559.49, 8796.123],
   ARRAY[245.23, 5559.49, 8796.123], ARRAY[245, 5559, 8796], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina'],
   ARRAY[X'77736F322062616C6C6572696E6120626C6F6220746573742E']);
 
