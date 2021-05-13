@@ -514,15 +514,16 @@ function queryDateTimeRecordParam() returns error? {
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
 }
 
-//@test:Config {
-//    groups: ["query", "query-simple-params"]
-//}
-//function queryDateTimeRecordWithTimeZoneParam() returns error? {
-//    time:Time date = check time:parse("2017-02-03T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-//    DateValue typeVal = new (date);
-//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-//    validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-//}
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryTimestampWithTimeZoneRecordParam() returns error? {
+    time:Civil dateTime = {utcOffset: {hours: +8, minutes: 0}, year:2008, month:8, day:8, hour: 20, minute: 8,
+                            second:8};
+    DateTimeValue typeVal = new (dateTime);
+    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
+    validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+}
 
 @test:Config {
     groups: ["query", "query-simple-params"]
@@ -560,15 +561,15 @@ function queryTimeTimeRecordParam() returns error? {
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
 }
 
-//@test:Config {
-//    groups: ["query", "query-simple-params"]
-//}
-//function queryTimeTimeRecordWithTimeZoneParam() returns error? {
-//    time:Time date = check time:parse("2017-02-03T11:35:45", "yyyy-MM-dd'T'HH:mm:ss");
-//    TimeValue typeVal = new (date);
-//    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-//    validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-//}
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryTimeTimeRecordWithTimeZoneParam() returns error? {
+    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
+    TimeValue typeVal = new (time);
+    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type2 = ${typeVal}`;
+    validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+}
 
 @test:Config {
     groups: ["query", "query-simple-params"]
@@ -633,6 +634,42 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+}
+
+//Can not test the SQL type TEXT with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingTextValue() returns error? {
+    TextValue textValue = new("Text Value Field");
+    test:assertTrue(textValue.value is string);
+}
+
+//Can not test SQL type STRUCT with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingStuctValue() returns error? {
+    StructValue structValue = new({"key":"value"});
+    test:assertTrue(structValue.value is record {});
+}
+
+//Can not test SQL type REF with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingRefValue() returns error? {
+    RefValue refValue = new({"key":"value"});
+    test:assertTrue(refValue.value is record {});
+}
+
+//Can not test SQL type ROW with hsqldb
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+isolated function testCreatingRowValue() returns error? {
+    RowValue rowValue = new([1, 2]);
+    test:assertTrue(rowValue.value is byte[]);
 }
 
 @test:Config {

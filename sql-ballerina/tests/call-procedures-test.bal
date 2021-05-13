@@ -14,6 +14,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/time;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -245,6 +246,82 @@ function testCallWithNumericTypesInoutParams() returns error? {
 }
 
 @test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
+}
+function testErroneousCallWithNumericTypesInoutParams() returns error? {
+    IntegerValue paraID = new(1);
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithInoutParams(${paraID})`;
+    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    test:assertTrue(ret is error);
+
+    if (ret is DatabaseError) {
+        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
+        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
+        "[call SelectNumericDataWithInoutParams( ? )]."));
+    } else {
+        test:assertFail("DatabaseError Error expected.");
+    }
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures6]
+}
+function testCallWithDateTimeTypesWithOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    DateOutParameter paraDate = new;
+    TimeOutParameter paraTime = new;
+    TimeWithTimezoneOutParameter paraTimeWithTz = new;
+    TimestampOutParameter paraTimestamp = new;
+    TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
+                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+    test:assertEquals(paraDate.get(string), "2017-05-23", "Date out parameter of procedure did not match.");
+    test:assertEquals(paraTime.get(string), "14:15:23", "Time out parameter of procedure did not match.");
+    test:assertEquals(paraTimeWithTz.get(string), "16:33:55+06:30", "Time out parameter of procedure did not match.");
+    test:assertEquals(paraTimestamp.get(string), "2017-01-25 16:33:55.0", "Timestamp out parameter of procedure did not match.");
+    test:assertEquals(paraTimestampWithTz.get(string), "2017-01-25T16:33:55-08:00", "Date Time out parameter of procedure did not match.");
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures6]
+}
+function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    DateOutParameter paraDate = new;
+    TimeOutParameter paraTime = new;
+    TimeWithTimezoneOutParameter paraTimeWithTz = new;
+    TimestampOutParameter paraTimestamp = new;
+    TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
+                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    time:Date dateRecord = {year: 2017, month: 5, day: 23};
+    time:TimeOfDay timeRecord = {hour: 14, minute: 15, second:23};
+    time:Civil timestampRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
+    time:TimeOfDay timeWithTzRecord = {utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"};
+    time:Civil timestampWithTzRecord = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
+                                        month:1, day:25, hour: 16, minute: 33, second:55};
+
+    test:assertEquals(paraDate.get(time:Date), dateRecord, "Date out parameter of procedure did not match.");
+    test:assertEquals(paraTime.get(time:TimeOfDay), timeRecord, "Time out parameter of procedure did not match.");
+    test:assertEquals(paraTimeWithTz.get(time:TimeOfDay), timeWithTzRecord, "Time with Timezone out parameter of procedure did not match.");
+    test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
+    test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
+}
+
+@test:Config {
     groups: ["procedures"]
 }
 function testCreateProcedures1() returns error? {
@@ -359,17 +436,65 @@ function testCreateProcedures5() returns error? {
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures5]
+}
+function testCreateProcedures6() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectDateTimeDataWithOutParams (IN p_id INT, OUT p_date_type DATE, OUT p_time_type TIME,
+                                                OUT p_timewithtz_type TIME WITH TIME ZONE,  OUT p_timestamp_type TIMESTAMP,
+                                                OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
+                SELECT time_type INTO p_time_type FROM DateTimeTypes where id = p_id;
+                SELECT timewithtz_type INTO p_timewithtz_type FROM DateTimeTypes where id = p_id;
+                SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
+                SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
 
-function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery)
-returns ProcedureCallResult | error {
+@test:Config {
+    groups: ["procedures"]
+}
+function testMultipleRecords() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE FetchMultipleRecords (IN p_country_code VARCHAR(10))
+            READS SQL DATA DYNAMIC RESULT SETS 1
+            BEGIN ATOMIC
+                declare curs cursor for select name, age, birthday from MultipleRecords where country_code = p_country_code;
+                open curs;
+            END
+        `;
+
+    _ = check createSqlProcedure(createProcedure);
+
+    VarcharValue paraCountryCode = new("US");
+    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords(${paraCountryCode})`;
+
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(callProcedureQuery);
+    stream<record {}, Error>? streamData = result.queryResult;
+    if (streamData is stream<record {}, Error>){
+        record {|record {} value;|}? data = check streamData.next();
+        record {}? value = data?.value;
+    }
+    test:assertTrue(streamData is (), "streamData is not nil.");
+    check result.close();
+    check dbClient.close();
+}
+
+function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(sqlQuery);
     check dbClient.close();
     return result;
 }
 
-function createSqlProcedure(ParameterizedQuery sqlQuery)
-returns ExecutionResult | Error {
+function createSqlProcedure(ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ExecutionResult result = check dbClient->execute(sqlQuery);
     check dbClient.close();
@@ -379,8 +504,7 @@ returns ExecutionResult | Error {
 isolated function validateProcedureResult(ExecutionResult|Error result, int rowCount, int? lastId = ()) {
     if(result is Error){
         test:assertFail("Procedure creation failed");
-    }
-    else{
+    } else {
         test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
         if (lastId is ()) {
@@ -394,5 +518,4 @@ isolated function validateProcedureResult(ExecutionResult|Error result, int rowC
             }
         }
     }
-    
 }
