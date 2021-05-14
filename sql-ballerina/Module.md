@@ -8,8 +8,6 @@ module `JDBC`.
 Ballerina now has [JDBC module](https://ballerina.io/learn/api-docs/ballerina/#/jdbc) as the generic db connector module to connect with any relational database by simply providing the JDBC URL and the other related properties.
 Ballerina also provides specially designed various database specific db connectors, so that you can work with different databases, and you are allowed to access their db specific functionalities.
 
-
-
 ### Client
 
 The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used. 
