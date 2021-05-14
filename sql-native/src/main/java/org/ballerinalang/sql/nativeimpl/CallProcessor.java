@@ -400,9 +400,15 @@ public class CallProcessor {
         case Constants.OutParameterTypes.TIME:
             sqlTypeValue = Types.TIME;
             break;
+        case Constants.OutParameterTypes.TIMEWITHTIMEZONE:
+            sqlTypeValue = Types.TIME_WITH_TIMEZONE;
+            break;
         case Constants.OutParameterTypes.TIMESTAMP:
         case Constants.OutParameterTypes.DATETIME:
             sqlTypeValue = Types.TIMESTAMP;
+            break;
+        case Constants.OutParameterTypes.TIMESTAMPWITHTIMEZONE:
+            sqlTypeValue = Types.TIMESTAMP_WITH_TIMEZONE;
             break;
         case Constants.OutParameterTypes.ARRAY:
             sqlTypeValue = Types.ARRAY;

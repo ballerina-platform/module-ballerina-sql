@@ -40,7 +40,8 @@ dependencies {
     compile group: 'org.ballerinalang', name: 'time-native', version: "${stdlibTimeVersion}"
     compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
     compile group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
-    
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
 tasks.withType(JavaCompile) {
@@ -64,6 +65,8 @@ test {
         enabled = true
         destinationFile = file("$buildDir/coverage-reports/jacoco.exec")
         includeNoLocationClasses = true
+        excludes = ['jdk.internal.*']
+        useJUnitPlatform()
     }
 }
 

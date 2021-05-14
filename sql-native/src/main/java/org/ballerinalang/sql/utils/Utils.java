@@ -61,14 +61,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
@@ -153,108 +151,6 @@ public class Utils {
 
     public static BArray createTimeStruct(long millis) {
         return TimeValueHandler.createUtcFromMilliSeconds(millis);
-    }
-
-    public static String getString(java.util.Date value) {
-        if (value == null) {
-            return null;
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.setTime(value);
-
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-        StringBuffer datetimeString = new StringBuffer(28);
-        if (value instanceof Date) {
-            //'-'? yyyy '-' mm '-' dd zzzzzz?
-            calendar.setTime(value);
-            appendDate(datetimeString, calendar);
-            appendTimeZone(calendar, datetimeString);
-        } else if (value instanceof Time) {
-            //hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-            calendar.setTimeInMillis(value.getTime());
-            appendTime(calendar, datetimeString);
-            appendTimeZone(calendar, datetimeString);
-        } else if (value instanceof Timestamp) {
-            calendar.setTimeInMillis(value.getTime());
-            appendDate(datetimeString, calendar);
-            datetimeString.append("T");
-            appendTime(calendar, datetimeString);
-            appendTimeZone(calendar, datetimeString);
-        } else {
-            calendar.setTime(value);
-            appendTime(calendar, datetimeString);
-            appendTimeZone(calendar, datetimeString);
-        }
-        return datetimeString.toString();
-    }
-
-    private static void appendTimeZone(Calendar calendar, StringBuffer dateString) {
-        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
-        int timezoneOffSetInMinits = timezoneOffSet / 60000;
-        if (timezoneOffSetInMinits < 0) {
-            dateString.append("-");
-            timezoneOffSetInMinits = timezoneOffSetInMinits * -1;
-        } else {
-            dateString.append("+");
-        }
-        int hours = timezoneOffSetInMinits / 60;
-        int minits = timezoneOffSetInMinits % 60;
-        if (hours < 10) {
-            dateString.append("0");
-        }
-        dateString.append(hours).append(":");
-        if (minits < 10) {
-            dateString.append("0");
-        }
-        dateString.append(minits);
-    }
-
-    private static void appendTime(Calendar value, StringBuffer dateString) {
-        if (value.get(Calendar.HOUR_OF_DAY) < 10) {
-            dateString.append("0");
-        }
-        dateString.append(value.get(Calendar.HOUR_OF_DAY)).append(":");
-        if (value.get(Calendar.MINUTE) < 10) {
-            dateString.append("0");
-        }
-        dateString.append(value.get(Calendar.MINUTE)).append(":");
-        if (value.get(Calendar.SECOND) < 10) {
-            dateString.append("0");
-        }
-        dateString.append(value.get(Calendar.SECOND)).append(".");
-        if (value.get(Calendar.MILLISECOND) < 10) {
-            dateString.append("0");
-        }
-        if (value.get(Calendar.MILLISECOND) < 100) {
-            dateString.append("0");
-        }
-        dateString.append(value.get(Calendar.MILLISECOND));
-    }
-
-    private static void appendDate(StringBuffer dateString, Calendar calendar) {
-        int year = calendar.get(Calendar.YEAR);
-        if (year < 1000) {
-            dateString.append("0");
-        }
-        if (year < 100) {
-            dateString.append("0");
-        }
-        if (year < 10) {
-            dateString.append("0");
-        }
-        dateString.append(year).append("-");
-        // sql date month is started from 1 and calendar month is
-        // started from 0. so have to add one
-        int month = calendar.get(Calendar.MONTH) + 1;
-        if (month < 10) {
-            dateString.append("0");
-        }
-        dateString.append(month).append("-");
-        if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            dateString.append("0");
-        }
-        dateString.append(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
     public static Object getGeneratedKeys(ResultSet rs) throws SQLException {
