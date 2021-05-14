@@ -4,8 +4,6 @@ The SQL library is one of the standard library packages of the<a target="_blank"
 
 It provides the common interface and functionality to interact with a database. The corresponding database clients can be created by using specific database packages such as MySQL or using the Java Database Connectivity package JDBC.
 
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
-
 ### Report Issues
 
 To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina Standard Library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library).

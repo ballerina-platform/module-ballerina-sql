@@ -1,18 +1,13 @@
-## Module Overview
+## Overview
 
 This module provides the common interface and functionality to interact with a database. The corresponding database
 clients can be created by using specific database modules such as `MySQL` or using the Java Database Connectivity 
 module `JDBC`.
 
 ### List of Database Modules
-1. JDBC (Java Database Connectivity) Module
-This module can be used to connect with any database by simply providing the JDBC URL and the other related properties. 
-For more details, see the [JDBC module](https://ballerina.io/learn/api-docs/ballerina/#/jdbc).
+Ballerina now has [JDBC module](https://ballerina.io/learn/api-docs/ballerina/#/jdbc) as the generic db connector module to connect with any relational database by simply providing the JDBC URL and the other related properties.
+Ballerina also provides specially designed various database specific db connectors, so that you can work with different databases, and you are allowed to access their db specific functionalities.
 
-
-2. MySQL Module  
-This module is specially designed to work with a MySQL database and allows to access the functionality 
-provided by MySQL 8.0.x onwards. For more details, see the [MySQL module](https://ballerina.io/learn/api-docs/ballerina/#/mysql).
 
 
 ### Client
@@ -89,19 +84,14 @@ updating, and batch updating data.
 
 #### Creating Tables
 
-This sample creates a table with two columns. One column is of type `int`and the other is of type `varchar`.
+This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
 The CREATE statement is executed via the `execute` remote function of the client.
 
 ```ballerina
 // Create the ‘Students’ table with the  ‘id’, 'name' and ‘age’ fields.
-sql:ExecutionResult|sql:Error ret = dbClient->execute("CREATE TABLE student(id INT AUTO_INCREMENT, " +
+sql:ExecutionResult ret = check dbClient->execute("CREATE TABLE student(id INT AUTO_INCREMENT, " +
                          "age INT, name VARCHAR(255), PRIMARY KEY (id))");
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //an error of type sql:Error is returned for 'ret'.
-}
+//A value of type sql:ExecutionResult is returned for 'ret'. 
 ```
 
 #### Inserting Data
@@ -113,14 +103,8 @@ In the first example, the query parameter values are passed directly into the qu
 remote function.
 
 ```ballerina
-sql:ExecutionResult|sql:Error ret = dbClient->execute("INSERT INTO student(age, name) " +
+sql:ExecutionResult ret = check dbClient->execute("INSERT INTO student(age, name) " +
                          "values (23, 'john')");
-if ret is sql:ExecutionResult {
-    //a value of type sql:ExecutionResult is returned for 'ret'. 
-    //any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //An error of type sql:Error is returned for 'ret'.
-}
 ```
 
 In the second example, the parameter values, which are in local variables are used to parameterize the SQL query in 
@@ -134,13 +118,7 @@ int age = 8;
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //An error of type sql:Error is returned for 'ret'.
-}
+sql:ExecutionResult ret = check dbClient->execute(query);
 ```
 
 In the third example, the parameter values are passed as a `sql:TypedValue` to the `execute` remote function. Use the 
@@ -153,13 +131,7 @@ sql:IntegerValue age = new (10);
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //An error of type sql:Error is returned for 'ret'.
-}
+sql:ExecutionResult ret = check dbClient->execute(query);
 ```
 
 #### Inserting Data With Auto-generated Keys
@@ -173,14 +145,11 @@ string name = "Kate";
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
                                 values (${age}, ${name})`;
-sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-    int? count = ret.affectedRowCount;
-    string|int? generatedKey = ret.lastInsertId;
-} else {
-    //An error of type sql:Error is returned for 'ret'.
+sql:ExecutionResultret = check dbClient->execute(query);
+//Number of rows affected by the execution of the query.
+int? count = ret.affectedRowCount;
+//The integer or string generated by the database in response to a query execution.
+string|int? generatedKey = ret.lastInsertId;
 }
 ```
 
@@ -219,9 +188,6 @@ stream<Student, sql:Error> resultStream =
 error? e = resultStream.forEach(function(Student student) {
    //Can perform any operations using 'student' and can access any fields in the returned record of type Student.
 });
-if e is error {
-   // An error value returned when iterating through the resultStream.
-}
 ```
 
 Defining the return type is optional and you can query the database without providing the result type. Hence, 
@@ -242,9 +208,6 @@ stream<record{}, sql:Error> resultStream = dbClient->query(query);
 error? e = resultStream.forEach(function(record{} student) {
     //Can perform any operations using 'student' and can access any fields in the returned record.
 });
-if e is error {
-   // An error value returned when iterating through the resultStream.
-}
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
@@ -267,9 +230,6 @@ if result is record {|record {} value;|} {
 }
 
 error? e = resultStream.close();
-if(e is error){
-    // An error value returned when closing the resultStream.
-}
 ```
 
 #### Updating Data
@@ -281,13 +241,7 @@ the client.
 int age = 23;
 sql:ParameterizedQuery query = `UPDATE students SET name = 'John' 
                                 WHERE age = ${age}`;
-sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //An error of type sql:Error is returned for 'ret'.
-}
+sql:ExecutionResult|sql:Error ret = check dbClient->execute(query);
 ```
 
 #### Deleting Data
@@ -298,13 +252,7 @@ the client.
 ```ballerina
 string name = "John";
 sql:ParameterizedQuery query = `DELETE from students WHERE name = ${name}`;
-sql:ExecutionResult|sql:Error ret = dbClient->execute(query);
-if ret is sql:ExecutionResult {
-    //A value of type sql:ExecutionResult is returned for 'ret'. 
-    //Any operations can be performed using the variable 'ret' and fields in sql:ExecutionResult can be accessed.
-} else {
-    //An error of type sql:Error is returned for 'ret'.
-}
+sql:ExecutionResult|sql:Error ret = check dbClient->execute(query);
 ```
 
 #### Batch Updating Data
@@ -325,13 +273,7 @@ var data = [
 sql:ParameterizedQuery[] batch = from var row in data
                                  select `INSERT INTO students ('name', 'age')
                                  VALUES (${row.name}, ${row.age})`;
-sql:ExecutionResult[]|sql:Error ret = dbClient->batchExecute(batch);
-
-if ret is error {
-    //An error of type sql:Error is returned for 'ret'.
-} else {
-    //Array of type sql:ExecutionResult[] is returned for 'ret'.
-}
+sql:ExecutionResult[] ret = check dbClient->batchExecute(batch);
 ```
 
 #### Execute SQL Stored Procedures
@@ -348,12 +290,10 @@ if ret is error {
     //An error returned
 } else {
     stream<record{}, sql:Error>? resultStr = ret.queryResult;
-    if !(resultStr is ()) {
+    if resultStr is stream<record{}, sql:Error> {
         sql:Error? e = resultStr.forEach(function(record{} result) {
         //can perform operations using 'result'.
       });
-    } else {
-        //Stored  procedure does not return anything.
     }
     check ret.close();
 }
