@@ -34,6 +34,13 @@ dependencies {
 
     checkstyle project(":build-config:checkstyle")
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}"
+    compile group: 'org.ballerinalang', name: 'time-native', version: "${stdlibTimeVersion}"
+    compile group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
+    compile group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
+    
 }
 
 tasks.withType(JavaCompile) {
