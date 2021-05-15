@@ -16,9 +16,9 @@
 
 import ballerina/jballerina.java;
 
-final configurable int maxOpenConnections = 15;
-final configurable decimal maxConnectionLifeTime = 1800.0;
-final configurable int minIdleConnections = 15;
+configurable int maxOpenConnections = 15;
+configurable decimal maxConnectionLifeTime = 1800.0;
+configurable int minIdleConnections = 15;
 
 # Represents the properties which are used to configure DB connection pool.
 # Default values of the fields can be set through the configuration API.
