@@ -14,16 +14,13 @@
  * limitations under the License.
  *
  */
-
-import org.apache.tools.ant.taskdefs.condition.Os
-
 buildscript {
     repositories {
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/plugin-gradle'
             credentials {
-                username System.getenv("packageUser")
-                password System.getenv("packagePAT")
+                username System.getenv('packageUser')
+                password System.getenv('packagePAT')
             }
         }
     }
@@ -32,22 +29,21 @@ buildscript {
     }
 }
 
-
 description = 'Ballerina - SQL Ballerina Generator'
 
-def packageName = "sql"
-def packageOrg = "ballerina"
+def packageName = 'sql'
+def packageOrg = 'ballerina'
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
 def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def originalConfig = ballerinaConfigFile.text
 def originalDependencies = ballerinaDependencyFile.text
-def distributionPath =  project.projectDir.absolutePath + "/build/target/jballerina-tools-${ballerinaLangVersion}"
+def distributionPath = project.projectDir.absolutePath + "/build/target/jballerina-tools-${ballerinaLangVersion}"
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
-        def splitVersion = extVersion.split('-');
+        def splitVersion = extVersion.split('-')
         if (splitVersion.length > 3) {
             def strippedValues = splitVersion[0..-4]
             return strippedValues.join('-')
@@ -55,16 +51,16 @@ def stripBallerinaExtensionVersion(String extVersion) {
             return extVersion
         }
     } else {
-        return extVersion.replace("${project.ext.snapshotVersion}", "")
+        return extVersion.replace("${project.ext.snapshotVersion}", '')
     }
 }
 
 apply plugin: 'io.ballerina.plugin'
 
-ballerina{
+ballerina {
     module = packageName
     langVersion = ballerinaLangVersion
-    testCoverageParam = "--code-coverage --jacoco-xml --includes=org.ballerinalang.sql.*:ballerina.sql.*"
+    testCoverageParam = '--code-coverage --jacoco-xml --includes=org.ballerinalang.sql.*:ballerina.sql.*'
 }
 
 task updateTomlVersions {
@@ -72,14 +68,14 @@ task updateTomlVersions {
         def stdlibDependentIoVersion = stripBallerinaExtensionVersion(project.stdlibIoVersion)
         def stdlibTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
 
-        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version.toString())
-        newConfig = newConfig.replace("@toml.version@", tomlVersion)
-        newConfig = newConfig.replace("@project.path@", distributionPath)
+        def newConfig = ballerinaConfigFile.text.replace('@project.version@', project.version.toString())
+        newConfig = newConfig.replace('@toml.version@', tomlVersion)
+        newConfig = newConfig.replace('@project.path@', distributionPath)
 
         ballerinaConfigFile.text = newConfig
 
-        def newDependencyConfig = ballerinaDependencyFile.text.replace("@stdlib.io.version@", stdlibDependentIoVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibTimeVersion)
+        def newDependencyConfig = ballerinaDependencyFile.text.replace('@stdlib.io.version@', stdlibDependentIoVersion)
+        newDependencyConfig = newDependencyConfig.replace('@stdlib.time.version@', stdlibTimeVersion)
         ballerinaDependencyFile.text = newDependencyConfig
     }
 }
@@ -100,11 +96,11 @@ publishing {
     }
     repositories {
         maven {
-            name = "GitHubPackages"
+            name = 'GitHubPackages'
             url = uri("https://maven.pkg.github.com/ballerina-platform/module-${packageOrg}-${packageName}")
             credentials {
-                username = System.getenv("publishUser")
-                password = System.getenv("publishPAT")
+                username = System.getenv('publishUser')
+                password = System.getenv('publishPAT')
             }
         }
     }
