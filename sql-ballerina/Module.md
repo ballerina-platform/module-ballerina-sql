@@ -5,7 +5,7 @@ clients can be created by using specific database modules such as `mysql` or usi
 module `jdbc`.
 
 ### List of Database Modules
-Ballerina now has the [`jdbc` module](https://ballerina.io/learn/api-docs/ballerina/#/jdbc) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
+Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc/latest) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases and you can access their DB-specific functionalities.
 
 ### Client
