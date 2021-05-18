@@ -6,7 +6,7 @@ It provides the common interface and functionality to interact with a database. 
 
 ### Report Issues
 
-To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina Standard Library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library).
+To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina Standard Library parent repository](https://github.com/ballerina-platform/ballerina-standard-library).
 
 ### Useful Links
 - Discuss the code changes of the Ballerina project in ballerina-dev@googlegroups.com.

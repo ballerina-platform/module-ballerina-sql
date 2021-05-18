@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents the properties belonging to a `sql:BatchExecuteError`.
+# Represents the properties belonging to an `sql:BatchExecuteError`.
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
@@ -25,7 +25,7 @@ public type BatchExecuteErrorDetail record {
     ExecutionResult[] executionResults;
 };
 
-# Represents the properties belonging to a `sql:DatabaseError`.
+# Represents the properties belonging to an `sql:DatabaseError`.
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
