@@ -15,7 +15,7 @@ The database client should be created using any of the above-listed database mod
 #### Connection Pool Handling
 
 All database modules share the same connection pooling concept and there are three possible scenarios for 
-connection pool handling.  For its properties and possible values, see the `sql:ConnectionPool`.  
+connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).  
 
 1. Global, shareable, default connection pool
 
@@ -298,5 +298,5 @@ if ret is error {
 ```
 Note that you have to invoke the close operation explicitly on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
 
->**Note:** The default thread pool size used in Ballerina is the number of processors available * 2. You can configure
+>**Note:** The default thread pool size used in Ballerina is: [the number of processors available * 2] . You can configure
 the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
