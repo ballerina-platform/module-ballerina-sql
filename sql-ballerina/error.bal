@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents the properties belonging to a `BatchExecuteError`.
+# Represents the properties belonging to an `sql:BatchExecuteError`.
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
@@ -25,7 +25,7 @@ public type BatchExecuteErrorDetail record {
     ExecutionResult[] executionResults;
 };
 
-# Represents the properties belonging to a `DatabaseError`.
+# Represents the properties belonging to an `sql:DatabaseError`.
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
@@ -35,7 +35,7 @@ public type DatabaseErrorDetail record {
 };
 
 //Level 1
-# Defines the common error type for the module
+# Defines the common error type for the module.
 public type Error distinct error;
 
 //Level 2

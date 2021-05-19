@@ -23,16 +23,16 @@ configurable int minIdleConnections = 15;
 # Represents the properties which are used to configure DB connection pool.
 # Default values of the fields can be set through the configuration API.
 #
-# + maxOpenConnections - The maximum number of open connections that the pool is allowed to have, including
-#                        both idle and in-use connections. Default value is 15 and it can be changed through the
-#                        configuration API with the key `b7a.sql.pool.maxOpenConnections`.
-# + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. Default value is 1800
+# + maxOpenConnections - The maximum number of open connections that the pool is allowed to have including
+#                        both idle and in-use connections. The default value is 15 and it can be changed through the
+#                        configuration API with the `b7a.sql.pool.maxOpenConnections` key
+# + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. The default value is 1800
 #                                  seconds (30 minutes) and it can be changed through the configuration API with the
-#                                  key `b7a.sql.pool.maxConnectionLifeTime`. A value of 0 indicates unlimited maximum
-#                                  lifetime (infinite lifetime).
-# + minIdleConnections - The minimum number of idle connections that pool tries to maintain in the pool. Default
-#                        is the same as maxOpenConnections and it can be changed through the configuration
-#                        API with the key `b7a.sql.pool.minIdleConnections`.
+#                                  `b7a.sql.pool.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
+#                                  lifetime (infinite lifetime)
+# + minIdleConnections - The minimum number of idle connections that the pool tries to maintain in it. The default value
+#                        is the same as `maxOpenConnections` and it can be changed through the configuration
+#                        API with the `b7a.sql.pool.minIdleConnections` key
 public type ConnectionPool record {|
     int maxOpenConnections = maxOpenConnections;
     decimal maxConnectionLifeTime = maxConnectionLifeTime;
