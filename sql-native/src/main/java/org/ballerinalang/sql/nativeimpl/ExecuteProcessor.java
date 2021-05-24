@@ -73,6 +73,10 @@ public class ExecuteProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (sqlDatasource.isClosed()) {
+                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
+                        " are not allowed");
+            }
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
@@ -128,6 +132,10 @@ public class ExecuteProcessor {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (sqlDatasource.isClosed()) {
+                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
+                        " are not allowed");
+            }
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
