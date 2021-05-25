@@ -73,7 +73,7 @@ public class QueryProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
-            if (sqlDatasource.isPoolShutdown()) {
+            if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
                 BError errorValue = ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
                         "further operations are not allowed");
                 return getErrorStream(recordType, errorValue);

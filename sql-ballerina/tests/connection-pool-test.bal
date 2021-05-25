@@ -17,7 +17,6 @@ import ballerina/lang.runtime as runtime;
 import ballerina/lang.'string as strings;
 import ballerina/test;
 
-
 string poolDB_1 = urlPrefix + "9002/pool1";
 string poolDB_2 = urlPrefix + "9003/pool2";
 

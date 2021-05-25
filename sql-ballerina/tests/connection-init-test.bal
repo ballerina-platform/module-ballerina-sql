@@ -57,7 +57,7 @@ function testConnectionAfterClose() returns error? {
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if (data is ApplicationError) {
-        test:assertTrue(data.message().startsWith("SQL Client is already closed,hence further operations are not " +
+        test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " +
             "allowed"));
     } else {
         test:assertFail("ApplicationError Error expected.");

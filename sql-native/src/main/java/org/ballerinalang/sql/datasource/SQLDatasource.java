@@ -265,7 +265,7 @@ public class SQLDatasource {
         poolShutdown = true;
     }
 
-    public boolean isPoolShutdown() {
+    private boolean isPoolShutdown() {
         return poolShutdown;
     }
 

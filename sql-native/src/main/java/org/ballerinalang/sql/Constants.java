@@ -31,7 +31,9 @@ public final class Constants {
 
     public static final String CONNECTOR_NAME = "SQLClientConnector";
     public static final String DATABASE_CLIENT = "Client";
+    public static final String DATABASE_CLIENT_ACTIVE_STATUS = "clientActive";
     public static final String SQL_CONNECTOR_TRANSACTION_ID = "sql-transaction-id";
+
 
     public static final String BATCH_EXECUTE_ERROR_DETAIL = "BatchExecuteErrorDetail";
     public static final String BATCH_EXECUTE_ERROR = "BatchExecuteError";
