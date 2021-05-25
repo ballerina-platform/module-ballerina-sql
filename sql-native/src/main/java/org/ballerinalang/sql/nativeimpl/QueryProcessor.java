@@ -19,7 +19,6 @@
 package org.ballerinalang.sql.nativeimpl;
 
 
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
@@ -73,11 +72,6 @@ public class QueryProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
-            if (sqlDatasource.isPoolShutdown()) {
-                BError errorValue = ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
-                        "further operations are not allowed");
-                return getErrorStream(recordType, errorValue);
-            }
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
@@ -103,15 +97,15 @@ public class QueryProcessor {
                     streamConstraint = (StructureType) ((BTypedesc) recordType).getDescribingType();
                     columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 }
-                return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
-                        PredefinedTypes.TYPE_NULL), resultParameterProcessor
-                        .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint),
+                        resultParameterProcessor.createRecordIterator(resultSet, statement, connection,
+                                columnDefinitions, streamConstraint));
             } catch (SQLException e) {
                 Utils.closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
-                return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(),
-                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint()),
+                        createRecordIterator(errorValue));
             } catch (ApplicationError applicationError) {
                 Utils.closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
@@ -135,12 +129,11 @@ public class QueryProcessor {
     private static BStream getErrorStream(Object recordType, BError errorValue) {
         if (recordType == null) {
             return ValueCreator.createStreamValue(
-                    TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(), PredefinedTypes.TYPE_NULL),
-                    createRecordIterator(errorValue));
+                    TypeCreator.createStreamType(Utils.getDefaultStreamConstraint()), createRecordIterator(errorValue));
         } else {
             return ValueCreator.createStreamValue(
-                    TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
-                            PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
+                    TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType()),
+                    createRecordIterator(errorValue));
         }
     }
 

@@ -18,7 +18,6 @@
 
 package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
@@ -88,7 +87,7 @@ public class ProcedureCallResultUtils {
                     }
                 }
                 BStream streamValue = ValueCreator.createStreamValue(
-                        TypeCreator.createStreamType(streamConstraint, PredefinedTypes.TYPE_NULL),
+                        TypeCreator.createStreamType(streamConstraint),
                         resultParameterProcessor.createRecordIterator(resultSet, null, null,
                                 columnDefinitions, streamConstraint));
                 procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
