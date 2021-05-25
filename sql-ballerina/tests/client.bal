@@ -17,9 +17,8 @@
 import ballerina/jballerina.java;
 
 # Represents a Mock database client.
-client class MockClient {
+isolated client class MockClient {
     *Client;
-    private boolean clientActive = true;
 
     public function init(string url, string? user = (), string? password = (), string? datasourceName = (),
         map<anydata>? options = (), ConnectionPool? connectionPool = (),
@@ -38,44 +37,26 @@ client class MockClient {
 
     remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
     returns @tainted stream <record {}, Error> {
-        if (self.clientActive) {
-            return nativeQuery(self, sqlQuery, rowType);
-        } else {
-            return generateApplicationErrorStream("SQL Client is already closed,"
-                + "hence further operations are not allowed");
-        }
+        return nativeQuery(self, sqlQuery, rowType);
     }
 
     remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
-        if (self.clientActive) {
-            return nativeExecute(self, sqlQuery);
-        } else {
-            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
-        }
+        return nativeExecute(self, sqlQuery);
     }
 
     remote isolated function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
-        if (self.clientActive) {
-            return nativeBatchExecute(self, sqlQueries);
-        } else {
-            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
-        }
+        return nativeBatchExecute(self, sqlQueries);
     }
 
     remote isolated function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error {
-        if (self.clientActive) {
-            return nativeCall(self, sqlQuery, rowTypes);
-        } else {
-            return error ApplicationError("SQL Client is already closed, hence further operations are not allowed");
-        }
+        return nativeCall(self, sqlQuery, rowTypes);
     }
 
     public isolated function close() returns Error? {
-        self.clientActive = false;
         return close(self);
     }
 }

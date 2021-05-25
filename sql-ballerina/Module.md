@@ -44,7 +44,7 @@ connection pool handling.  For its properties and possible values, see the [`sql
 3. Local, shareable connection pool
 
     If you create a record of the `sql:ConnectionPool` type and reuse that in the configuration of multiple clients, 
-    for each  set of clients that connects to the same database instance with the same set of properties, a shared 
+    for each set of clients that connects to the same database instance with the same set of properties, a shared 
     connection pool will be created. The JDBC module example below shows how the global connection pool is used.
 
     ```ballerina

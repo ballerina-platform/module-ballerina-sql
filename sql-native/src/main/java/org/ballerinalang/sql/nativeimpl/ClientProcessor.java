@@ -42,6 +42,7 @@ public class ClientProcessor {
         // situation following null check is needed.
         if (datasourceObj != null) {
             ((SQLDatasource) datasourceObj).decrementClientCounterAndAttemptPoolShutdown();
+            client.addNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS, Boolean.FALSE);
         }
         return null;
     }
@@ -58,6 +59,7 @@ public class ClientProcessor {
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
             client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
+            client.addNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS, Boolean.TRUE);
             return null;
         } catch (BError errorValue) {
             return errorValue;
