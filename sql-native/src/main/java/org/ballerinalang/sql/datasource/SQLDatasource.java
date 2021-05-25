@@ -56,7 +56,6 @@ public class SQLDatasource {
     private Lock mutex = new ReentrantLock();
     private boolean poolShutdown = false;
     private boolean xaConn;
-    private boolean clientActive = true;
     private AtomikosDataSourceBean atomikosDataSourceBean;
     private HikariDataSource hikariDataSource;
     private XADataSource xaDataSource;
@@ -237,10 +236,6 @@ public class SQLDatasource {
         return newSqlDatasource;
     }
 
-    public boolean isClosed() {
-        return !clientActive;
-    }
-
     private Connection getConnection() throws SQLException {
       if (atomikosDataSourceBean != null) {
           return atomikosDataSourceBean.getConnection();
@@ -262,17 +257,15 @@ public class SQLDatasource {
     private void closeConnectionPool() {
         if (hikariDataSource != null) {
             hikariDataSource.close();
-            clientActive = false;
         }
 
         if (atomikosDataSourceBean != null) {
             atomikosDataSourceBean.close();
-            clientActive = false;
         }
         poolShutdown = true;
     }
 
-    private boolean isPoolShutdown() {
+    public boolean isPoolShutdown() {
         return poolShutdown;
     }
 

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Add DB connection active status check in native code level
+
 ## [0.6.0-beta.1] - 2021-05-11
 
 ### Added

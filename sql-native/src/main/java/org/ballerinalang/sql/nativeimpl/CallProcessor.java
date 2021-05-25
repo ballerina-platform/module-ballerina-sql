@@ -87,7 +87,7 @@ public class CallProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
-            if (sqlDatasource.isClosed()) {
+            if (sqlDatasource.isPoolShutdown()) {
                 return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
                         " are not allowed");
             }
