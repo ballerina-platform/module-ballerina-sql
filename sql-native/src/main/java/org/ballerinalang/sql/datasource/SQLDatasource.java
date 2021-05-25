@@ -84,7 +84,6 @@ public class SQLDatasource {
                 return;
             }
             connection = getConnection();
-
         } catch (SQLException e) {
             throw ErrorGenerator.getSQLDatabaseError(e,
                     "error while verifying the connection for " + Constants.CONNECTOR_NAME + ", ");
@@ -266,7 +265,7 @@ public class SQLDatasource {
         poolShutdown = true;
     }
 
-    private boolean isPoolShutdown() {
+    public boolean isPoolShutdown() {
         return poolShutdown;
     }
 

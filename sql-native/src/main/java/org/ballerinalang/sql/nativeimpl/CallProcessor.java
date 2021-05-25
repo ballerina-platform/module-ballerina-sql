@@ -18,6 +18,7 @@
 
 package org.ballerinalang.sql.nativeimpl;
 
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -86,6 +87,10 @@ public class CallProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (sqlDatasource.isPoolShutdown()) {
+                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
+                        " are not allowed");
+            }
             Connection connection;
             CallableStatement statement;
             ResultSet resultSet;
@@ -130,7 +135,8 @@ public class CallProcessor {
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         resultSetCount++;
                     }
-                    BStream streamValue = ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint),
+                    BStream streamValue = ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
+                            PredefinedTypes.TYPE_NULL),
                         resultParameterProcessor.createRecordIterator(resultSet, null, null, columnDefinitions,
                                                      streamConstraint));
                     procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
