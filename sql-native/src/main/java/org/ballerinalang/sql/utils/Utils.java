@@ -72,7 +72,6 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_FIELD;
 import static org.ballerinalang.sql.Constants.EXECUTION_RESULT_RECORD;
-import static org.ballerinalang.sql.Constants.LAST_INSERTED_ID_FIELD;
 import static org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA;
 
 /**
@@ -233,15 +232,9 @@ public class Utils {
 
     public static void updateProcedureCallExecutionResult(CallableStatement statement, BObject procedureCallResult)
             throws SQLException {
-        Object lastInsertedId = null;
         int count = statement.getUpdateCount();
-        ResultSet resultSet = statement.getGeneratedKeys();
-        if (resultSet.next()) {
-            lastInsertedId = getGeneratedKeys(resultSet);
-        }
         Map<String, Object> resultFields = new HashMap<>();
         resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
-        resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
         BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
                 ModuleUtils.getModule(), EXECUTION_RESULT_RECORD, resultFields);
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);

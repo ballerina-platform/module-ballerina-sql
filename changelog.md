@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Add DB connection active status check in native code level
+- [Remove sending `lastInsertId` in `ExecutionResult` for remote call function](https://github.com/ballerina-platform/ballerina-standard-library/issues/1409)
 
 ## [0.6.0-beta.1] - 2021-05-11
 
