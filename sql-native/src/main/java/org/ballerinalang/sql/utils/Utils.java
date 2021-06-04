@@ -235,10 +235,6 @@ public class Utils {
             throws SQLException {
         Object lastInsertedId = null;
         int count = statement.getUpdateCount();
-        ResultSet resultSet = statement.getGeneratedKeys();
-        if (resultSet.next()) {
-            lastInsertedId = getGeneratedKeys(resultSet);
-        }
         Map<String, Object> resultFields = new HashMap<>();
         resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
         resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
