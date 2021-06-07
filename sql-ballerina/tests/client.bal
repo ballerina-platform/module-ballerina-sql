@@ -60,9 +60,10 @@ isolated client class MockClient {
         name: "nativeCall"
     } external;
 
-    public isolated function close() returns Error? {
-        return close(self);
-    }
+    public isolated function close() returns Error? = @java:Method {
+         'class: "org.ballerinalang.sql.testutils.ClientTestUtils",
+         name: "close"
+    } external;
 }
 
 type SQLParams record {|
@@ -83,8 +84,4 @@ returns Error? = @java:Method {
 isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
     'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
-} external;
-
-isolated function close(Client Client) returns Error? = @java:Method {
-    'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
 } external;
