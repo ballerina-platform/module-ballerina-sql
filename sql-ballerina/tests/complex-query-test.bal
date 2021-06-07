@@ -44,7 +44,6 @@ type SelectTestAlias record {
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
-
 function testGetPrimitiveTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(

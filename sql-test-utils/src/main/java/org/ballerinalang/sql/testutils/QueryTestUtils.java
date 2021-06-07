@@ -18,9 +18,9 @@
 
 package org.ballerinalang.sql.testutils;
 
-import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
+import io.ballerina.runtime.api.values.BTypedesc;
 
 import org.ballerinalang.sql.nativeimpl.QueryProcessor;
 import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
@@ -32,7 +32,7 @@ public class QueryTestUtils {
     }
 
     public static BStream nativeQuery(BObject client, Object paramSQLString,
-                                      Object recordType) {
+                                      BTypedesc recordType) {
         DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
                 .getInstance();
         DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor

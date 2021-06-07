@@ -18,7 +18,6 @@
 
 package org.ballerinalang.sql.nativeimpl;
 
-
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -96,7 +95,7 @@ public class QueryProcessor {
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
                 StructureType streamConstraint;
-                if (recordType == null) {
+                if (((BTypedesc) recordType).getDescribingType().getName().equals(Constants.DEFAULT_RECORD_NAME)) {
                     columnDefinitions = Utils.getColumnDefinitions(resultSet, null);
                     streamConstraint = Utils.getDefaultRecordType(columnDefinitions);
                 } else {
@@ -133,15 +132,9 @@ public class QueryProcessor {
     }
 
     private static BStream getErrorStream(Object recordType, BError errorValue) {
-        if (recordType == null) {
-            return ValueCreator.createStreamValue(
-                    TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(), PredefinedTypes.TYPE_NULL),
-                    createRecordIterator(errorValue));
-        } else {
-            return ValueCreator.createStreamValue(
-                    TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
-                            PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
-        }
+        return ValueCreator.createStreamValue(
+                TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
+                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
     }
 
     private static BObject createRecordIterator(BError errorValue) {

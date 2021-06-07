@@ -62,6 +62,7 @@ public final class Constants {
     public static final String EXECUTION_RESULT_RECORD = "ExecutionResult";
     public static final String AFFECTED_ROW_COUNT_FIELD = "affectedRowCount";
     public static final String LAST_INSERTED_ID_FIELD = "lastInsertId";
+    public static final String DEFAULT_RECORD_NAME = "record {| anydata...; |}";
 
     public static final String READ_BYTE_CHANNEL_STRUCT = "ReadableByteChannel";
     public static final String READ_CHAR_CHANNEL_STRUCT = "ReadableCharacterChannel";

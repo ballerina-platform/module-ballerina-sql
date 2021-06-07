@@ -27,8 +27,8 @@ public type Client client object {
     # + rowType - The `typedesc` of the record that should be returned as a result. If this is not provided, the default
     #             column names of the query result set will be used for the record attributes
     # + return - Stream of records in the type of `rowType`
-    remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
-    returns @tainted stream <record {}, Error>;
+    remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
+    returns @tainted stream <rowType, Error>;
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
