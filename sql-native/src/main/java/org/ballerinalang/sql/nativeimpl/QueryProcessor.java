@@ -95,9 +95,7 @@ public class QueryProcessor {
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
                 StructureType streamConstraint;
-                if (((BTypedesc) recordType).getDescribingType()
-                        .equals(TypeCreator.createRecordType(Constants.DEFAULT_RECORD_NAME, ModuleUtils.getModule(),
-                        2049, false, 6))) {
+                if (((BTypedesc) recordType).getDescribingType().getName().equals(Constants.DEFAULT_RECORD_NAME)) {
                     columnDefinitions = Utils.getColumnDefinitions(resultSet, null);
                     streamConstraint = Utils.getDefaultRecordType(columnDefinitions);
                 } else {
