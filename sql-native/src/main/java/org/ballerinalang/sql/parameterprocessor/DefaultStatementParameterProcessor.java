@@ -885,11 +885,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         } else if (object instanceof BArray) {
             BArray objectArray = (BArray) object;
             String type = objectArray.getElementType().toString();
-            if (objectArray.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.BYTE) {
+            if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
                 return Types.VARBINARY;
-            } else if (objectArray.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.UNION ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_BYTE)) {
+            } else if (objectArray.getElementType().getTag() == TypeTags.ARRAY_TAG ||
+                    type.equals(Constants.SqlTypes.OPTIONAL_BYTE) || type.equals(Constants.SqlTypes.BYTE_ARRAY_TYPE)) {
                 setBinaryArray(connection, preparedStatement, index, objectArray);
                 return Types.VARBINARY;
             } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
