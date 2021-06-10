@@ -21,7 +21,7 @@ package org.ballerinalang.sql.nativeimpl;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.StructureType;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
@@ -94,14 +94,9 @@ public class QueryProcessor {
                 }
                 resultSet = statement.executeQuery();
                 List<ColumnDefinition> columnDefinitions;
-                StructureType streamConstraint;
-                if (((BTypedesc) recordType).getDescribingType().getName().equals(Constants.DEFAULT_RECORD_NAME)) {
-                    columnDefinitions = Utils.getColumnDefinitions(resultSet, null);
-                    streamConstraint = Utils.getDefaultRecordType(columnDefinitions);
-                } else {
-                    streamConstraint = (StructureType) ((BTypedesc) recordType).getDescribingType();
-                    columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
-                }
+                RecordType streamConstraint;
+                streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
+                columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
                         .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));

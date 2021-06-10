@@ -67,6 +67,60 @@ function testGetPrimitiveTypes() returns error? {
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
+function testGetPrimitiveTypes2() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<SelectTestAlias, error?> streamData = dbClient->query(
+	"SELECT int_type, long_type, double_type,"
+        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias);
+    record {|SelectTestAlias value;|}? data = check streamData.next();
+    check streamData.close();
+    SelectTestAlias? value = data?.value;
+    check dbClient.close();
+
+    SelectTestAlias expectedData = {
+        int_type: 1,
+        long_type: 9223372036854774807,
+        double_type: 2139095039,
+        boolean_type: true,
+        string_type: "Hello"
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+    test:assertTrue(value is SelectTestAlias, "Received value type is different.");
+}
+
+type SelectTestAlias2 record {
+    int int_type;
+    int long_type;
+    float double_type;
+};
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testGetPrimitiveTypesLessFields() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<SelectTestAlias2, error?> streamData = dbClient->query(
+	"SELECT int_type, long_type, double_type,"
+        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias2);
+    record {|SelectTestAlias2 value;|}? data = check streamData.next();
+    check streamData.close();
+    SelectTestAlias2? value = data?.value;
+    check dbClient.close();
+
+    var expectedData = {
+        int_type: 1,
+        long_type: 9223372036854774807,
+        double_type: 2.139095039E9,
+        BOOLEAN_TYPE: true,
+        STRING_TYPE: "Hello"
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+    test:assertTrue(value is SelectTestAlias2, "Received value type is different.");
+}
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
 function testToJson() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
@@ -110,6 +164,7 @@ function testToJsonComplexTypes() returns error? {
         BINARY_TYPE: "wso2 ballerina binary test.".toBytes()
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
+    test:assertTrue(data is record {|record{} value;|}, "Received value type is different.");
 }
 
 @test:Config {
