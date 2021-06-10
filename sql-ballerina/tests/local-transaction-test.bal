@@ -479,7 +479,7 @@ isolated function testLocalTransactionSuccessWithFailedHelper(string status,Mock
     return a;
 }
 
-isolated function getCount(MockClient dbClient, string id) returns @tainted int | error {
+isolated function getCount(MockClient dbClient, string id) returns int | error {
     stream<TransactionResultCount, Error> streamData = <stream<TransactionResultCount, Error>> dbClient->query("Select COUNT(*) as " +
         "countval from Customers where registrationID = "+ id, TransactionResultCount);
         record {|TransactionResultCount value;|}? data = check streamData.next();

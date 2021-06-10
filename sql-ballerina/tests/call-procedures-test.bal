@@ -50,7 +50,7 @@ function cleanproceduresContainer() returns error? {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures1]
 }
-function testCallWithStringTypes() returns @tainted record {}|error? {
+function testCallWithStringTypes() returns record {}|error? {
     int id = 2;
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);

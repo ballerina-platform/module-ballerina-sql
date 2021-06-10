@@ -335,7 +335,7 @@ returns error? {
 }
 
 function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url)
-returns @tainted int|error {
+returns int|error {
     runtime:sleep(1);
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
         connectionPoolOptions = connectionPoolOptions);
@@ -480,7 +480,7 @@ public type Variable record {
     string variable_name;
 };
 
-function getOpenConnectionCount(string url) returns @tainted (int|error) {
+function getOpenConnectionCount(string url) returns (int|error) {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = {maxOpenConnections: 1}, connectionPoolOptions = connectionPoolOptions);
     var dt = dbClient->query("show status where `variable_name` = 'Threads_connected'", Variable);
     int|error count = getIntVariableValue(dt);
@@ -489,14 +489,14 @@ function getOpenConnectionCount(string url) returns @tainted (int|error) {
 }
 
 function testGlobalConnectionPoolConcurrentHelper1(string url) returns
-    @tainted [stream<record{}, error?>, stream<record{}, error?>]|error {
+    [stream<record{}, error?>, stream<record{}, error?>]|error {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
     var dt2 = dbClient->query("select count(*) as val from Customers where registrationID = 2", Result);
     return [dt1, dt2];
 }
 
-function testGlobalConnectionPoolConcurrentHelper2(string url) returns @tainted (int|error)[] | error {
+function testGlobalConnectionPoolConcurrentHelper2(string url) returns (int|error)[] | error {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     (int|error)[] returnArray = [];
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);

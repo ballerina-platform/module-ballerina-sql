@@ -35,23 +35,23 @@ isolated client class MockClient {
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
 
-    remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
-    returns @tainted stream <record {}, Error> {
+    remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}>? rowType = ())
+    returns stream <record {}, Error> {
         return nativeQuery(self, sqlQuery, rowType);
     }
 
-    remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
+    remote isolated function execute(string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
         return nativeExecute(self, sqlQuery);
     }
 
-    remote isolated function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
+    remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
         return nativeBatchExecute(self, sqlQueries);
     }
 
-    remote isolated function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote isolated function call(string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error {
         return nativeCall(self, sqlQuery, rowTypes);
     }
