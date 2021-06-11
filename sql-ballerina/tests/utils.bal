@@ -83,31 +83,31 @@ function cleanDockerContainer(string containerName) returns error? {
     io:println("Cleaned docker container '" + containerName +"'.");
 }
 
-isolated function getByteColumnChannel() returns @untainted io:ReadableByteChannel | error {
+isolated function getByteColumnChannel() returns io:ReadableByteChannel | error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/byteValue.txt");
     return byteChannel;
 }
 
-isolated function getBlobColumnChannel() returns @untainted io:ReadableByteChannel | error {
+isolated function getBlobColumnChannel() returns io:ReadableByteChannel | error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/blobValue.txt");
     return byteChannel;
 }
 
-isolated function getClobColumnChannel() returns @untainted io:ReadableCharacterChannel | error {
+isolated function getClobColumnChannel() returns io:ReadableCharacterChannel | error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/clobValue.txt");
     io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
     return sourceChannel;
 }
 
-isolated function getUntaintedData(record {}|error? value, string fieldName) returns @untainted anydata {
+isolated function getUntaintedData(record {}|error? value, string fieldName) returns anydata {
     if (value is record {}) {
         return value[fieldName];
     }
     return {};
 }
 
-function queryMockClient(string url, @untainted string|ParameterizedQuery sqlQuery)
-returns @tainted record {} | error? {
+function queryMockClient(string url, string|ParameterizedQuery sqlQuery)
+returns record {} | error? {
     MockClient dbClient = check new (url = url, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(sqlQuery);
     record {|record {} value;|}? data = check streamData.next();
@@ -117,8 +117,8 @@ returns @tainted record {} | error? {
     return value;
 }
 
-function exec(@untainted string command, @untainted map<string> env = {},
-                     @untainted string? dir = (), @untainted string... args) returns Process|error = @java:Method {
+function exec(string command, map<string> env = {},
+                     string? dir = (), string... args) returns Process|error = @java:Method {
     name: "exec",
     'class: "org.ballerinalang.sql.testutils.nativeimpl.Exec"
 } external;

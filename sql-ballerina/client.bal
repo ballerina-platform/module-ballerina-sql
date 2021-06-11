@@ -27,8 +27,8 @@ public type Client client object {
     # + rowType - The `typedesc` of the record that should be returned as a result. If this is not provided, the default
     #             column names of the query result set will be used for the record attributes
     # + return - Stream of records in the type of `rowType`
-    remote isolated function query(@untainted string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
-    returns @tainted stream <rowType, Error>;
+    remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
+    returns stream <rowType, Error>;
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
@@ -36,7 +36,7 @@ public type Client client object {
     #              or an `sql:ParameterizedQuery` when the query has params to be passed in
     # + return - Summary of the SQL update query as an `sql:ExecutionResult` or an `sql:Error`
     #            if any error occurred when executing the query
-    remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
+    remote isolated function execute(string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
 
     # Executes a batch of provided parameterized DDL or DML SQL queries
     # and returns the summary of the execution.
@@ -48,7 +48,7 @@ public type Client client object {
     #            will return an `sql:BatchExecuteError`. However, the driver may or may not continue to process the
     #            remaining commands in the batch after a failure. The summary of the executed queries in case of an error
     #            can be accessed as `(<sql:BatchExecuteError> result).detail()?.executionResults`
-    remote isolated function batchExecute(@untainted ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
+    remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
     # Executes a SQL stored procedure and returns the result as stream and execution summary.
     #
@@ -56,7 +56,7 @@ public type Client client object {
     # + rowTypes - The array of `typedesc` of the records that should be returned as a result. If this is not provided,
     #               the default column names of the query result set will be used for the record attributes
     # + return - Summary of the execution is returned in an `sql:ProcedureCallResult`, or an `sql:Error`
-    remote isolated function call(@untainted string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote isolated function call(string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
     # Closes the SQL client.
