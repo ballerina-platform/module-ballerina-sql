@@ -41,7 +41,7 @@ isolated client class MockClient {
         name: "nativeQuery"
     } external;
 
-    remote isolated function execute(@untainted string|ParameterizedQuery sqlQuery)
+    remote isolated function execute(string|ParameterizedQuery sqlQuery)
     returns ExecutionResult|Error = @java:Method {
         'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils",
         name: "nativeExecute"
