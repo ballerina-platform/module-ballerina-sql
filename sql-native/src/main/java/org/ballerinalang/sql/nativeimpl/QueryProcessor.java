@@ -93,10 +93,8 @@ public class QueryProcessor {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
                 }
                 resultSet = statement.executeQuery();
-                List<ColumnDefinition> columnDefinitions;
-                RecordType streamConstraint;
-                streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
-                columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
+                RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
+                List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
                         .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
