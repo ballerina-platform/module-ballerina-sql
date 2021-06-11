@@ -88,6 +88,30 @@ function testGetPrimitiveTypes2() returns error? {
     test:assertTrue(value is SelectTestAlias, "Received value type is different.");
 }
 
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testGetPrimitiveTypes3() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<SelectTestAlias, error?> streamData = dbClient->query(
+	"SELECT int_type, long_type, double_type,"
+        + "boolean_type, string_type from DataTable WHERE row_id = 1");
+    record {|SelectTestAlias value;|}? data = check streamData.next();
+    check streamData.close();
+    SelectTestAlias? value = data?.value;
+    check dbClient.close();
+
+    SelectTestAlias expectedData = {
+        int_type: 1,
+        long_type: 9223372036854774807,
+        double_type: 2139095039,
+        boolean_type: true,
+        string_type: "Hello"
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+    test:assertTrue(value is SelectTestAlias, "Received value type is different.");
+}
+
 type SelectTestAlias2 record {
     int int_type;
     int long_type;
