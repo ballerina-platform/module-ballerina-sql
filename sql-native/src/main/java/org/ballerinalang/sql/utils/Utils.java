@@ -297,29 +297,28 @@ public class Utils {
             throws ApplicationError {
         String ballerinaFieldName = null;
         Type ballerinaType = null;
-        if (streamConstraint != null) {
-            for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
-                if (field.getKey().equalsIgnoreCase(columnName)) {
-                    ballerinaFieldName = field.getKey();
-                    ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
-                    if (ballerinaType == null) {
-                        throw new ApplicationError("The field '" + field.getKey() + "' of type " +
-                                field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
-                                columnName + "' of SQL type '" + sqlTypeName + "'");
-                    }
-                    break;
+        for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
+            if (field.getKey().equalsIgnoreCase(columnName)) {
+                ballerinaFieldName = field.getKey();
+                ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
+                if (ballerinaType == null) {
+                    throw new ApplicationError("The field '" + field.getKey() + "' of type " +
+                            field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
+                            columnName + "' of SQL type '" + sqlTypeName + "'");
                 }
+                break;
             }
-            if (ballerinaFieldName == null) {
+        }
+        if (ballerinaFieldName == null) {
+            if (((RecordType) streamConstraint).isSealed()) {
                 throw new ApplicationError("No mapping field found for SQL table column '" + columnName + "'"
                         + " in the record type '" + streamConstraint.getName() + "'");
+            } else {
+                ballerinaType = getDefaultBallerinaType(sqlType);
+                ballerinaFieldName = columnName;
             }
-        } else {
-            ballerinaType = getDefaultBallerinaType(sqlType);
-            ballerinaFieldName = columnName;
         }
         return new ColumnDefinition(columnName, ballerinaFieldName, sqlType, sqlTypeName, ballerinaType, isNullable);
-
     }
 
     private static boolean isValidFieldConstraint(int sqlType, Type type) {

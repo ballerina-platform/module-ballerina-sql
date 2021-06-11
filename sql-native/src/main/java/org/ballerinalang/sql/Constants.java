@@ -173,6 +173,7 @@ public final class Constants {
         public static final String OPTIONAL_DECIMAL = "decimal?";
         public static final String DECIMAL_TYPE = "decimal";
         public static final String OPTIONAL_BYTE = "byte[]?";
+        public static final String BYTE_ARRAY_TYPE = "byte[]";
     }
 
     /**
