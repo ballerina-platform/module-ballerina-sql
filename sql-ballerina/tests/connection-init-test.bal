@@ -56,7 +56,7 @@ function testConnectionAfterClose() returns error? {
     stream<record{}, error?> streamData = testDB->query("SELECT * FROM Customers");
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
-    if (data is ApplicationError) {
+    if data is ApplicationError {
         test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " +
             "allowed"));
     } else {
@@ -74,7 +74,7 @@ function testStreamNextAfterClose() returns error? {
     check streamData.close();
     record {|record {} value;|}?|error data = iterator.next();
     test:assertTrue(data is error);
-    if (data is ApplicationError) {
+    if data is ApplicationError {
         test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " +
         "on the stream."));
     } else {
@@ -89,7 +89,7 @@ function testStreamNextAfterClose() returns error? {
 function testConnectionInvalidUrl() returns error? {
     string invalidUrl = urlPrefix;
     MockClient|Error dbClient = new (invalidUrl);
-    if (!(dbClient is Error)) {
+    if !(dbClient is Error) {
         check dbClient.close();
         test:assertFail("Invalid does not throw DatabaseError");
     } 
@@ -100,7 +100,7 @@ function testConnectionInvalidUrl() returns error? {
 }
 function testConnectionNoUserPassword() returns error? {
     MockClient|Error dbClient = new (connectDB);
-    if (!(dbClient is Error)) {
+    if !(dbClient is Error) {
         check dbClient.close();
         test:assertFail("No username does not throw DatabaseError");
     } 
@@ -111,7 +111,7 @@ function testConnectionNoUserPassword() returns error? {
 }
 function testConnectionWithValidDriver() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource");
-    if (dbClient is Error) {
+    if dbClient is Error {
         test:assertFail("Valid driver throws DatabaseError");
     } else {
         check dbClient.close();
@@ -124,7 +124,7 @@ function testConnectionWithValidDriver() returns error? {
 function testConnectionWithInvalidDriver() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password,
         "org.hsqldb.jdbc.JDBCDataSourceInvalid");
-    if (!(dbClient is Error)) {
+    if !(dbClient is Error) {
         check dbClient.close();
         test:assertFail("Invalid driver does not throw DatabaseError");
     }
@@ -136,7 +136,7 @@ function testConnectionWithInvalidDriver() returns error? {
 function testConnectionWithDatasourceOptions() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"loginTimeout": 5000});
-    if (dbClient is Error) {
+    if dbClient is Error {
         test:assertFail("Datasource options throws DatabaseError");
     } else {
         check dbClient.close();
@@ -149,7 +149,7 @@ function testConnectionWithDatasourceOptions() returns error? {
 function testConnectionWithDatasourceInvalidProperty() returns error? {
     MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"invalidProperty": 10});
-    if (dbClient is Error) {
+    if dbClient is Error {
         test:assertEquals(dbClient.message(), 
         "Error in SQL connector configuration: Property invalidProperty does not exist on target class org.hsqldb.jdbc.JDBCDataSource");
     } else {
@@ -168,7 +168,7 @@ function testWithConnectionPool() returns error? {
     MockClient dbClient = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
     error? err = dbClient.close();
-    if (err is error) {
+    if err is error {
         test:assertFail("DB connection not created properly.");
     } else {
         test:assertEquals(connectionPool.maxConnectionLifeTime, <decimal> 2000.5);

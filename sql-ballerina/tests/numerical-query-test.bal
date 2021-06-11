@@ -56,7 +56,7 @@ function testQuery() returns error? {
     });
     check dbClient.close();
 
-    if (!(returnData is ())) {
+    if !(returnData is ()) {
         test:assertEquals(returnData["ID"], 1);
         test:assertEquals(returnData["INT_TYPE"], 2147483647);
         test:assertEquals(returnData["BIGINT_TYPE"], 9223372036854774807);

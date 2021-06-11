@@ -54,7 +54,7 @@ function testInsertTable() returns error? {
     
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
     var insertId = result.lastInsertId;
-    if (insertId is int) {
+    if insertId is int {
         test:assertTrue(insertId >= 1, "Last Insert Id is nil.");
     } else {
         test:assertFail("Insert Id should be an integer.");
@@ -84,7 +84,7 @@ function testInsertTableWithGeneratedKeys() returns error? {
     check dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
     var insertId = result.lastInsertId;
-    if (insertId is int) {
+    if insertId is int {
         test:assertTrue(insertId >= 1, "Last Insert Id is nil.");
     } else {
         test:assertFail("Insert Id should be an integer.");
@@ -115,7 +115,7 @@ function testInsertAndSelectTableWithGeneratedKeys() returns error? {
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
     
     string|int? insertedId = result.lastInsertId;
-    if (insertedId is int) {
+    if insertedId is int {
         string query = string `SELECT * from NumericTypes where id = ${insertedId}`;
         stream<record{}, error?> queryResult = dbClient->query(query, NumericType);
 
@@ -142,7 +142,7 @@ function testInsertWithAllNilAndSelectTableWithGeneratedKeys() returns error? {
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     string|int? insertedId = result.lastInsertId;
-    if (insertedId is int) {
+    if insertedId is int {
         string query = string `SELECT * from NumericTypes where id = ${insertedId}`;
         stream<record{}, error?> queryResult = dbClient->query(query, NumericType);
 
@@ -294,7 +294,7 @@ function testInsertTableWithDatabaseError() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     ExecutionResult|Error result = dbClient->execute("Insert into NumericTypesNonExistTable (int_type) values (20)");
 
-    if (result is DatabaseError) {
+    if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypesNonExistTable " + 
                         "(int_type) values (20). user lacks privilege or object not found: NUMERICTYPESNONEXISTTABLE in " + 
                         "statement [Insert into NumericTypesNonExistTable (int_type) values (20)]."));
@@ -317,7 +317,7 @@ function testInsertTableWithDataTypeError() returns error? {
     ExecutionResult|Error result = dbClient->execute("Insert into NumericTypes (int_type) values"
         + " ('This is wrong type')");
 
-    if (result is DatabaseError) {
+    if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " + 
                     "(int_type) values ('This is wrong type'). data exception: invalid character value for cast."),
                     "Error message does not match, actual :'" + result.message() + "'");
@@ -363,7 +363,7 @@ function testErroneousExcuteWithParams() returns error? {
     ParameterizedQuery query = `Insert into NumericTypes (int_type) values (${value})`;
     ExecutionResult|error result = dbClient->execute(query);
     test:assertTrue(result is error);
-    if (result is DatabaseError) {
+    if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " +
                 "(int_type) values ( ? ). incompatible data type in conversion."));
     } else {

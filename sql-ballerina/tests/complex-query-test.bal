@@ -161,7 +161,7 @@ function testToJson() returns error? {
         string_type: "Hello"
     };
     json|error expectedDataJson = expectedData.cloneWithType(json);
-    if (expectedDataJson is json) {
+    if expectedDataJson is json {
         test:assertEquals(retVal, expectedDataJson, "Expected JSON did not match.");
     } else {
         test:assertFail("Error in cloning record to JSON" + expectedDataJson.message());
@@ -298,12 +298,12 @@ function testMultipleRecoredRetrieval() returns error? {
     ResultMap? mixTypesActual = ();
     int counter = 0;
     error? e = streamData.forEach(function (record {} value) {
-        if (value is ResultMap && counter == 0) {
+        if value is ResultMap && counter == 0 {
             mixTypesActual = value;
         }
         counter = counter + 1;
     });
-    if (e is error) {
+    if e is error {
         test:assertFail("Error when iterating through records " + e.message());
     }
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
@@ -469,10 +469,10 @@ function testColumnAlias() returns error? {
     };
     int counter = 0;
     error? e = queryResult.forEach(function (record{} value) {
-        if (value is ResultSetTestAlias) {
+        if value is ResultSetTestAlias {
             test:assertEquals(value, expectedData, "Expected record did not match.");
             counter = counter + 1;
-        } else{
+        } else {
             test:assertFail("Expected data type is ResultSetTestAlias");
         }
     });
@@ -503,12 +503,12 @@ function testQueryRowId() returns error? {
     record{}? mixTypesActual = ();
     int counter = 0;
     error? e = streamData.forEach(function (record {} value) {
-        if (counter == 0) {
+        if counter == 0 {
             mixTypesActual = value;
         }
         counter = counter + 1;
     });
-    if (e is error) {
+    if e is error {
         test:assertFail("Query failed");
     }
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");

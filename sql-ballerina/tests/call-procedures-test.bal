@@ -15,6 +15,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/io;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -256,7 +257,7 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     test:assertTrue(ret is error);
 
-    if (ret is DatabaseError) {
+    if ret is DatabaseError {
         test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
         "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
         "[call SelectNumericDataWithInoutParams( ? )]."));
@@ -457,6 +458,14 @@ function testCreateProcedures6() returns error? {
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());
 }
 
+type Person record {
+    int id;
+    string name;
+    int age;
+    string birthday;
+    string country_code;
+};
+
 @test:Config {
     groups: ["procedures"]
 }
@@ -465,8 +474,8 @@ function testMultipleRecords() returns error? {
         CREATE PROCEDURE FetchMultipleRecords (IN p_country_code VARCHAR(10))
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
-                declare curs cursor for select name, age, birthday from MultipleRecords where country_code = p_country_code;
-                open curs;
+                 declare curs cursor for select * from MultipleRecords where country_code = p_country_code;
+                 open curs;
             END
         `;
 
@@ -476,11 +485,14 @@ function testMultipleRecords() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords(${paraCountryCode})`;
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult result = check dbClient->call(callProcedureQuery);
+    ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
     stream<record {}, Error>? streamData = result.queryResult;
-    if (streamData is stream<record {}, Error>){
-        record {|record {} value;|}? data = check streamData.next();
-        record {}? value = data?.value;
+    if streamData is stream<record {}, Error> {
+        stream<Person, Error> studentStream =
+                        <stream<Person, Error>> streamData;
+        Error? e = studentStream.forEach(function(Person person) {
+            io:println("person details: ", person);
+        });
     }
     test:assertTrue(streamData is (), "streamData is not nil.");
     check result.close();
@@ -507,11 +519,11 @@ isolated function validateProcedureResult(ExecutionResult|Error result, int rowC
     } else {
         test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
-        if (lastId is ()) {
+        if lastId is () {
             test:assertEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
         } else {
             int|string? lastInsertIdVal = result.lastInsertId;
-            if (lastInsertIdVal is int) {
+            if lastInsertIdVal is int {
                 test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
             } else {
                 test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());
