@@ -191,30 +191,6 @@ error? e = resultStream.forEach(function(Student student) {
 });
 ```
 
-Or
-```ballerina
-// Define a close record type to represent the results.
-type Student record {|
-    int id;
-    int age;
-    string name;
-|};
-
-// Select the data from the database table. The query parameters are passed 
-// directly. Similar to the `execute` examples, parameters can be passed as
-// sub types of `sql:TypedValue` as well.
-int id = 10;
-int age = 12;
-sql:ParameterizedQuery query = `SELECT id, age, name FROM students
-                                WHERE id < ${id} AND age > ${age}`;
-stream<Student, sql:Error> resultStream = dbClient->query(query);
-
-// Iterating the returned table.
-error? e = resultStream.forEach(function(Student student) {
-   //Can perform any operations using 'student' and can access any fields in the returned record of type Student.
-});
-```
-
 Defining the return type is optional and you can query the database without providing the result type. Hence, 
 the above sample can be modified as follows with an open record type as the return type. The property name in the open record 
 type will be the same as how the column is defined in the database. 
