@@ -157,19 +157,19 @@ This sample shows three examples to demonstrate the different usages of the `que
 database table and obtain the results. 
 
 This example demonstrates querying data from a table in a database.
-First, a type is created to represent the returned result set. This record can be defined as an open or closed record
+First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
 according to the requirement. If an open record is defined, the returned stream type will include both defined fields
 in the record and additional database columns fetched by the SQL query which are not defined in the record.
 Note the mapping of the database column to the returned record's property is case-insensitive if it is defined in the
 record(i.e., the `ID` column in the result can be mapped to the `id`property in the record). Additional Column names
-added to the returned record as in the SQL query. If the record is defined as close record, only defined fields in the
-record are returned or gives an error. Next, the `SELECT` query is executed via the `query` remote function of the client.
-Once the query is executed, each data record can be retrieved by looping the result set. The `stream`returned by the
-select operation holds a pointer to the actual data in the database and it loads data from the table only when it is
-accessed. This stream can be iterated only once.
+added to the returned record as in the SQL query. If the record is defined as a close record, only defined fields in the
+record are returned or gives an error when additional columns present in the SQL query. Next, the `SELECT` query is executed
+via the `query` remote function of the client. Once the query is executed, each data record can be retrieved by looping 
+the result set. The `stream`returned by the select operation holds a pointer to the actual data in the database and it 
+loads data from the table only when it is accessed. This stream can be iterated only once.
 
 ```ballerina
-// Define a open record type to represent the results.
+// Define an open record type to represent the results.
 type Student record {
     int id;
     int age;
@@ -232,6 +232,7 @@ stream<record{}, sql:Error> resultStream = dbClient->query(query);
 // Iterating the returned table.
 error? e = resultStream.forEach(function(record{} student) {
     //Can perform any operations using the 'student' and can access any fields in the returned record.
+    io:println("Student name: ", student.value["name"]);
 });
 ```
 
