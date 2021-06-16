@@ -245,12 +245,11 @@ result stream will not be closed, and you have to explicitly invoke the `close` 
 stream<record{}, sql:Error> resultStream = 
             dbClient->query("SELECT count(*) as total FROM students");
 
-record {|record {} value;|}|error? result = resultStream.next();
+record {|record {} value;|}? result = check resultStream.next();
 
 if result is record {|record {} value;|} {
     // A valid result is returned.
-} else if result is error {
-    // An error is returned as the result.
+    io:println("total students: ", result.value["total"]);
 } else {
     // Student table must be empty.
 }
