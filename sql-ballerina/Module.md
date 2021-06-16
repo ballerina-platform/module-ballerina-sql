@@ -169,7 +169,7 @@ select operation holds a pointer to the actual data in the database and it loads
 accessed. This stream can be iterated only once.
 
 ```ballerina
-// Define a open record type to represent the results.
+// Define an open record type to represent the results.
 type Student record {
     int id;
     int age;
@@ -232,6 +232,7 @@ stream<record{}, sql:Error> resultStream = dbClient->query(query);
 // Iterating the returned table.
 error? e = resultStream.forEach(function(record{} student) {
     //Can perform any operations using the 'student' and can access any fields in the returned record.
+    io:println("Student name: ", student.value["name"]);
 });
 ```
 
