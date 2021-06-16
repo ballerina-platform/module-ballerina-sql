@@ -266,7 +266,7 @@ the client.
 int age = 23;
 sql:ParameterizedQuery query = `UPDATE students SET name = 'John' 
                                 WHERE age = ${age}`;
-sql:ExecutionResult|sql:Error result = check dbClient->execute(query);
+sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
 #### Deleting Data
@@ -277,7 +277,7 @@ the client.
 ```ballerina
 string name = "John";
 sql:ParameterizedQuery query = `DELETE from students WHERE name = ${name}`;
-sql:ExecutionResult|sql:Error result = check dbClient->execute(query);
+sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
 #### Batch Updating Data
