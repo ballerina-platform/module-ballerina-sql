@@ -29,7 +29,6 @@ configurations {
 }
 
 dependencies {
-
     jacocoRuntime "org.jacoco:org.jacoco.agent:${jacoco.toolVersion}:runtime"
 
     checkstyle project(":build-config:checkstyle")
@@ -51,22 +50,37 @@ tasks.withType(JavaCompile) {
 sourceCompatibility = JavaVersion.VERSION_11
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.6"
 }
 
 test {
     testLogging {
         showStackTraces = true
         showStandardStreams = true
-        events "failed"
+        events "PASSED", "FAILED", "SKIPPED"
         exceptionFormat "full"
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
     }
     jacoco {
         enabled = true
-        destinationFile = file("$buildDir/coverage-reports/jacoco.exec")
-        includeNoLocationClasses = true
+        includeNoLocationClasses = false
         excludes = ['jdk.internal.*']
         useJUnitPlatform()
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
     }
 }
 
