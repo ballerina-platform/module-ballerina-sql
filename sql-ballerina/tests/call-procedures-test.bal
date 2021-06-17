@@ -180,6 +180,42 @@ function testCallWithNumericTypesOutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
+    dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
+}
+function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
+    IntegerValue paraID = new(2);
+    IntegerOutParameter paraInt = new;
+    BigIntOutParameter paraBigInt = new;
+    SmallIntOutParameter paraSmallInt = new;
+    SmallIntOutParameter paraTinyInt = new;
+    BitOutParameter paraBit = new;
+    DecimalOutParameter paraDecimal = new;
+    NumericOutParameter paraNumeric = new;
+    FloatOutParameter paraFloat = new;
+    RealOutParameter paraReal = new;
+    DoubleOutParameter paraDouble = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithOutParams(${paraID}, ${paraInt},
+                        ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
+                        ${paraFloat}, ${paraReal}, ${paraDouble})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    test:assertEquals(paraInt.get(int), 0, "2nd out parameter of procedure did not match.");
+    test:assertEquals(paraBigInt.get(int), 0, "3rd out parameter of procedure did not match.");
+    test:assertEquals(paraSmallInt.get(int), 0, "4th out parameter of procedure did not match.");
+    test:assertEquals(paraTinyInt.get(int), 0, "5th out parameter of procedure did not match.");
+    test:assertEquals(paraBit.get(boolean), false, "6th out parameter of procedure did not match.");
+    test:assertEquals(paraDecimal.get(decimal), (), "7th out parameter of procedure did not match.");
+    test:assertEquals(paraNumeric.get(decimal), (), "8th out parameter of procedure did not match.");
+    test:assertTrue((check paraFloat.get(float)) >= 0.0, "9th out parameter of procedure did not match.");
+    test:assertTrue((check paraReal.get(float)) >= 0.0, "10th out parameter of procedure did not match.");
+    test:assertEquals(paraDouble.get(float), 0.0, "11th out parameter of procedure did not match.");
+}
+
+@test:Config {
+    groups: ["procedures"],
     dependsOn: [testCallWithNumericTypesOutParams,testCreateProcedures4]
 }
 function testCallWithStringTypesInoutParams() returns error? {
