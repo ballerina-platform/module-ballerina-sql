@@ -15,7 +15,6 @@
 
 import ballerina/test;
 import ballerina/time;
-import ballerina/io;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -507,32 +506,26 @@ type Person record {
 }
 function testMultipleRecords() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE FetchMultipleRecords (IN p_country_code VARCHAR(10))
+        CREATE PROCEDURE FetchMultipleRecords ()
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
-                 declare curs cursor for select * from MultipleRecords where country_code = p_country_code;
+                 declare curs cursor with return for select * from MultipleRecords;
                  open curs;
             END
         `;
 
     _ = check createSqlProcedure(createProcedure);
 
-    VarcharValue paraCountryCode = new("US");
-    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords(${paraCountryCode})`;
+    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords()`;
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
+    boolean|Error status = result.getNextQueryResult();
     stream<record {}, Error>? streamData = result.queryResult;
-    if streamData is stream<record {}, Error> {
-        stream<Person, Error> studentStream =
-                        <stream<Person, Error>> streamData;
-        Error? e = studentStream.forEach(function(Person person) {
-            io:println("person details: ", person);
-        });
-    }
-    test:assertTrue(streamData is (), "streamData is not nil.");
     check result.close();
     check dbClient.close();
+    test:assertTrue(streamData is stream<record {}, Error>, "streamData is nil.");
+    test:assertTrue(status is boolean, "streamData is not boolean.");
 }
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {

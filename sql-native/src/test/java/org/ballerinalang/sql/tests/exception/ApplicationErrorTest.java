@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Application Error tests.
+ * ApplicationError class test.
  *
  * @since 0.6.0-beta.2
  */
