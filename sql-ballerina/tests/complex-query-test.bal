@@ -246,6 +246,7 @@ type TestTypeData record {
     string string_type;
     string[] string_array;
     boolean[] boolean_array;
+    json json_type;
 };
 
 @test:Config {
@@ -254,7 +255,7 @@ type TestTypeData record {
 function testComplexWithStructDef() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, "
-        + "boolean_type, string_type, boolean_array, string_array "
+        + "boolean_type, string_type, boolean_array, string_array, json_type "
         + "from MixTypes where row_id =1", TestTypeData);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -268,7 +269,8 @@ function testComplexWithStructDef() returns error? {
         boolean_type: true,
         string_type: "Hello",
         boolean_array: [true, false, true],
-        string_array: ["Hello", "Ballerina"]
+        string_array: ["Hello", "Ballerina"],
+        json_type: [1, 2, 3]
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }

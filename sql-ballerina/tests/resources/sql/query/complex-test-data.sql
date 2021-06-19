@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS MixTypes (
   double_type DOUBLE,
   boolean_type BOOLEAN,
   string_type VARCHAR (50),
+  json_type VARCHAR (50),
   decimal_type DECIMAL(16,4),
   int_array INTEGER ARRAY,
   long_array BIGINT ARRAY,
@@ -96,9 +97,9 @@ CREATE TABLE IF NOT EXISTS MixTypes (
   PRIMARY KEY (row_id)
 );
 
-INSERT INTO MixTypes (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type,
+INSERT INTO MixTypes (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, json_type, decimal_type,
   int_array, long_array, float_array, double_array, boolean_array, string_array)
-VALUES (1, 1, 9223372036854774807, 123.34, 2139095039, TRUE, 'Hello', 342452151425.4556, ARRAY[1, 2, 3],
+VALUES (1, 1, 9223372036854774807, 123.34, 2139095039, TRUE, 'Hello', '[1, 2, 3]', 342452151425.4556, ARRAY[1, 2, 3],
   ARRAY[100000000, 200000000, 300000000], ARRAY[245.23, 5559.49, 8796.123],
   ARRAY[245.23, 5559.49, 8796.123], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina']);
 
