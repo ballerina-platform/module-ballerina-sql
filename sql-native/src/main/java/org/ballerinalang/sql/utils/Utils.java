@@ -82,6 +82,8 @@ import static org.ballerinalang.stdlib.time.util.Constants.ANALOG_GIGA;
  * @since 1.2.0
  */
 public class Utils {
+    private Utils() {
+    }
 
     public static void closeResources(
             TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,

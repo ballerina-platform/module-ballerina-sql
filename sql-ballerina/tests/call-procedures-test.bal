@@ -358,6 +358,27 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
 }
 
 @test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCallWithOtherDataTypesWithOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    ClobOutParameter paraClob = new;
+    VarBinaryOutParameter paraBinary = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob}, ${paraBinary})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    string clobType = "very long text";
+    var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+
+    test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
+    test:assertEquals(paraBinary.get(byte), binaryType, "VarBinary out parameter of procedure did not match.");
+}
+
+@test:Config {
     groups: ["procedures"]
 }
 function testCreateProcedures1() returns error? {
@@ -488,6 +509,22 @@ function testCreateProcedures6() returns error? {
                 SELECT timewithtz_type INTO p_timewithtz_type FROM DateTimeTypes where id = p_id;
                 SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
+
+@test:Config {
+    groups: ["procedures"]
+}
+function testCreateProcedures7() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectOtherDataTypesWithOutParams (IN p_id INT, OUT p_clob_type CLOB,
+                                                OUT p_var_binary_type VARBINARY(27))
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
+                SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());

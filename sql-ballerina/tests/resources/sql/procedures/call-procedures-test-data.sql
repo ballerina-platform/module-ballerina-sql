@@ -12,6 +12,17 @@ CREATE TABLE IF NOT EXISTS StringTypes (
 INSERT INTO StringTypes(id, varchar_type, charmax_type, char_type, charactermax_type, character_type, nvarcharmax_type)
                     VALUES (1, 'test0', 'test1', 'a', 'test2', 'b', 'test3'); 
 
+CREATE TABLE IF NOT EXISTS OtherTypes (
+                            id INT IDENTITY,
+                            clob_type    CLOB,
+                            blob_type    BLOB,
+                            var_binary_type VARBINARY(27),
+                            PRIMARY KEY (id)
+                    );
+
+INSERT INTO OtherTypes(id, clob_type, blob_type, var_binary_type)
+                    VALUES (1, CONVERT('very long text', CLOB), X'77736F322062616C6C6572696E6120626C6F6220746573742E',
+                    X'77736F322062616C6C6572696E612062696E61727920746573742E');
 
 CREATE TABLE IF NOT EXISTS NumericTypes (
                               id INT IDENTITY,

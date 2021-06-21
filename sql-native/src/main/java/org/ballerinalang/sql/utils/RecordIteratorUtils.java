@@ -59,6 +59,8 @@ import static org.ballerinalang.sql.utils.Utils.getString;
  * @since 1.2.0
  */
 public class RecordIteratorUtils {
+    private RecordIteratorUtils() {
+    }
 
     public static Object nextResult(BObject recordIterator) {
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();

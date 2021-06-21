@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.2.0
  */
 public class ConnectionPoolUtils {
+    private ConnectionPoolUtils() {
+    }
 
     public static void initGlobalPoolContainer(BMap<BString, Object> poolConfig) {
         SQLDatasource.putDatasourceContainer(poolConfig, new ConcurrentHashMap<>());
