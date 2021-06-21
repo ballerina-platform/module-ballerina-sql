@@ -536,6 +536,8 @@ type ArrayRecord record {
     time:TimeOfDay?[]? time_array;
     time:Civil?[]? datetime_array;
     time:Civil?[]? timestamp_array;
+    time:TimeOfDay?[]? time_tz_array;
+    time:Civil?[]? timestamp_tz_array;
     byte[]?[]? blob_array;
 };
 
@@ -545,7 +547,7 @@ type ArrayRecord record {
 function testGetArrayTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -569,7 +571,9 @@ function testGetArrayTypes() returns error? {
         date_array: [<time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [<time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
-        timestamp_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
+        timestamp_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        time_tz_array: [<time:TimeOfDay>{utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"}, <time:TimeOfDay>{utcOffset: {hours: 4, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+04:30"}],
+        timestamp_tz_array: [<time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
@@ -580,7 +584,7 @@ function testGetArrayTypes() returns error? {
 function testGetArrayTypes2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array from ArrayTypes2 WHERE row_id = 2", ArrayRecord);
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2", ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -603,7 +607,9 @@ function testGetArrayTypes2() returns error? {
         date_array: [null, null],
         time_array: [null, null],
         datetime_array: [null, null],
-        timestamp_array: [null, null]
+        timestamp_array: [null, null],
+        time_tz_array: [null, null],
+        timestamp_tz_array: [null, null]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
@@ -614,7 +620,7 @@ function testGetArrayTypes2() returns error? {
 function testGetArrayTypes3() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array from ArrayTypes2 WHERE row_id = 3`, ArrayRecord);
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 3`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -638,7 +644,9 @@ function testGetArrayTypes3() returns error? {
         date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
-        timestamp_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}]
+        timestamp_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        time_tz_array: [null, <time:TimeOfDay>{utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"}, <time:TimeOfDay>{utcOffset: {hours: 4, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+04:30"}],
+        timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
@@ -649,7 +657,7 @@ function testGetArrayTypes3() returns error? {
 function testGetArrayTypes4() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array from ArrayTypes2 WHERE row_id = 4`, ArrayRecord);
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 4`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -672,7 +680,9 @@ function testGetArrayTypes4() returns error? {
         date_array: (),
         time_array: (),
         datetime_array: (),
-        timestamp_array: ()
+        timestamp_array: (),
+        time_tz_array: (),
+        timestamp_tz_array: ()
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
