@@ -532,6 +532,7 @@ type ArrayRecord record {
     string?[]? char_array;
     string?[]? nvarchar_array;
     boolean?[]? boolean_array;
+    byte[]?[]? bit_array;
     time:Date?[]? date_array;
     time:TimeOfDay?[]? time_array;
     time:Civil?[]? datetime_array;
@@ -547,7 +548,7 @@ type ArrayRecord record {
 function testGetArrayTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -568,6 +569,7 @@ function testGetArrayTypes() returns error? {
         char_array: ["Hello          ", "Ballerina      "],
         nvarchar_array: ["Hello", "Ballerina"],
         boolean_array: [true, false, true],
+        bit_array: [<byte[]>[32], <byte[]>[96], <byte[]>[128]],
         date_array: [<time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [<time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
@@ -584,7 +586,7 @@ function testGetArrayTypes() returns error? {
 function testGetArrayTypes2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2", ArrayRecord);
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2", ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -604,6 +606,7 @@ function testGetArrayTypes2() returns error? {
         char_array: [null, null],
         nvarchar_array: [null, null],
         boolean_array: [null, null],
+        bit_array: [null, null],
         date_array: [null, null],
         time_array: [null, null],
         datetime_array: [null, null],
@@ -620,7 +623,7 @@ function testGetArrayTypes2() returns error? {
 function testGetArrayTypes3() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 3`, ArrayRecord);
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 3`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -641,6 +644,7 @@ function testGetArrayTypes3() returns error? {
         char_array: [null, "Hello          ", "Ballerina      "],
         nvarchar_array: [null, "Hello", "Ballerina"],
         boolean_array: [null, true, false, true],
+         bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
         date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
@@ -657,7 +661,7 @@ function testGetArrayTypes3() returns error? {
 function testGetArrayTypes4() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 4`, ArrayRecord);
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 4`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -677,6 +681,7 @@ function testGetArrayTypes4() returns error? {
         char_array: (),
         nvarchar_array: (),
         boolean_array: (),
+        bit_array: (),
         date_array: (),
         time_array: (),
         datetime_array: (),

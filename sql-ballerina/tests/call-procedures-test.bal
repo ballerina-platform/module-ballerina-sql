@@ -310,12 +310,13 @@ function testCallWithDateTimeTypesWithOutParams() returns error? {
     IntegerValue paraID = new(1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
+    DateTimeOutParameter paraDateTime = new;
     TimeWithTimezoneOutParameter paraTimeWithTz = new;
     TimestampOutParameter paraTimestamp = new;
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
-                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -334,12 +335,13 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     IntegerValue paraID = new(1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
+    DateTimeOutParameter paraDateTime = new;
     TimeWithTimezoneOutParameter paraTimeWithTz = new;
     TimestampOutParameter paraTimestamp = new;
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
-                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -367,24 +369,31 @@ type StringArray string[];
 }
 function testCallWithOtherDataTypesWithOutParams() returns error? {
     IntegerValue paraID = new(1);
+    BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
-    VarBinaryOutParameter paraBinary = new;
+    VarBinaryOutParameter paraVarBinary = new;
     ArrayOutParameter paraIntArray = new;
     ArrayOutParameter paraStringArray = new;
+    BooleanOutParameter paraBoolean = new;
+    BinaryOutParameter paraBinary = new;
+    TextOutParameter paraText = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
-                                    ${paraBinary}, ${paraIntArray}, ${paraStringArray})`;
+                                    ${paraVarBinary}, ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
     string clobType = "very long text";
-    var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    var varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
     int[] int_array = [1, 2, 3];
     string[] string_array = ["Hello", "Ballerina"];
+    var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
 
     test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
-    test:assertEquals(paraBinary.get(byte), binaryType, "VarBinary out parameter of procedure did not match.");
+    test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
+    test:assertEquals(paraBinary.get(byte), binaryType, "Binary out parameter of procedure did not match.");
+    test:assertEquals(paraBoolean.get(boolean), true, "Boolean out parameter of procedure did not match.");
     test:assertEquals(paraIntArray.get(IntArray), int_array, "Int array out parameter of procedure did not match.");
     test:assertEquals(paraStringArray.get(StringArray), string_array, "String array out parameter of procedure did not match.");
 }
@@ -402,13 +411,17 @@ distinct class RandomOutParameter {
 }
 function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     IntegerValue paraID = new(1);
+    BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
-    VarBinaryOutParameter paraBinary = new;
+    VarBinaryOutParameter paraVarBinary = new;
     ArrayOutParameter paraIntArray = new;
     RandomOutParameter paraStringArray = new;
+    BooleanOutParameter paraBoolean = new;
+    BinaryOutParameter paraBinary = new;
+    TextOutParameter paraText = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
-                                    ${paraBinary} , ${paraIntArray}, ${paraStringArray})`;
+                                    ${paraVarBinary} , ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
 
     ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     test:assertTrue(ret is error);
@@ -535,13 +548,14 @@ function testCreateProcedures5() returns error? {
 }
 function testCreateProcedures6() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE SelectDateTimeDataWithOutParams (IN p_id INT, OUT p_date_type DATE, OUT p_time_type TIME,
+        CREATE PROCEDURE SelectDateTimeDataWithOutParams (IN p_id INT, OUT p_date_type DATE, OUT p_time_type TIME, OUT p_datetime_type DATETIME,
                                                 OUT p_timewithtz_type TIME WITH TIME ZONE,  OUT p_timestamp_type TIMESTAMP,
                                                 OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
                 SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
                 SELECT time_type INTO p_time_type FROM DateTimeTypes where id = p_id;
+                SELECT datetime_type INTO p_datetime_type FROM DateTimeTypes where id = p_id;
                 SELECT timewithtz_type INTO p_timewithtz_type FROM DateTimeTypes where id = p_id;
                 SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
@@ -557,11 +571,14 @@ function testCreateProcedures7() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectOtherDataTypesWithOutParams (IN p_id INT, OUT p_clob_type CLOB,
                                                 OUT p_var_binary_type VARBINARY(27), OUT p_int_array_type INT ARRAY,
-                                                OUT p_string_array_type VARCHAR(50) ARRAY)
+                                                OUT p_string_array_type VARCHAR(50) ARRAY, OUT p_binary_type BINARY(27),
+                                                OUT p_boolean_type BOOLEAN)
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
                 SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
                 SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
+                SELECT binary_type INTO p_binary_type FROM OtherTypes where id = p_id;
+                SELECT boolean_type INTO p_boolean_type FROM OtherTypes where id = p_id;
                 SELECT int_array_type INTO p_int_array_type FROM OtherTypes where id = p_id;
                 SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
             END
