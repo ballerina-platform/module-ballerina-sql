@@ -15,6 +15,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/jballerina.java;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -357,6 +358,9 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
 }
 
+type IntArray int[];
+type StringArray string[];
+
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures7]
@@ -365,17 +369,49 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
     IntegerValue paraID = new(1);
     ClobOutParameter paraClob = new;
     VarBinaryOutParameter paraBinary = new;
+    ArrayOutParameter paraIntArray = new;
+    ArrayOutParameter paraStringArray = new;
 
-    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob}, ${paraBinary})`;
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
+                                    ${paraBinary}, ${paraIntArray}, ${paraStringArray})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
     string clobType = "very long text";
     var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    int[] int_array = [1, 2, 3];
+    string[] string_array = ["Hello", "Ballerina"];
 
     test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
     test:assertEquals(paraBinary.get(byte), binaryType, "VarBinary out parameter of procedure did not match.");
+    test:assertEquals(paraIntArray.get(IntArray), int_array, "Int array out parameter of procedure did not match.");
+    test:assertEquals(paraStringArray.get(StringArray), string_array, "String array out parameter of procedure did not match.");
+}
+
+distinct class RandomOutParameter {
+    *OutParameter;
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "org.ballerinalang.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    ClobOutParameter paraClob = new;
+    VarBinaryOutParameter paraBinary = new;
+    ArrayOutParameter paraIntArray = new;
+    RandomOutParameter paraStringArray = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
+                                    ${paraBinary} , ${paraIntArray}, ${paraStringArray})`;
+
+    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    test:assertTrue(ret is error);
 }
 
 @test:Config {
@@ -520,11 +556,14 @@ function testCreateProcedures6() returns error? {
 function testCreateProcedures7() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectOtherDataTypesWithOutParams (IN p_id INT, OUT p_clob_type CLOB,
-                                                OUT p_var_binary_type VARBINARY(27))
+                                                OUT p_var_binary_type VARBINARY(27), OUT p_int_array_type INT ARRAY,
+                                                OUT p_string_array_type VARCHAR(50) ARRAY)
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
                 SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
                 SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
+                SELECT int_array_type INTO p_int_array_type FROM OtherTypes where id = p_id;
+                SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());

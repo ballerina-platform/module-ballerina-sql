@@ -17,12 +17,14 @@ CREATE TABLE IF NOT EXISTS OtherTypes (
                             clob_type    CLOB,
                             blob_type    BLOB,
                             var_binary_type VARBINARY(27),
+                            int_array_type INT ARRAY,
+                            string_array_type VARCHAR(50) ARRAY,
                             PRIMARY KEY (id)
                     );
 
-INSERT INTO OtherTypes(id, clob_type, blob_type, var_binary_type)
+INSERT INTO OtherTypes(id, clob_type, blob_type, var_binary_type, int_array_type, string_array_type)
                     VALUES (1, CONVERT('very long text', CLOB), X'77736F322062616C6C6572696E6120626C6F6220746573742E',
-                    X'77736F322062616C6C6572696E612062696E61727920746573742E');
+                    X'77736F322062616C6C6572696E612062696E61727920746573742E', ARRAY [1, 2, 3], ARRAY['Hello', 'Ballerina']);
 
 CREATE TABLE IF NOT EXISTS NumericTypes (
                               id INT IDENTITY,
