@@ -102,9 +102,9 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() returns error? {
     // return an error
     int i = 0;
     while(i < 4) {
-        if (returnArray[i][0] is anydata) {
+        if returnArray[i][0] is anydata {
             test:assertEquals(returnArray[i][0], 1);
-            if (returnArray[i][1] is anydata) {
+            if returnArray[i][1] is anydata {
                test:assertEquals(returnArray[i][1], 1);
             } else {
                test:assertFail("Expected second element of array an integer" + (<error> returnArray[i][1]).message());
@@ -464,8 +464,8 @@ function testStopClientUsingGlobalPool() returns error? {
 function testLocalConnectionPoolShutDown() {
     int|error count1 = getOpenConnectionCount(poolDB_1);
     int|error count2 = getOpenConnectionCount(poolDB_2);
-    if (count1 is error) {
-        if (count2 is error) {
+    if count1 is error {
+        if count2 is error {
             test:assertEquals(count1.message(), count2.message());
         } else {
             test:assertFail("Expected invalid count of connection pool" + count2.toString());
@@ -512,7 +512,7 @@ function testGlobalConnectionPoolConcurrentHelper2(string url) returns (int|erro
 
 isolated function getCombinedReturnValue([stream<record{}, error?>, stream<record{}, error?>]|error queryResult) returns
  (int|error)[]|error {
-    if (queryResult is error) {
+    if queryResult is error {
         return queryResult;
     } else {
         stream<record{}, error?> x;
@@ -528,9 +528,9 @@ isolated function getCombinedReturnValue([stream<record{}, error?>, stream<recor
 isolated function getIntVariableValue(stream<record{}, error?> queryResult) returns int|error {
     int count = -1;
     record {|record {} value;|}? data = check queryResult.next();
-    if (data is record {|record {} value;|}) {
+    if data is record {|record {} value;|} {
         record {} variable = data.value;
-        if (variable is Variable) {
+        if variable is Variable {
             return 'int:fromString(variable.value);
         }
     }
@@ -587,9 +587,9 @@ function drainGlobalPool(string url) returns error? {
 isolated function getReturnValue(stream<record{}, error?> queryResult) returns int|error {
     int count = -1;
     record {|record {} value;|}? data = check queryResult.next();
-    if (data is record {|record {} value;|}) {
+    if data is record {|record {} value;|} {
         record {} value = data.value;
-        if (value is Result) {
+        if value is Result {
             count = value.val;
         }
     }

@@ -12,6 +12,22 @@ CREATE TABLE IF NOT EXISTS StringTypes (
 INSERT INTO StringTypes(id, varchar_type, charmax_type, char_type, charactermax_type, character_type, nvarcharmax_type)
                     VALUES (1, 'test0', 'test1', 'a', 'test2', 'b', 'test3'); 
 
+CREATE TABLE IF NOT EXISTS OtherTypes (
+                            id INT IDENTITY,
+                            clob_type    CLOB,
+                            blob_type    BLOB,
+                            var_binary_type VARBINARY(27),
+                            int_array_type INT ARRAY,
+                            string_array_type VARCHAR(50) ARRAY,
+                            binary_type  BINARY(27),
+                            boolean_type BOOLEAN,
+                            PRIMARY KEY (id)
+                    );
+
+INSERT INTO OtherTypes(id, clob_type, blob_type, var_binary_type, int_array_type, string_array_type, binary_type, boolean_type)
+                    VALUES (1, CONVERT('very long text', CLOB), X'77736F322062616C6C6572696E6120626C6F6220746573742E',
+                    X'77736F322062616C6C6572696E612062696E61727920746573742E', ARRAY [1, 2, 3], ARRAY['Hello', 'Ballerina'],
+                    X'77736F322062616C6C6572696E612062696E61727920746573742E', TRUE);
 
 CREATE TABLE IF NOT EXISTS NumericTypes (
                               id INT IDENTITY,
@@ -47,14 +63,15 @@ CREATE TABLE IF NOT EXISTS DateTimeTypes (
                              id INT IDENTITY,
                              date_type DATE,
                              time_type TIME,
+                             datetime_type DATETIME,
                              timewithtz_type TIME WITH TIME ZONE,
                              timestamp_type TIMESTAMP,
                              timestampwithtz_type TIMESTAMP WITH TIME ZONE,
                              PRIMARY KEY (id)
                     );
 
-INSERT INTO DateTimeTypes (id, date_type, time_type, timestamp_type, timewithtz_type, timestampwithtz_type)
- VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00');
+INSERT INTO DateTimeTypes (id, date_type, time_type, datetime_type, timestamp_type, timewithtz_type, timestampwithtz_type)
+ VALUES (1, '2017-05-23', '14:15:23', '2017-01-25 16:33:55', '2017-01-25 16:33:55', '16:33:55+6:30', '2017-01-25 16:33:55-8:00');
 
 CREATE TABLE IF NOT EXISTS MultipleRecords (
                             id INT IDENTITY,

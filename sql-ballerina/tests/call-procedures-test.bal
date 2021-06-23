@@ -15,6 +15,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/jballerina.java;
 
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
@@ -179,6 +180,42 @@ function testCallWithNumericTypesOutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
+    dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
+}
+function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
+    IntegerValue paraID = new(2);
+    IntegerOutParameter paraInt = new;
+    BigIntOutParameter paraBigInt = new;
+    SmallIntOutParameter paraSmallInt = new;
+    SmallIntOutParameter paraTinyInt = new;
+    BitOutParameter paraBit = new;
+    DecimalOutParameter paraDecimal = new;
+    NumericOutParameter paraNumeric = new;
+    FloatOutParameter paraFloat = new;
+    RealOutParameter paraReal = new;
+    DoubleOutParameter paraDouble = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithOutParams(${paraID}, ${paraInt},
+                        ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
+                        ${paraFloat}, ${paraReal}, ${paraDouble})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    test:assertEquals(paraInt.get(int), 0, "2nd out parameter of procedure did not match.");
+    test:assertEquals(paraBigInt.get(int), 0, "3rd out parameter of procedure did not match.");
+    test:assertEquals(paraSmallInt.get(int), 0, "4th out parameter of procedure did not match.");
+    test:assertEquals(paraTinyInt.get(int), 0, "5th out parameter of procedure did not match.");
+    test:assertEquals(paraBit.get(boolean), false, "6th out parameter of procedure did not match.");
+    test:assertEquals(paraDecimal.get(decimal), (), "7th out parameter of procedure did not match.");
+    test:assertEquals(paraNumeric.get(decimal), (), "8th out parameter of procedure did not match.");
+    test:assertTrue((check paraFloat.get(float)) >= 0.0, "9th out parameter of procedure did not match.");
+    test:assertTrue((check paraReal.get(float)) >= 0.0, "10th out parameter of procedure did not match.");
+    test:assertEquals(paraDouble.get(float), 0.0, "11th out parameter of procedure did not match.");
+}
+
+@test:Config {
+    groups: ["procedures"],
     dependsOn: [testCallWithNumericTypesOutParams,testCreateProcedures4]
 }
 function testCallWithStringTypesInoutParams() returns error? {
@@ -256,7 +293,7 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     test:assertTrue(ret is error);
 
-    if (ret is DatabaseError) {
+    if ret is DatabaseError {
         test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
         "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
         "[call SelectNumericDataWithInoutParams( ? )]."));
@@ -273,12 +310,13 @@ function testCallWithDateTimeTypesWithOutParams() returns error? {
     IntegerValue paraID = new(1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
+    DateTimeOutParameter paraDateTime = new;
     TimeWithTimezoneOutParameter paraTimeWithTz = new;
     TimestampOutParameter paraTimestamp = new;
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
-                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -297,12 +335,13 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     IntegerValue paraID = new(1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
+    DateTimeOutParameter paraDateTime = new;
     TimeWithTimezoneOutParameter paraTimeWithTz = new;
     TimestampOutParameter paraTimestamp = new;
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
-                                    ${paraTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -319,6 +358,73 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimeWithTz.get(time:TimeOfDay), timeWithTzRecord, "Time with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
+}
+
+type IntArray int[];
+type StringArray string[];
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCallWithOtherDataTypesWithOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    BlobOutParameter paraBlob = new;
+    ClobOutParameter paraClob = new;
+    VarBinaryOutParameter paraVarBinary = new;
+    ArrayOutParameter paraIntArray = new;
+    ArrayOutParameter paraStringArray = new;
+    BooleanOutParameter paraBoolean = new;
+    BinaryOutParameter paraBinary = new;
+    TextOutParameter paraText = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
+                                    ${paraVarBinary}, ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    string clobType = "very long text";
+    var varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    int[] int_array = [1, 2, 3];
+    string[] string_array = ["Hello", "Ballerina"];
+    var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+
+    test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
+    test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
+    test:assertEquals(paraBinary.get(byte), binaryType, "Binary out parameter of procedure did not match.");
+    test:assertEquals(paraBoolean.get(boolean), true, "Boolean out parameter of procedure did not match.");
+    test:assertEquals(paraIntArray.get(IntArray), int_array, "Int array out parameter of procedure did not match.");
+    test:assertEquals(paraStringArray.get(StringArray), string_array, "String array out parameter of procedure did not match.");
+}
+
+distinct class RandomOutParameter {
+    *OutParameter;
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "org.ballerinalang.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    BlobOutParameter paraBlob = new;
+    ClobOutParameter paraClob = new;
+    VarBinaryOutParameter paraVarBinary = new;
+    ArrayOutParameter paraIntArray = new;
+    RandomOutParameter paraStringArray = new;
+    BooleanOutParameter paraBoolean = new;
+    BinaryOutParameter paraBinary = new;
+    TextOutParameter paraText = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
+                                    ${paraVarBinary} , ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
+
+    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    test:assertTrue(ret is error);
 }
 
 @test:Config {
@@ -442,13 +548,14 @@ function testCreateProcedures5() returns error? {
 }
 function testCreateProcedures6() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE SelectDateTimeDataWithOutParams (IN p_id INT, OUT p_date_type DATE, OUT p_time_type TIME,
+        CREATE PROCEDURE SelectDateTimeDataWithOutParams (IN p_id INT, OUT p_date_type DATE, OUT p_time_type TIME, OUT p_datetime_type DATETIME,
                                                 OUT p_timewithtz_type TIME WITH TIME ZONE,  OUT p_timestamp_type TIMESTAMP,
                                                 OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
                 SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
                 SELECT time_type INTO p_time_type FROM DateTimeTypes where id = p_id;
+                SELECT datetime_type INTO p_datetime_type FROM DateTimeTypes where id = p_id;
                 SELECT timewithtz_type INTO p_timewithtz_type FROM DateTimeTypes where id = p_id;
                 SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
@@ -460,31 +567,58 @@ function testCreateProcedures6() returns error? {
 @test:Config {
     groups: ["procedures"]
 }
+function testCreateProcedures7() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectOtherDataTypesWithOutParams (IN p_id INT, OUT p_clob_type CLOB,
+                                                OUT p_var_binary_type VARBINARY(27), OUT p_int_array_type INT ARRAY,
+                                                OUT p_string_array_type VARCHAR(50) ARRAY, OUT p_binary_type BINARY(27),
+                                                OUT p_boolean_type BOOLEAN)
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
+                SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
+                SELECT binary_type INTO p_binary_type FROM OtherTypes where id = p_id;
+                SELECT boolean_type INTO p_boolean_type FROM OtherTypes where id = p_id;
+                SELECT int_array_type INTO p_int_array_type FROM OtherTypes where id = p_id;
+                SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
+
+type Person record {
+    int id;
+    string name;
+    int age;
+    string birthday;
+    string country_code;
+};
+
+@test:Config {
+    groups: ["procedures"]
+}
 function testMultipleRecords() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE FetchMultipleRecords (IN p_country_code VARCHAR(10))
+        CREATE PROCEDURE FetchMultipleRecords ()
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
-                declare curs cursor for select name, age, birthday from MultipleRecords where country_code = p_country_code;
-                open curs;
+                 declare curs cursor with return for select * from MultipleRecords;
+                 open curs;
             END
         `;
 
     _ = check createSqlProcedure(createProcedure);
 
-    VarcharValue paraCountryCode = new("US");
-    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords(${paraCountryCode})`;
+    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords()`;
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult result = check dbClient->call(callProcedureQuery);
+    ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
+    boolean|Error status = result.getNextQueryResult();
     stream<record {}, Error>? streamData = result.queryResult;
-    if (streamData is stream<record {}, Error>){
-        record {|record {} value;|}? data = check streamData.next();
-        record {}? value = data?.value;
-    }
-    test:assertTrue(streamData is (), "streamData is not nil.");
     check result.close();
     check dbClient.close();
+    test:assertTrue(streamData is stream<record {}, Error>, "streamData is nil.");
+    test:assertTrue(status is boolean, "streamData is not boolean.");
 }
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
@@ -507,11 +641,11 @@ isolated function validateProcedureResult(ExecutionResult|Error result, int rowC
     } else {
         test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
-        if (lastId is ()) {
+        if lastId is () {
             test:assertEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
         } else {
             int|string? lastInsertIdVal = result.lastInsertId;
-            if (lastInsertIdVal is int) {
+            if lastInsertIdVal is int {
                 test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
             } else {
                 test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());

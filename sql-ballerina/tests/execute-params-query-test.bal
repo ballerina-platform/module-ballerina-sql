@@ -399,6 +399,7 @@ function insertIntoArrayTable3() returns error? {
     NVarcharArrayValue paraNVarchar = new (["NVarchar value", "Varying NChar"]);
     string[] paraString = ["Hello", "Ballerina"];
     BooleanArrayValue paraBool = new ([true, false]);
+    BitArrayValue paraBit = new ([true, false]);
     DateArrayValue paraDate = new (["2021-12-18", "2021-12-19"]);
     time:TimeOfDay time = {hour: 20, minute: 8, second: 12};
     TimeArrayValue paraTime = new ([time, time]);
@@ -583,11 +584,11 @@ returns ExecutionResult | error {
 isolated function validateResult(ExecutionResult result, int rowCount, int? lastId = ()) {
     test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
-    if (lastId is ()) {
+    if lastId is () {
         test:assertEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
     } else {
         int|string? lastInsertIdVal = result.lastInsertId;
-        if (lastInsertIdVal is int) {
+        if lastInsertIdVal is int {
             test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
         } else {
             test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -15,24 +15,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.ballerinalang.sql.utils;
 
-import io.ballerina.runtime.api.values.BMap;
-import io.ballerina.runtime.api.values.BString;
-import org.ballerinalang.sql.datasource.SQLDatasource;
+package org.ballerinalang.sql.tests.exception;
 
-import java.util.concurrent.ConcurrentHashMap;
+import org.ballerinalang.sql.exception.ApplicationError;
+import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This is the util class for handing connection pool.
+ * ApplicationError class test.
  *
- * @since 1.2.0
+ * @since 0.6.0-beta.2
  */
-public class ConnectionPoolUtils {
-    private ConnectionPoolUtils() {
-    }
-
-    public static void initGlobalPoolContainer(BMap<BString, Object> poolConfig) {
-        SQLDatasource.putDatasourceContainer(poolConfig, new ConcurrentHashMap<>());
+public class ApplicationErrorTest {
+    @Test
+    void applicationErrorTest1() {
+        ApplicationError error = new ApplicationError("Application Error", new SQLException("new SQL Exception"));
+        assertEquals(error.getMessage(), "Application Error");
     }
 }

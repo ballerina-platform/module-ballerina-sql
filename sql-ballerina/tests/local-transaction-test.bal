@@ -126,12 +126,12 @@ function testTransactionRollbackWithRollback() returns error? {
         transInfo = transactions:info();
         var e1 = dbClient->execute("Insert into Customers (firstName,lastName,registrationID," +
                 "creditLimit,country) values ('James', 'Clerk', 211, 5000.75, 'USA')");
-        if (e1 is error){
+        if e1 is error {
             rollback;
         } else {
             var e2 = dbClient->execute("Insert into Customers2 (firstName,lastName,registrationID," +
                         "creditLimit,country) values ('James', 'Clerk', 211, 5000.75, 'USA')");
-            if (e2 is error){
+            if e2 is error {
                 rollback;
                 stmtAfterFailureExecuted  = true;
             } else {
@@ -226,7 +226,7 @@ function testTransactionAbort() returns error?  {
         res = check dbClient->execute("Insert into Customers " +
         "(firstName,lastName,registrationID,creditLimit,country) values ('James', 'Clerk', 220, 5000.75, 'USA')");
         int i = 0;
-        if (i == 0) {
+        if i == 0 {
             rollback;
         } else {
             check commit;
@@ -255,7 +255,7 @@ function testTransactionErrorPanic() returns error? {
     int catchValue = 0;
     var ret = trap testTransactionErrorPanicHelper(dbClient);
     io:println(ret);
-    if (ret is error) {
+    if ret is error {
         catchValue = -1;
     }
     //Check whether the update action is performed.
@@ -274,7 +274,7 @@ function testTransactionErrorPanicHelper(MockClient dbClient) returns error? {
         var e1 = check dbClient->execute("Insert into Customers (firstName,lastName," +
                               "registrationID,creditLimit,country) values ('James', 'Clerk', 260, 5000.75, 'USA')");
         int i = 0;
-        if (i == 0) {
+        if i == 0 {
             error e = error("error");
             panic e;
         } else {
@@ -299,7 +299,7 @@ function testTransactionErrorPanicAndTrap() returns error? {
         var e1 = check dbClient->execute("Insert into Customers (firstName,lastName,registrationID," +
                  "creditLimit,country) values ('James', 'Clerk', 250, 5000.75, 'USA')");
         var ret = trap testTransactionErrorPanicAndTrapHelper(0);
-        if (ret is error) {
+        if ret is error {
             catchValue = -1;
         }
         check commit;
@@ -314,7 +314,7 @@ function testTransactionErrorPanicAndTrap() returns error? {
 }
 
 isolated function testTransactionErrorPanicAndTrapHelper(int i) {
-    if (i == 0) {
+    if i == 0 {
         error err = error("error");
         panic err;
     }
@@ -389,7 +389,7 @@ function testLocalTransactionFailed() returns error? {
     string a = "beforetx";
 
     var ret = trap testLocalTransactionFailedHelper(dbClient);
-    if (ret is string) {
+    if ret is string {
         a += ret;
     } else {
         a += ret.message() + " trapped";
@@ -446,7 +446,7 @@ function testLocalTransactionSuccessWithFailed() returns error? {
 
     string a = "beforetx";
     string | error ret = trap testLocalTransactionSuccessWithFailedHelper(a, dbClient);
-    if (ret is string) {
+    if ret is string {
         a = ret;
     } else {
         a = a + "trapped";
@@ -466,7 +466,7 @@ isolated function testLocalTransactionSuccessWithFailedHelper(string status,Mock
         a = a + " inTrx";
         var e1 = check dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country)" +
                                     " values ('James', 'Clerk', 222, 5000.75, 'USA')");
-        if (i == 3) {
+        if i == 3 {
             var e2 = check dbClient->execute("Insert into Customers (firstName,lastName,registrationID,creditLimit,country) " +
                                         "values ('Anne', 'Clerk', 222, 5000.75, 'USA')");
         } else {

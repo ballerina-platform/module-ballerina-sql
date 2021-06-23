@@ -179,7 +179,7 @@ function queryTypeVarCharIntegerParam() returns error? {
     decimal decimalVal = 25.45;
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertNotEquals(returnData, ());
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Query returns ()");
     } else {
         test:assertEquals(returnData["INT_TYPE"], 1);
@@ -285,7 +285,7 @@ function queryTypeDoubleIntParam() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
 
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 10);
@@ -340,7 +340,7 @@ function queryTypeNumericIntParam() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
 
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 10);
@@ -496,7 +496,7 @@ function queryDateStringInvalidParam() {
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if (result is ApplicationError) {
+    if result is ApplicationError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
                 "DateTimeTypes WHERE date_type =  ? . java.lang.IllegalArgumentException"));
     } else {
@@ -543,7 +543,7 @@ function queryTimeStringInvalidParam() {
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if (result is DatabaseError) {
+    if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
         "WHERE time_type =  ? . data exception: invalid datetime format."));
     } else {
@@ -589,7 +589,7 @@ function queryTimestampStringInvalidParam() {
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if (result is DatabaseError) {
+    if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
         "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
     } else {
@@ -693,7 +693,7 @@ function queryArrayBasicParams() returns error? {
                                 AND string_array = ${paraString}
                                 AND boolean_array = ${paraBool}`;
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
-    if (returnData is record{}) {
+    if returnData is record{} {
         test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
         test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
         test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
@@ -716,7 +716,7 @@ function queryArrayBasicNullParams() returns error? {
          AND boolean_array is null`;
 
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
-    if (returnData is record{}) {
+    if returnData is record{} {
         test:assertEquals(returnData["INT_ARRAY"], ());
         test:assertEquals(returnData["LONG_ARRAY"], ());
         test:assertEquals(returnData["FLOAT_ARRAY"], ());
@@ -732,7 +732,7 @@ function queryArrayBasicNullParams() returns error? {
 
 isolated function validateDataTableResult(record{}? returnData) {
     decimal decimalVal = 23.45;
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Empty row returned.");
     } else {
         test:assertEquals(returnData["ROW_ID"], 1);
@@ -747,7 +747,7 @@ isolated function validateDataTableResult(record{}? returnData) {
 }
 
 isolated function validateNumericTableResult(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Empty row returned.");
     } else {
         test:assertEquals(returnData["ID"], 1);
@@ -759,12 +759,12 @@ isolated function validateNumericTableResult(record{}? returnData) {
         test:assertTrue(returnData["REAL_TYPE"] is float);
         test:assertTrue(returnData["DECIMAL_TYPE"] is decimal);
         test:assertTrue(returnData["NUMERIC_TYPE"] is decimal);
-        test:assertTrue(returnData["FLOAT_TYPE"] is float);   
+        test:assertTrue(returnData["FLOAT_TYPE"] is float);
     }
 }
 
 isolated function validateComplexTableResult(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 5);
@@ -774,7 +774,7 @@ isolated function validateComplexTableResult(record{}? returnData) {
 }
 
 isolated function validateDateTimeTypesTableResult(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 7);
@@ -784,7 +784,7 @@ isolated function validateDateTimeTypesTableResult(record{}? returnData) {
 }
 
 isolated function validateEnumTable(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 2);
@@ -794,7 +794,7 @@ isolated function validateEnumTable(record{}? returnData) {
 }
 
 isolated function validateGeoTable(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 2);
@@ -804,7 +804,7 @@ isolated function validateGeoTable(record{}? returnData) {
 }
 
 isolated function validateJsonTable(record{}? returnData) {
-    if (returnData is ()) {
+    if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
         test:assertEquals(returnData.length(), 2);
