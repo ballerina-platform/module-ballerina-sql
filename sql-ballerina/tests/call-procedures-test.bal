@@ -355,6 +355,7 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
 
     test:assertEquals(paraDate.get(time:Date), dateRecord, "Date out parameter of procedure did not match.");
     test:assertEquals(paraTime.get(time:TimeOfDay), timeRecord, "Time out parameter of procedure did not match.");
+    test:assertEquals(paraDateTime.get(time:Civil), timestampRecord, "DateTime out parameter of procedure did not match.");
     test:assertEquals(paraTimeWithTz.get(time:TimeOfDay), timeWithTzRecord, "Time with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
@@ -419,6 +420,12 @@ function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     BooleanOutParameter paraBoolean = new;
     BinaryOutParameter paraBinary = new;
     TextOutParameter paraText = new;
+    NCharOutParameter paraNChar = new;
+    NClobOutParameter paraNClob = new;
+    RowOutParameter paraRowOut = new;
+    RefOutParameter paraRefOut = new;
+    StructOutParameter paraStruct = new;
+    XMLOutParameter paraXml = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
                                     ${paraVarBinary} , ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
