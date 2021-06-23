@@ -210,7 +210,7 @@ function testWithAllParams() returns error? {
 @test:Config {
     groups: ["connection"]
 }
-function isolated testGenerateErrorStream() returns error? {
+isolated function testGenerateErrorStream() returns error? {
     stream <record {}, Error> errorStream = generateApplicationErrorStream("Test generate Error Stream");
     record {}|Error firstElement = errorStream.next();
     test:assertTrue(firstElement is Error);
