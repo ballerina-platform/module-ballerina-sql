@@ -93,6 +93,9 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     private static final ArrayType dateArrayType = TypeCreator.createArrayType(dateRecordType);
 
+    public DefaultResultParameterProcessor() {
+    }
+
     public static DefaultResultParameterProcessor getInstance() {
         if (instance == null) {
             synchronized (lock) {
