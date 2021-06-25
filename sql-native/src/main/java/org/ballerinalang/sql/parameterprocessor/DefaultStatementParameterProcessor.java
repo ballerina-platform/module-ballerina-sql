@@ -80,7 +80,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     private static final Object lock = new Object();
     private static volatile DefaultStatementParameterProcessor instance;
 
-    private DefaultStatementParameterProcessor() {
+    public DefaultStatementParameterProcessor() {
     }
 
     public static DefaultStatementParameterProcessor getInstance() {
