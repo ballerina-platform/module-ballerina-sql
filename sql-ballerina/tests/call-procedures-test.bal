@@ -308,6 +308,18 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     DateValue dateVal = new();
     TimestampValue timestampVal = new();
     DateTimeValue datetimeVal = new();
+    int[] intArr = [1, 2];
+    ArrayValue intArrayVal = new(intArr);
+    string[] strArr = ["Hello", "Ballerina"];
+    ArrayValue strArrayVal = new(strArr);
+    boolean[] booArr = [true, false, true];
+    ArrayValue booArrayVal = new(booArr);
+    float[] floArr = [245.23, 5559.49, 8796.123];
+    ArrayValue floArrayVal = new(floArr);
+    decimal[] decArr = [245, 5559, 8796];
+    ArrayValue decArrayVal = new(decArr);
+    byte[][] byteArr = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
+    ArrayValue byteArrayVal = new(byteArr);
 
     InOutParameter paraVarChar = new(varCharVal);
     InOutParameter paraChar = new(charVal);
@@ -328,11 +340,17 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     InOutParameter paraDate = new(dateVal);
     InOutParameter paraTime = new(timeVal);
     InOutParameter paraTimestamp = new(timestampVal);
+    InOutParameter paraIntArray = new(intArrayVal);
+    InOutParameter paraStrArray = new(strArrayVal);
+    InOutParameter paraFloArray = new(floArrayVal);
+    InOutParameter paraDecArray = new(decArrayVal);
+    InOutParameter paraBooArray = new(booArrayVal);
+    InOutParameter paraByteArray = new(byteArrayVal);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
         ${paraNvarchar}, ${paraBit}, ${paraBoolean}, ${paraInt}, ${paraBigInt}, ${paraSmallInt}, ${paraNumeric}, ${paraFloat},
         ${paraReal}, ${paraDouble}, ${paraDecimal}, ${paraVarBinary}, ${paraClob}, ${paraDateTime}, ${paraDate}, ${paraTime},
-        ${paraTimestamp})`;
+        ${paraTimestamp}, ${paraIntArray}, ${paraStrArray}, ${paraFloArray}, ${paraDecArray}, ${paraBooArray}, ${paraByteArray})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -668,7 +686,9 @@ function testCreateProcedures8() returns error? {
                 INOUT p_bigint_type BIGINT, INOUT p_smallint_type SMALLINT, INOUT p_numeric_type NUMERIC(10,2),
                 INOUT p_float_type FLOAT, INOUT p_real_type REAL, INOUT p_double_type DOUBLE, INOUT p_decimal_type DECIMAL(10,2),
                 INOUT p_var_binary_type VARBINARY(27), INOUT p_clob_type CLOB, INOUT p_datetime_type DATETIME,
-                INOUT p_date_type DATE, INOUT p_time_type TIME, INOUT p_timestamp_type TIMESTAMP)
+                INOUT p_date_type DATE, INOUT p_time_type TIME, INOUT p_timestamp_type TIMESTAMP, INOUT p_int_array_type INT ARRAY,
+                INOUT p_string_array_type VARCHAR(50) ARRAY, INOUT p_float_array_type FLOAT ARRAY, INOUT p_decimal_array_type DECIMAL ARRAY,
+                INOUT p_boolean_array_type BOOLEAN ARRAY, INOUT p_byte_array_type VARBINARY(27) ARRAY)
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
                 SELECT varchar_type INTO p_varchar_type FROM StringTypes where id = p_id;
@@ -690,6 +710,12 @@ function testCreateProcedures8() returns error? {
                 SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
                 SELECT time_type INTO p_time_type FROM DateTimeTypes where id = p_id;
                 SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
+                SELECT int_array_type INTO p_int_array_type FROM OtherTypes where id = p_id;
+                SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
+                SELECT boolean_array INTO p_boolean_array_type FROM ArrayTypes where row_id = p_id;
+                SELECT float_array INTO p_float_array_type FROM ArrayTypes where row_id = p_id;
+                SELECT decimal_array INTO p_decimal_array_type FROM ArrayTypes where row_id = p_id;
+                SELECT blob_array INTO p_byte_array_type FROM ArrayTypes where row_id = p_id;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());
