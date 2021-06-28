@@ -573,6 +573,33 @@ function insertIntoArrayTable8() returns error? {
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
 }
 
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable9() returns error? {
+     time:TimeOfDay timeRecord = {hour: 14, minute: 15, second:23};
+     TimeArrayValue paraTime = new ([timeRecord]);
+
+     time:Date dateRecord = {year: 2017, month: 5, day: 23};
+     DateArrayValue paraDate = new ([dateRecord]);
+
+     time:Utc timestampRecord = time:utcNow();
+     TimestampArrayValue paraTimestamp = new ([timestampRecord]);
+
+     time:TimeOfDay timeWithTzRecord = {utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"};
+     TimeArrayValue paraTimeWithTZ = new ([timeWithTzRecord]);
+
+     time:Civil timestampWithTzRecord = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
+                                            month:1, day:25, hour: 16, minute: 33, second:55};
+     DateTimeArrayValue paraDatetimeWithTZ = new ([timestampWithTzRecord]);
+    int rowId = 13;
+
+    ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, time_array, date_array, timestamp_array, time_tz_array, timestamp_tz_array) VALUES(${rowId},
+                ${paraTime}, ${paraDate}, ${paraTimestamp}, ${paraTimeWithTZ}, ${paraDatetimeWithTZ})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
 function executeQueryMockClient(ParameterizedQuery sqlQuery)
 returns ExecutionResult | error {
     MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
