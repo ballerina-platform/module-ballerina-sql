@@ -284,6 +284,70 @@ function testCallWithNumericTypesInoutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
+    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures8]
+}
+function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
+    IntegerValue paraID = new(1);
+
+    VarcharValue varCharVal = new();
+    CharValue charVal = new();
+    NVarcharValue nVarCharVal = new();
+    BitValue bitVal = new();
+    BooleanValue booleanVal = new();
+    IntegerValue intVal = new();
+    SmallIntValue smallIntVal = new();
+    BigIntValue bigIntVal = new();
+    NumericValue numericVal = new();
+    DoubleValue doubleVal = new();
+    RealValue realVal = new();
+    FloatValue floatVal = new();
+    DecimalValue decimalVal = new();
+    VarBinaryValue binaryVal = new();
+    ClobValue clobVal = new();
+    TimeValue timeVal = new();
+    DateValue dateVal = new();
+    TimestampValue timestampVal = new();
+    DateTimeValue datetimeVal = new();
+
+    InOutParameter paraVarChar = new(varCharVal);
+    InOutParameter paraChar = new(charVal);
+    InOutParameter paraNvarchar = new(nVarCharVal);
+    InOutParameter paraBit = new(bitVal);
+    InOutParameter paraBoolean = new(booleanVal);
+    InOutParameter paraInt = new(intVal);
+    InOutParameter paraBigInt = new(bigIntVal);
+    InOutParameter paraSmallInt = new(smallIntVal);
+    InOutParameter paraNumeric = new(numericVal);
+    InOutParameter paraFloat = new(floatVal);
+    InOutParameter paraReal = new(realVal);
+    InOutParameter paraDouble = new(doubleVal);
+    InOutParameter paraDecimal = new(decimalVal);
+    InOutParameter paraVarBinary = new (binaryVal);
+    InOutParameter paraClob = new(clobVal);
+    InOutParameter paraDateTime = new(datetimeVal);
+    InOutParameter paraDate = new(dateVal);
+    InOutParameter paraTime = new(timeVal);
+    InOutParameter paraTimestamp = new(timestampVal);
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
+        ${paraNvarchar}, ${paraBit}, ${paraBoolean}, ${paraInt}, ${paraBigInt}, ${paraSmallInt}, ${paraNumeric}, ${paraFloat},
+        ${paraReal}, ${paraDouble}, ${paraDecimal}, ${paraVarBinary}, ${paraClob}, ${paraDateTime}, ${paraDate}, ${paraTime},
+        ${paraTimestamp})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    string clobType = "very long text";
+    var varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    time:Civil dateTimeRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
+
+    test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
+    test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
+    test:assertEquals(paraDateTime.get(time:Civil), dateTimeRecord, "DateTime out parameter of procedure did not match.");
+}
+
+@test:Config {
+    groups: ["procedures"],
     dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
 }
 function testErroneousCallWithNumericTypesInoutParams() returns error? {
@@ -588,6 +652,44 @@ function testCreateProcedures7() returns error? {
                 SELECT boolean_type INTO p_boolean_type FROM OtherTypes where id = p_id;
                 SELECT int_array_type INTO p_int_array_type FROM OtherTypes where id = p_id;
                 SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCreateProcedures8() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectOtherDataWithInoutParams (IN p_id INT, INOUT p_varchar_type VARCHAR(255), INOUT p_char_type CHAR,
+                INOUT p_nvarcharmax_type NVARCHAR(255), INOUT p_bit_type BIT, INOUT p_boolean_type BOOLEAN, INOUT p_int_type INT,
+                INOUT p_bigint_type BIGINT, INOUT p_smallint_type SMALLINT, INOUT p_numeric_type NUMERIC(10,2),
+                INOUT p_float_type FLOAT, INOUT p_real_type REAL, INOUT p_double_type DOUBLE, INOUT p_decimal_type DECIMAL(10,2),
+                INOUT p_var_binary_type VARBINARY(27), INOUT p_clob_type CLOB, INOUT p_datetime_type DATETIME,
+                INOUT p_date_type DATE, INOUT p_time_type TIME, INOUT p_timestamp_type TIMESTAMP)
+            READS SQL DATA DYNAMIC RESULT SETS 1
+            BEGIN ATOMIC
+                SELECT varchar_type INTO p_varchar_type FROM StringTypes where id = p_id;
+                SELECT char_type INTO p_char_type FROM StringTypes where id = p_id;
+                SELECT nvarcharmax_type INTO p_nvarcharmax_type FROM StringTypes where id = p_id;
+                SELECT bit_type INTO p_bit_type FROM NumericTypes where id = p_id;
+                SELECT boolean_type INTO p_boolean_type FROM OtherTypes where id = p_id;
+                SELECT int_type INTO p_int_type FROM NumericTypes where id = p_id;
+                SELECT bigint_type INTO p_bigint_type FROM NumericTypes where id = p_id;
+                SELECT smallint_type INTO p_smallint_type FROM NumericTypes where id = p_id;
+                SELECT decimal_type INTO p_decimal_type FROM NumericTypes where id = p_id;
+                SELECT numeric_type INTO p_numeric_type FROM NumericTypes where id = p_id;
+                SELECT float_type INTO p_float_type FROM NumericTypes where id = p_id;
+                SELECT real_type INTO p_real_type FROM NumericTypes where id = p_id;
+                SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
+                SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
+                SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
+                SELECT datetime_type INTO p_datetime_type FROM DateTimeTypes where id = p_id;
+                SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
+                SELECT time_type INTO p_time_type FROM DateTimeTypes where id = p_id;
+                SELECT timestamp_type INTO p_timestamp_type FROM DateTimeTypes where id = p_id;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());

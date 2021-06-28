@@ -92,6 +92,9 @@ subprojects {
         externalJars (group: 'org.hsqldb', name: 'hsqldb', version: "${hsqlDriverVersion}") {
             transitive = false
         }
+        externalJars (group: 'com.h2database', name: 'h2', version: "${h2Version}") {
+            transitive = false
+        }
     }
 }
 

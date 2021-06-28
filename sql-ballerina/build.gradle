@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 /*
  * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -103,12 +105,145 @@ publishing {
     }
 }
 
+class Database {
+    String db
+    String category
+    String script
+
+    Database(String db, String category, String script) {
+        this.db = db
+        this.category = category
+        this.script = script
+    }
+
+    String getDb() {
+        return this.db
+    }
+
+    String getCategory() {
+        return this.category
+    }
+
+    String getScript() {
+        return this.script
+    }
+}
+
+class DatabaseMeta {
+    String group
+    String mainGroup
+    List<Database> databases
+
+    DatabaseMeta(String group, String mainGroup, List<Database> databases) {
+        this.group = group
+        this.mainGroup = mainGroup
+        this.databases = databases
+    }
+
+    String getGroup() {
+        return this.group
+    }
+
+    String getMainGroup() {
+        return this.mainGroup
+    }
+
+    List<Database> getDatabases() {
+        return this.databases
+    }
+}
+
+List<DatabaseMeta> testDatabasesList = new ArrayList<DatabaseMeta>()
+
+List<Database> h2QueryDbs = new ArrayList<Database>()
+h2QueryDbs.add(new Database('H2_QUERY_DB', 'query', 'h2-query-test-data.sql'))
+testDatabasesList.add(new DatabaseMeta('query-h2', 'query-h2', h2QueryDbs))
+
+
+task createTestDatabases {
+    List<DatabaseMeta> dbsNeeded = new ArrayList<DatabaseMeta>()
+    def MainGroupList = ['query-h2']
+    String[] tempGroups
+    if (project.hasProperty('groups')) {
+        tempGroups = project.findProperty('groups').toString().split(',')
+    } else {
+        tempGroups = MainGroupList
+    }
+    def count = 0
+    def dbCount
+    while (count < tempGroups.length) {
+        dbCount = 0
+        while (dbCount < testDatabasesList.size()) {
+            DatabaseMeta val = testDatabasesList[dbCount]
+            if (val.getGroup().equalsIgnoreCase(tempGroups[count])
+                    && (val.getGroup().equalsIgnoreCase(val.getMainGroup()) ||
+                    !tempGroups.contains(val.getMainGroup()))) {
+                dbsNeeded.add(val)
+            }
+            dbCount = dbCount + 1
+        }
+        count = count + 1
+    }
+    doLast {
+        println('Databses will be created for :' + tempGroups + ' groups')
+        count = 0
+        while (count < dbsNeeded.size()) {
+            DatabaseMeta dbMeta = dbsNeeded[count]
+            List<Database> dbList = dbMeta.getDatabases()
+            dbCount = 0
+            while (dbCount < dbList.size()) {
+                Database db = dbList[dbCount]
+                try {
+                    exec {
+                        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                            commandLine 'cmd', '/c', "java -classpath $project.projectDir\\lib\\h2-1.4.200.jar " +
+                                    "org.h2.tools.RunScript -url jdbc:h2:$project.projectDir\\target\\databases\\${db.getDb()}" +
+                                    ' -user test -password Test123 -script ' +
+                                    "$project.projectDir\\tests\\resources\\sql\\${db.getCategory()}\\${db.getScript()}"
+                        } else {
+                            commandLine 'sh', '-c', "java -cp $project.projectDir/lib/h2-1.4.200.jar " +
+                                    "org.h2.tools.RunScript -url jdbc:h2:$project.projectDir/target/databases/${db.getDb()}" +
+                                    ' -user test -password Test123 -script ' +
+                                    "$project.projectDir/tests/resources/sql/${db.getCategory()}/${db.getScript()}"
+                        }
+                    }
+                    sleep(5 * 1000)
+                } catch (all) {
+                    println(all.cause)
+                    throw new GradleException('could not create test databases')
+                }
+                dbCount = dbCount + 1
+            }
+            count = count + 1
+        }
+    }
+}
+
+task removeTestDatabases() {
+    doLast {
+        try {
+            exec {
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    commandLine 'cmd', '/c', "rmdir $project.projectDir\\target\\databases /s /q"
+                } else {
+                    commandLine 'sh', '-c', "rm -r $project.projectDir/target/databases"
+                }
+            }
+        } catch (all) {
+            println('Gradle process can safely ignore the removeTestDatabases task')
+        }
+    }
+}
+
 updateTomlFiles.dependsOn copyStdlibs
+createTestDatabases.dependsOn updateTomlFiles
 
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-test-utils:build"
+build.finalizedBy removeTestDatabases
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-test-utils:build"
+test.dependsOn createTestDatabases
 
 publishToMavenLocal.dependsOn build
 publish.dependsOn build
