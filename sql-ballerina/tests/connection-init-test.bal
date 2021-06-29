@@ -206,3 +206,12 @@ function testWithAllParams() returns error? {
         {"loginTimeout": 5000}, connectionPool);
     test:assertEquals(dbClient.close(), (), "HSQLDB connection failure.");
 }
+
+@test:Config {
+    groups: ["connection"]
+}
+isolated function testGenerateErrorStream() returns error? {
+    stream <record {}, Error> errorStream = generateApplicationErrorStream("Test generate Error Stream");
+    record {}|Error firstElement = errorStream.next();
+    test:assertTrue(firstElement is Error);
+}
