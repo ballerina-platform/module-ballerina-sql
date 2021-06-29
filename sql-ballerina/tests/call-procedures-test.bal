@@ -302,7 +302,8 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     RealValue realVal = new();
     FloatValue floatVal = new();
     DecimalValue decimalVal = new();
-    VarBinaryValue binaryVal = new();
+    VarBinaryValue varBinaryVal = new();
+    BinaryValue binaryVal = new();
     ClobValue clobVal = new();
     TimeValue timeVal = new();
     DateValue dateVal = new();
@@ -320,6 +321,7 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     ArrayValue decArrayVal = new(decArr);
     byte[][] byteArr = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
     ArrayValue byteArrayVal = new(byteArr);
+    ArrayValue emptyArrayVal = new();
 
     InOutParameter paraVarChar = new(varCharVal);
     InOutParameter paraChar = new(charVal);
@@ -334,7 +336,8 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     InOutParameter paraReal = new(realVal);
     InOutParameter paraDouble = new(doubleVal);
     InOutParameter paraDecimal = new(decimalVal);
-    InOutParameter paraVarBinary = new (binaryVal);
+    InOutParameter paraVarBinary = new (varBinaryVal);
+    InOutParameter paraBinary = new (binaryVal);
     InOutParameter paraClob = new(clobVal);
     InOutParameter paraDateTime = new(datetimeVal);
     InOutParameter paraDate = new(dateVal);
@@ -346,11 +349,13 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     InOutParameter paraDecArray = new(decArrayVal);
     InOutParameter paraBooArray = new(booArrayVal);
     InOutParameter paraByteArray = new(byteArrayVal);
+    InOutParameter paraEmptyArray = new(emptyArrayVal);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
         ${paraNvarchar}, ${paraBit}, ${paraBoolean}, ${paraInt}, ${paraBigInt}, ${paraSmallInt}, ${paraNumeric}, ${paraFloat},
-        ${paraReal}, ${paraDouble}, ${paraDecimal}, ${paraVarBinary}, ${paraClob}, ${paraDateTime}, ${paraDate}, ${paraTime},
-        ${paraTimestamp}, ${paraIntArray}, ${paraStrArray}, ${paraFloArray}, ${paraDecArray}, ${paraBooArray}, ${paraByteArray})`;
+        ${paraReal}, ${paraDouble}, ${paraDecimal}, ${paraVarBinary}, ${paraBinary}, ${paraClob}, ${paraDateTime}, ${paraDate}, ${paraTime},
+        ${paraTimestamp}, ${paraIntArray}, ${paraStrArray}, ${paraFloArray}, ${paraDecArray}, ${paraBooArray}, ${paraByteArray},
+        ${paraEmptyArray})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -685,10 +690,10 @@ function testCreateProcedures8() returns error? {
                 INOUT p_nvarcharmax_type NVARCHAR(255), INOUT p_bit_type BIT, INOUT p_boolean_type BOOLEAN, INOUT p_int_type INT,
                 INOUT p_bigint_type BIGINT, INOUT p_smallint_type SMALLINT, INOUT p_numeric_type NUMERIC(10,2),
                 INOUT p_float_type FLOAT, INOUT p_real_type REAL, INOUT p_double_type DOUBLE, INOUT p_decimal_type DECIMAL(10,2),
-                INOUT p_var_binary_type VARBINARY(27), INOUT p_clob_type CLOB, INOUT p_datetime_type DATETIME,
+                INOUT p_var_binary_type VARBINARY(27),INOUT p_binary_type BINARY(27), INOUT p_clob_type CLOB, INOUT p_datetime_type DATETIME,
                 INOUT p_date_type DATE, INOUT p_time_type TIME, INOUT p_timestamp_type TIMESTAMP, INOUT p_int_array_type INT ARRAY,
                 INOUT p_string_array_type VARCHAR(50) ARRAY, INOUT p_float_array_type FLOAT ARRAY, INOUT p_decimal_array_type DECIMAL ARRAY,
-                INOUT p_boolean_array_type BOOLEAN ARRAY, INOUT p_byte_array_type VARBINARY(27) ARRAY)
+                INOUT p_boolean_array_type BOOLEAN ARRAY, INOUT p_byte_array_type VARBINARY(27) ARRAY, INOUT p_empty_array_type VARCHAR(50) ARRAY)
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
                 SELECT varchar_type INTO p_varchar_type FROM StringTypes where id = p_id;
@@ -705,6 +710,7 @@ function testCreateProcedures8() returns error? {
                 SELECT real_type INTO p_real_type FROM NumericTypes where id = p_id;
                 SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
                 SELECT var_binary_type INTO p_var_binary_type FROM OtherTypes where id = p_id;
+                SELECT binary_type INTO p_binary_type FROM OtherTypes where id = p_id;
                 SELECT clob_type INTO p_clob_type FROM OtherTypes where id = p_id;
                 SELECT datetime_type INTO p_datetime_type FROM DateTimeTypes where id = p_id;
                 SELECT date_type INTO p_date_type FROM DateTimeTypes where id = p_id;
@@ -716,6 +722,7 @@ function testCreateProcedures8() returns error? {
                 SELECT float_array INTO p_float_array_type FROM ArrayTypes where row_id = p_id;
                 SELECT decimal_array INTO p_decimal_array_type FROM ArrayTypes where row_id = p_id;
                 SELECT blob_array INTO p_byte_array_type FROM ArrayTypes where row_id = p_id;
+                SELECT string_array_type INTO p_empty_array_type FROM OtherTypes where id = p_id;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());
