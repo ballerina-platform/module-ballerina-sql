@@ -208,7 +208,7 @@ public final class Constants {
         public static final String DATETIME = "DATETIME";
         public static final String TIMESTAMP = "TIMESTAMP";
         public static final String TIME_WITH_TIMEZONE = "TIME_WITH_TIMEZONE";
-        public static final String TIMESTAMP_WITH_TIMEZONE = "TIME_WITH_TIMEZONE";
+        public static final String TIMESTAMP_WITH_TIMEZONE = "TIMESTAMP_WITH_TIMEZONE";
     }
 
     /**

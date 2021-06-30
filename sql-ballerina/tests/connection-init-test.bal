@@ -62,6 +62,24 @@ function testConnectionAfterClose() returns error? {
     } else {
         test:assertFail("ApplicationError Error expected.");
     }
+
+    ExecutionResult|Error result = testDB->execute("INSERT INTO Customers (firstName) VALUES ('Peter')");
+    if result is Error {
+        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " +
+                    "allowed"));
+    }
+
+    ExecutionResult[]|Error result2 = testDB->batchExecute([`INSERT INTO Customers (firstName) VALUES ('Peter')`]);
+    if result2 is Error {
+        test:assertTrue(result2.message().startsWith("SQL Client is already closed, hence further operations are not " +
+                    "allowed"));
+    }
+
+    ProcedureCallResult|Error result3 = testDB->call(`call MockProcedure()`);
+    if result3 is Error {
+            test:assertTrue(result3.message().startsWith("SQL Client is already closed, hence further operations are not " +
+                        "allowed"));
+    }
 }
 
 @test:Config {

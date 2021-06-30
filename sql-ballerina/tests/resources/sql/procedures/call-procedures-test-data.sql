@@ -86,3 +86,21 @@ INSERT INTO MultipleRecords (id, name, age, birthday, country_code)
     VALUES(1, 'Bob', 20, '2017-05-23', 'US');
 INSERT INTO MultipleRecords (id, name, age, birthday, country_code)
     VALUES(2, 'John', 25, '2012-10-12', 'US');
+
+CREATE TABLE IF NOT EXISTS ArrayTypes(
+  row_id        INTEGER NOT NULL,
+  int_array     INTEGER ARRAY,
+  long_array    BIGINT ARRAY,
+  float_array   FLOAT ARRAY,
+  double_array  DOUBLE ARRAY,
+  decimal_array  DECIMAL ARRAY,
+  boolean_array BOOLEAN ARRAY,
+  string_array  VARCHAR(20) ARRAY,
+  blob_array    VARBINARY(27) ARRAY,
+  PRIMARY KEY (row_id)
+);
+
+INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, string_array, blob_array)
+  VALUES (1, ARRAY [1, 2, 3], ARRAY [10000, 20000, 30000], ARRAY[245.23, 5559.49, 8796.123],
+  ARRAY[245.23, 5559.49, 8796.123], ARRAY[245, 5559, 8796], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina'],
+  ARRAY[X'77736F322062616C6C6572696E6120626C6F6220746573742E']);
