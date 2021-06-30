@@ -586,17 +586,11 @@ function insertIntoArrayTable9() returns error? {
      time:Utc timestampRecord = time:utcNow();
      TimestampArrayValue paraTimestamp = new ([timestampRecord]);
 
-     time:TimeOfDay timeWithTzRecord = {utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"};
-     TimeArrayValue paraTimeWithTZ = new ([timeWithTzRecord]);
-
-     time:Civil timestampWithTzRecord = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
-                                            month:1, day:25, hour: 16, minute: 33, second:55};
-     DateTimeArrayValue paraDatetimeWithTZ = new ([timestampWithTzRecord]);
     int rowId = 13;
 
     ParameterizedQuery sqlQuery =
-        `INSERT INTO ArrayTypes2 (row_id, time_array, date_array, timestamp_array, time_tz_array, timestamp_tz_array) VALUES(${rowId},
-                ${paraTime}, ${paraDate}, ${paraTimestamp}, ${paraTimeWithTZ}, ${paraDatetimeWithTZ})`;
+        `INSERT INTO ArrayTypes2 (row_id, time_array, date_array, timestamp_array) VALUES(${rowId},
+                ${paraTime}, ${paraDate}, ${paraTimestamp})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
