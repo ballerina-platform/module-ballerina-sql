@@ -128,7 +128,20 @@ public class ExecuteProcessor {
      * @return execution result or error
      */
     public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
-                             DefaultStatementParameterProcessor statementParameterProcessor) {
+                            DefaultStatementParameterProcessor statementParameterProcessor) {
+        return nativeBatchExecute(client, paramSQLStrings, statementParameterProcessor, true);
+    }
+
+    /**
+     * Execute a batch of SQL statements.
+     * @param client client object
+     * @param paramSQLStrings array of SQL string for the execute statement
+     * @param statementParameterProcessor pre-processor of the statement
+     * @param generateKeys flag to auto-generate keys
+     * @return execution result or error
+     */
+    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
+                            DefaultStatementParameterProcessor statementParameterProcessor, boolean generateKeys) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -160,14 +173,20 @@ public class ExecuteProcessor {
                     }
                 }
                 connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
-                statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+
+                if (generateKeys) {
+                    statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+                } else {
+                    statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
+                }
+
                 for (BObject param : parameters) {
                     statementParameterProcessor.setParams(connection, statement, param);
                     statement.addBatch();
                 }
                 int[] counts = statement.executeBatch();
 
-                if (!isDdlStatement(sqlQuery)) {
+                if (generateKeys && !isDdlStatement(sqlQuery)) {
                     resultSet = statement.getGeneratedKeys();
                 }
                 for (int count : counts) {
