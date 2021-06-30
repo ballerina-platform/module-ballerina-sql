@@ -45,7 +45,7 @@ jobs:
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
           ./gradlew -Pversion=${VERSION} publish -x test -PpublishToCentral=true
-      - name: Post release tasks
+      - name: Github Release and Release sync PR
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run:
