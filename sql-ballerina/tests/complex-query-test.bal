@@ -691,3 +691,31 @@ function testGetArrayTypes4() returns error? {
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
+
+type UserDefinedTypes record {
+    int udt_int;
+    boolean udt_boolean;
+    string udt_string;
+    float udt_float;
+};
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testUserDefinedTypes() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float from " +
+    "UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
+    record{| record{} value; |}? data =  check queryResult.next();
+    record{}? value = data?.value;
+    check dbClient.close();
+
+    UserDefinedTypes expected = {
+        udt_int: 1,
+        udt_boolean: true,
+        udt_string: "User defined type string",
+        udt_float: 12.32
+    };
+
+    test:assertEquals(value, expected, "Expected record did not match.");
+}
