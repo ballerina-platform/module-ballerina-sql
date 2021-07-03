@@ -245,8 +245,10 @@ CREATE TABLE IF NOT EXISTS UserDefinedTypesTable (
     udt_boolean BOOLEAN_TYPE,
     udt_string STRING_TYPE,
     udt_float FLOAT_TYPE,
+    uuid_type UUID,
+    other_type OTHER,
     PRIMARY KEY (udt_int)
 );
 
-INSERT INTO UserDefinedTypesTable (udt_int, udt_boolean, udt_string, udt_float) VALUES
-  (1, true, 'User defined type string', 12.32);
+INSERT INTO UserDefinedTypesTable (udt_int, udt_boolean, udt_string, udt_float, uuid_type) VALUES
+  (1, true, 'User defined type string', 12.32, '24ff1824-01e8-4dac-8eb3-3fee32ad2b9c');

@@ -697,6 +697,7 @@ type UserDefinedTypes record {
     boolean udt_boolean;
     string udt_string;
     float udt_float;
+    string uuid_type;
 };
 
 @test:Config {
@@ -704,8 +705,8 @@ type UserDefinedTypes record {
 }
 function testUserDefinedTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float from " +
-    "UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
+    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float, " +
+    "uuid_type, other_type from UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
     record{| record{} value; |}? data =  check queryResult.next();
     record{}? value = data?.value;
     check dbClient.close();
@@ -714,7 +715,9 @@ function testUserDefinedTypes() returns error? {
         udt_int: 1,
         udt_boolean: true,
         udt_string: "User defined type string",
-        udt_float: 12.32
+        udt_float: 12.32,
+        uuid_type: "24ff1824-01e8-4dac-8eb3-3fee32ad2b9c",
+        "OTHER_TYPE": null
     };
 
     test:assertEquals(value, expected, "Expected record did not match.");
