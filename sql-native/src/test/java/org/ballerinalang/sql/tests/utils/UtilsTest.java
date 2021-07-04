@@ -18,6 +18,7 @@
 
 package org.ballerinalang.sql.tests.utils;
 
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.TypeUtils;
@@ -103,5 +104,14 @@ public class UtilsTest {
         list.add(columnDefinition2);
         StructureType structureType = Utils.getDefaultRecordType(list);
         assertEquals(structureType.getFlags(), 0);
+    }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest() {
+        try {
+            Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_INT, "New Type");
+        } catch (ApplicationError e) {
+            assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : int");
+        }
     }
 }

@@ -22,9 +22,11 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.exception.ApplicationError;
 import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
+import org.ballerinalang.sql.tests.TestUtils;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -37,12 +39,12 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
 /**
  * DefaultResultParameterProcessor class test.
  *
  * @since 0.6.0-beta.2
  */
-
 public class DefaultResultParameterProcessorTest {
 
     static class NullAndErrorCheckClass extends DefaultResultParameterProcessor {
@@ -101,10 +103,9 @@ public class DefaultResultParameterProcessorTest {
     @Test
     void getCustomOutParametersTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
-        ColumnDefinition columnDefinition = new ColumnDefinition("int_type", null,
-                2, "INT", TypeUtils.getType(1), false);
+        BObject bObject = TestUtils.getRecordObject("RecordType");
         try {
-            Object object = testClass.getCustomOutParameters(null, 1, null);
+            Object object = testClass.getCustomOutParameters(bObject, 1, null);
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), null);
         }
@@ -238,7 +239,7 @@ public class DefaultResultParameterProcessorTest {
         Date date = new Date();
         try {
             assertNotNull(testClass.convertTimeStamp(date, Types.TIMESTAMP,
-                    PredefinedTypes.TYPE_READONLY_PROCESSING_INSTRUCTION)
+                    PredefinedTypes.TYPE_READONLY_ANYDATA)
                     , "Null received");
         } catch (Exception ignored) {
 
@@ -276,7 +277,7 @@ public class DefaultResultParameterProcessorTest {
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
         try {
             assertNotNull(testClass.convertTimestampWithTimezone(offsetDateTime, Types.TIMESTAMP_WITH_TIMEZONE,
-                    PredefinedTypes.TYPE_READONLY_PROCESSING_INSTRUCTION)
+                    PredefinedTypes.TYPE_READONLY_ANYDATA)
                     , "Null received");
         } catch (Exception ignored) {
 
