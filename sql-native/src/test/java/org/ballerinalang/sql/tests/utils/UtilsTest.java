@@ -18,9 +18,20 @@
 
 package org.ballerinalang.sql.tests.utils;
 
+import io.ballerina.runtime.api.types.StructureType;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
+import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BLink;
+import io.ballerina.runtime.api.values.BValue;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.ballerinalang.sql.utils.Utils;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,5 +47,61 @@ public class UtilsTest {
        ApplicationError error = Utils.throwInvalidParameterError(intVal, "Integer");
        assertEquals(error.getMessage(),
                "Invalid parameter :java.lang.Integer is passed as value for SQL type : Integer");
+    }
+
+    @Test
+    void createTimeStructTest() {
+        try {
+            BArray bArray = Utils.createTimeStruct(1400020000);
+        } catch (UnsupportedOperationException e) {
+            assertEquals(e.getMessage(), "java.lang.UnsupportedOperationException");
+        }
+    }
+
+    @Test
+    void throwInvalidParameterErrorTest() {
+        BValue bValue = new BValue() {
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return TypeUtils.getType(1);
+            }
+        };
+
+        ApplicationError applicationError = Utils.throwInvalidParameterError(bValue, "INTEGER");
+        assertEquals(applicationError.getMessage(), "Invalid parameter :byte is passed as value for " +
+                "SQL type : INTEGER");
+    }
+
+    @Test
+    void getDefaultRecordTypeTest() {
+        ColumnDefinition columnDefinition1 = new ColumnDefinition("int_type", null,
+                2, "INT", TypeUtils.getType(4), false);
+        ColumnDefinition columnDefinition2 = new ColumnDefinition("string_type", null,
+                2, "STRING", TypeUtils.getType(12), true);
+        List<ColumnDefinition> list = new ArrayList<>();
+        list.add(columnDefinition1);
+        list.add(columnDefinition2);
+        StructureType structureType = Utils.getDefaultRecordType(list);
+        assertEquals(structureType.getFlags(), 0);
     }
 }
