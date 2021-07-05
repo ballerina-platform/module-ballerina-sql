@@ -50,6 +50,22 @@ public class DefaultStatementParameterProcessorTest {
             return getCustomStructData(null, TestUtils.getMockBValueJson());
         }
 
+        void testSetBoolean() throws SQLException, ApplicationError {
+            setBoolean(null, "Boolean", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetNumericAndDecimal() throws SQLException, ApplicationError {
+            setDecimal(null, "Decimal", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetBinaryAndBlob() throws SQLException, ApplicationError, IOException {
+            setBlob(null, "Blob", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetClobAndNclob() throws SQLException, ApplicationError, IOException {
+            setClob(TestUtils.getMockConnection(false), null, "Clob", 0, TestUtils.getMockObject("Object"));
+        }
+
         void testSetInteger() throws SQLException, ApplicationError {
             setInteger(null, "Int", 0, TestUtils.getMockBValueJson());
         }
@@ -58,16 +74,32 @@ public class DefaultStatementParameterProcessorTest {
             setBigInt(null, "BigInt", 0, TestUtils.getMockBValueJson());
         }
 
+        void testSetSmallInt() throws SQLException, ApplicationError {
+            setSmallInt(null, "SmallInt", 0, TestUtils.getMockBValueJson());
+        }
+
         void testSetFloat() throws SQLException, ApplicationError {
             setFloat(null, "Float", 0, TestUtils.getMockBValueJson());
         }
 
         void testSetReal() throws SQLException, ApplicationError {
-            setFloat(null, "Real", 0, TestUtils.getMockBValueJson());
+            setReal(null, "Real", 0, TestUtils.getMockBValueJson());
         }
 
         void testSetDouble() throws SQLException, ApplicationError {
             setDouble(null, "Double", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetRow() throws SQLException, ApplicationError {
+            setRow(null, "Row", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetDate() throws SQLException, ApplicationError {
+            setDate(null, "Date", 0, TestUtils.getMockBValueJson());
+        }
+
+        void testSetTime() throws SQLException, ApplicationError {
+            setTime(null, "Time", 0, TestUtils.getMockBValueJson());
         }
     }
 
@@ -112,6 +144,46 @@ public class DefaultStatementParameterProcessorTest {
     }
 
     @Test
+    void setBooleanTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetBoolean();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Boolean");
+        }
+    }
+
+    @Test
+    void setNumericAndDecimalTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetNumericAndDecimal();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Decimal");
+        }
+    }
+
+    @Test
+    void setBinaryAndBlobTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetBinaryAndBlob();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Blob");
+        }
+    }
+
+    @Test
+    void setClobAndNclobTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetClobAndNclob();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :Object is passed as value for SQL type : Clob");
+        }
+    }
+
+    @Test
     void setIntegerTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
@@ -128,6 +200,16 @@ public class DefaultStatementParameterProcessorTest {
             testClass.testSetBigInt();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : BigInt");
+        }
+    }
+
+    @Test
+    void setSmallIntTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetSmallInt();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : SmallInt");
         }
     }
 
@@ -158,6 +240,36 @@ public class DefaultStatementParameterProcessorTest {
             testClass.testSetDouble();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Double");
+        }
+    }
+
+    @Test
+    void setRowTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetRow();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Row");
+        }
+    }
+
+    @Test
+    void setDateTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetDate();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Date");
+        }
+    }
+
+    @Test
+    void setTimeTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testSetTime();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Time");
         }
     }
 }
