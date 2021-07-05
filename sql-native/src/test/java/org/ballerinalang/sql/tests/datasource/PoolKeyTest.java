@@ -20,8 +20,10 @@ package org.ballerinalang.sql.tests.datasource;
 
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.internal.values.MapValueImpl;
 import org.ballerinalang.sql.datasource.PoolKey;
+import org.ballerinalang.sql.tests.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -65,5 +67,44 @@ public class PoolKeyTest {
         options.put(fromString("floatValue"), 1.2);
         PoolKey poolKey = new PoolKey("JDBC_URL", options);
         assertEquals(poolKey.hashCode(), 1581738924);
+    }
+
+    @Test
+    void hashCodeTest2() {
+        BMap<BString, BValue> options = new MapValueImpl<>();
+        options.put(fromString("charValue"), TestUtils.getMockBValueJson());
+        PoolKey poolKey = new PoolKey("JDBC_URL", options);
+        try {
+            poolKey.hashCode();
+        } catch (AssertionError e) {
+            assertEquals(e.getMessage(), "type json shouldn't have occurred");
+        }
+    }
+
+    @Test
+    void hashCodeTest3() {
+        BMap<BString, Character> options = new MapValueImpl<>();
+        options.put(fromString("floatValue"), 'a');
+        PoolKey poolKey = new PoolKey("JDBC_URL", options);
+        assertEquals(poolKey.hashCode(), 1367829517);
+    }
+
+    @Test
+    void optionsEqualTest() {
+        BMap<BString, Double> options = new MapValueImpl<>();
+        options.put(fromString("floatValue"), 1.2);
+        PoolKey poolKey = new PoolKey("JDBC_URL", options);
+        BMap<BString, Double> options1 = new MapValueImpl<>();
+        options1.put(fromString("floatValue"), 1.3);
+        PoolKey poolKey1 = new PoolKey("JDBC_URL", options1);
+        assertFalse(poolKey.equals(poolKey1));
+
+        PoolKey poolKey2 = new PoolKey("JDBC_URL", null);
+        assertFalse(poolKey.equals(poolKey2));
+
+        BMap<BString, Double> options2 = new MapValueImpl<>();
+        PoolKey poolKey3 = new PoolKey("JDBC_URL", options2);
+        assertFalse(poolKey.equals(poolKey3));
+
     }
 }

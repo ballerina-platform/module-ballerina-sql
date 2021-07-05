@@ -103,7 +103,7 @@ public class DefaultResultParameterProcessorTest {
     @Test
     void getCustomOutParametersTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
-        BObject bObject = TestUtils.getRecordObject("RecordType");
+        BObject bObject = TestUtils.getMockObject("ObjectType");
         try {
             Object object = testClass.getCustomOutParameters(bObject, 1, null);
         } catch (NullPointerException e) {

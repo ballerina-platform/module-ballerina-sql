@@ -19,14 +19,17 @@
 package org.ballerinalang.sql.tests;
 
 import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BFuture;
 import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.internal.scheduling.Strand;
 
 import java.sql.Array;
@@ -59,7 +62,7 @@ import javax.transaction.xa.Xid;
 public class TestUtils {
     private static Module emptyModule = new Module(null, null, null);
 
-    public static BObject getRecordObject(String name) {
+    public static BObject getMockObject(String name) {
         return new BObject() {
             @Override
             public Object call(Strand strand, String s, Object... objects) {
@@ -487,6 +490,35 @@ public class TestUtils {
             @Override
             public void start(Xid xid, int flags) throws XAException {
 
+            }
+        };
+    }
+
+    public static BValue getMockBValueJson() {
+        return new BValue() {
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return PredefinedTypes.TYPE_JSON;
             }
         };
     }
