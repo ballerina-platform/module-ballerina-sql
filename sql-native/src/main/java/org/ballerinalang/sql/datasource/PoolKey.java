@@ -36,6 +36,10 @@ public class PoolKey {
     private final String jdbcUrl;
     private final BMap<BString, ?> options;
 
+    private PoolKey() {
+        this(null, null);
+    }
+
     public PoolKey(String jdbcUrl, BMap<BString, ?> options) {
         this.jdbcUrl = jdbcUrl;
         this.options = options;

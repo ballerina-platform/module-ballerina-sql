@@ -196,7 +196,7 @@ function testToJsonComplexTypes() returns error? {
 }
 function testComplexTypesNil() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from " +
+    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type, clob_type, binary_type, other_type, uuid_type from " +
         " ComplexTypes where row_id = 2");
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -205,7 +205,9 @@ function testComplexTypesNil() returns error? {
     var complexStringType = {
         blob_type: (),
         clob_type: (),
-        binary_type: ()
+        binary_type: (),
+        other_type: (),
+        uuid_type: ()
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
 }
@@ -697,7 +699,6 @@ type UserDefinedTypes record {
     boolean udt_boolean;
     string udt_string;
     float udt_float;
-    string uuid_type;
 };
 
 @test:Config {
@@ -705,8 +706,8 @@ type UserDefinedTypes record {
 }
 function testUserDefinedTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float, " +
-    "uuid_type, other_type from UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
+    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float " +
+    "from UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
     record{| record{} value; |}? data =  check queryResult.next();
     record{}? value = data?.value;
     check dbClient.close();
@@ -715,9 +716,7 @@ function testUserDefinedTypes() returns error? {
         udt_int: 1,
         udt_boolean: true,
         udt_string: "User defined type string",
-        udt_float: 12.32,
-        uuid_type: "24ff1824-01e8-4dac-8eb3-3fee32ad2b9c",
-        "OTHER_TYPE": null
+        udt_float: 12.32
     };
 
     test:assertEquals(value, expected, "Expected record did not match.");

@@ -42,12 +42,14 @@ CREATE TABLE IF NOT EXISTS ComplexTypes(
   blob_type      BLOB(1024),
   clob_type      CLOB(1024),
   binary_type  BINARY(27),
+  uuid_type UUID,
+  other_type OTHER,
   PRIMARY KEY (row_id)
 );
 
-INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type) VALUES
+INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, uuid_type) VALUES
   (1, X'77736F322062616C6C6572696E6120626C6F6220746573742E', CONVERT('very long text', CLOB),
-  X'77736F322062616C6C6572696E612062696E61727920746573742E');
+  X'77736F322062616C6C6572696E612062696E61727920746573742E', '24ff1824-01e8-4dac-8eb3-3fee32ad2b9c');
 
 INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type) VALUES
   (2, null, null, null);
@@ -245,10 +247,8 @@ CREATE TABLE IF NOT EXISTS UserDefinedTypesTable (
     udt_boolean BOOLEAN_TYPE,
     udt_string STRING_TYPE,
     udt_float FLOAT_TYPE,
-    uuid_type UUID,
-    other_type OTHER,
     PRIMARY KEY (udt_int)
 );
 
-INSERT INTO UserDefinedTypesTable (udt_int, udt_boolean, udt_string, udt_float, uuid_type) VALUES
-  (1, true, 'User defined type string', 12.32, '24ff1824-01e8-4dac-8eb3-3fee32ad2b9c');
+INSERT INTO UserDefinedTypesTable (udt_int, udt_boolean, udt_string, udt_float) VALUES
+  (1, true, 'User defined type string', 12.32);
