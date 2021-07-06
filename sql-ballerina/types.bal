@@ -19,7 +19,7 @@ import ballerina/time;
 import ballerina/jballerina.java;
 import ballerina/lang.'object as obj;
 
-# Represents a parameter for the SQL Client remote functions when a variable needs to be passed
+# Represents a parameter for the SQL Client remote functions when a variable needs to be passed.
 # to the remote function.
 #
 # + value - Value of parameter passed into the SQL statement
@@ -27,8 +27,10 @@ public type TypedValue object {
     public anydata|object {}|anydata[]|object{}[]? value;
 };
 
+# Represents a union type of ballerina/time records.
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
 
+# Represents ballerina typed array.
 type ArrayValueType string?[]|int?[]|boolean?[]|float?[]|decimal?[]|byte[]?[];
 
 # Possible type of parameters that can be passed into the SQL query.
@@ -649,7 +651,7 @@ public type OutParameter object {
     public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error;
 };
 
-# Represents Char Out Parameter used in procedure calls
+# Represents Char Out Parameter used in procedure calls.
 public distinct class CharOutParameter {
     *OutParameter;
     # Parses returned Char SQL value to ballerina value.
@@ -661,7 +663,7 @@ public distinct class CharOutParameter {
     } external;
 }
 
-# Represents Varchar Out Parameter used in procedure calls
+# Represents Varchar Out Parameter used in procedure calls.
 public distinct class VarcharOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -673,7 +675,7 @@ public distinct class VarcharOutParameter {
     } external;
 }
 
-# Represents NChar Out Parameter used in procedure calls
+# Represents NChar Out Parameter used in procedure calls.
 public distinct class NCharOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -685,7 +687,7 @@ public distinct class NCharOutParameter {
     } external;
 }
 
-# Represents NVarchar Out Parameter used in procedure calls
+# Represents NVarchar Out Parameter used in procedure calls.
 public distinct class NVarcharOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -697,7 +699,7 @@ public distinct class NVarcharOutParameter {
     } external;
 }
 
-# Represents Binary Out Parameter used in procedure calls
+# Represents Binary Out Parameter used in procedure calls.
 public distinct class BinaryOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -709,7 +711,7 @@ public distinct class BinaryOutParameter {
     } external;
 }
 
-# Represents VarBinary Out Parameter used in procedure calls
+# Represents VarBinary Out Parameter used in procedure calls.
 public distinct class VarBinaryOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -721,7 +723,7 @@ public distinct class VarBinaryOutParameter {
     } external;
 }
 
-# Represents Text Out Parameter used in procedure calls
+# Represents Text Out Parameter used in procedure calls.
 public distinct class TextOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -733,7 +735,7 @@ public distinct class TextOutParameter {
     } external;
 }
 
-# Represents Blob Out Parameter used in procedure calls
+# Represents Blob Out Parameter used in procedure calls.
 public distinct class BlobOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -745,7 +747,7 @@ public distinct class BlobOutParameter {
     } external;
 }
 
-# Represents Clob Out Parameter used in procedure calls
+# Represents Clob Out Parameter used in procedure calls.
 public distinct class ClobOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -757,7 +759,7 @@ public distinct class ClobOutParameter {
     } external;
 }
 
-# Represents NClob Out Parameter used in procedure calls
+# Represents NClob Out Parameter used in procedure calls.
 public distinct class NClobOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -769,7 +771,7 @@ public distinct class NClobOutParameter {
     } external;
 }
 
-# Represents Date Out Parameter used in procedure calls
+# Represents Date Out Parameter used in procedure calls.
 public distinct class DateOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -781,7 +783,7 @@ public distinct class DateOutParameter {
     } external;
 }
 
-# Represents Time Out Parameter used in procedure calls
+# Represents Time Out Parameter used in procedure calls.
 public distinct class TimeOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -793,7 +795,7 @@ public distinct class TimeOutParameter {
     } external;
 }
 
-# Represents Time With Timezone Out Parameter used in procedure calls
+# Represents Time With Timezone Out Parameter used in procedure calls.
 public distinct class TimeWithTimezoneOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -805,7 +807,7 @@ public distinct class TimeWithTimezoneOutParameter {
     } external;
 }
 
-# Represents DateTime Out Parameter used in procedure calls
+# Represents DateTime Out Parameter used in procedure calls.
 public distinct class DateTimeOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -817,7 +819,7 @@ public distinct class DateTimeOutParameter {
     } external;
 }
 
-# Represents Timestamp Out Parameter used in procedure calls
+# Represents Timestamp Out Parameter used in procedure calls.
 public distinct class TimestampOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -829,7 +831,7 @@ public distinct class TimestampOutParameter {
     } external;
 }
 
-# Represents Timestamp with Timezone Out Parameter used in procedure calls
+# Represents Timestamp with Timezone Out Parameter used in procedure calls.
 public distinct class TimestampWithTimezoneOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -841,7 +843,7 @@ public distinct class TimestampWithTimezoneOutParameter {
     } external;
 }
 
-# Represents Array Out Parameter used in procedure calls
+# Represents Array Out Parameter used in procedure calls.
 public distinct class ArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -853,7 +855,7 @@ public distinct class ArrayOutParameter {
     } external;
 }
 
-# Represents Row Out Parameter used in procedure calls
+# Represents Row Out Parameter used in procedure calls.
 public distinct class RowOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -865,7 +867,7 @@ public distinct class RowOutParameter {
     } external;
 }
 
-# Represents SmallInt Out Parameter used in procedure calls
+# Represents SmallInt Out Parameter used in procedure calls.
 public distinct class SmallIntOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -877,7 +879,7 @@ public distinct class SmallIntOutParameter {
     } external;
 }
 
-# Represents Integer Out Parameter used in procedure calls
+# Represents Integer Out Parameter used in procedure calls.
 public distinct class IntegerOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -889,7 +891,7 @@ public distinct class IntegerOutParameter {
     } external;
 }
 
-# Represents BigInt Out Parameter used in procedure calls
+# Represents BigInt Out Parameter used in procedure calls.
 public distinct class BigIntOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -901,7 +903,7 @@ public distinct class BigIntOutParameter {
     } external;
 }
 
-# Represents Real Out Parameter used in procedure calls
+# Represents Real Out Parameter used in procedure calls.
 public distinct class RealOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -913,7 +915,7 @@ public distinct class RealOutParameter {
     } external;
 }
 
-# Represents Float Out Parameter used in procedure calls
+# Represents Float Out Parameter used in procedure calls.
 public distinct class FloatOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -925,7 +927,7 @@ public distinct class FloatOutParameter {
     } external;
 }
 
-# Represents Double Out Parameter used in procedure calls
+# Represents Double Out Parameter used in procedure calls.
 public distinct class DoubleOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -937,7 +939,7 @@ public distinct class DoubleOutParameter {
     } external;
 }
 
-# Represents Numeric Out Parameter used in procedure calls
+# Represents Numeric Out Parameter used in procedure calls.
 public distinct class NumericOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -949,7 +951,7 @@ public distinct class NumericOutParameter {
     } external;
 }
 
-# Represents Decimal Out Parameter used in procedure calls
+# Represents Decimal Out Parameter used in procedure calls.
 public distinct class DecimalOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -961,7 +963,7 @@ public distinct class DecimalOutParameter {
     } external;
 }
 
-# Represents Bit Out Parameter used in procedure calls
+# Represents Bit Out Parameter used in procedure calls.
 public distinct class BitOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -973,7 +975,7 @@ public distinct class BitOutParameter {
     } external;
 }
 
-# Represents Boolean Out Parameter used in procedure calls
+# Represents Boolean Out Parameter used in procedure calls.
 public distinct class BooleanOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -985,7 +987,7 @@ public distinct class BooleanOutParameter {
     } external;
 }
 
-# Represents Ref Out Parameter used in procedure calls
+# Represents Ref Out Parameter used in procedure calls.
 public distinct class RefOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -997,7 +999,7 @@ public distinct class RefOutParameter {
     } external;
 }
 
-# Represents Struct Out Parameter used in procedure calls
+# Represents Struct Out Parameter used in procedure calls.
 public distinct class StructOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
@@ -1009,7 +1011,7 @@ public distinct class StructOutParameter {
     } external;
 }
 
-# Represents XML Out Parameter used in procedure calls
+# Represents XML Out Parameter used in procedure calls.
 public distinct class XMLOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
