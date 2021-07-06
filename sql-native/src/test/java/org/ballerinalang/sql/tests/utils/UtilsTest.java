@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BValue;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.tests.TestUtils;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.ballerinalang.sql.utils.Utils;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Utils class test.
@@ -121,6 +123,15 @@ public class UtilsTest {
             Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_CLONEABLE, "New Type");
         } catch (ApplicationError e) {
             assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : Cloneable");
+        }
+    }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest2() {
+        try {
+            Utils.validatedInvalidFieldAssignment(100, TestUtils.getBooleanStructRecord(), "New Type");
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 }

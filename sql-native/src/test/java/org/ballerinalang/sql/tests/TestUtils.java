@@ -29,6 +29,7 @@ import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BFuture;
 import io.ballerina.runtime.api.values.BInitialValueEntry;
+import io.ballerina.runtime.api.values.BIterator;
 import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -56,6 +57,7 @@ import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -834,6 +836,217 @@ public class TestUtils {
             @Override
             public Type getType() {
                 return null;
+            }
+        };
+    }
+
+    public static BArray getBArray() {
+        ArrayList<String> array = new ArrayList<>();
+        array.add("new String");
+        return new BArray() {
+            @Override
+            public int size() {
+                return array.size();
+            }
+
+            @Override
+            public Object get(long l) {
+                return array.get((int) l);
+            }
+
+            @Override
+            public Object getRefValue(long l) {
+                return null;
+            }
+
+            @Override
+            public Object fillAndGetRefValue(long l) {
+                return null;
+            }
+
+            @Override
+            public long getInt(long l) {
+                return 0;
+            }
+
+            @Override
+            public boolean getBoolean(long l) {
+                return false;
+            }
+
+            @Override
+            public byte getByte(long l) {
+                return 0;
+            }
+
+            @Override
+            public double getFloat(long l) {
+                return 0;
+            }
+
+            @Override
+            public String getString(long l) {
+                return null;
+            }
+
+            @Override
+            public BString getBString(long l) {
+                return null;
+            }
+
+            @Override
+            public void add(long l, Object o) {
+
+            }
+
+            @Override
+            public void add(long l, long l1) {
+
+            }
+
+            @Override
+            public void add(long l, boolean b) {
+
+            }
+
+            @Override
+            public void add(long l, byte b) {
+
+            }
+
+            @Override
+            public void add(long l, double v) {
+
+            }
+
+            @Override
+            public void add(long l, String s) {
+
+            }
+
+            @Override
+            public void add(long l, BString bString) {
+
+            }
+
+            @Override
+            public void append(Object o) {
+
+            }
+
+            @Override
+            public Object reverse() {
+                return null;
+            }
+
+            @Override
+            public Object shift() {
+                return null;
+            }
+
+            @Override
+            public Object shift(long l) {
+                return null;
+            }
+
+            @Override
+            public void unshift(Object[] objects) {
+
+            }
+
+            @Override
+            public Object[] getValues() {
+                return new Object[0];
+            }
+
+            @Override
+            public byte[] getBytes() {
+                return new byte[0];
+            }
+
+            @Override
+            public String[] getStringArray() {
+                return new String[0];
+            }
+
+            @Override
+            public long[] getIntArray() {
+                return new long[0];
+            }
+
+            @Override
+            public boolean[] getBooleanArray() {
+                return new boolean[0];
+            }
+
+            @Override
+            public byte[] getByteArray() {
+                return new byte[0];
+            }
+
+            @Override
+            public double[] getFloatArray() {
+                return new double[0];
+            }
+
+            @Override
+            public Type getElementType() {
+                return null;
+            }
+
+            @Override
+            public Type getIteratorNextReturnType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public BArray slice(long l, long l1) {
+                return null;
+            }
+
+            @Override
+            public void setLength(long l) {
+
+            }
+
+            @Override
+            public long getLength() {
+                return 0;
+            }
+
+            @Override
+            public BIterator<?> getIterator() {
+                return null;
+            }
+
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return PredefinedTypes.TYPE_STRING;
             }
         };
     }

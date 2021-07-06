@@ -101,6 +101,50 @@ public class DefaultStatementParameterProcessorTest {
         void testSetTime() throws SQLException, ApplicationError {
             setTime(null, "Time", 0, TestUtils.getMockBValueJson());
         }
+
+        void testGetIntValueArrayData() throws ApplicationError {
+             getIntValueArrayData(TestUtils.getBArray(), null, "Int Array");
+        }
+
+        void testGetDecimalValueArrayData() throws ApplicationError {
+            getDecimalValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetRealValueArrayData() throws ApplicationError {
+            getRealValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetNumericValueArrayData() throws ApplicationError {
+            getNumericValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetDoubleValueArrayData() throws ApplicationError {
+            getDoubleValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetFloatValueArrayData() throws ApplicationError {
+            getFloatValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetDateValueArrayData() throws ApplicationError {
+            getDateValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetTimeValueArrayData() throws ApplicationError {
+            getTimeValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetBitValueArrayData() throws ApplicationError {
+            getBitValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetBinaryValueArrayData() throws ApplicationError, IOException {
+            getBinaryValueArrayData(TestUtils.getBArray());
+        }
+
+        void testGetDateTimeValueArrayData() throws ApplicationError {
+            getDateTimeValueArrayData(TestUtils.getBArray());
+        }
     }
 
     @Test
@@ -270,6 +314,127 @@ public class DefaultStatementParameterProcessorTest {
             testClass.testSetTime();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Invalid parameter :json is passed as value for SQL type : Time");
+        }
+    }
+
+    @Test
+    void getIntValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetIntValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Int Array");
+        }
+    }
+
+    @Test
+    void getDecimalValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetDecimalValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Decimal Array");
+        }
+    }
+
+    @Test
+    void getRealValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetRealValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Real Array");
+        }
+    }
+
+    @Test
+    void getNumericValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetNumericValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Numeric Array");
+        }
+    }
+
+    @Test
+    void getDoubleValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetDoubleValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Double Array");
+        }
+    }
+
+    @Test
+    void getFloatValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetFloatValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Float Array");
+        }
+    }
+
+    @Test
+    void getDateValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetDateValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Date Array");
+        }
+    }
+
+    @Test
+    void getTimeValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetTimeValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : Time Array");
+        }
+    }
+
+    @Test
+    void getBitValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetBitValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : BIT Array");
+        }
+    }
+
+    @Test
+    void getBinaryValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetBinaryValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :java.lang.String is passed as value for SQL " +
+                    "type : BINARY");
+        }
+    }
+
+    @Test
+    void getDateTimeValueArrayDataTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testGetDateTimeValueArrayData();
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Invalid parameter :string is passed as value for SQL " +
+                    "type : TIMESTAMP ARRAY");
         }
     }
 }
