@@ -30,12 +30,14 @@ import org.ballerinalang.sql.tests.TestUtils;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Date;
 
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -54,6 +56,18 @@ public class DefaultResultParameterProcessorTest {
 
         BMap<BString, Object> testNullCreateUserDefinedType() throws ApplicationError {
             return createUserDefinedType(null, null);
+        }
+
+        BArray testCreateAndPopulateCustomValueArray() throws ApplicationError, SQLException {
+            return createAndPopulateCustomValueArray(null, null, null);
+        }
+
+        void testCreateUserDefinedTypeSubtype() throws ApplicationError {
+            createUserDefinedTypeSubtype(TestUtils.getField(), PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE);
+        }
+
+        Object testConvertChar() throws ApplicationError {
+            return convertChar("4", 4, PredefinedTypes.TYPE_INT, "INTEGER");
         }
     }
 
@@ -129,6 +143,109 @@ public class DefaultResultParameterProcessorTest {
             assertNull(testClass.convertStruct(null, Types.STRUCT, PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE)
                     , "Not Null received");
         } catch (Exception ignored) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest1() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getStruct(), Types.STRUCT,
+                    PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "specified record and the returned SQL Struct field counts are " +
+                    "different, and hence not compatible");
+        }
+    }
+
+    @Test
+    void convertStructTest2() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getStruct(),
+                    Types.STRUCT, TestUtils.getIntStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), "2");
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest3() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
+                    Types.STRUCT, TestUtils.getIntStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), 2);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest4() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getBooleanStruct(),
+                    Types.STRUCT, TestUtils.getBooleanStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), true);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest5() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getFloatStruct(),
+                    Types.STRUCT, TestUtils.getFloatStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), 2.3);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest6() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
+                    Types.STRUCT, TestUtils.getFloatStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), 2.0);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest7() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getFloatStruct(),
+                    Types.STRUCT, TestUtils.getDecimalStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), 2.0);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    @Test
+    void convertStructTest8() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
+                    Types.STRUCT, TestUtils.getDecimalStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), new BigDecimal(2));
+        } catch (Exception ignore) {
 
         }
     }
@@ -290,6 +407,37 @@ public class DefaultResultParameterProcessorTest {
         try {
             assertNotNull(testClass.convertBinary("String", Types.BINARY, PredefinedTypes.TYPE_STRING)
                     , "Null received");
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    @Test
+    void createAndPopulateCustomValueArrayTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            assertNull(testClass.testCreateAndPopulateCustomValueArray(), "Not Null received");
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    @Test
+    void createUserDefinedTypeSubtypeTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.testCreateUserDefinedTypeSubtype();
+        } catch (ApplicationError e) {
+            assertEquals(e.getMessage(), "Error while retrieving data for unsupported type int to " +
+                    "create $$returnType$$ record.");
+        }
+    }
+
+    @Test
+    void convertCharTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            assertEquals(testClass.testConvertChar(), fromString("4"));
         } catch (Exception ignored) {
 
         }

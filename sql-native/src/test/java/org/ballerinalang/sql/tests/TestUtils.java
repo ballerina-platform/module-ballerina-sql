@@ -21,7 +21,9 @@ package org.ballerinalang.sql.tests;
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BFuture;
@@ -30,8 +32,12 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BValue;
+import io.ballerina.runtime.internal.IteratorUtils;
 import io.ballerina.runtime.internal.scheduling.Strand;
+import io.ballerina.runtime.internal.types.BField;
+import io.ballerina.runtime.internal.types.BRecordType;
 
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -521,5 +527,140 @@ public class TestUtils {
                 return PredefinedTypes.TYPE_JSON;
             }
         };
+    }
+
+    public static Field getField() {
+        return new Field() {
+            @Override
+            public long getFlags() {
+                return 0;
+            }
+
+            @Override
+            public Type getFieldType() {
+                return PredefinedTypes.TYPE_INT;
+            }
+
+            @Override
+            public String getFieldName() {
+                return null;
+            }
+        };
+    }
+
+    public static Struct getStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new String[]{"2", "2"};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
+    public static Struct getIntStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new BigDecimal[]{new BigDecimal(1), new BigDecimal(2)};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
+    public static Struct getFloatStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new Double[]{1.2, 2.3};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
+    public static Struct getBooleanStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new Boolean[]{true, false};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
+    public static RecordType getIntStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value1", new BField(PredefinedTypes.TYPE_INT, "value1", 256L));
+        fields.put("value2", new BField(PredefinedTypes.TYPE_INT, "value2", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_INT));
+    }
+
+    public static RecordType getBooleanStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value1", new BField(PredefinedTypes.TYPE_BOOLEAN, "value1", 256L));
+        fields.put("value2", new BField(PredefinedTypes.TYPE_BOOLEAN, "value2", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_BOOLEAN));
+    }
+
+    public static RecordType getFloatStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value1", new BField(PredefinedTypes.TYPE_FLOAT, "value1", 256L));
+        fields.put("value2", new BField(PredefinedTypes.TYPE_FLOAT, "value2", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_FLOAT));
+    }
+
+    public static RecordType getStringStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value1", new BField(PredefinedTypes.TYPE_STRING, "value1", 256L));
+        fields.put("value2", new BField(PredefinedTypes.TYPE_STRING, "value2", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_STRING));
+    }
+
+    public static RecordType getDecimalStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value1", new BField(PredefinedTypes.TYPE_DECIMAL, "value1", 256L));
+        fields.put("value2", new BField(PredefinedTypes.TYPE_DECIMAL, "value2", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_DECIMAL));
     }
 }

@@ -114,4 +114,13 @@ public class UtilsTest {
             assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : int");
         }
     }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest1() {
+        try {
+            Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_CLONEABLE, "New Type");
+        } catch (ApplicationError e) {
+            assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : Cloneable");
+        }
+    }
 }
