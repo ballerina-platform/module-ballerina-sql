@@ -24,6 +24,7 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.internal.values.MapValueImpl;
 import org.ballerinalang.sql.exception.ApplicationError;
 import org.ballerinalang.sql.parameterprocessor.DefaultResultParameterProcessor;
 import org.ballerinalang.sql.tests.TestUtils;
@@ -41,6 +42,7 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * DefaultResultParameterProcessor class test.
@@ -77,7 +79,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             assertNull(testClass.testNullCreateAndPopulateCustomBBRefValueArray(), "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -87,7 +89,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             assertNull(testClass.testNullCreateUserDefinedType(), "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -132,7 +134,7 @@ public class DefaultResultParameterProcessorTest {
             assertNull(testClass.convertXml(null, Types.SQLXML, PredefinedTypes.TYPE_XML)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -143,7 +145,7 @@ public class DefaultResultParameterProcessorTest {
             assertNull(testClass.convertStruct(null, Types.STRUCT, PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -167,8 +169,8 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getIntStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), "2");
-        } catch (Exception ignore) {
-
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -180,8 +182,8 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getIntStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), 2);
-        } catch (Exception ignore) {
-
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -192,9 +194,9 @@ public class DefaultResultParameterProcessorTest {
             Object object = testClass.convertStruct(TestUtils.getBooleanStruct(),
                     Types.STRUCT, TestUtils.getBooleanStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
-            assertEquals(map.get(fromString("value1")), true);
-        } catch (Exception ignore) {
-
+            assertEquals(map.get(fromString("value1")), false);
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -206,8 +208,8 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getFloatStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), 2.3);
-        } catch (Exception ignore) {
-
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -219,8 +221,8 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getFloatStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), 2.0);
-        } catch (Exception ignore) {
-
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -228,12 +230,12 @@ public class DefaultResultParameterProcessorTest {
     void convertStructTest7() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            Object object = testClass.convertStruct(TestUtils.getFloatStruct(),
+            Object object = testClass.convertStruct(TestUtils.getDecimalStruct(),
                     Types.STRUCT, TestUtils.getDecimalStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
-            assertEquals(map.get(fromString("value1")), 2.0);
-        } catch (Exception ignore) {
-
+            assertEquals(map.get(fromString("value1")), new BigDecimal("2.3"));
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -245,8 +247,36 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getDecimalStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), new BigDecimal(2));
-        } catch (Exception ignore) {
+        } catch (Exception ignored) {
+            fail("Exception received");
+        }
+    }
 
+    @Test
+    void convertStructTest9() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getStruct(),
+                    Types.STRUCT, TestUtils.getStringStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            assertEquals(map.get(fromString("value1")), "2");
+        } catch (Exception ignored) {
+            fail("Exception received");
+        }
+    }
+
+    @Test
+    void convertStructTest10() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object object = testClass.convertStruct(TestUtils.getRecordStruct(),
+                    Types.STRUCT, TestUtils.getRecordStructRecord());
+            BMap<BString, Object> map = (BMap<BString, Object>) object;
+            MapValueImpl mapValue = (MapValueImpl) map.get(fromString("value0"));
+            assertEquals(mapValue.getBooleanValue(fromString("value2")), true);
+            assertEquals(mapValue.getBooleanValue(fromString("value1")), false);
+        } catch (Exception ignored) {
+            fail("Exception received");
         }
     }
 
@@ -258,7 +288,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_STRING)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -271,7 +301,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_INT)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -283,7 +313,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_STRING)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -296,7 +326,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_INT)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -308,7 +338,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_STRING)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -321,7 +351,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_INT)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -333,7 +363,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_STRING)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -346,7 +376,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_INT)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -356,10 +386,10 @@ public class DefaultResultParameterProcessorTest {
         Date date = new Date();
         try {
             assertNotNull(testClass.convertTimeStamp(date, Types.TIMESTAMP,
-                    PredefinedTypes.TYPE_READONLY_ANYDATA)
+                    TestUtils.getTupleType())
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -371,7 +401,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_STRING)
                     , "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -384,7 +414,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.TYPE_INT)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -394,10 +424,10 @@ public class DefaultResultParameterProcessorTest {
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
         try {
             assertNotNull(testClass.convertTimestampWithTimezone(offsetDateTime, Types.TIMESTAMP_WITH_TIMEZONE,
-                    PredefinedTypes.TYPE_READONLY_ANYDATA)
+                    TestUtils.getTupleType())
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -408,7 +438,7 @@ public class DefaultResultParameterProcessorTest {
             assertNotNull(testClass.convertBinary("String", Types.BINARY, PredefinedTypes.TYPE_STRING)
                     , "Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -418,7 +448,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             assertNull(testClass.testCreateAndPopulateCustomValueArray(), "Not Null received");
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 
@@ -439,7 +469,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             assertEquals(testClass.testConvertChar(), fromString("4"));
         } catch (Exception ignored) {
-
+            fail("Exception received");
         }
     }
 }

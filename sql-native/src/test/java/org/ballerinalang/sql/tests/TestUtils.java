@@ -22,6 +22,7 @@ import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.IntersectionType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
@@ -605,6 +606,25 @@ public class TestUtils {
         };
     }
 
+    public static Struct getDecimalStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new BigDecimal[]{ new BigDecimal("1.2"), new BigDecimal("2.3")};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
     public static Struct getBooleanStruct() {
         return new Struct() {
             @Override
@@ -614,7 +634,26 @@ public class TestUtils {
 
             @Override
             public Object[] getAttributes() throws SQLException {
-                return new Boolean[]{true, false};
+                return new Integer[]{1, 0};
+            }
+
+            @Override
+            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                return new Object[0];
+            }
+        };
+    }
+
+    public static Struct getRecordStruct() {
+        return new Struct() {
+            @Override
+            public String getSQLTypeName() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Object[] getAttributes() throws SQLException {
+                return new Struct[]{getBooleanStruct()};
             }
 
             @Override
@@ -662,5 +701,91 @@ public class TestUtils {
         fields.put("value2", new BField(PredefinedTypes.TYPE_DECIMAL, "value2", 256L));
         return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_DECIMAL));
+    }
+
+    public static RecordType getRecordStructRecord() {
+        Map<String, Field> fields = new HashMap();
+        fields.put("value0", new BField(getBooleanStructRecord(), "value0", 256L));
+        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+                IteratorUtils.getTypeFlags(getBooleanStructRecord()));
+    }
+
+    public static Type getTupleType() {
+        return new Type() {
+            @Override
+            public <V> V getZeroValue() {
+                return null;
+            }
+
+            @Override
+            public <V> V getEmptyValue() {
+                return null;
+            }
+
+            @Override
+            public int getTag() {
+                return 34;
+            }
+
+            @Override
+            public boolean isNilable() {
+                return false;
+            }
+
+            @Override
+            public String getName() {
+                return "Utc";
+            }
+
+            @Override
+            public String getQualifiedName() {
+                return null;
+            }
+
+            @Override
+            public Module getPackage() {
+                return null;
+            }
+
+            @Override
+            public boolean isPublic() {
+                return false;
+            }
+
+            @Override
+            public boolean isNative() {
+                return false;
+            }
+
+            @Override
+            public boolean isAnydata() {
+                return false;
+            }
+
+            @Override
+            public boolean isPureType() {
+                return false;
+            }
+
+            @Override
+            public boolean isReadOnly() {
+                return false;
+            }
+
+            @Override
+            public Type getImmutableType() {
+                return null;
+            }
+
+            @Override
+            public void setImmutableType(IntersectionType intersectionType) {
+
+            }
+
+            @Override
+            public Module getPkg() {
+                return null;
+            }
+        };
     }
 }
