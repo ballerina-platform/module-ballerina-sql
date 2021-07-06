@@ -40,6 +40,7 @@ import io.ballerina.runtime.internal.IteratorUtils;
 import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.types.BField;
 import io.ballerina.runtime.internal.types.BRecordType;
+import io.ballerina.runtime.internal.values.BmpStringValue;
 
 import java.math.BigDecimal;
 import java.sql.Array;
@@ -58,9 +59,11 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import javax.transaction.xa.XAException;
@@ -413,7 +416,22 @@ public class TestUtils {
 
             @Override
             public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-                return null;
+                return new Struct() {
+                    @Override
+                    public String getSQLTypeName() throws SQLException {
+                        return typeName;
+                    }
+
+                    @Override
+                    public Object[] getAttributes() throws SQLException {
+                        return attributes;
+                    }
+
+                    @Override
+                    public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                        return new Object[0];
+                    }
+                };
             }
 
             @Override
@@ -840,18 +858,17 @@ public class TestUtils {
         };
     }
 
-    public static BArray getBArray() {
-        ArrayList<String> array = new ArrayList<>();
-        array.add("new String");
+    public static <T> BArray getBArray(ArrayList<T> arrayList, Type type) {
+
         return new BArray() {
             @Override
             public int size() {
-                return array.size();
+                return arrayList.size();
             }
 
             @Override
             public Object get(long l) {
-                return array.get((int) l);
+                return arrayList.get((int) l);
             }
 
             @Override
@@ -1046,7 +1063,175 @@ public class TestUtils {
 
             @Override
             public Type getType() {
-                return PredefinedTypes.TYPE_STRING;
+                return type;
+            }
+        };
+    }
+
+    public static BMap getMockBMapRecord() {
+        HashMap<BmpStringValue, Boolean> booleanHashMap = new HashMap<>();
+        booleanHashMap.put(new BmpStringValue("value1"), true);
+        booleanHashMap.put(new BmpStringValue("value2"), false);
+
+        return new BMap() {
+            @Override
+            public Object get(Object o) {
+                return booleanHashMap.get(o);
+            }
+
+            @Override
+            public Object put(Object o, Object o2) {
+                return null;
+            }
+
+            @Override
+            public Object remove(Object o) {
+                return null;
+            }
+
+            @Override
+            public boolean containsKey(Object o) {
+                return false;
+            }
+
+            @Override
+            public Set<Map.Entry> entrySet() {
+                return null;
+            }
+
+            @Override
+            public Collection values() {
+                return null;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @Override
+            public Object getOrThrow(Object o) {
+                return null;
+            }
+
+            @Override
+            public Object fillAndGet(Object o) {
+                return null;
+            }
+
+            @Override
+            public Object[] getKeys() {
+                return new Object[0];
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public void addNativeData(String s, Object o) {
+
+            }
+
+            @Override
+            public Object getNativeData(String s) {
+                return null;
+            }
+
+            @Override
+            public Long getIntValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public Double getFloatValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public BString getStringValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public Boolean getBooleanValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public BMap<?, ?> getMapValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public BObject getObjectValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public BArray getArrayValue(BString bString) {
+                return null;
+            }
+
+            @Override
+            public Type getIteratorNextReturnType() {
+                return null;
+            }
+
+            @Override
+            public long getDefaultableIntValue(BString bString) {
+                return 0;
+            }
+
+            @Override
+            public Object merge(BMap bMap, boolean b) {
+                return null;
+            }
+
+            @Override
+            public BTypedesc getTypedesc() {
+                return null;
+            }
+
+            @Override
+            public void populateInitialValue(Object o, Object o2) {
+
+            }
+
+            @Override
+            public BIterator<?> getIterator() {
+                return null;
+            }
+
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return TestUtils.getBooleanStructRecord();
             }
         };
     }

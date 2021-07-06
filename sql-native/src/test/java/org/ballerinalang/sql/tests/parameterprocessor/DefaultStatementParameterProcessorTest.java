@@ -17,6 +17,8 @@
  */
 package org.ballerinalang.sql.tests.parameterprocessor;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.sql.exception.ApplicationError;
 import org.ballerinalang.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import org.ballerinalang.sql.tests.TestUtils;
@@ -24,8 +26,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Struct;
+import java.util.ArrayList;
 
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * DefaultStatementParameterProcessor class test.
@@ -103,47 +109,93 @@ public class DefaultStatementParameterProcessorTest {
         }
 
         void testGetIntValueArrayData() throws ApplicationError {
-             getIntValueArrayData(TestUtils.getBArray(), null, "Int Array");
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getIntValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING), null, "Int Array");
         }
 
         void testGetDecimalValueArrayData() throws ApplicationError {
-            getDecimalValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getDecimalValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetRealValueArrayData() throws ApplicationError {
-            getRealValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getRealValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetNumericValueArrayData() throws ApplicationError {
-            getNumericValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getNumericValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetDoubleValueArrayData() throws ApplicationError {
-            getDoubleValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getDoubleValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetFloatValueArrayData() throws ApplicationError {
-            getFloatValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getFloatValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetDateValueArrayData() throws ApplicationError {
-            getDateValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getDateValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetTimeValueArrayData() throws ApplicationError {
-            getTimeValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getTimeValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetBitValueArrayData() throws ApplicationError {
-            getBitValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getBitValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetBinaryValueArrayData() throws ApplicationError, IOException {
-            getBinaryValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getBinaryValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
         void testGetDateTimeValueArrayData() throws ApplicationError {
-            getDateTimeValueArrayData(TestUtils.getBArray());
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add("new String");
+            getDateTimeValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
+        }
+
+        Object[] testGetBitValueArrayDataBString() throws ApplicationError {
+            ArrayList<BString> arrayList = new ArrayList<>();
+            arrayList.add(fromString("True"));
+            return getBitValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
+        }
+
+        Object[] testGetBitValueArrayDataInteger(int i) throws ApplicationError {
+            ArrayList<Integer> arrayList = new ArrayList<>();
+            arrayList.add(i);
+            return getBitValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_INT));
+        }
+
+        Object[] testGetRecordStructDataNull() throws SQLException, ApplicationError {
+            Object[] array = new Object[1];
+            getRecordStructData(TestUtils.getMockConnection(false), array, 0, null);
+            return array;
+        }
+
+        Object[] testGetRecordStructDataRecord() throws SQLException, ApplicationError {
+            Object[] array = new Object[1];
+            getRecordStructData(TestUtils.getMockConnection(false), array, 0, TestUtils.getMockBMapRecord());
+            return array;
         }
     }
 
@@ -435,6 +487,66 @@ public class DefaultStatementParameterProcessorTest {
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Invalid parameter :string is passed as value for SQL " +
                     "type : TIMESTAMP ARRAY");
+        }
+    }
+
+    @Test
+    void getBitValueArrayDataBStringTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object[] objects = testClass.testGetBitValueArrayDataBString();
+            Boolean[] array = (Boolean[]) objects[0];
+            assertEquals(array[0], true);
+        } catch (Exception e) {
+            fail("Exception received");
+        }
+    }
+
+    @Test
+    void getBitValueArrayDataIntegerTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object[] objects = testClass.testGetBitValueArrayDataInteger(1);
+            Boolean[] array = (Boolean[]) objects[0];
+            assertEquals(array[0], true);
+        } catch (Exception e) {
+            fail("Exception received");
+        }
+    }
+
+    @Test
+    void getBitValueArrayDataIntegerTest2() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object[] objects = testClass.testGetBitValueArrayDataInteger(12);
+            Boolean[] array = (Boolean[]) objects[0];
+            assertEquals(array[0], true);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Only 1 or 0 can be passed for BIT SQL Type, but found :12");
+        }
+    }
+
+    @Test
+    void getRecordStructDataNullTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object[] objects = testClass.testGetRecordStructDataNull();
+            Struct struct = (Struct) objects[0];
+            assertEquals(struct.getSQLTypeName(), null);
+        } catch (Exception e) {
+            fail("Exception received");
+        }
+    }
+
+    @Test
+    void getRecordStructDataRecordTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            Object[] objects = testClass.testGetRecordStructDataRecord();
+            Struct struct = (Struct) objects[0];
+            assertEquals(struct.getAttributes()[0], false);
+        } catch (Exception e) {
+            fail("Exception received");
         }
     }
 }
