@@ -150,6 +150,17 @@ public class DefaultResultParameterProcessorTest {
     }
 
     @Test
+    void convertStructErrorTest() {
+        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
+        try {
+            testClass.convertStruct(TestUtils.getStruct(), Types.INTEGER, PredefinedTypes.TYPE_INT);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "The ballerina type that can be used for SQL struct should be record type," +
+                    " but found int .");
+        }
+    }
+
+    @Test
     void convertStructTest1() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
@@ -165,10 +176,10 @@ public class DefaultResultParameterProcessorTest {
     void convertStructTest2() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            Object object = testClass.convertStruct(TestUtils.getStruct(),
+            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
                     Types.STRUCT, TestUtils.getIntStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
-            assertEquals(map.get(fromString("value1")), "2");
+            assertEquals(map.get(fromString("value1")), 2);
         } catch (Exception ignored) {
             fail("Exception received");
         }
@@ -178,7 +189,7 @@ public class DefaultResultParameterProcessorTest {
     void convertStructTest3() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
+            Object object = testClass.convertStruct(TestUtils.getDecimalStruct(),
                     Types.STRUCT, TestUtils.getIntStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), 2);
@@ -217,7 +228,7 @@ public class DefaultResultParameterProcessorTest {
     void convertStructTest6() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
+            Object object = testClass.convertStruct(TestUtils.getDecimalStruct(),
                     Types.STRUCT, TestUtils.getFloatStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             assertEquals(map.get(fromString("value1")), 2.0);
@@ -233,7 +244,7 @@ public class DefaultResultParameterProcessorTest {
             Object object = testClass.convertStruct(TestUtils.getDecimalStruct(),
                     Types.STRUCT, TestUtils.getDecimalStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
-            assertEquals(map.get(fromString("value1")), new BigDecimal("2.3"));
+            assertEquals(map.get(fromString("value1")), new BigDecimal("2"));
         } catch (Exception ignored) {
             fail("Exception received");
         }
@@ -241,19 +252,6 @@ public class DefaultResultParameterProcessorTest {
 
     @Test
     void convertStructTest8() {
-        NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
-        try {
-            Object object = testClass.convertStruct(TestUtils.getIntStruct(),
-                    Types.STRUCT, TestUtils.getDecimalStructRecord());
-            BMap<BString, Object> map = (BMap<BString, Object>) object;
-            assertEquals(map.get(fromString("value1")), new BigDecimal(2));
-        } catch (Exception ignored) {
-            fail("Exception received");
-        }
-    }
-
-    @Test
-    void convertStructTest9() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
             Object object = testClass.convertStruct(TestUtils.getStruct(),
@@ -266,7 +264,7 @@ public class DefaultResultParameterProcessorTest {
     }
 
     @Test
-    void convertStructTest10() {
+    void convertStructTest9() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
             Object object = testClass.convertStruct(TestUtils.getRecordStruct(),

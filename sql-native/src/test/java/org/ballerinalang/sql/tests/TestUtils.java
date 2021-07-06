@@ -28,10 +28,12 @@ import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BFuture;
+import io.ballerina.runtime.api.values.BInitialValueEntry;
 import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.internal.IteratorUtils;
 import io.ballerina.runtime.internal.scheduling.Strand;
@@ -71,6 +73,8 @@ public class TestUtils {
 
     public static BObject getMockObject(String name) {
         return new BObject() {
+            HashMap<String, Object> nativeData = new HashMap<>();
+
             @Override
             public Object call(Strand strand, String s, Object... objects) {
                 return null;
@@ -128,12 +132,12 @@ public class TestUtils {
 
             @Override
             public void addNativeData(String s, Object o) {
-
+                nativeData.put(s, o);
             }
 
             @Override
             public Object getNativeData(String s) {
-                return null;
+                return nativeData.get(s);
             }
 
             @Override
@@ -568,7 +572,7 @@ public class TestUtils {
         };
     }
 
-    public static Struct getIntStruct() {
+    public static Struct getDecimalStruct() {
         return new Struct() {
             @Override
             public String getSQLTypeName() throws SQLException {
@@ -606,7 +610,7 @@ public class TestUtils {
         };
     }
 
-    public static Struct getDecimalStruct() {
+    public static Struct getIntStruct() {
         return new Struct() {
             @Override
             public String getSQLTypeName() throws SQLException {
@@ -615,7 +619,7 @@ public class TestUtils {
 
             @Override
             public Object[] getAttributes() throws SQLException {
-                return new BigDecimal[]{ new BigDecimal("1.2"), new BigDecimal("2.3")};
+                return new Integer[]{ 1, 2};
             }
 
             @Override
@@ -784,6 +788,51 @@ public class TestUtils {
 
             @Override
             public Module getPkg() {
+                return null;
+            }
+        };
+    }
+
+    public static BTypedesc getBTypedesc(Type type) {
+        Type typedesc = type;
+        return new BTypedesc() {
+            @Override
+            public Type getDescribingType() {
+                return typedesc;
+            }
+
+            @Override
+            public Object instantiate(Strand strand) {
+                return null;
+            }
+
+            @Override
+            public Object instantiate(Strand strand, BInitialValueEntry[] bInitialValueEntries) {
+                return null;
+            }
+
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
                 return null;
             }
         };
