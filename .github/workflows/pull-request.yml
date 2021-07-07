@@ -25,8 +25,7 @@ jobs:
           path: sql-ballerina/ballerina-internal.log
           if-no-files-found: ignore
       - name: Generate CodeCov Report
-        if: github.event_name == 'pull_request'
-        uses: codecov/codecov-action@v1 
+        uses: codecov/codecov-action@v1
         
   windows-build:
     runs-on: windows-latest
