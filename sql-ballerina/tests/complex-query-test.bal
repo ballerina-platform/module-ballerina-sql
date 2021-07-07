@@ -706,10 +706,11 @@ type UserDefinedTypes record {
 }
 function testUserDefinedTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float " +
-    "from UserDefinedTypesTable where udt_int = 1", UserDefinedTypes);
-    record{| record{} value; |}? data =  check queryResult.next();
-    record{}? value = data?.value;
+    stream<UserDefinedTypes, error?> queryResult = dbClient->query("SELECT udt_int, udt_boolean, udt_string, udt_float " +
+    "from UserDefinedTypesTable where udt_int = 1");
+    record{| UserDefinedTypes value; |}? data =  check queryResult.next();
+    check queryResult.close();
+    UserDefinedTypes? value = data?.value;
     check dbClient.close();
 
     UserDefinedTypes expected = {
