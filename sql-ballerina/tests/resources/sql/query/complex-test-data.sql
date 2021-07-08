@@ -236,19 +236,3 @@ INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_arra
 
 INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, bit_array, string_array, blob_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz_array, timestamp_tz_array)
   VALUES (4, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null);
-
-CREATE TYPE INT_TYPE AS INT;
-CREATE TYPE BOOLEAN_TYPE AS BOOLEAN;
-CREATE TYPE STRING_TYPE AS VARCHAR(100);
-CREATE TYPE FLOAT_TYPE AS FLOAT;
-
-CREATE TABLE IF NOT EXISTS UserDefinedTypesTable (
-    udt_int INT_TYPE NOT NULL,
-    udt_boolean BOOLEAN_TYPE,
-    udt_string STRING_TYPE,
-    udt_float FLOAT_TYPE,
-    PRIMARY KEY (udt_int)
-);
-
-INSERT INTO UserDefinedTypesTable (udt_int, udt_boolean, udt_string, udt_float) VALUES
-  (1, true, 'User defined type string', 12.32);
