@@ -120,10 +120,10 @@ returns record {} | error? {
 function exec(string command, map<string> env = {},
                      string? dir = (), string... args) returns Process|error = @java:Method {
     name: "exec",
-    'class: "org.ballerinalang.sql.testutils.nativeimpl.Exec"
+    'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.Exec"
 } external;
 
 isolated function setModuleForTest() = @java:Method {
     name: "setModule",
-    'class: "org.ballerinalang.sql.testutils.nativeimpl.ModuleUtils"
+    'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.ModuleUtils"
 } external;

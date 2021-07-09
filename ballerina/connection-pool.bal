@@ -55,7 +55,7 @@ readonly class GlobalConnectionPoolContainer {
 }
 
 isolated function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Method {
-    'class: "org.ballerinalang.sql.utils.ConnectionPoolUtils"
+    'class: "io.ballerina.stdlib.sql.utils.ConnectionPoolUtils"
 } external;
 
 // This is an instance of GlobalPoolConfigContainer object type. The init functions of database clients pass

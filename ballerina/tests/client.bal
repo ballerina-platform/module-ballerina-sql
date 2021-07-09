@@ -37,13 +37,13 @@ isolated client class MockClient {
 
     remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error> = @java:Method {
-        'class: "org.ballerinalang.sql.testutils.QueryTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
         name: "nativeQuery"
     } external;
 
     remote isolated function execute(string|ParameterizedQuery sqlQuery)
     returns ExecutionResult|Error = @java:Method {
-        'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils",
         name: "nativeExecute"
     } external;
 
@@ -56,12 +56,12 @@ isolated client class MockClient {
 
     remote isolated function call(string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error = @java:Method {
-        'class: "org.ballerinalang.sql.testutils.CallTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.CallTestUtils",
         name: "nativeCall"
     } external;
 
     public isolated function close() returns Error? = @java:Method {
-         'class: "org.ballerinalang.sql.testutils.ClientTestUtils",
+         'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils",
          name: "close"
     } external;
 }
@@ -78,10 +78,10 @@ type SQLParams record {|
 
 function createSqlClient(Client sqlClient, SQLParams sqlParams, ConnectionPool globalConnPool)
 returns Error? = @java:Method {
-    'class: "org.ballerinalang.sql.testutils.ClientTestUtils"
+    'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils"
 } external;
 
 isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
-    'class: "org.ballerinalang.sql.testutils.ExecuteTestUtils"
+    'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils"
 } external;

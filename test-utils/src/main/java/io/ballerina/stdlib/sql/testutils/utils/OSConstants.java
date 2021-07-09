@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -11,13 +11,25 @@
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
-module io.ballerina.stdlib.sql.testutils {
-    requires io.ballerina.runtime;
-    requires io.ballerina.stdlib.sql;
-    exports io.ballerina.stdlib.sql.testutils;
+package io.ballerina.stdlib.sql.testutils.utils;
+
+/**
+ * Constants for os related functions.
+ *
+ * @since 0.6.0
+ */
+public class OSConstants {
+    static final String PROCESS_TYPE = "Process";
+
+    static final String PROCESS_FIELD = "ProcessField";
+
+    public static final String PROCESS_EXEC_ERROR = "ProcessExecError";
+
+    private OSConstants() {
+    }
 }
