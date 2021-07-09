@@ -196,7 +196,7 @@ function testToJsonComplexTypes() returns error? {
 }
 function testComplexTypesNil() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from " +
+    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type, clob_type, binary_type, other_type, uuid_type from " +
         " ComplexTypes where row_id = 2");
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -205,7 +205,9 @@ function testComplexTypesNil() returns error? {
     var complexStringType = {
         blob_type: (),
         clob_type: (),
-        binary_type: ()
+        binary_type: (),
+        other_type: (),
+        uuid_type: ()
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
 }

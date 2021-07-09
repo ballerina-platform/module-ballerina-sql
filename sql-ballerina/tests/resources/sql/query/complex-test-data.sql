@@ -42,12 +42,14 @@ CREATE TABLE IF NOT EXISTS ComplexTypes(
   blob_type      BLOB(1024),
   clob_type      CLOB(1024),
   binary_type  BINARY(27),
+  uuid_type UUID,
+  other_type OTHER,
   PRIMARY KEY (row_id)
 );
 
-INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type) VALUES
+INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, uuid_type) VALUES
   (1, X'77736F322062616C6C6572696E6120626C6F6220746573742E', CONVERT('very long text', CLOB),
-  X'77736F322062616C6C6572696E612062696E61727920746573742E');
+  X'77736F322062616C6C6572696E612062696E61727920746573742E', '24ff1824-01e8-4dac-8eb3-3fee32ad2b9c');
 
 INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type) VALUES
   (2, null, null, null);
@@ -234,4 +236,3 @@ INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_arra
 
 INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, bit_array, string_array, blob_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz_array, timestamp_tz_array)
   VALUES (4, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null);
-

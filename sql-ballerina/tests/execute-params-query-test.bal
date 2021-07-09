@@ -594,6 +594,36 @@ function insertIntoArrayTable9() returns error? {
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable10() returns error? {
+     time:TimeOfDay timeWithTzRecord = {utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"};
+     TimeArrayValue paraTimeWithTZ = new ([timeWithTzRecord]);
+
+     int rowId = 14;
+     ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, time_tz_array) VALUES(${rowId},
+                ${paraTimeWithTZ})`;
+     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
+     test:assertTrue(result is error, "Error Expected for timestamp array");
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoArrayTable11() returns error? {
+     time:Civil timestampWithTzRecord = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
+                                            month:1, day:25, hour: 16, minute: 33, second:55};
+     DateTimeArrayValue paraDatetimeWithTZ = new ([timestampWithTzRecord]);
+     int rowId = 14;
+     ParameterizedQuery sqlQuery =
+        `INSERT INTO ArrayTypes2 (row_id, timestamp_tz_array) VALUES(${rowId},
+                ${paraDatetimeWithTZ})`;
+     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
+     test:assertTrue(result is error, "Error Expected for timestamp array");
+}
+
 function executeQueryMockClient(ParameterizedQuery sqlQuery)
 returns ExecutionResult | error {
     MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);

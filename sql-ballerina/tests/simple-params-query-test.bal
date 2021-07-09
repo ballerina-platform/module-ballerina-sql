@@ -232,6 +232,30 @@ function queryTypBitInvalidIntParam() {
     test:assertEquals(dbError.message(), "Only 1 or 0 can be passed for BitValue SQL Type, but found :12");
 }
 
+type DataTableRecord record {
+    float int_type;
+};
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryIntTypeInvalidParam() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT int_type from DataTable WHERE row_id = ${rowId}`;
+    MockClient dbClient = check new (url = simpleParamsDb, user = user, password = password);
+    stream<DataTableRecord, error?> streamData = dbClient->query(sqlQuery);
+    record {|DataTableRecord value;|}|error? data = streamData.next();
+    check streamData.close();
+    check dbClient.close();
+    test:assertTrue(data is error);
+    if data is ApplicationError {
+        test:assertTrue(data.message().startsWith("The field 'int_type' of type float cannot be mapped to the column " +
+        "'INT_TYPE' of SQL type 'INTEGER'"));
+    } else {
+        test:assertFail("ApplicationError Error expected.");
+    }
+}
+
 @test:Config {
     groups: ["query", "query-simple-params"]
 }

@@ -18,11 +18,25 @@
 
 package org.ballerinalang.sql.tests.utils;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.types.StructureType;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
+import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BLink;
+import io.ballerina.runtime.api.values.BValue;
 import org.ballerinalang.sql.exception.ApplicationError;
+import org.ballerinalang.sql.tests.TestUtils;
+import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.ballerinalang.sql.utils.Utils;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Utils class test.
@@ -36,5 +50,88 @@ public class UtilsTest {
        ApplicationError error = Utils.throwInvalidParameterError(intVal, "Integer");
        assertEquals(error.getMessage(),
                "Invalid parameter :java.lang.Integer is passed as value for SQL type : Integer");
+    }
+
+    @Test
+    void createTimeStructTest() {
+        try {
+            BArray bArray = Utils.createTimeStruct(1400020000);
+        } catch (UnsupportedOperationException e) {
+            assertEquals(e.getMessage(), "java.lang.UnsupportedOperationException");
+        }
+    }
+
+    @Test
+    void throwInvalidParameterErrorTest() {
+        BValue bValue = new BValue() {
+            @Override
+            public Object copy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public Object frozenCopy(Map<Object, Object> map) {
+                return null;
+            }
+
+            @Override
+            public String stringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public String expressionStringValue(BLink bLink) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return TypeUtils.getType(1);
+            }
+        };
+
+        ApplicationError applicationError = Utils.throwInvalidParameterError(bValue, "INTEGER");
+        assertEquals(applicationError.getMessage(), "Invalid parameter :byte is passed as value for " +
+                "SQL type : INTEGER");
+    }
+
+    @Test
+    void getDefaultRecordTypeTest() {
+        ColumnDefinition columnDefinition1 = new TestUtils.ExtendedColumnDefinition("int_type", null,
+                2, "INT", TypeUtils.getType(4), false);
+        ColumnDefinition columnDefinition2 = new TestUtils.ExtendedColumnDefinition("string_type", null,
+                2, "STRING", TypeUtils.getType(12), true);
+        List<ColumnDefinition> list = new ArrayList<>();
+        list.add(columnDefinition1);
+        list.add(columnDefinition2);
+        StructureType structureType = Utils.getDefaultRecordType(list);
+        assertEquals(structureType.getFlags(), 0);
+    }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest() {
+        try {
+            Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_INT, "New Type");
+        } catch (ApplicationError e) {
+            assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : int");
+        }
+    }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest1() {
+        try {
+            Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_CLONEABLE, "New Type");
+        } catch (ApplicationError e) {
+            assertEquals(e.getMessage(), "New Type field cannot be converted to ballerina type : Cloneable");
+        }
+    }
+
+    @Test
+    void validatedInvalidFieldAssignmentTest2() {
+        try {
+            Utils.validatedInvalidFieldAssignment(100, TestUtils.getBooleanStructRecord(), "New Type");
+        } catch (Exception ignored) {
+            fail("Exception received");
+        }
     }
 }
