@@ -81,16 +81,16 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     private static final ArrayType byteArrayType = TypeCreator.createArrayType(
         TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE));
     private static final RecordType civilRecordType = TypeCreator.createRecordType(
-        org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD,
-        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+        io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD,
+        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     private static final ArrayType civilArrayType = TypeCreator.createArrayType(civilRecordType);
     private static final RecordType timeRecordType = TypeCreator.createRecordType(
-        org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD,
-        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+        io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD,
+        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     private static final ArrayType timeArrayType = TypeCreator.createArrayType(timeRecordType);
     private static final RecordType dateRecordType = TypeCreator.createRecordType(
-        org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD,
-        org.ballerinalang.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
+        io.ballerina.stdlib.time.util.Constants.DATE_RECORD,
+        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     private static final ArrayType dateArrayType = TypeCreator.createArrayType(dateRecordType);
 
     public DefaultResultParameterProcessor() {
@@ -556,7 +556,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(date.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equals(org.ballerinalang.stdlib.time.util.Constants.DATE_RECORD)) {
+                    if (type.getName().equals(io.ballerina.stdlib.time.util.Constants.DATE_RECORD)) {
                         if (date instanceof Date) {
                             return Utils.createDateRecord((Date) date);
                         } else {
@@ -582,7 +582,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(time.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equals(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
+                    if (type.getName().equals(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
                         if (time instanceof Time) {
                             return Utils.createTimeRecord((Time) time);
                         } else {
@@ -609,7 +609,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(offsetTime.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equals(org.ballerinalang.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
+                    if (type.getName().equals(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
                         return Utils.createTimeWithTimezoneRecord(offsetTime);
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
@@ -631,7 +631,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(timestamp.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                if (type.getName().equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD)
+                if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)
                         && timestamp instanceof Timestamp) {
                     return Utils.createTimestampRecord((Timestamp) timestamp);
                 } else {
@@ -657,7 +657,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(offsetDateTime.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                    if (type.getName().equalsIgnoreCase(org.ballerinalang.stdlib.time.util.Constants.CIVIL_RECORD)) {
+                    if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)) {
                         return Utils.createTimestampWithTimezoneRecord(offsetDateTime);
                     } else {
                         throw new ApplicationError("Unsupported Ballerina type:" +
