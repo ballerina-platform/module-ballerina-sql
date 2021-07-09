@@ -42,6 +42,10 @@ import static io.ballerina.stdlib.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIE
 import static io.ballerina.stdlib.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
+import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
+import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
+import static io.ballerina.stdlib.sql.utils.Utils.getDefaultRecordType;
+import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
 
 /**
  * This class provides functionality for the `ProcedureCallResult` to iterate through the sql result sets.
@@ -69,8 +73,8 @@ public class ProcedureCallResultUtils {
                 int totalRecordDescriptions = (int) procedureCallResult
                         .getNativeData(RESULT_SET_TOTAL_NATIVE_DATA_FIELD);
                 if (totalRecordDescriptions == 0) {
-                    columnDefinitions = Utils.getColumnDefinitions(resultSet, null);
-                    streamConstraint = Utils.getDefaultRecordType(columnDefinitions);
+                    columnDefinitions = getColumnDefinitions(resultSet, null);
+                    streamConstraint = getDefaultRecordType(columnDefinitions);
                 } else {
                     Object[] recordDescriptions = (Object[]) procedureCallResult
                             .getNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD);
@@ -78,7 +82,7 @@ public class ProcedureCallResultUtils {
                     if (recordDescription <= totalRecordDescriptions) {
                         streamConstraint = (StructureType)
                                 ((BTypedesc) recordDescriptions[recordDescription]).getDescribingType();
-                        columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
+                        columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, recordDescription + 1);
                     } else {
                         throw new ApplicationError("The record description array count does not match with the " +
@@ -92,7 +96,7 @@ public class ProcedureCallResultUtils {
                 procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 procedureCallResult.set(EXECUTION_RESULT_FIELD, null);
             } else {
-                Utils.updateProcedureCallExecutionResult(statement, procedureCallResult);
+                updateProcedureCallExecutionResult(statement, procedureCallResult);
             }
             return moreResults;
         } catch (SQLException e) {
@@ -109,6 +113,6 @@ public class ProcedureCallResultUtils {
     public static Object closeCallResult(BObject procedureCallResult) {
         Statement statement = (Statement) procedureCallResult.getNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD);
         Connection connection = (Connection) procedureCallResult.getNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD);
-        return Utils.cleanUpConnection(procedureCallResult, null, statement, connection);
+        return cleanUpConnection(procedureCallResult, null, statement, connection);
     }
 }

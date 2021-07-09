@@ -50,6 +50,8 @@ import java.time.OffsetTime;
 import java.util.List;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
+import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
+import static io.ballerina.stdlib.sql.utils.Utils.getString;
 
 /**
  * This class provides functionality for the `RecordIterator` to iterate through the sql result set.
@@ -127,10 +129,10 @@ public class RecordIteratorUtils {
             case Types.BLOB:
                 return resultParameterProcessor.convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
             case Types.CLOB:
-                String clobValue = Utils.getString(resultSet.getClob(columnIndex));
+                String clobValue = getString(resultSet.getClob(columnIndex));
                 return resultParameterProcessor.convertChar(clobValue, sqlType, ballerinaType);
             case Types.NCLOB:
-                String nClobValue = Utils.getString(resultSet.getNClob(columnIndex));
+                String nClobValue = getString(resultSet.getNClob(columnIndex));
                 return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
             case Types.DATE:
                 Date date = resultSet.getDate(columnIndex);
@@ -230,6 +232,6 @@ public class RecordIteratorUtils {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
         Statement statement = (Statement) recordIterator.getNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD);
         Connection connection = (Connection) recordIterator.getNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD);
-        return Utils.cleanUpConnection(recordIterator, resultSet, statement, connection);
+        return cleanUpConnection(recordIterator, resultSet, statement, connection);
     }
 }

@@ -17,21 +17,21 @@
   -->
 <FindBugsFilter>
     <Match>
-        <class name="Utils"/>
+        <class name="org.ballerina.stdlib.sql.utils.Utils"/>
         <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
     </Match>
     <Match>
-        <class name="QueryProcessor"/>
+        <class name="org.ballerina.stdlib.sql.nativeimpl.QueryProcessor"/>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Match>
     <Match>
-        <class name="QueryProcessor"/>
+        <class name="org.ballerina.stdlib.sql.nativeimpl.QueryProcessor"/>
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
     </Match>
     <!-- In Queryprocessor native call method the ResultSet instance is not closed because user wants 
             to iterate the Resultset and close it later. -->
     <Match>
-        <class name="ExecuteProcessor"/>
+        <class name="org.ballerina.stdlib.sql.nativeimpl.ExecuteProcessor"/>
         <Bug pattern="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH"/>
     </Match>
 </FindBugsFilter>
