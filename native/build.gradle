@@ -31,7 +31,7 @@ configurations {
 dependencies {
     jacocoRuntime "org.jacoco:org.jacoco.agent:${jacoco.toolVersion}:runtime"
 
-    checkstyle project(":build-config:checkstyle")
+    checkstyle project(":checkstyle")
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
@@ -126,8 +126,8 @@ tasks.withType(Checkstyle) {
 }
 
 spotbugsMain.finalizedBy validateSpotbugs
-checkstyleMain.dependsOn(":build-config:checkstyle:downloadCheckstyleRuleFiles")
-checkstyleTest.dependsOn ":build-config:checkstyle:downloadCheckstyleRuleFiles"
+checkstyleMain.dependsOn ':checkstyle:downloadCheckstyleRuleFiles'
+checkstyleTest.dependsOn ':checkstyle:downloadCheckstyleRuleFiles'
 
 publishing {
     publications {
