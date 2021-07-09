@@ -21,11 +21,13 @@ package io.ballerina.stdlib.sql.testutils;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
-
 import io.ballerina.stdlib.sql.nativeimpl.QueryProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
 
+/**
+ * Test client native query class.
+ */
 public class QueryTestUtils {
 
     private QueryTestUtils() {
@@ -37,6 +39,7 @@ public class QueryTestUtils {
                 .getInstance();
         DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
                 .getInstance();
-        return QueryProcessor.nativeQuery(client, paramSQLString, recordType, statementParametersProcessor, resultParametersProcessor);
+        return QueryProcessor.nativeQuery(client, paramSQLString, recordType, statementParametersProcessor,
+                resultParametersProcessor);
     }
 }

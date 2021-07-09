@@ -20,17 +20,19 @@ package io.ballerina.stdlib.sql.testutils;
 
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
-
 import io.ballerina.stdlib.sql.nativeimpl.CallProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
 
+/**
+ * Native class for test client call method.
+ */
 public class CallTestUtils {
     private CallTestUtils(){ 
     }
     
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes) {
-        return CallProcessor.nativeCall(client, paramSQLString, recordTypes, DefaultStatementParameterProcessor.getInstance(),
-            DefaultResultParameterProcessor.getInstance());
+        return CallProcessor.nativeCall(client, paramSQLString, recordTypes,
+                DefaultStatementParameterProcessor.getInstance(), DefaultResultParameterProcessor.getInstance());
     }
 }

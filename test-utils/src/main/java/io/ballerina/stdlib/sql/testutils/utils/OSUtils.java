@@ -17,13 +17,13 @@
  */
 package io.ballerina.stdlib.sql.testutils.utils;
 
-import io.ballerina.stdlib.sql.testutils.nativeimpl.ModuleUtils;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.sql.testutils.nativeimpl.ModuleUtils;
 
 import java.io.IOException;
 
@@ -39,8 +39,8 @@ public class OSUtils {
      * error object from message.
      *
      * @param typeId The string type ID of the particular error object.
-     * @param ex    Java throwable object to capture description of error struct. If throwable object is null,
-     *              "Unknown Error" sets to message by default.
+     * @param ex     Java throwable object to capture description of error struct. If throwable object is null,
+     *               "Unknown Error" sets to message by default.
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, Throwable ex) {

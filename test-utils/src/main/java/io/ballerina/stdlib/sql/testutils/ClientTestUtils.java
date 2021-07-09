@@ -21,11 +21,12 @@ package io.ballerina.stdlib.sql.testutils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
-
 import io.ballerina.stdlib.sql.nativeimpl.ClientProcessor;
 
+/**
+ * Initialize test client.
+ */
 public class ClientTestUtils {
     
     private ClientTestUtils(){ 
@@ -33,7 +34,8 @@ public class ClientTestUtils {
 
     public static Object createSqlClient(BObject client, BMap<BString, Object> sqlDatasourceParams,
                                          BMap<BString, Object> globalConnectionPool) {
-        return ClientProcessor.createClient(client, SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
+        return ClientProcessor.createClient(client,
+                SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
     }
 
     public static Object close(BObject client) {

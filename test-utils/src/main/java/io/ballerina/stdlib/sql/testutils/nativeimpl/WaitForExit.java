@@ -18,8 +18,8 @@
 
 package io.ballerina.stdlib.sql.testutils.nativeimpl;
 
-import io.ballerina.stdlib.sql.testutils.utils.OSConstants;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.stdlib.sql.testutils.utils.OSConstants;
 import io.ballerina.stdlib.sql.testutils.utils.OSUtils;
 
 /**

@@ -18,9 +18,9 @@
 
 package io.ballerina.stdlib.sql.testutils.nativeimpl;
 
-import io.ballerina.stdlib.sql.testutils.utils.OSConstants;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.sql.testutils.utils.OSConstants;
 import io.ballerina.stdlib.sql.testutils.utils.OSUtils;
 
 import java.io.File;
