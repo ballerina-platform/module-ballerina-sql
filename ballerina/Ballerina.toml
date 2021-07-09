@@ -4,7 +4,7 @@ name = "sql"
 version = "@toml.version@"
 
 [[platform.java11.dependency]]
-path = "../sql-native/build/libs/sql-native-@project.version@.jar"
+path = "../native/build/libs/sql-native-@project.version@.jar"
 
 [[platform.java11.dependency]]
 path = "../sql-test-utils/build/libs/sql-test-utils-@project.version@.jar"
