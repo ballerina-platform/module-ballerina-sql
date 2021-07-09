@@ -97,9 +97,9 @@ public class UtilsTest {
 
     @Test
     void getDefaultRecordTypeTest() {
-        ColumnDefinition columnDefinition1 = new ColumnDefinition("int_type", null,
+        ColumnDefinition columnDefinition1 = new TestUtils.ExtendedColumnDefinition("int_type", null,
                 2, "INT", TypeUtils.getType(4), false);
-        ColumnDefinition columnDefinition2 = new ColumnDefinition("string_type", null,
+        ColumnDefinition columnDefinition2 = new TestUtils.ExtendedColumnDefinition("string_type", null,
                 2, "STRING", TypeUtils.getType(12), true);
         List<ColumnDefinition> list = new ArrayList<>();
         list.add(columnDefinition1);

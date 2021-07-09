@@ -19,6 +19,7 @@
 package org.ballerinalang.sql.tests.utils;
 
 import io.ballerina.runtime.api.utils.TypeUtils;
+import org.ballerinalang.sql.tests.TestUtils;
 import org.ballerinalang.sql.utils.ColumnDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -31,16 +32,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @since 0.6.0-beta.2
  */
 public class ColumnDefinitionTest {
+
+
     @Test
     void isNullableTest() {
-        ColumnDefinition columnDefinition = new ColumnDefinition("int_type", null,
+        ColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type", null,
                 2, "INT", TypeUtils.getType(1), false);
         assertFalse(columnDefinition.isNullable(), "nullable flag is wrong");
     }
 
     @Test
     void columnNameTest() {
-        ColumnDefinition columnDefinition = new ColumnDefinition("int_type", null,
+        ColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type", null,
                 2, "INT", TypeUtils.getType(1), false);
         assertEquals(columnDefinition.getColumnName(), "int_type", "column name is wrong");
     }

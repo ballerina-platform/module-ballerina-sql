@@ -41,6 +41,7 @@ import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.types.BField;
 import io.ballerina.runtime.internal.types.BRecordType;
 import io.ballerina.runtime.internal.values.BmpStringValue;
+import org.ballerinalang.sql.utils.ColumnDefinition;
 
 import java.math.BigDecimal;
 import java.sql.Array;
@@ -74,6 +75,18 @@ import javax.transaction.xa.Xid;
  * TestUtils class for testing ballerina native classes/methods.
  */
 public class TestUtils {
+
+    /**
+     * ExtendedColumnDefinition Class for test utils.
+     */
+    public static class ExtendedColumnDefinition extends ColumnDefinition {
+
+        public ExtendedColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
+                                        Type ballerinaType, boolean isNullable) {
+            super(columnName, ballerinaFieldName, sqlType, sqlName, ballerinaType, isNullable);
+        }
+    }
+
     private static Module emptyModule = new Module(null, null, null);
 
     public static BObject getMockObject(String name) {

@@ -32,7 +32,7 @@ public class ColumnDefinition {
     private final Type ballerinaType;
     private final boolean isNullable;
 
-    public ColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
+    protected ColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
                      Type ballerinaType, boolean isNullable) {
         this.columnName = columnName;
         if (ballerinaFieldName != null && !ballerinaFieldName.isEmpty()) {

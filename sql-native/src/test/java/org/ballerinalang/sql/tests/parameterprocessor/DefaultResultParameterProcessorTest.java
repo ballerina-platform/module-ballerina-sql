@@ -96,7 +96,7 @@ public class DefaultResultParameterProcessorTest {
     @Test
     void getCustomResultTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
-        ColumnDefinition columnDefinition = new ColumnDefinition("int_type", null,
+        ColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type", null,
                 2, "INT", TypeUtils.getType(1), false);
         try {
             testClass.getCustomResult(null, 1, columnDefinition);
