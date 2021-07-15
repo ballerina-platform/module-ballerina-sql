@@ -1,12 +1,6 @@
 name: PR build
 
-on:
-  pull_request:
-  push:
-    branches-ignore:
-      - master
-      - "automated/dependency_version_update"
-      - "automated/dependency_version_update_tmp"
+on: [ pull_request ]
 
 jobs:
   ubuntu-build:
@@ -23,16 +17,8 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew build
-      - name: Archive Error Log
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: Ballerina Internal Log Linux
-          path: sql-ballerina/ballerina-internal.log
-          if-no-files-found: ignore
       - name: Generate CodeCov Report
-        if: github.event_name == 'pull_request'
-        uses: codecov/codecov-action@v1 
+        uses: codecov/codecov-action@v1
         
   windows-build:
     runs-on: windows-latest
@@ -49,11 +35,3 @@ jobs:
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew.bat build -x test
         # Due to no docker available in gitaction windows
-      - name: Archive Error Log
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: Ballerina Internal Log Windows
-          path: sql-ballerina/ballerina-internal.log
-          if-no-files-found: ignore
-
