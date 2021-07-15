@@ -20,6 +20,14 @@ import ballerina/jballerina.java;
 string proceduresDb = "procedures";
 string proceduresDB = urlPrefix + "9012/procedures";
 
+type IntArray int[];
+type StringArray string[];
+type BooleanType BooleanValue;
+type FloatArray float[];
+type DecimalArray decimal[];
+type CivilArray time:Civil[];
+type TimeOfDayArray time:TimeOfDay[];
+
 type StringDataForCall record {
     string varchar_type;
     string charmax_type;
@@ -309,19 +317,13 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     DateValue dateVal = new();
     TimestampValue timestampVal = new();
     DateTimeValue datetimeVal = new();
-    int[] intArr = [1, 2];
-    ArrayValue intArrayVal = new(intArr);
-    string[] strArr = ["Hello", "Ballerina"];
-    ArrayValue strArrayVal = new(strArr);
-    boolean[] booArr = [true, false, true];
-    ArrayValue booArrayVal = new(booArr);
-    float[] floArr = [245.23, 5559.49, 8796.123];
-    ArrayValue floArrayVal = new(floArr);
-    decimal[] decArr = [245, 5559, 8796];
-    ArrayValue decArrayVal = new(decArr);
-    byte[][] byteArr = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
-    ArrayValue byteArrayVal = new(byteArr);
-    ArrayValue emptyArrayVal = new();
+    int[] intArrayVal = [1, 2];
+    string[] strArrayVal = ["Hello", "Ballerina"];
+    boolean[] booArrayVal = [true, false, true];
+    float[] floArrayVal = [245.23, 5559.49, 8796.123];
+    decimal[] decArrayVal = [245, 5559, 8796];
+    byte[][] byteArrayVal = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
+    string[] emptyArrayVal = [];
 
     InOutParameter paraVarChar = new(varCharVal);
     InOutParameter paraChar = new(charVal);
@@ -447,9 +449,6 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
 }
-
-type IntArray int[];
-type StringArray string[];
 
 @test:Config {
     groups: ["procedures"],
@@ -763,6 +762,217 @@ function testMultipleRecords() returns error? {
     test:assertTrue(status is boolean, "streamData is not boolean.");
 }
 
+@test:Config {
+    groups: ["procedures"]
+}
+function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
+    float float1 = 19.21;
+    float float2 = 492.98;
+    SmallIntArrayValue paraSmallint = new([1211, 478]);
+    IntegerArrayValue paraInt = new([121, 498]);
+    BigIntArrayValue paraLong = new ([121, 498]);
+    float[] paraFloat = [19.21, 492.98];
+    DoubleArrayValue paraDouble = new ([float1, float2]);
+    RealArrayValue paraReal = new ([float1, float2]);
+    DecimalArrayValue paraDecimal = new ([<decimal> 12.245, <decimal> 13.245]);
+    NumericArrayValue paraNumeric = new ([float1, float2]);
+    CharArrayValue paraChar = new (["Char value", "Character"]);
+    VarcharArrayValue paraVarchar = new (["Varchar value", "Varying Char"]);
+    NVarcharArrayValue paraNVarchar = new (["NVarchar value", "Varying NChar"]);
+    string[] paraString = ["Hello", "Ballerina"];
+    BooleanArrayValue paraBool = new ([true, false]);
+    DateArrayValue paraDate = new (["2021-12-18", "2021-12-19"]);
+    time:TimeOfDay time = {hour: 20, minute: 8, second: 12};
+    TimeArrayValue paraTime = new ([time, time]);
+    time:Civil datetime = {year: 2021, month: 12, day: 18, hour: 20, minute: 8, second: 12};
+    DateTimeArrayValue paraDateTime = new ([datetime, datetime]);
+    time:Utc timestampUtc = [12345600, 12];
+    TimestampArrayValue paraTimestamp = new ([timestampUtc, timestampUtc]);
+    byte[] byteArray1 = [1, 2, 3];
+    byte[] byteArray2 = [4, 5, 6];
+    BinaryArrayValue paraBinary = new ([byteArray1, byteArray2]);
+    VarBinaryArrayValue paraVarBinary = new ([byteArray1, byteArray2]);
+    int rowId = 1;
+    datetime = {year: 2021, month: 12, day: 18, hour: 20, minute: 8, second: 12, utcOffset: {hours: 5, minutes: 30, seconds: 0d}};
+    time:Civil[] paraTimestampWithTimezone = [datetime, datetime];
+    time:TimeOfDay timeWithTimezone = {hour: 20, minute: 8, second: 12, utcOffset: {hours: 5, minutes: 30, seconds: 0d}};
+    time:TimeOfDay[] paraTimeWithTimezone = [timeWithTimezone, timeWithTimezone];
+
+    InOutParameter smallint_array = new(paraSmallint);
+    InOutParameter int_array = new(paraInt);
+    InOutParameter long_array = new(paraLong);
+    InOutParameter float_array = new(paraFloat);
+    InOutParameter double_array = new(paraDouble);
+    InOutParameter real_array = new(paraReal);
+    InOutParameter decimal_array = new(paraDecimal);
+    InOutParameter numeric_array = new(paraNumeric);
+    InOutParameter boolean_array = new(paraBool);
+    InOutParameter char_array = new(paraChar);
+    InOutParameter varchar_array = new(paraVarchar);
+    InOutParameter nvarchar_array = new(paraNVarchar);
+    InOutParameter string_array = new (paraString);
+    InOutParameter date_array = new(paraDate);
+    InOutParameter time_array = new(paraTime);
+    InOutParameter datetime_array = new(paraDateTime);
+    InOutParameter timestamp_array = new(paraTimestamp);
+    InOutParameter time_tz_array = new(paraTimeWithTimezone);
+    InOutParameter timestamp_tz_array = new(paraTimestampWithTimezone);
+
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectArrayDataWithInoutParams (IN rowId INT, INOUT p_small_int_array SMALLINT ARRAY,
+                                                INOUT p_int_array INTEGER ARRAY, INOUT p_real_array REAL ARRAY,
+                                                INOUT p_numeric_array NUMERIC(6,2) ARRAY,
+                                                INOUT p_nvarchar_array NVARCHAR(15) ARRAY,
+                                                INOUT p_long_array BIGINT ARRAY,
+                                                INOUT p_float_array FLOAT ARRAY,
+                                                INOUT p_double_array DOUBLE ARRAY,
+                                                INOUT p_decimal_array DECIMAL(6,2) ARRAY,
+                                                INOUT p_boolean_array BOOLEAN ARRAY,
+                                                INOUT p_char_array CHAR(15) ARRAY,
+                                                INOUT p_varchar_array VARCHAR(100) ARRAY,
+                                                INOUT p_string_array VARCHAR(20) ARRAY,
+                                                INOUT p_date_array DATE ARRAY,
+                                                INOUT p_time_array TIME ARRAY,
+                                                INOUT p_timestamp_array timestamp ARRAY,
+                                                INOUT p_datetime_array DATETIME ARRAY
+                                                )
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT smallint_array INTO p_small_int_array FROM ProArrayTypes where row_id = rowId;
+                SELECT int_array INTO p_int_array FROM ProArrayTypes where row_id = rowId;
+                SELECT real_array INTO p_real_array FROM ProArrayTypes where row_id = rowId;
+                SELECT numeric_array INTO p_numeric_array FROM ProArrayTypes where row_id = rowId;
+                SELECT nvarchar_array INTO p_nvarchar_array FROM ProArrayTypes where row_id = rowId;
+                SELECT long_array INTO p_long_array FROM ProArrayTypes where row_id = rowId;
+                SELECT float_array INTO p_float_array FROM ProArrayTypes where row_id = rowId;
+                SELECT double_array INTO p_double_array FROM ProArrayTypes where row_id = rowId;
+                SELECT decimal_array INTO p_decimal_array FROM ProArrayTypes where row_id = rowId;
+                SELECT boolean_array INTO p_boolean_array FROM ProArrayTypes where row_id = rowId;
+                SELECT char_array INTO p_char_array FROM ProArrayTypes where row_id = rowId;
+                SELECT varchar_array INTO p_varchar_array FROM ProArrayTypes where row_id = rowId;
+                SELECT string_array INTO p_string_array FROM ProArrayTypes where row_id = rowId;
+                SELECT date_array INTO p_date_array FROM ProArrayTypes where row_id = rowId;
+                SELECT time_array INTO p_time_array FROM ProArrayTypes where row_id = rowId;
+                SELECT timestamp_array INTO p_timestamp_array FROM ProArrayTypes where row_id = rowId;
+                SELECT datetime_array INTO p_datetime_array FROM ProArrayTypes where row_id = rowId;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithInoutParams(${rowId}, ${smallint_array},
+                                    ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
+                                    ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
+                                    ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
+                                    ${timestamp_array}, ${datetime_array})`;
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    int[] smallIntArray = [12,232];
+    int[] intArray = [1,2,3];
+    float[] floatArray = [199.33,2399.1];
+    decimal[] numericArray = [11.11,23.23];
+    string[] nVarcharArray = ["Hello","Ballerina"];
+    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0}, {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
+    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of procedure did not match.");
+    test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
+    test:assertEquals(real_array.get(FloatArray), floatArray, "Real array out parameter of procedure did not match.");
+    test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter of procedure did not match.");
+    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
+    //test:assertEquals(time_tz_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
+    //test:assertEquals(timestamp_tz_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
+    //test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+}
+
+@test:Config {
+    groups: ["procedures"]
+}
+function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
+    SmallIntArrayOutParameter smallint_array = new;
+    IntegerArrayOutParameter int_array = new;
+    BigIntArrayOutParameter long_array = new;
+    DoubleArrayOutParameter double_array = new;
+    RealArrayOutParameter real_array = new;
+    FloatArrayOutParameter float_array = new;
+    DecimalArrayOutParameter decimal_array = new;
+    NumericArrayOutParameter numeric_array = new;
+    CharArrayOutParameter char_array = new;
+    VarcharArrayOutParameter varchar_array = new;
+    NVarcharArrayOutParameter nvarchar_array = new;
+    BinaryArrayOutParameter binaryArray = new;
+    VarBinaryArrayOutParameter varbinaryArray = new;
+    BooleanArrayOutParameter boolean_array = new;
+    DateArrayOutParameter date_array = new;
+    TimeArrayOutParameter time_array = new;
+    DateTimeArrayOutParameter datetime_array = new;
+    TimestampArrayOutParameter timestamp_array = new;
+    ArrayOutParameter string_array = new;
+    int rowId = 1;
+
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectArrayDataWithOutParams (IN rowId INT, OUT p_small_int_array SMALLINT ARRAY,
+                                                OUT p_int_array INTEGER ARRAY, OUT p_real_array REAL ARRAY,
+                                                OUT p_numeric_array NUMERIC(6,2) ARRAY,
+                                                OUT p_nvarchar_array NVARCHAR(15) ARRAY,
+                                                OUT p_long_array BIGINT ARRAY,
+                                                OUT p_float_array FLOAT ARRAY,
+                                                OUT p_double_array DOUBLE ARRAY,
+                                                OUT p_decimal_array DECIMAL(6,2) ARRAY,
+                                                OUT p_boolean_array BOOLEAN ARRAY,
+                                                OUT p_char_array CHAR(15) ARRAY,
+                                                OUT p_varchar_array VARCHAR(100) ARRAY,
+                                                OUT p_string_array VARCHAR(20) ARRAY,
+                                                OUT p_date_array DATE ARRAY,
+                                                OUT p_time_array TIME ARRAY,
+                                                OUT p_timestamp_array timestamp ARRAY,
+                                                OUT p_datetime_array DATETIME ARRAY
+                                                )
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT smallint_array INTO p_small_int_array FROM ProArrayTypes where row_id = rowId;
+                SELECT int_array INTO p_int_array FROM ProArrayTypes where row_id = rowId;
+                SELECT real_array INTO p_real_array FROM ProArrayTypes where row_id = rowId;
+                SELECT numeric_array INTO p_numeric_array FROM ProArrayTypes where row_id = rowId;
+                SELECT nvarchar_array INTO p_nvarchar_array FROM ProArrayTypes where row_id = rowId;
+                SELECT long_array INTO p_long_array FROM ProArrayTypes where row_id = rowId;
+                SELECT float_array INTO p_float_array FROM ProArrayTypes where row_id = rowId;
+                SELECT double_array INTO p_double_array FROM ProArrayTypes where row_id = rowId;
+                SELECT decimal_array INTO p_decimal_array FROM ProArrayTypes where row_id = rowId;
+                SELECT boolean_array INTO p_boolean_array FROM ProArrayTypes where row_id = rowId;
+                SELECT char_array INTO p_char_array FROM ProArrayTypes where row_id = rowId;
+                SELECT varchar_array INTO p_varchar_array FROM ProArrayTypes where row_id = rowId;
+                SELECT string_array INTO p_string_array FROM ProArrayTypes where row_id = rowId;
+                SELECT date_array INTO p_date_array FROM ProArrayTypes where row_id = rowId;
+                SELECT time_array INTO p_time_array FROM ProArrayTypes where row_id = rowId;
+                SELECT timestamp_array INTO p_timestamp_array FROM ProArrayTypes where row_id = rowId;
+                SELECT datetime_array INTO p_datetime_array FROM ProArrayTypes where row_id = rowId;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithOutParams(${rowId}, ${smallint_array},
+                                    ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
+                                    ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
+                                    ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
+                                    ${timestamp_array}, ${datetime_array})`;
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    int[] smallIntArray = [12,232];
+    int[] intArray = [1,2,3];
+    float[] floatArray = [199.33,2399.1];
+    decimal[] numericArray = [11.11,23.23];
+    decimal[] decimalArray = [245.12,5559.12,8796.92];
+    string[] nVarcharArray = ["Hello","Ballerina"];
+    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0}, {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
+    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of procedure did not match.");
+    test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
+    test:assertEquals(real_array.get(FloatArray), floatArray, "Real array out parameter of procedure did not match.");
+    test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter of procedure did not match.");
+    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
+    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter of procedure did not match.");
+    //test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+    //test:assertEquals(time_array.get(TimeOfDayArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+}
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(sqlQuery);
@@ -778,7 +988,7 @@ function createSqlProcedure(ParameterizedQuery sqlQuery) returns ExecutionResult
 }
 
 isolated function validateProcedureResult(ExecutionResult|Error result, int rowCount, int? lastId = ()) {
-    if(result is Error){
+    if(result is Error) {
         test:assertFail("Procedure creation failed");
     } else {
         test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
