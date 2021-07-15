@@ -939,6 +939,18 @@ public distinct class TimestampOutParameter {
     } external;
 }
 
+# Represents Timestamp Array Out Parameter used in procedure calls.
+public distinct class TimestampArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Timestamp with Timezone Out Parameter used in procedure calls.
 public distinct class TimestampWithTimezoneOutParameter {
     *OutParameter;
@@ -1025,6 +1037,18 @@ public distinct class IntegerOutParameter {
 
 # Represents BigInt Out Parameter used in procedure calls.
 public distinct class BigIntOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Integer Array Out Parameter used in procedure calls.
+public distinct class IntegerArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
