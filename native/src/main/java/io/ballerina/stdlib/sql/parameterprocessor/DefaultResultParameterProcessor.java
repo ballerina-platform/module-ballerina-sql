@@ -307,6 +307,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
                     mapDataArray.add(i, dateMap);
                 }
+                mapDataArray.freezeDirect();
                 return mapDataArray;
             case Constants.Classes.TIMESTAMP:
                 mapDataArray = ValueCreator.createArrayValue(civilArrayType);
@@ -314,6 +315,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
                     mapDataArray.add(i, civilMap);
                 }
+                mapDataArray.freezeDirect();
                 return mapDataArray;
             case Constants.Classes.TIME:
                 mapDataArray = ValueCreator.createArrayValue(timeArrayType);
@@ -321,6 +323,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
                     mapDataArray.add(i, timeMap);
                 }
+                mapDataArray.freezeDirect();
                 return mapDataArray;
             case Constants.Classes.OFFSET_TIME:
                 BArray mapTimeArray = ValueCreator.createArrayValue(timeArrayType);
@@ -329,6 +332,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
                     mapTimeArray.add(i, civilMap);
                 }
+                mapTimeArray.freezeDirect();
                 return mapTimeArray;
             case Constants.Classes.OFFSET_DATE_TIME:
                 BArray mapDateTimeArray = ValueCreator.createArrayValue(civilArrayType);
@@ -337,6 +341,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
                     mapDateTimeArray.add(i, civilMap);
                 }
+                mapDateTimeArray.freezeDirect();
                 return mapDateTimeArray;
             default:
                 return createAndPopulateCustomValueArray(firstNonNullElement, type, array);

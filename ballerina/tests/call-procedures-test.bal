@@ -22,11 +22,13 @@ string proceduresDB = urlPrefix + "9012/procedures";
 
 type IntArray int[];
 type StringArray string[];
-type BooleanType BooleanValue;
+type BooleanArray boolean[];
 type FloatArray float[];
 type DecimalArray decimal[];
 type CivilArray time:Civil[];
 type TimeOfDayArray time:TimeOfDay[];
+type UtcArray time:Utc[];
+type DateArray time:Date[];
 
 type StringDataForCall record {
     string varchar_type;
@@ -878,9 +880,7 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     test:assertEquals(real_array.get(FloatArray), floatArray, "Real array out parameter of procedure did not match.");
     test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter of procedure did not match.");
     test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
-    //test:assertEquals(time_tz_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
-    //test:assertEquals(timestamp_tz_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
-    //test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
 }
 
 @test:Config {
@@ -959,19 +959,47 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
 
     int[] smallIntArray = [12,232];
     int[] intArray = [1,2,3];
-    float[] floatArray = [199.33,2399.1];
+    float[] realArray = [199.33,2399.1];
+    float[] floatArray = [245.23,5559.49,8796.123];
     decimal[] numericArray = [11.11,23.23];
     decimal[] decimalArray = [245.12,5559.12,8796.92];
+    float[] doubleArray = [245.23,5559.49,8796.123];
     string[] nVarcharArray = ["Hello","Ballerina"];
-    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0}, {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
-    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of procedure did not match.");
+    string[] charArray = ["Hello          ","Ballerina      "];
+    string[] varcharArray = ["Hello","Ballerina"];
+    int[] longArray = [100000000,200000000,300000000];
+    boolean[] booleanArray = [true,false,true];
+    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0},
+    {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
+    time:Date[] dateArray = [{"year":2017,"month":2,"day":3},{"year":2017,"month":2,"day":3}];
+    time:TimeOfDay[] timeOfDayArray = [{"hour":11,"minute":22,"second":42}, {"hour":12,"minute":23,"second":45}];
+    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " +
+    "procedure did not match.");
     test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
-    test:assertEquals(real_array.get(FloatArray), floatArray, "Real array out parameter of procedure did not match.");
-    test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter of procedure did not match.");
-    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
-    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter of procedure did not match.");
-    //test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
-    //test:assertEquals(time_array.get(TimeOfDayArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+    test:assertEquals(real_array.get(FloatArray), realArray, "Real array out parameter of procedure did not match.");
+    test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(long_array.get(IntArray), longArray, "Long array out parameter of procedure did not match.");
+    test:assertEquals(float_array.get(FloatArray), floatArray, "Float array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(double_array.get(FloatArray), doubleArray, "Double array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(boolean_array.get(BooleanArray), booleanArray, "Boolean array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(char_array.get(StringArray), charArray, "Char array out parameter of procedure did not match.");
+    test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(date_array.get(DateArray), dateArray, "Date array out parameter of procedure did not match.");
+    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Date time array out parameter " +
+    "of procedure did not match.");
+    test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " +
+    "of procedure did not match.");
 }
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
