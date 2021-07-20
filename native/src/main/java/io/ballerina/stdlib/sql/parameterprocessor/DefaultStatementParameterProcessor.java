@@ -284,8 +284,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 try {
                     arrayData[i] = Date.valueOf(innerValue.toString());
                 } catch (java.lang.IllegalArgumentException ex) {
-                    throw new ApplicationError("Unsupported String Value " + innerValue
-                            .toString() + " for Date Array");
+                    throw new ApplicationError("Unsupported String Value " + innerValue + " for Date Array");
                 }
             } else if (innerValue instanceof BMap) {
                 BMap dateMap = (BMap) innerValue;
@@ -317,8 +316,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 try {
                     arrayData[i] = Time.valueOf(innerValue.toString());
                 } catch (java.lang.NumberFormatException ex) {
-                    throw new ApplicationError("Unsupported String Value " + innerValue
-                            .toString() + " for Time Array");
+                    throw new ApplicationError("Unsupported String Value " + innerValue + " for Time Array");
                 }
                 // arrayData[i] = innerValue.toString();
             } else if (innerValue instanceof BMap) {
@@ -410,7 +408,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                             + " SQL Type, but found :" + lVal);
                 }
             } else if (innerValue instanceof Boolean) {
-                arrayData[i] = (Boolean) innerValue;
+                arrayData[i] = innerValue;
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, type + " Array");
             }            
@@ -479,8 +477,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     arrayData[i] = LocalDateTime.parse(innerValue.toString(), formatter);
                 } catch (java.time.format.DateTimeParseException ex) {
-                    throw new ApplicationError("Unsupported String Value " + innerValue
-                            .toString() + " for DateTime Array");
+                    throw new ApplicationError("Unsupported String Value " + innerValue + " for DateTime Array");
                 }
             } else if (innerValue instanceof BArray) {
                 //this is mapped to time:Utc
@@ -601,7 +598,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     getRecordStructData(conn, structData, i, bValue);
                     break;
                 default:
-                    getCustomStructData(conn, value);
+                    getCustomStructData(value);
             }
         }
         return new Object[]{structData, structuredSQLType};
@@ -829,8 +826,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         throw Utils.throwInvalidParameterError(value, Constants.SqlTypes.ARRAY);
     }
 
-    protected Object[] getCustomStructData(Connection conn, Object value)
-            throws SQLException, ApplicationError {
+    protected Object[] getCustomStructData(Object value) throws ApplicationError {
         Type type = TypeUtils.getType(value);
         String structuredSQLType = type.getName().toUpperCase(Locale.getDefault());
         throw new ApplicationError("unsupported data type of " + structuredSQLType
@@ -1217,7 +1213,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         setPreparedStatement(conn, preparedStatement, index, getTimeValueArrayData(value));
     }
 
-    protected Object[] getIntArrayData(Object value) throws ApplicationError {
+    protected Object[] getIntArrayData(Object value) {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Long[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
@@ -1226,7 +1222,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "BIGINT"};
     }
 
-    protected Object[] getFloatArrayData(Object value) throws ApplicationError {
+    protected Object[] getFloatArrayData(Object value) {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Double[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
@@ -1235,7 +1231,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "DOUBLE"};
     }
 
-    protected Object[] getDecimalArrayData(Object value) throws ApplicationError {
+    protected Object[] getDecimalArrayData(Object value) {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new BigDecimal[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
@@ -1244,7 +1240,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "DECIMAL"};
     }
 
-    protected Object[] getStringArrayData(Object value) throws ApplicationError {
+    protected Object[] getStringArrayData(Object value) {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new String[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
@@ -1253,7 +1249,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "VARCHAR"};
     }
 
-    protected Object[] getBooleanArrayData(Object value) throws ApplicationError {
+    protected Object[] getBooleanArrayData(Object value) {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Boolean[arrayLength];
         for (int i = 0; i < arrayLength; i++) {
@@ -1290,7 +1286,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     protected void getArrayStructData(Field field, Object[] structData, String structuredSQLType, int i, Object bValue)
-            throws SQLException, ApplicationError {
+            throws ApplicationError {
         Type elementType = ((ArrayType) field
                 .getFieldType()).getElementType();
         if (elementType.getTag() == TypeTags.BYTE_TAG) {
