@@ -31,8 +31,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
@@ -66,7 +66,7 @@ public class QueryProcessor {
     public static BStream nativeQuery(
             BObject client, Object paramSQLString,
             Object recordType,
-            DefaultStatementParameterProcessor statementParameterProcessor,
+            AbstractStatementParameterProcessor statementParameterProcessor,
             DefaultResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();

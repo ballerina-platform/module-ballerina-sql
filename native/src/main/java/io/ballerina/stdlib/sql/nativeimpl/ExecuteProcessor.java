@@ -28,7 +28,7 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 
@@ -68,7 +68,7 @@ public class ExecuteProcessor {
      * @return execution result or error
      */
     public static Object nativeExecute(BObject client, Object paramSQLString,
-                     DefaultStatementParameterProcessor statementParameterProcessor) {
+                     AbstractStatementParameterProcessor statementParameterProcessor) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -128,7 +128,7 @@ public class ExecuteProcessor {
      * @return execution result or error
      */
     public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
-                            DefaultStatementParameterProcessor statementParameterProcessor) {
+                                            AbstractStatementParameterProcessor statementParameterProcessor) {
         return nativeBatchExecute(client, paramSQLStrings, statementParameterProcessor, true);
     }
 
@@ -141,7 +141,8 @@ public class ExecuteProcessor {
      * @return execution result or error
      */
     public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
-                            DefaultStatementParameterProcessor statementParameterProcessor, boolean generateKeys) {
+                                            AbstractStatementParameterProcessor statementParameterProcessor,
+                                            boolean generateKeys) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;

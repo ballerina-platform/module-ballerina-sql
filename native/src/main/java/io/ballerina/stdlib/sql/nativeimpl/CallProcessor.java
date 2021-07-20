@@ -32,8 +32,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
@@ -81,7 +81,7 @@ public class CallProcessor {
      * @return procedure call result or error
      */
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
-            DefaultStatementParameterProcessor statementParameterProcessor, 
+            AbstractStatementParameterProcessor statementParameterProcessor,
             DefaultResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
@@ -162,7 +162,7 @@ public class CallProcessor {
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes,
-                                  DefaultStatementParameterProcessor statementParameterProcessor)
+                                  AbstractStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
@@ -331,7 +331,7 @@ public class CallProcessor {
     }
 
     private static int getOutParameterType(
-            BObject typedValue, DefaultStatementParameterProcessor statementParameterProcessor
+            BObject typedValue, AbstractStatementParameterProcessor statementParameterProcessor
             ) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;

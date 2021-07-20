@@ -94,254 +94,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return instance;
     }
 
-    private int getSQLType(BObject typedValue) throws ApplicationError {
-        String sqlType = typedValue.getType().getName();
-        int sqlTypeValue;
-        switch (sqlType) {
-            case Constants.SqlTypes.VARCHAR:
-            case Constants.SqlTypes.TEXT:
-                sqlTypeValue = Types.VARCHAR;
-                break;
-            case Constants.SqlTypes.CHAR:
-                sqlTypeValue = Types.CHAR;
-                break;
-            case Constants.SqlTypes.NCHAR:
-                sqlTypeValue = Types.NCHAR;
-                break;
-            case Constants.SqlTypes.NVARCHAR:
-                sqlTypeValue = Types.NVARCHAR;
-                break;
-            case Constants.SqlTypes.BIT:
-                sqlTypeValue = Types.BIT;
-                break;
-            case Constants.SqlTypes.BOOLEAN:
-                sqlTypeValue = Types.BOOLEAN;
-                break;
-            case Constants.SqlTypes.INTEGER:
-                sqlTypeValue = Types.INTEGER;
-                break;
-            case Constants.SqlTypes.BIGINT:
-                sqlTypeValue = Types.BIGINT;
-                break;
-            case Constants.SqlTypes.SMALLINT:
-                sqlTypeValue = Types.SMALLINT;
-                break;
-            case Constants.SqlTypes.FLOAT:
-                sqlTypeValue = Types.FLOAT;
-                break;
-            case Constants.SqlTypes.REAL:
-                sqlTypeValue = Types.REAL;
-                break;
-            case Constants.SqlTypes.DOUBLE:
-                sqlTypeValue = Types.DOUBLE;
-                break;
-            case Constants.SqlTypes.NUMERIC:
-                sqlTypeValue = Types.NUMERIC;
-                break;
-            case Constants.SqlTypes.DECIMAL:
-                sqlTypeValue = Types.DECIMAL;
-                break;
-            case Constants.SqlTypes.BINARY:
-                sqlTypeValue = Types.BINARY;
-                break;
-            case Constants.SqlTypes.VARBINARY:
-                sqlTypeValue = Types.VARBINARY;
-                break;
-            case Constants.SqlTypes.BLOB:
-                if (typedValue instanceof BArray) {
-                    sqlTypeValue = Types.VARBINARY;
-                } else {
-                    sqlTypeValue = Types.LONGVARBINARY;
-                }
-                break;
-            case Constants.SqlTypes.CLOB:
-            case Constants.SqlTypes.NCLOB:
-                if (typedValue instanceof BString) {
-                    sqlTypeValue = Types.CLOB;
-                } else {
-                    sqlTypeValue = Types.LONGVARCHAR;
-                }
-                break;
-            case Constants.SqlTypes.DATE:
-                sqlTypeValue = Types.DATE;
-                break;
-            case Constants.SqlTypes.TIME:
-                sqlTypeValue = Types.TIME;
-                break;
-            case Constants.SqlTypes.TIMESTAMP:
-            case Constants.SqlTypes.DATETIME:
-                sqlTypeValue = Types.TIMESTAMP;
-                break;
-            case Constants.SqlTypes.ARRAY:
-                sqlTypeValue = Types.ARRAY;
-                break;
-            case Constants.SqlTypes.REF:
-                sqlTypeValue = Types.REF;
-                break;
-            case Constants.SqlTypes.STRUCT:
-                sqlTypeValue = Types.STRUCT;
-                break;
-            case Constants.SqlTypes.ROW:
-                sqlTypeValue = Types.ROWID;
-                break;
-            default:
-                sqlTypeValue = getCustomSQLType(typedValue);
-        }
-        return sqlTypeValue;
-    }
-
-    private void setSqlTypedParam(Connection connection, PreparedStatement preparedStatement, int index,
-                                    BObject typedValue)
-            throws SQLException, ApplicationError, IOException {
-        String sqlType = typedValue.getType().getName();
-        Object value = typedValue.get(Constants.TypedValueFields.VALUE);
-        switch (sqlType) {
-            case Constants.SqlTypes.VARCHAR:
-                setVarchar(preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.VARCHAR_ARRAY:
-                setVarcharArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.CHAR:
-                setChar(preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.CHAR_ARRAY:
-                setCharArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.TEXT:
-                setText(preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.NCHAR:
-                setNChar(preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.NVARCHAR_ARRAY:
-                setNVarcharArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.NVARCHAR:
-                setNVarchar(preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.BIT:
-                setBit(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.BIT_ARRAY:
-                setBitArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.BOOLEAN:
-                setBoolean(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.BOOLEAN_ARRAY:
-                setBooleanArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.INTEGER:
-                setInteger(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.INTEGER_ARRAY:
-                setIntegerArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.BIGINT:
-                setBigInt(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.BIGINT_ARRAY:
-                setBigIntArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.SMALLINT:
-                setSmallInt(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.SMALLINT_ARRAY:
-                setSmallIntArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.FLOAT:
-                setFloat(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.FLOAT_ARRAY:
-                setFloatArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.REAL:
-                setReal(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.REAL_ARRAY:
-                setRealArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.DOUBLE:
-                setDouble(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.DOUBLE_ARRAY:
-                setDoubleArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.NUMERIC:
-                setNumeric(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.NUMERIC_ARRAY:
-                setNumericArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.DECIMAL:
-                setDecimal(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.DECIMAL_ARRAY:
-                setDecimalArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.BINARY:
-                setBinary(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.BINARY_ARRAY:
-                setBinaryArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.VARBINARY:
-                setVarBinary(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.VARBINARY_ARRAY:
-                setVarBinaryArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.BLOB:
-                setBlob(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.CLOB:
-                setClob(connection, preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.NCLOB:
-                setNClob(connection, preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.DATE:
-                setDate(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.DATE_ARRAY:
-                setDateArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.TIME:
-                setTime(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.TIME_ARRAY:
-                setTimeArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.TIMESTAMP:
-                setTimestamp(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.TIMESTAMP_ARRAY:
-                setTimestampArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.DATETIME:
-                setDateTime(preparedStatement, sqlType, index, value);
-                break;
-            case Constants.SqlTypes.DATETIME_ARRAY:
-                setDateTimeArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.ARRAY:
-                setArray(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.REF:
-                setRef(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.STRUCT:
-                setStruct(connection, preparedStatement, index, value);
-                break;
-            case Constants.SqlTypes.ROW:
-                setRow(preparedStatement, sqlType, index, value);
-                break;
-            default:
-                setCustomSqlTypedParam(connection, preparedStatement, index, typedValue);
-        }
-    }
-
     private Object[] getArrayData(Object value) throws ApplicationError {
         Type type = TypeUtils.getType(value);
         if (value == null || type.getTag() != TypeTags.ARRAY_TAG) {
@@ -854,87 +606,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
         return new Object[]{structData, structuredSQLType};
     }
-
-    public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
-            throws SQLException, ApplicationError, IOException {
-        BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
-        for (int i = 0; i < arrayValue.size(); i++) {
-            Object object = arrayValue.get(i);
-            int index = i + 1;
-            setSQLValueParam(connection, preparedStatement, index, object, false);
-        }
-    }
-
-    public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement,
-                    int index, Object object, boolean returnType) throws SQLException, ApplicationError, IOException {
-        if (object == null) {
-            preparedStatement.setNull(index, Types.NULL);
-            return Types.NULL;
-        } else if (object instanceof BString) {
-            preparedStatement.setString(index, object.toString());
-            return Types.VARCHAR;
-        } else if (object instanceof Long) {
-            preparedStatement.setLong(index, (Long) object);
-            return Types.BIGINT;
-        } else if (object instanceof Double) {
-            preparedStatement.setDouble(index, (Double) object);
-            return Types.DOUBLE;
-        } else if (object instanceof BDecimal) {
-            preparedStatement.setBigDecimal(index, ((BDecimal) object).decimalValue());
-            return Types.NUMERIC;
-        } else if (object instanceof Boolean) {
-            preparedStatement.setBoolean(index, (Boolean) object);
-            return Types.BOOLEAN;
-        } else if (object instanceof BArray) {
-            BArray objectArray = (BArray) object;
-            String type = objectArray.getElementType().toString();
-            if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
-                preparedStatement.setBytes(index, objectArray.getBytes());
-                return Types.VARBINARY;
-            } else if (objectArray.getElementType().getTag() == TypeTags.ARRAY_TAG ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_BYTE) || type.equals(Constants.SqlTypes.BYTE_ARRAY_TYPE)) {
-                setBinaryArray(connection, preparedStatement, index, objectArray);
-                return Types.VARBINARY;
-            } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
-                setVarcharArray(connection, preparedStatement, index, objectArray);
-                return Types.VARCHAR;
-            } else if (type.equals(Constants.SqlTypes.INT) || type.equals(Constants.SqlTypes.OPTIONAL_INT)) {
-                setIntegerArray(connection, preparedStatement, index, objectArray);
-                return Types.INTEGER;
-            } else if (type.equals(Constants.SqlTypes.BOOLEAN_TYPE) ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_BOOLEAN)) {
-                setBooleanArray(connection, preparedStatement, index, objectArray);
-                return Types.BOOLEAN;
-            } else if (type.equals(Constants.SqlTypes.FLOAT_TYPE) || type.equals(Constants.SqlTypes.OPTIONAL_FLOAT)) {
-                setFloatArray(connection, preparedStatement, index, objectArray);
-                return Types.FLOAT;
-            } else if (type.equals(Constants.SqlTypes.DECIMAL_TYPE) ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
-                setDecimalArray(connection, preparedStatement, index, objectArray);
-                return Types.DECIMAL;
-            } else {
-                throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
-            }
-        } else if (object instanceof BObject) {
-            BObject objectValue = (BObject) object;
-            if ((objectValue.getType().getTag() == TypeTags.OBJECT_TYPE_TAG)) {
-                setSqlTypedParam(connection, preparedStatement, index, objectValue);
-                if (returnType) {
-                    return getSQLType(objectValue);
-                }
-                return 0;
-            } else {
-                throw new ApplicationError("Unsupported type:" +
-                        objectValue.getType().getQualifiedName() + " in column index: " + index);
-            }
-        } else if (object instanceof BXml) {
-            setXml(preparedStatement, index, (BXml) object);
-            return Types.SQLXML;
-        } else {
-            throw new ApplicationError("Unsupported type passed in column index: " + index);
-        }
-    }
-
+    
     protected void setXml(PreparedStatement preparedStatement, int index, BXml value) throws SQLException {
         preparedStatement.setObject(index, value.getTextValue(), Types.SQLXML);
     }
@@ -1136,19 +808,16 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     public int getCustomOutParameterType(BObject typedValue) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         throw new ApplicationError("Unsupported OutParameter type: " + sqlType);
     }
 
-    @Override
     protected int getCustomSQLType(BObject typedValue) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         throw new ApplicationError("Unsupported SQL type: " + sqlType);
     }
 
-    @Override
     protected void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
                                           int index, BObject typedValue)
             throws SQLException, ApplicationError, IOException {
@@ -1156,12 +825,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         throw new ApplicationError("Unsupported SQL type: " + sqlType);
     }
 
-    @Override
     protected Object[] getCustomArrayData(Object value) throws ApplicationError {
         throw Utils.throwInvalidParameterError(value, Constants.SqlTypes.ARRAY);
     }
 
-    @Override
     protected Object[] getCustomStructData(Connection conn, Object value)
             throws SQLException, ApplicationError {
         Type type = TypeUtils.getType(value);
@@ -1170,79 +837,66 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 + " specified for struct parameter");
     }
 
-    @Override
     protected void setVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setString(preparedStatement, index, value);
     }
 
-    @Override
     protected void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getVarcharValueArrayData(value));
     }
 
-    @Override
     protected void setText(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setString(preparedStatement, index, value);
     }
 
-    @Override
     protected void setChar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setString(preparedStatement, index, value);
     }
 
-    @Override
     protected void setCharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getCharValueArrayData(value));
     }
 
-    @Override
     protected void setNChar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setNstring(preparedStatement, index, value);
     }
 
-    @Override
     protected void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         setNstring(preparedStatement, index, value);
     }
 
-    @Override
     protected void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getNvarcharValueArrayData(value));
     }
 
-    @Override
     protected void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setBooleanValue(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setBitArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getBitValueArrayData(value));
     }
 
-    @Override
     protected void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setBooleanValue(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setBooleanArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getBooleanValueArrayData(value));
     }
 
-    @Override
     protected void setInteger(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1254,14 +908,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setIntegerArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.INTEGER,
                 "Int Array"));
     }
 
-    @Override
     protected void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1273,14 +925,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setBigIntArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.BIGINT,
                 "Bigint Array"));
     }
 
-    @Override
     protected void setSmallInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1292,14 +942,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setSmallIntArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getIntValueArrayData(value, Constants.SqlArrays.SMALLINT,
                 "Smallint Array"));
     }
 
-    @Override
     protected void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1314,13 +962,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setFloatArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getFloatValueArrayData(value));
     }
 
-    @Override
     protected void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1336,13 +982,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setRealArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getRealValueArrayData(value));
     }
 
-    @Override
     protected void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1357,81 +1001,68 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setDoubleArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getDoubleValueArrayData(value));
     }
 
-    @Override
     protected void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setNumericAndDecimal(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setNumericArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getNumericValueArrayData(value));
     }
 
-    @Override
     protected void setDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setNumericAndDecimal(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setDecimalArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getDecimalValueArrayData(value));
     }
 
-    @Override
     protected void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setBinaryArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setPreparedStatement(conn, preparedStatement, index, getBinaryValueArrayData(value));
     }
 
-    @Override
     protected void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setVarBinaryArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setPreparedStatement(conn, preparedStatement, index, getVarbinaryValueArrayData(value));
     }
 
-    @Override
     protected void setBlob(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index, 
             Object value)
             throws SQLException, ApplicationError {
         setClobAndNclob(connection, preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index, 
             Object value)
             throws SQLException, ApplicationError {
         setClobAndNclob(connection, preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setRow(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1449,19 +1080,16 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setStruct(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setRefAndStruct(conn, preparedStatement, index, value);
     }
 
-    @Override
     protected void setRef(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setRefAndStruct(conn, preparedStatement, index, value);
     }
 
-    @Override
     protected void setArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError, IOException {
         setPreparedStatement(conn, preparedStatement, index, getArrayData(value));
@@ -1477,31 +1105,26 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setDateTimeAndTimestamp(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setDateTimeArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getDateTimeValueArrayData(value));
     }
 
-    @Override
     protected void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         setDateTimeAndTimestamp(preparedStatement, sqlType, index, value);
     }
 
-    @Override
     protected void setTimestampArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getTimestampValueArrayData(value));
     }
 
-    @Override
     protected void setDate(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         Date date;
@@ -1526,13 +1149,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setDateArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getDateValueArrayData(value));
     }
 
-    @Override
     protected void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, ApplicationError {
         if (value == null) {
@@ -1591,13 +1212,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
             throws SQLException, ApplicationError {
         setPreparedStatement(conn, preparedStatement, index, getTimeValueArrayData(value));
     }
 
-    @Override
     protected Object[] getIntArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Long[arrayLength];
@@ -1607,7 +1226,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "BIGINT"};
     }
 
-    @Override
     protected Object[] getFloatArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Double[arrayLength];
@@ -1617,7 +1235,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "DOUBLE"};
     }
 
-    @Override
     protected Object[] getDecimalArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new BigDecimal[arrayLength];
@@ -1627,7 +1244,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "DECIMAL"};
     }
 
-    @Override
     protected Object[] getStringArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new String[arrayLength];
@@ -1637,7 +1253,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "VARCHAR"};
     }
 
-    @Override
     protected Object[] getBooleanArrayData(Object value) throws ApplicationError {
         int arrayLength = ((BArray) value).size();
         Object[] arrayData = new Boolean[arrayLength];
@@ -1647,7 +1262,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return new Object[]{arrayData, "BOOLEAN"};
     }
 
-    @Override
     protected Object[] getNestedArrayData(Object value) throws ApplicationError {
         Type type = TypeUtils.getType(value);
         Type elementType = ((ArrayType) type).getElementType();
@@ -1665,7 +1279,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    @Override
     protected void getRecordStructData(Connection conn, Object[] structData, int i, Object bValue)
             throws SQLException, ApplicationError {
         Object structValue = bValue;
@@ -1676,7 +1289,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         structData[i] = structValue;
     }
 
-    @Override
     protected void getArrayStructData(Field field, Object[] structData, String structuredSQLType, int i, Object bValue)
             throws SQLException, ApplicationError {
         Type elementType = ((ArrayType) field
