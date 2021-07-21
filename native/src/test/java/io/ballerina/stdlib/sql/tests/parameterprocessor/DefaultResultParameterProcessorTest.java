@@ -121,7 +121,7 @@ public class DefaultResultParameterProcessorTest {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         BObject bObject = TestUtils.getMockObject("ObjectType");
         try {
-            Object object = testClass.convertCustomOutParameters(bObject, 1, null);
+            Object object = testClass.convertCustomOutParameter(bObject, "", 1, null);
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), null);
         }

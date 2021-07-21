@@ -940,7 +940,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertCustomOutParameters(BObject value, int sqlType, Type ballerinaType) {
+    public Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType, Type ballerinaType) {
+        return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
+    }
+
+    @Override
+    public Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
     }
 

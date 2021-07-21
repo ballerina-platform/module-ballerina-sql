@@ -103,7 +103,11 @@ public abstract class AbstractResultParameterProcessor {
 
     protected abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
 
-    protected abstract Object convertCustomOutParameters(BObject value, int sqlType, Type ballerinaType);
+    public abstract Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType,
+                                                     Type ballerinaType);
+
+    public abstract Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType,
+                                                       Type ballerinaType);
 
     public abstract Object processChar(CallableStatement statement, int paramIndex)
             throws SQLException;
