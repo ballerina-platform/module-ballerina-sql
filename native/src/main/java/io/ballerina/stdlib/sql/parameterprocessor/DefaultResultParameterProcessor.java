@@ -37,7 +37,6 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
-import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.math.BigDecimal;
@@ -45,13 +44,11 @@ import java.nio.charset.Charset;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
-import java.sql.Statement;
 import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -958,27 +955,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object getCustomOutParameters(BObject value, int sqlType, Type ballerinaType) {
+    public Object convertCustomOutParameters(BObject value, int sqlType, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
     }
 
-    protected BObject getIteratorObject() {
+    public BObject getBalStreamResultIterator() {
         return null;
-    }
-
-    public BObject createRecordIterator(ResultSet resultSet,
-                                        Statement statement,
-                                        Connection connection, List<ColumnDefinition> columnDefinitions,
-                                        StructureType streamConstraint) {
-        BObject iteratorObject = this.getIteratorObject();
-        BObject resultIterator = ValueCreator.createObjectValue(ModuleUtils.getModule(),
-                Constants.RESULT_ITERATOR_OBJECT, new Object[]{null, iteratorObject});
-        resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
-        resultIterator.addNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD, statement);
-        resultIterator.addNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD, connection);
-        resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
-        resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
-        return resultIterator;
     }
 
     public Object getCustomResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition)
@@ -986,7 +968,4 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         throw new ApplicationError("Unsupported SQL type " + columnDefinition.getSqlName());
     }
 
-    public BObject getCustomProcedureCallObject() {
-        return null;
-    }
 }

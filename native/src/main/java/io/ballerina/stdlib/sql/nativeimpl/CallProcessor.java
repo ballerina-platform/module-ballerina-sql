@@ -32,8 +32,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
@@ -82,7 +82,7 @@ public class CallProcessor {
      */
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
             AbstractStatementParameterProcessor statementParameterProcessor,
-            DefaultResultParameterProcessor resultParameterProcessor) {
+            AbstractResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -117,10 +117,9 @@ public class CallProcessor {
                             resultParameterProcessor);
                 }
 
-                BObject iteratorObject = resultParameterProcessor.getCustomProcedureCallObject();
-
+                BObject iteratorObject = resultParameterProcessor.getBalStreamResultIterator();
                 BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
-                        PROCEDURE_CALL_RESULT, new Object[]{iteratorObject});
+                        PROCEDURE_CALL_RESULT, iteratorObject);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
                 if (resultType) {
@@ -210,7 +209,7 @@ public class CallProcessor {
 
     private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                       HashMap<Integer, Integer> outputParamTypes,
-                                      DefaultResultParameterProcessor resultParameterProcessor)
+                                      AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;

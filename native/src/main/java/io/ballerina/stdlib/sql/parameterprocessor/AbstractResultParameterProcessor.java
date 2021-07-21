@@ -17,14 +17,17 @@
  */
 package io.ballerina.stdlib.sql.parameterprocessor;
 
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.ModuleUtils;
 
 import java.math.BigDecimal;
 import java.sql.Array;
@@ -39,8 +42,8 @@ import java.sql.Struct;
 import java.util.List;
 
 /**
- * This class has abstract implementation of methods required convert SQL types into ballerina types and
- * other methods that process the parameters of the result.
+ * This class has abstract implementation of methods to process JDBC Callable statement. Populate methods are used to
+ * process callable statements and convert methods are used to transform the results to required ballerina types.
  *
  * @since 0.5.6
  */
@@ -100,111 +103,122 @@ public abstract class AbstractResultParameterProcessor {
 
     protected abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
 
-    protected abstract void populateChar(CallableStatement statement, BObject parameter, int paramIndex)
+    protected abstract Object convertCustomOutParameters(BObject value, int sqlType, Type ballerinaType);
+
+    public abstract void populateChar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateLongVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateLongVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateNChar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateNChar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateLongNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateLongNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateLongVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateLongVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateBlob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateBlob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateClob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateClob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateNClob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateNClob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateDate(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateDate(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateTime(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateTime(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateTimeWithTimeZone(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateTimeWithTimeZone(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateTimestampWithTimeZone(
+    public abstract void populateTimestampWithTimeZone(
             CallableStatement statement, BObject parameter, int paramIndex) throws SQLException;
 
-    protected abstract void populateArray(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateArray(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateRowID(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateRowID(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateTinyInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateTinyInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateSmallInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateSmallInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateInteger(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateInteger(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateBigInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateBigInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateReal(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateReal(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateFloat(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateFloat(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateDouble(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateDouble(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateNumeric(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateNumeric(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateDecimal(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateDecimal(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateBit(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateBit(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateBoolean(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateBoolean(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateRef(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateRef(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateStruct(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateStruct(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    protected abstract void populateXML(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void populateXML(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
     public abstract void populateCustomOutParameters(
             CallableStatement statement, BObject parameter, int paramIndex, int sqlType) throws ApplicationError;
 
-    protected abstract Object getCustomOutParameters(BObject value, int sqlType, Type ballerinaType);
-
-    public abstract BObject createRecordIterator(
+    public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
-            List<ColumnDefinition> columnDefinitions, StructureType streamConstraint);
+            List<ColumnDefinition> columnDefinitions, StructureType streamConstraint) {
+        BObject resultIterator = ValueCreator.createObjectValue(ModuleUtils.getModule(),
+                Constants.RESULT_ITERATOR_OBJECT, null, getBalStreamResultIterator());
+        resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
+        resultIterator.addNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD, statement);
+        resultIterator.addNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD, connection);
+        resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
+        resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
+        return resultIterator;
+    }
+
+    public abstract BObject getBalStreamResultIterator();
 }
