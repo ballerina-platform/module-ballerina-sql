@@ -105,107 +105,110 @@ public abstract class AbstractResultParameterProcessor {
 
     protected abstract Object convertCustomOutParameters(BObject value, int sqlType, Type ballerinaType);
 
-    public abstract void populateChar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processChar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateLongVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processLongVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateNChar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processNChar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateLongNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processLongNVarchar(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateLongVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processLongVarBinary(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateBlob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processBlob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateClob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processClob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateNClob(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processNClob(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateDate(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processDate(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateTime(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processTime(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateTimeWithTimeZone(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processTimeWithTimeZone(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processTimestamp(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateTimestampWithTimeZone(
+    public abstract void processTimestampWithTimeZone(
             CallableStatement statement, BObject parameter, int paramIndex) throws SQLException;
 
-    public abstract void populateArray(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processArray(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateRowID(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processRowID(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateTinyInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processTinyInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateSmallInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processSmallInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateInteger(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processInteger(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateBigInt(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processBigInt(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateReal(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processReal(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateFloat(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processFloat(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateDouble(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processDouble(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateNumeric(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processNumeric(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateDecimal(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processDecimal(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateBit(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processBit(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateBoolean(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processBoolean(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateRef(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processRef(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateStruct(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processStruct(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateXML(CallableStatement statement, BObject parameter, int paramIndex)
+    public abstract void processXML(CallableStatement statement, BObject parameter, int paramIndex)
             throws SQLException;
 
-    public abstract void populateCustomOutParameters(
+    public abstract void processCustomOutParameters(
             CallableStatement statement, BObject parameter, int paramIndex, int sqlType) throws ApplicationError;
+
+    public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
+                                                           ColumnDefinition columnDefinition) throws ApplicationError;
 
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
