@@ -223,109 +223,111 @@ public class CallProcessor {
             BObject parameter = (BObject) arrayValue.get(paramIndex - 1);
             parameter.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, sqlType);
 
+            Object result;
             switch (sqlType) {
                 case Types.CHAR:
-                    resultParameterProcessor.processChar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processChar(statement, paramIndex);
                     break;
                 case Types.VARCHAR:
-                    resultParameterProcessor.processVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processVarchar(statement, paramIndex);
                     break;
                 case Types.LONGVARCHAR:
-                    resultParameterProcessor.processLongVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongVarchar(statement, paramIndex);
                     break;
                 case Types.NCHAR:
-                    resultParameterProcessor.processNChar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNChar(statement, paramIndex);
                     break;
                 case Types.NVARCHAR:
-                    resultParameterProcessor.processNVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNVarchar(statement, paramIndex);
                     break;
                 case Types.LONGNVARCHAR:
-                    resultParameterProcessor.processLongNVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongNVarchar(statement, paramIndex);
                     break;
                 case Types.BINARY:
-                    resultParameterProcessor.processBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBinary(statement, paramIndex);
                     break;
                 case Types.VARBINARY:
-                    resultParameterProcessor.processVarBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processVarBinary(statement, paramIndex);
                     break;
                 case Types.LONGVARBINARY:
-                    resultParameterProcessor.processLongVarBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongVarBinary(statement, paramIndex);
                     break;
                 case Types.BLOB:
-                    resultParameterProcessor.processBlob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBlob(statement, paramIndex);
                     break;
                 case Types.CLOB:
-                    resultParameterProcessor.processClob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processClob(statement, paramIndex);
                     break;
                 case Types.NCLOB:
-                    resultParameterProcessor.processNClob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNClob(statement, paramIndex);
                     break;
                 case Types.DATE:
-                    resultParameterProcessor.processDate(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDate(statement, paramIndex);
                     break;
                 case Types.TIME:
-                    resultParameterProcessor.processTime(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTime(statement, paramIndex);
                     break;
                 case Types.TIME_WITH_TIMEZONE:
-                    resultParameterProcessor.processTimeWithTimeZone(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimeWithTimeZone(statement, paramIndex);
                     break;
                 case Types.TIMESTAMP:
-                    resultParameterProcessor.processTimestamp(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimestamp(statement, paramIndex);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
-                    resultParameterProcessor.processTimestampWithTimeZone(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimestampWithTimeZone(statement, paramIndex);
                     break;
                 case Types.ARRAY:
-                    resultParameterProcessor.processArray(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processArray(statement, paramIndex);
                     break;
                 case Types.ROWID:
-                    resultParameterProcessor.processRowID(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processRowID(statement, paramIndex);
                     break;
                 case Types.TINYINT:
-                    resultParameterProcessor.processTinyInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTinyInt(statement, paramIndex);
                     break;
                 case Types.SMALLINT:
-                    resultParameterProcessor.processSmallInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processSmallInt(statement, paramIndex);
                     break;
                 case Types.INTEGER:
-                    resultParameterProcessor.processInteger(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processInteger(statement, paramIndex);
                     break;
                 case Types.BIGINT:
-                    resultParameterProcessor.processBigInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBigInt(statement, paramIndex);
                     break;
                 case Types.REAL:
-                    resultParameterProcessor.processReal(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processReal(statement, paramIndex);
                     break;
                 case Types.FLOAT:
-                    resultParameterProcessor.processFloat(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processFloat(statement, paramIndex);
                     break;
                 case Types.DOUBLE:
-                    resultParameterProcessor.processDouble(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDouble(statement, paramIndex);
                     break;
                 case Types.NUMERIC:
-                    resultParameterProcessor.processNumeric(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNumeric(statement, paramIndex);
                     break;
                 case Types.DECIMAL:
-                    resultParameterProcessor.processDecimal(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDecimal(statement, paramIndex);
                     break;
                 case Types.BIT:
-                    resultParameterProcessor.processBit(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBit(statement, paramIndex);
                     break;
                 case Types.BOOLEAN:
-                    resultParameterProcessor.processBoolean(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBoolean(statement, paramIndex);
                     break;
                 case Types.REF:
-                    resultParameterProcessor.processRef(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processRef(statement, paramIndex);
                     break;
                 case Types.STRUCT:
-                    resultParameterProcessor.processStruct(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processStruct(statement, paramIndex);
                     break;
                 case Types.SQLXML:
-                    resultParameterProcessor.processXML(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processXML(statement, paramIndex);
                     break;
                 default:
-                    resultParameterProcessor.processCustomOutParameters(statement, parameter, paramIndex, sqlType);
+                    result = resultParameterProcessor.processCustomOutParameters(statement, paramIndex, sqlType);
             }
+            parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, result);
         }
     }
 

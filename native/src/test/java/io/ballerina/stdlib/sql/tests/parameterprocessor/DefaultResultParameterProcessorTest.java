@@ -109,7 +109,7 @@ public class DefaultResultParameterProcessorTest {
     void populateCustomOutParametersTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            testClass.processCustomOutParameters(null, null, 2, 3);
+            testClass.processCustomOutParameters(null, 2, 3);
         } catch (ApplicationError e) {
             assertEquals(e.getMessage(), "Unsupported SQL type '3' when reading Procedure call Out" +
                     " parameter of index '2'.");
