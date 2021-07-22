@@ -989,7 +989,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     CharArrayOutParameter char_array = new;
     VarcharArrayOutParameter varchar_array = new;
     NVarcharArrayOutParameter nvarchar_array = new;
-    BinaryArrayOutParameter binaryArray = new;
+    BinaryArrayOutParameter binary_array = new;
     VarBinaryArrayOutParameter varbinaryArray = new;
     BooleanArrayOutParameter boolean_array = new;
     DateArrayOutParameter date_array = new;
@@ -1021,7 +1021,8 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
                                                 OUT p_datetime_array DATETIME ARRAY,
                                                 OUT p_bit_array BIT(4) ARRAY,
                                                 OUT p_time_tz_array TIME WITH TIME ZONE ARRAY,
-                                                OUT p_timestamp_tz_array TIMESTAMP WITH TIME ZONE ARRAY
+                                                OUT p_timestamp_tz_array TIMESTAMP WITH TIME ZONE ARRAY,
+                                                OUT p_binary_array BINARY(27) ARRAY
                                                 )
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
@@ -1045,6 +1046,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
                 SELECT bit_array INTO p_bit_array FROM ProArrayTypes where row_id = rowId;
                 SELECT time_tz_array INTO p_time_tz_array FROM ProArrayTypes where row_id = rowId;
                 SELECT timestamp_tz_array INTO p_timestamp_tz_array FROM ProArrayTypes where row_id = rowId;
+                SELECT binary_array INTO p_binary_array FROM ProArrayTypes where row_id = rowId;
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure),0,());
@@ -1054,7 +1056,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
                                     ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
                                     ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                     ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
-                                    ${timestamp_tz_array})`;
+                                    ${timestamp_tz_array}, ${binary_array})`;
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
@@ -1081,6 +1083,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     int[] longArray = [100000000,200000000,300000000];
     boolean[] booleanArray = [true,false,true];
     byte[][] byteArray = [[128],[128],[0]];
+    byte[][] binaryArray = [[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,105,110,97,114,121,32,116,101,115,116,139]];
     time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0},
     {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
     string[] civilArrayInString = ["2017-02-03 11:53:00.0","2019-04-05 12:33:10.0"];
@@ -1154,12 +1157,18 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     "of procedure did not match.");
     test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " +
     "of procedure did not match.");
+    test:assertFalse((bit_array.get(StringArray) is Error));
     test:assertEquals(time_tz_array.get(TimeOfDayArray), timetzArray, "Time with timezone array out parameter " +
     "of procedure did not match.");
+    test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30","16:33:55+04:30"], "Timestamp with timezone array out " +
+    "parameter of procedure did not match.");
     test:assertEquals(timestamp_tz_array.get(CivilArray), timestamptzArray, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
     test:assertEquals(timestamp_tz_array.get(StringArray), timestamptzArrayInString, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
+    test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " +
+    "procedure did not match.");
+    test:assertFalse((binary_array.get(StringArray) is Error));
 }
 
 @test:Config {
@@ -1189,13 +1198,14 @@ function negativeOutParamsTest() returns error? {
     BitArrayOutParameter bit_array = new;
     TimeWithTimezoneArrayOutParameter time_tz_array = new;
     TimestampWithTimezoneArrayOutParameter timestamp_tz_array = new;
+    BinaryArrayOutParameter binary_array = new;
     int rowId = 1;
     ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithOutParams(${rowId}, ${smallint_array},
                                         ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
                                         ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
                                         ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                         ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
-                                        ${timestamp_tz_array})`;
+                                        ${timestamp_tz_array}, ${binary_array})`;
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
     byte[][]|Error result = smallint_array.get(ByteArray);
@@ -1354,6 +1364,14 @@ function negativeOutParamsTest() returns error? {
     if (result is Error) {
         test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data " +
         "type:Boolean array"));
+    } else {
+        test:assertFail("Result is not mismatch");
+    }
+
+    float[]|Error output = binary_array.get(FloatArray);
+    if (output is Error) {
+        test:assertTrue(output.toString().includes("Unsupported Ballerina type:float[] for SQL Date " +
+        "data type:Binary array"));
     } else {
         test:assertFail("Result is not mismatch");
     }

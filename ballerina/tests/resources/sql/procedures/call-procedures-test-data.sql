@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS ProArrayTypes (
   numeric_array NUMERIC(6,2) ARRAY,
   boolean_array BOOLEAN ARRAY,
   bit_array BIT ARRAY,
+  binary_array BINARY(27) ARRAY,
   char_array CHAR(15) ARRAY,
   varchar_array VARCHAR(100) ARRAY,
   nvarchar_array NVARCHAR(15) ARRAY,
@@ -133,7 +134,7 @@ CREATE TABLE IF NOT EXISTS ProArrayTypes (
 
 INSERT INTO ProArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
 bit_array, string_array, blob_array, smallint_array, numeric_array, real_array, char_array, varchar_array,
-nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz_array, timestamp_tz_array)
+nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz_array, timestamp_tz_array, binary_array)
   VALUES (1, ARRAY [1, 2, 3], ARRAY [100000000, 200000000, 300000000], ARRAY[245.23, 5559.49, 8796.123],
   ARRAY[245.23, 5559.49, 8796.123], ARRAY[245.12, 5559.12, 8796.92], ARRAY[TRUE, FALSE, TRUE],
   ARRAY[1, 1, 0], ARRAY['Hello', 'Ballerina'],
@@ -141,4 +142,5 @@ nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz
   ARRAY[12, 232], ARRAY[11.11, 23.23], ARRAY[199.33, 2399.1], ARRAY['Hello', 'Ballerina'], ARRAY['Hello', 'Ballerina'],
   ARRAY['Hello', 'Ballerina'], ARRAY['2017-02-03', '2017-02-03'], ARRAY['11:22:42', '12:23:45'],
   ARRAY['2017-02-03 11:53:00', '2019-04-05 12:33:10'], ARRAY['2017-02-03 11:53:00', '2019-04-05 12:33:10'],
-  ARRAY['16:33:55+6:30', '16:33:55+4:30'], ARRAY['2017-01-25 16:33:55-8:00', '2017-01-25 16:33:55-5:00']);
+  ARRAY['16:33:55+6:30', '16:33:55+4:30'], ARRAY['2017-01-25 16:33:55-8:00', '2017-01-25 16:33:55-5:00'],
+  ARRAY[X'77736F322062616C6C6572696E612062696E61727920746573747R']);
