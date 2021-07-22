@@ -153,7 +153,16 @@ public class OutParameterProcessor {
                 case Types.SQLXML:
                     return resultParameterProcessor.convertXml((SQLXML) value, sqlType, ballerinaType);
                 default:
-                    return resultParameterProcessor.getCustomOutParameters(result, sqlType, ballerinaType);
+                    String objectType = result.getType().getName();
+                    if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
+                        Object inParamValue = result.get(Constants.ParameterObject.IN_VALUE_FIELD);
+                        return resultParameterProcessor.convertCustomInOutParameter(value, inParamValue, sqlType,
+                                ballerinaType);
+                    } else {
+                        String outParamObjectName = result.getType().getName();
+                        return resultParameterProcessor.convertCustomOutParameter(value, outParamObjectName, sqlType,
+                                ballerinaType);
+                    }
             }
         } catch (ApplicationError | IOException applicationError) {
             return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());

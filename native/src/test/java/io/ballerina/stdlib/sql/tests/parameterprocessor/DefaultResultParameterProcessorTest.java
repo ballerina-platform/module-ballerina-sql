@@ -99,7 +99,7 @@ public class DefaultResultParameterProcessorTest {
         ColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type", null,
                 2, "INT", TypeUtils.getType(1), false);
         try {
-            testClass.getCustomResult(null, 1, columnDefinition);
+            testClass.processCustomTypeFromResultSet(null, 1, columnDefinition);
         } catch (ApplicationError e) {
             assertEquals(e.getMessage(), "Unsupported SQL type INT");
         }
@@ -109,7 +109,7 @@ public class DefaultResultParameterProcessorTest {
     void populateCustomOutParametersTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            testClass.populateCustomOutParameters(null, null, 2, 3);
+            testClass.processCustomOutParameters(null, 2, 3);
         } catch (ApplicationError e) {
             assertEquals(e.getMessage(), "Unsupported SQL type '3' when reading Procedure call Out" +
                     " parameter of index '2'.");
@@ -121,7 +121,7 @@ public class DefaultResultParameterProcessorTest {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         BObject bObject = TestUtils.getMockObject("ObjectType");
         try {
-            Object object = testClass.getCustomOutParameters(bObject, 1, null);
+            Object object = testClass.convertCustomOutParameter(bObject, "", 1, null);
         } catch (NullPointerException e) {
             assertEquals(e.getMessage(), null);
         }

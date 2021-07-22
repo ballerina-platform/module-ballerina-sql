@@ -32,8 +32,8 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
@@ -81,8 +81,8 @@ public class CallProcessor {
      * @return procedure call result or error
      */
     public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
-            DefaultStatementParameterProcessor statementParameterProcessor, 
-            DefaultResultParameterProcessor resultParameterProcessor) {
+            AbstractStatementParameterProcessor statementParameterProcessor,
+            AbstractResultParameterProcessor resultParameterProcessor) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -117,10 +117,9 @@ public class CallProcessor {
                             resultParameterProcessor);
                 }
 
-                BObject iteratorObject = resultParameterProcessor.getCustomProcedureCallObject();
-
+                BObject iteratorObject = resultParameterProcessor.getBalStreamResultIterator();
                 BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
-                        PROCEDURE_CALL_RESULT, new Object[]{iteratorObject});
+                        PROCEDURE_CALL_RESULT, iteratorObject);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
                 if (resultType) {
@@ -162,7 +161,7 @@ public class CallProcessor {
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes,
-                                  DefaultStatementParameterProcessor statementParameterProcessor)
+                                  AbstractStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError, IOException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
@@ -210,7 +209,7 @@ public class CallProcessor {
 
     private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                       HashMap<Integer, Integer> outputParamTypes,
-                                      DefaultResultParameterProcessor resultParameterProcessor)
+                                      AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;
@@ -224,114 +223,116 @@ public class CallProcessor {
             BObject parameter = (BObject) arrayValue.get(paramIndex - 1);
             parameter.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, sqlType);
 
+            Object result;
             switch (sqlType) {
                 case Types.CHAR:
-                    resultParameterProcessor.populateChar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processChar(statement, paramIndex);
                     break;
                 case Types.VARCHAR:
-                    resultParameterProcessor.populateVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processVarchar(statement, paramIndex);
                     break;
                 case Types.LONGVARCHAR:
-                    resultParameterProcessor.populateLongVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongVarchar(statement, paramIndex);
                     break;
                 case Types.NCHAR:
-                    resultParameterProcessor.populateNChar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNChar(statement, paramIndex);
                     break;
                 case Types.NVARCHAR:
-                    resultParameterProcessor.populateNVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNVarchar(statement, paramIndex);
                     break;
                 case Types.LONGNVARCHAR:
-                    resultParameterProcessor.populateLongNVarchar(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongNVarchar(statement, paramIndex);
                     break;
                 case Types.BINARY:
-                    resultParameterProcessor.populateBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBinary(statement, paramIndex);
                     break;
                 case Types.VARBINARY:
-                    resultParameterProcessor.populateVarBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processVarBinary(statement, paramIndex);
                     break;
                 case Types.LONGVARBINARY:
-                    resultParameterProcessor.populateLongVarBinary(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processLongVarBinary(statement, paramIndex);
                     break;
                 case Types.BLOB:
-                    resultParameterProcessor.populateBlob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBlob(statement, paramIndex);
                     break;
                 case Types.CLOB:
-                    resultParameterProcessor.populateClob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processClob(statement, paramIndex);
                     break;
                 case Types.NCLOB:
-                    resultParameterProcessor.populateNClob(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNClob(statement, paramIndex);
                     break;
                 case Types.DATE:
-                    resultParameterProcessor.populateDate(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDate(statement, paramIndex);
                     break;
                 case Types.TIME:
-                    resultParameterProcessor.populateTime(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTime(statement, paramIndex);
                     break;
                 case Types.TIME_WITH_TIMEZONE:
-                    resultParameterProcessor.populateTimeWithTimeZone(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimeWithTimeZone(statement, paramIndex);
                     break;
                 case Types.TIMESTAMP:
-                    resultParameterProcessor.populateTimestamp(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimestamp(statement, paramIndex);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
-                    resultParameterProcessor.populateTimestampWithTimeZone(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTimestampWithTimeZone(statement, paramIndex);
                     break;
                 case Types.ARRAY:
-                    resultParameterProcessor.populateArray(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processArray(statement, paramIndex);
                     break;
                 case Types.ROWID:
-                    resultParameterProcessor.populateRowID(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processRowID(statement, paramIndex);
                     break;
                 case Types.TINYINT:
-                    resultParameterProcessor.populateTinyInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processTinyInt(statement, paramIndex);
                     break;
                 case Types.SMALLINT:
-                    resultParameterProcessor.populateSmallInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processSmallInt(statement, paramIndex);
                     break;
                 case Types.INTEGER:
-                    resultParameterProcessor.populateInteger(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processInteger(statement, paramIndex);
                     break;
                 case Types.BIGINT:
-                    resultParameterProcessor.populateBigInt(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBigInt(statement, paramIndex);
                     break;
                 case Types.REAL:
-                    resultParameterProcessor.populateReal(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processReal(statement, paramIndex);
                     break;
                 case Types.FLOAT:
-                    resultParameterProcessor.populateFloat(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processFloat(statement, paramIndex);
                     break;
                 case Types.DOUBLE:
-                    resultParameterProcessor.populateDouble(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDouble(statement, paramIndex);
                     break;
                 case Types.NUMERIC:
-                    resultParameterProcessor.populateNumeric(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processNumeric(statement, paramIndex);
                     break;
                 case Types.DECIMAL:
-                    resultParameterProcessor.populateDecimal(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processDecimal(statement, paramIndex);
                     break;
                 case Types.BIT:
-                    resultParameterProcessor.populateBit(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBit(statement, paramIndex);
                     break;
                 case Types.BOOLEAN:
-                    resultParameterProcessor.populateBoolean(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processBoolean(statement, paramIndex);
                     break;
                 case Types.REF:
-                    resultParameterProcessor.populateRef(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processRef(statement, paramIndex);
                     break;
                 case Types.STRUCT:
-                    resultParameterProcessor.populateStruct(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processStruct(statement, paramIndex);
                     break;
                 case Types.SQLXML:
-                    resultParameterProcessor.populateXML(statement, parameter, paramIndex);
+                    result = resultParameterProcessor.processXML(statement, paramIndex);
                     break;
                 default:
-                    resultParameterProcessor.populateCustomOutParameters(statement, parameter, paramIndex, sqlType);
+                    result = resultParameterProcessor.processCustomOutParameters(statement, paramIndex, sqlType);
             }
+            parameter.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, result);
         }
     }
 
     private static int getOutParameterType(
-            BObject typedValue, DefaultStatementParameterProcessor statementParameterProcessor
+            BObject typedValue, AbstractStatementParameterProcessor statementParameterProcessor
             ) throws ApplicationError {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
