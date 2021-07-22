@@ -84,6 +84,11 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         io.ballerina.stdlib.time.util.Constants.DATE_RECORD,
         io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     private static final ArrayType dateArrayType = TypeCreator.createArrayType(dateRecordType);
+    public static final ArrayType STRING_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
+    public static final ArrayType BOOLEAN_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
+    public static final ArrayType INT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
+    public static final ArrayType FLOAT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
+    public static final ArrayType DECIMAL_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
 
     public DefaultResultParameterProcessor() {
     }
@@ -271,7 +276,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createStringArray(Object[] dataArray) {
-        BArray stringDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.STRING_ARRAY);
+        BArray stringDataArray = ValueCreator.createArrayValue(STRING_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             stringDataArray.add(i, fromString(dataArray[i].toString()));
         }
@@ -279,7 +284,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createBooleanArray(Object[] dataArray) {
-        BArray boolDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.BOOLEAN_ARRAY);
+        BArray boolDataArray = ValueCreator.createArrayValue(BOOLEAN_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
         }
@@ -287,7 +292,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createShortArray(Object[] dataArray) {
-        BArray shortDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        BArray shortDataArray = ValueCreator.createArrayValue(INT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             shortDataArray.add(i, ((Short) dataArray[i]).intValue());
         }
@@ -295,7 +300,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createIntegerArray(Object[] dataArray) {
-        BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             intDataArray.add(i, ((Integer) dataArray[i]).intValue());
         }
@@ -303,7 +308,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createLongArray(Object[] dataArray) {
-        BArray longDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        BArray longDataArray = ValueCreator.createArrayValue(INT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             longDataArray.add(i, ((Long) dataArray[i]).longValue());
         }
@@ -311,7 +316,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createFloatArray(Object[] dataArray) {
-        BArray floatDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        BArray floatDataArray = ValueCreator.createArrayValue(FLOAT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
         }
@@ -319,7 +324,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createDoubleArray(Object[] dataArray) {
-        BArray doubleDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        BArray doubleDataArray = ValueCreator.createArrayValue(FLOAT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
         }
@@ -327,7 +332,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     public static BArray createBigDecimalArray(Object[] dataArray) {
-        BArray decimalDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.DECIMAL_ARRAY);
+        BArray decimalDataArray = ValueCreator.createArrayValue(DECIMAL_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
         }

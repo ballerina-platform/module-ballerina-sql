@@ -18,9 +18,6 @@
 
 package io.ballerina.stdlib.sql;
 
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.values.BString;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -317,11 +314,6 @@ public final class Constants {
         public static final String DECIMAL = "decimal[]";
         public static final String UTC = "([int,decimal] & readonly)[]";
         public static final String BYTE = "byte[][]";
-        public static final ArrayType STRING_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
-        public static final ArrayType BOOLEAN_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
-        public static final ArrayType INT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-        public static final ArrayType FLOAT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
-        public static final ArrayType DECIMAL_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
     }
 
     /**
@@ -343,6 +335,5 @@ public final class Constants {
         public static final String TIME = "java.sql.Time";
         public static final String OFFSET_TIME = "java.time.OffsetTime";
         public static final String OFFSET_DATE_TIME = "java.time.OffsetDateTime";
-        public static final String OBJECT = "java.lang.Object[]";
     }
 }

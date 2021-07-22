@@ -18,7 +18,10 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
@@ -54,6 +57,10 @@ import static io.ballerina.stdlib.sql.utils.Utils.getString;
  * @since 0.5.6
  */
 public class OutParameterProcessor {
+
+    private static final ArrayType INT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
+    private static final ArrayType FLOAT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
+    private static final ArrayType DECIMAL_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
 
     private OutParameterProcessor() {
     }
@@ -253,7 +260,7 @@ public class OutParameterProcessor {
     }
 
     private static Object booleanToIntArray(Object[] dataArray) {
-        BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             int val = ((Boolean) dataArray[i]) ? 1 : 0;
             intDataArray.add(i, val);
@@ -278,7 +285,7 @@ public class OutParameterProcessor {
 
     private static Object realToArray(String name, Object[] dataArray, String objectTypeName, Type ballerinaType) {
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
-            BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+            BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
             for (int i = 0; i < dataArray.length; i++) {
                 intDataArray.add(i, ((Double) dataArray[i]).intValue());
             }
@@ -319,7 +326,7 @@ public class OutParameterProcessor {
     }
 
     private static Object toDecimalArray(Object[] dataArray) {
-        BArray decimalDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.DECIMAL_ARRAY);
+        BArray decimalDataArray = ValueCreator.createArrayValue(DECIMAL_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             Double doubleValue = (Double) dataArray[i];
             decimalDataArray.add(i, ValueCreator.createDecimalValue(BigDecimal.valueOf(doubleValue)));
@@ -328,7 +335,7 @@ public class OutParameterProcessor {
     }
 
     private static Object toFloatArray(Object[] dataArray) {
-        BArray floatDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        BArray floatDataArray = ValueCreator.createArrayValue(FLOAT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             floatDataArray.add(i, ((Double) dataArray[i]).floatValue());
         }
@@ -373,7 +380,7 @@ public class OutParameterProcessor {
     private static Object floatToArray(String name, Object[] dataArray, String objectTypeName,
                                          Type ballerinaType) {
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
-            BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+            BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
             for (int i = 0; i < dataArray.length; i++) {
                 Double doubleValue = (Double) dataArray[i];
                 intDataArray.add(i, doubleValue.intValue());
@@ -456,8 +463,7 @@ public class OutParameterProcessor {
                 return DefaultResultParameterProcessor.createFloatArray(dataArray);
             }
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL)) {
-            if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL) ||
-                    className.equalsIgnoreCase(Constants.Classes.OBJECT)) {
+            if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
                 return DefaultResultParameterProcessor.createBigDecimalArray(dataArray);
             } else {
                 return DefaultResultParameterProcessor.createDoubleArray(dataArray);
@@ -477,7 +483,7 @@ public class OutParameterProcessor {
     }
 
     private static Object floatToFloatArray(Object[] dataArray) {
-        BArray floatDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        BArray floatDataArray = ValueCreator.createArrayValue(FLOAT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             floatDataArray.add(i, ((BigDecimal) dataArray[i]).floatValue());
         }
@@ -485,7 +491,7 @@ public class OutParameterProcessor {
     }
 
     private static Object decimalToIntArray(Object[] dataArray) {
-        BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
             intDataArray.add(i, ((BigDecimal) dataArray[i]).intValue());
         }
