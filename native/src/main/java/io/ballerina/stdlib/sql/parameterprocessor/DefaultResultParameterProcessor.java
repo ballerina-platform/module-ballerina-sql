@@ -72,11 +72,6 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     private static final Object lock = new Object();
     private static volatile DefaultResultParameterProcessor instance;
 
-    private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
-    private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
-    private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
-    private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
     private static final ArrayType mapArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_MAP);
     private static final ArrayType byteArrayType = TypeCreator.createArrayType(
         TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE));
@@ -241,111 +236,164 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BArray createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                          Type type, Array array)
-            throws ApplicationError, SQLException {
-        int length = dataArray.length;
+                                                          Type type, Array array) throws ApplicationError,
+            SQLException {
         String elementType = firstNonNullElement.getClass().getCanonicalName();
         switch (elementType) {
             case Constants.Classes.STRING:
-                BArray stringDataArray = ValueCreator.createArrayValue(stringArrayType);
-                for (int i = 0; i < length; i++) {
-                    stringDataArray.add(i, fromString((String) dataArray[i]));
-                }
-                return stringDataArray;
+                return createStringArray(dataArray);
             case Constants.Classes.BOOLEAN:
-                BArray boolDataArray = ValueCreator.createArrayValue(booleanArrayType);
-                for (int i = 0; i < length; i++) {
-                    boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
-                }
-                return boolDataArray;
+                return createBooleanArray(dataArray);
             case Constants.Classes.SHORT:
-                BArray shortDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    shortDataArray.add(i, ((Short) dataArray[i]).intValue());
-                }
-                return shortDataArray;
+                return createShortArray(dataArray);
             case Constants.Classes.INTEGER:
-                BArray intDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    intDataArray.add(i, ((Integer) dataArray[i]).intValue());
-                }
-                return intDataArray;
+                return createIntegerArray(dataArray);
             case Constants.Classes.LONG:
-                BArray longDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    longDataArray.add(i, ((Long) dataArray[i]).longValue());
-                }
-                return longDataArray;
+                return createLongArray(dataArray);
             case Constants.Classes.FLOAT:
-                BArray floatDataArray = ValueCreator.createArrayValue(floatArrayType);
-                for (int i = 0; i < length; i++) {
-                    floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
-                }
-                return floatDataArray;
+                return createFloatArray(dataArray);
             case Constants.Classes.DOUBLE:
-                BArray doubleDataArray = ValueCreator.createArrayValue(floatArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
-                }
-                return doubleDataArray;
+                return createDoubleArray(dataArray);
             case Constants.Classes.BIG_DECIMAL:
-                BArray decimalDataArray = ValueCreator.createArrayValue(decimalArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
-                }
-                return decimalDataArray;
+                return createBigDecimalArray(dataArray);
             case Constants.Classes.BYTE:
-                BArray byteDataArray = ValueCreator.createArrayValue(byteArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    byteDataArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
-                }
-                return byteDataArray;
+                return createByteArray(dataArray);
             case Constants.Classes.DATE:
-                BArray mapDataArray;
-                mapDataArray = ValueCreator.createArrayValue(dateArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
-                    mapDataArray.add(i, dateMap);
-                }
-                mapDataArray.freezeDirect();
-                return mapDataArray;
+                return createDateArray(dataArray);
             case Constants.Classes.TIMESTAMP:
-                mapDataArray = ValueCreator.createArrayValue(civilArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
-                    mapDataArray.add(i, civilMap);
-                }
-                mapDataArray.freezeDirect();
-                return mapDataArray;
+                return createTimestampArray(dataArray);
             case Constants.Classes.TIME:
-                mapDataArray = ValueCreator.createArrayValue(timeArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
-                    mapDataArray.add(i, timeMap);
-                }
-                mapDataArray.freezeDirect();
-                return mapDataArray;
+                return createTimeArray(dataArray);
             case Constants.Classes.OFFSET_TIME:
-                BArray mapTimeArray = ValueCreator.createArrayValue(timeArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap =
-                            Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
-                    mapTimeArray.add(i, civilMap);
-                }
-                mapTimeArray.freezeDirect();
-                return mapTimeArray;
+                return createOffsetArray(dataArray);
             case Constants.Classes.OFFSET_DATE_TIME:
-                BArray mapDateTimeArray = ValueCreator.createArrayValue(civilArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap =
-                            Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
-                    mapDateTimeArray.add(i, civilMap);
-                }
-                mapDateTimeArray.freezeDirect();
-                return mapDateTimeArray;
+                return createOffsetTimeArray(dataArray);
             default:
                 return createAndPopulateCustomValueArray(firstNonNullElement, type, array);
         }
+    }
+
+    public static BArray createStringArray(Object[] dataArray) {
+        BArray stringDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.STRING_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            stringDataArray.add(i, fromString(dataArray[i].toString()));
+        }
+        return stringDataArray;
+    }
+
+    public static BArray createBooleanArray(Object[] dataArray) {
+        BArray boolDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.BOOLEAN_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
+        }
+        return boolDataArray;
+    }
+
+    public static BArray createShortArray(Object[] dataArray) {
+        BArray shortDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            shortDataArray.add(i, ((Short) dataArray[i]).intValue());
+        }
+        return shortDataArray;
+    }
+
+    public static BArray createIntegerArray(Object[] dataArray) {
+        BArray intDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            intDataArray.add(i, ((Integer) dataArray[i]).intValue());
+        }
+        return intDataArray;
+    }
+
+    public static BArray createLongArray(Object[] dataArray) {
+        BArray longDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.INT_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            longDataArray.add(i, ((Long) dataArray[i]).longValue());
+        }
+        return longDataArray;
+    }
+
+    public static BArray createFloatArray(Object[] dataArray) {
+        BArray floatDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
+        }
+        return floatDataArray;
+    }
+
+    public static BArray createDoubleArray(Object[] dataArray) {
+        BArray doubleDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.FLOAT_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
+        }
+        return doubleDataArray;
+    }
+
+    public static BArray createBigDecimalArray(Object[] dataArray) {
+        BArray decimalDataArray = ValueCreator.createArrayValue(Constants.ArrayTypes.DECIMAL_ARRAY);
+        for (int i = 0; i < dataArray.length; i++) {
+            decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
+        }
+        return decimalDataArray;
+    }
+
+    public static BArray createByteArray(Object[] dataArray) {
+        BArray byteDataArray = ValueCreator.createArrayValue(byteArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            byteDataArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
+        }
+        return byteDataArray;
+    }
+
+    public static BArray createDateArray(Object[] dataArray) {
+        BArray mapDataArray = ValueCreator.createArrayValue(dateArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
+            mapDataArray.add(i, dateMap);
+        }
+        mapDataArray.freezeDirect();
+        return mapDataArray;
+    }
+
+    public static BArray createTimestampArray(Object[] dataArray) {
+        BArray mapDataArray = ValueCreator.createArrayValue(civilArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
+            mapDataArray.add(i, civilMap);
+        }
+        mapDataArray.freezeDirect();
+        return mapDataArray;
+    }
+    public static BArray createTimeArray(Object[] dataArray) {
+        BArray mapDataArray = ValueCreator.createArrayValue(timeArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
+            mapDataArray.add(i, timeMap);
+        }
+        mapDataArray.freezeDirect();
+        return mapDataArray;
+    }
+
+    public static BArray createOffsetArray(Object[] dataArray) {
+        BArray mapTimeArray = ValueCreator.createArrayValue(timeArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            BMap<BString, Object> civilMap =
+                    Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
+            mapTimeArray.add(i, civilMap);
+        }
+        mapTimeArray.freezeDirect();
+        return mapTimeArray;
+    }
+
+    public static BArray createOffsetTimeArray(Object[] dataArray) {
+        BArray mapDateTimeArray = ValueCreator.createArrayValue(civilArrayType);
+        for (int i = 0; i < dataArray.length; i++) {
+            BMap<BString, Object> civilMap =
+                    Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
+            mapDateTimeArray.add(i, civilMap);
+        }
+        mapDateTimeArray.freezeDirect();
+        return mapDateTimeArray;
     }
 
     @Override

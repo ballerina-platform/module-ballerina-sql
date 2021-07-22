@@ -18,6 +18,9 @@
 
 package io.ballerina.stdlib.sql;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.values.BString;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -227,6 +230,7 @@ public final class Constants {
         public static final String NVARCHAR_ARRAY = "NVarcharArrayOutParameter";
         public static final String BINARY = "BinaryOutParameter";
         public static final String BINARY_ARRAY = "BinaryArrayOutParameter";
+        public static final String ARRAY = "ArrayOutParameter";
         public static final String VARBINARY = "VarBinaryOutParameter";
         public static final String VARBINARY_ARRAY = "VarBinaryArrayOutParameter";
         public static final String TEXT = "TextOutParameter";
@@ -245,7 +249,6 @@ public final class Constants {
         public static final String TIMESTAMP_ARRAY = "TimestampArrayOutParameter";
         public static final String TIMESTAMP_WITH_TIMEZONE = "TimestampWithTimezoneOutParameter";
         public static final String TIMESTAMP_WITH_TIMEZONE_ARRAY = "TimestampWithTimezoneArrayOutParameter";
-        public static final String ARRAY = "ArrayOutParameter";
         public static final String ROW = "RowOutParameter";
         public static final String SMALLINT = "SmallIntOutParameter";
         public static final String SMALL_INT_ARRAY = "SmallIntArrayOutParameter";
@@ -300,6 +303,28 @@ public final class Constants {
     }
 
     /**
+     * Constants for array types.
+     */
+    public static final class ArrayTypes {
+        private ArrayTypes() {}
+        public static final String STRING = "string[]";
+        public static final String INTEGER = "int[]";
+        public static final String FLOAT = "float[]";
+        public static final String BOOLEAN = "boolean[]";
+        public static final String DATE = "time:Date[]";
+        public static final String CIVIL = "time:Civil[]";
+        public static final String TIME_OF_DAY = "time:TimeOfDay[]";
+        public static final String DECIMAL = "decimal[]";
+        public static final String UTC = "([int,decimal] & readonly)[]";
+        public static final String BYTE = "byte[][]";
+        public static final ArrayType STRING_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
+        public static final ArrayType BOOLEAN_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
+        public static final ArrayType INT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
+        public static final ArrayType FLOAT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
+        public static final ArrayType DECIMAL_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
+    }
+
+    /**
      * Constants for classes.
      */
     public static final class Classes {
@@ -318,5 +343,6 @@ public final class Constants {
         public static final String TIME = "java.sql.Time";
         public static final String OFFSET_TIME = "java.time.OffsetTime";
         public static final String OFFSET_DATE_TIME = "java.time.OffsetDateTime";
+        public static final String OBJECT = "java.lang.Object[]";
     }
 }
