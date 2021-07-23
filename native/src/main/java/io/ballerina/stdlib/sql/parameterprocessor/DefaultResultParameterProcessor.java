@@ -54,6 +54,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -663,7 +664,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 case TypeTags.INT_TAG:
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
                 case TypeTags.INTERSECTION_TAG:
-                    return Utils.createTimeStruct(Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime());
+                    return Utils.createTimeStruct(Timestamp.valueOf(
+                            offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()).getTime());
             }
         }
         return null;
