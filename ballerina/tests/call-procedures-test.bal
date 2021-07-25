@@ -756,10 +756,10 @@ function testMultipleRecords() returns error? {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
     boolean|Error status = result.getNextQueryResult();
-    stream<record {}, Error>? streamData = result.queryResult;
+    stream<record {}, Error?>? streamData = result.queryResult;
     check result.close();
     check dbClient.close();
-    test:assertTrue(streamData is stream<record {}, Error>, "streamData is nil.");
+    test:assertTrue(streamData is stream<record {}, Error?>, "streamData is nil.");
     test:assertTrue(status is boolean, "streamData is not boolean.");
 }
 
