@@ -28,7 +28,7 @@ public type Client client object {
     #             column names of the query result set will be used for the record attributes
     # + return - Stream of records in the type of `rowType`
     remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
-    returns stream <rowType, Error>;
+    returns stream <rowType, Error?>;
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
@@ -69,10 +69,10 @@ isolated function closedStreamInvocationError() returns Error {
     return error ApplicationError("Stream is closed. Therefore, no operations are allowed further on the stream.");
 }
 
-public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error> {
+public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error?> {
     ApplicationError applicationErr = error ApplicationError(message);
     ResultIterator resultIterator = new (err = applicationErr);
-    stream<record {}, Error> errorStream = new (resultIterator);
+    stream<record {}, Error?> errorStream = new (resultIterator);
     return errorStream;
 }
 

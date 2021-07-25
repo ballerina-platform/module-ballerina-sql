@@ -185,7 +185,7 @@ function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? 
         datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
 
-    stream<record {} , error>[] resultArray = [];
+    stream<record {} , error?>[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient2->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[2] = dbClient3->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -235,7 +235,7 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() returns error
     MockClient dbClient5 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient6 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
 
-    stream<record {} , error>[] resultArray = [];
+    stream<record {} , error?>[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient2->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[2] = dbClient3->query("select count(*) as val from Customers where registrationID = 2", Result);
