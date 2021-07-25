@@ -49,7 +49,7 @@ type NumericTypeForQuery record {
 }
 function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, Error> streamData = dbClient->query("SELECT * FROM NumericTypes");
+    stream<record{}, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {}? returnData = ();
     error? e = streamData.forEach(function(record {} data) {
         returnData = data;
@@ -282,7 +282,7 @@ function testQueryNumericCustomTypeRecord() returns error? {
 }
 function testQueryFromNullTable() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, Error> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
+    stream<record{}, Error?> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
     record {} returnData = {};
     int count = 0;
     error? e = streamData.forEach(function(record {} data) {
