@@ -123,7 +123,7 @@ public class CallProcessor {
                         PROCEDURE_CALL_RESULT, new Object[]{iteratorObject});
                 Object[] recordDescriptions = recordTypes.getValues();
                 resultSet = statement.getResultSet();
-                int resultSetCount = 0;
+                int resultSetCount = 1;
                 if (resultType && resultSet != null) {
                     List<ColumnDefinition> columnDefinitions;
                     StructureType streamConstraint;
