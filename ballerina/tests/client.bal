@@ -36,7 +36,7 @@ isolated client class MockClient {
     }
 
     remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
-    returns stream <rowType, Error> = @java:Method {
+    returns stream <rowType, Error?> = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
         name: "nativeQuery"
     } external;

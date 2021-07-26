@@ -1375,7 +1375,7 @@ public class ResultIterator {
 #                          of the `getNextQueryResult` method
 public class ProcedureCallResult {
     public ExecutionResult? executionResult = ();
-    public stream<record {}, Error>? queryResult = ();
+    public stream<record {}, Error?>? queryResult = ();
     public CustomResultIterator? customResultIterator;
 
     public isolated function init(CustomResultIterator? customResultIterator = ()) {

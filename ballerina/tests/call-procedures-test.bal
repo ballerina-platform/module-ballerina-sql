@@ -68,8 +68,7 @@ function testCallWithStringTypes() returns record {}|error? {
     ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
-    stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
-    stream<StringDataForCall,Error> queryData = <stream<StringDataForCall,Error>>streamData;
+    stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
     error? e = queryData.forEach(function(StringDataForCall data) {
         returnData = data;
@@ -101,8 +100,7 @@ function testCallWithStringTypesInParams() returns error? {
     ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
-    stream<record{}, Error> streamData = dbClient->query(sqlQuery,StringDataForCall);
-    stream<StringDataForCall,Error> queryData = <stream<StringDataForCall,Error>>streamData;
+    stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
     error? e = queryData.forEach(function(StringDataForCall data) {
         returnData = data;
@@ -848,10 +846,10 @@ function testMultipleRecords() returns error? {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
     boolean|Error status = result.getNextQueryResult();
-    stream<record {}, Error>? streamData = result.queryResult;
+    stream<record {}, Error?>? streamData = result.queryResult;
     check result.close();
     check dbClient.close();
-    test:assertTrue(streamData is stream<record {}, Error>, "streamData is nil.");
+    test:assertTrue(streamData is stream<record {}, Error?>, "streamData is nil.");
     test:assertTrue(status is boolean, "streamData is not boolean.");
 }
 
