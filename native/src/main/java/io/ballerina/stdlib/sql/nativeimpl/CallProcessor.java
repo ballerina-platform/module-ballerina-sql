@@ -121,9 +121,8 @@ public class CallProcessor {
                 BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                         PROCEDURE_CALL_RESULT, iteratorObject);
                 Object[] recordDescriptions = recordTypes.getValues();
-                resultSet = statement.getResultSet();
                 int resultSetCount = 0;
-                if (resultType && resultSet != null) {
+                if (resultType && (resultSet = statement.getResultSet()) != null) {
                     List<ColumnDefinition> columnDefinitions;
                     StructureType streamConstraint;
                     if (recordTypes.size() == 0) {
