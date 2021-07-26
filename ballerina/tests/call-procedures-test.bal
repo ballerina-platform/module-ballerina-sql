@@ -448,6 +448,36 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
 }
 
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures6]
+}
+function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
+    IntegerValue paraID = new(1);
+    DateOutParameter paraDate = new;
+    TimeOutParameter paraTime = new;
+    DateTimeOutParameter paraDateTime = new;
+    TimeWithTimezoneOutParameter paraTimeWithTz = new;
+    TimestampOutParameter paraTimestamp = new;
+    TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
+                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+
+    string timestampWithTzRecordString = "2017-01-25T16:33:55-08:00";
+    time:Civil timestampWithTzRecordCivil = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
+                                        month:1, day:25, hour: 16, minute: 33, second:55};
+    time:Utc timestampWithTzRecordUtc = check time:utcFromCivil(timestampWithTzRecordCivil);
+
+    test:assertEquals(paraTimestampWithTz.get(string), timestampWithTzRecordString, "Timestamp with Timezone out parameter of procedure did not match.");
+    test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecordCivil, "Timestamp with Timezone out parameter of procedure did not match.");
+    test:assertEquals(paraTimestampWithTz.get(time:Utc), timestampWithTzRecordUtc, "Timestamp with Timezone out parameter of procedure did not match.");
+}
+
+
 type IntArray int[];
 type StringArray string[];
 
