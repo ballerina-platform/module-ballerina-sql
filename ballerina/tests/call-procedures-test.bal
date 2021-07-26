@@ -284,7 +284,7 @@ function testCallWithNumericTypesInoutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures8]
+    dependsOn: [testCallWithStringTypesInoutParams, testCreateProcedures9]
 }
 function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     IntegerValue paraID = new(1);
@@ -450,19 +450,13 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCreateProcedures6]
+    dependsOn: [testCreateProcedures7]
 }
 function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
     IntegerValue paraID = new(1);
-    DateOutParameter paraDate = new;
-    TimeOutParameter paraTime = new;
-    DateTimeOutParameter paraDateTime = new;
-    TimeWithTimezoneOutParameter paraTimeWithTz = new;
-    TimestampOutParameter paraTimestamp = new;
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
-    ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
-                                    ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
+    ParameterizedCallQuery callProcedureQuery = `call SelectTimestamptzWithOutParams(${paraID}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -483,7 +477,7 @@ type StringArray string[];
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCreateProcedures7]
+    dependsOn: [testCreateProcedures8]
 }
 function testCallWithOtherDataTypesWithOutParams() returns error? {
     IntegerValue paraID = new(1);
@@ -525,7 +519,7 @@ distinct class RandomOutParameter {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCreateProcedures7]
+    dependsOn: [testCreateProcedures8]
 }
 function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     IntegerValue paraID = new(1);
@@ -689,9 +683,26 @@ function testCreateProcedures6() returns error? {
 }
 
 @test:Config {
-    groups: ["procedures"]
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures6]
 }
 function testCreateProcedures7() returns error? {
+    ParameterizedQuery createProcedure = `
+        CREATE PROCEDURE SelectTimestamptzWithOutParams (IN p_id INT, OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
+            READS SQL DATA DYNAMIC RESULT SETS 2
+            BEGIN ATOMIC
+                SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+}
+
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures7]
+}
+function testCreateProcedures8() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectOtherDataTypesWithOutParams (IN p_id INT, OUT p_clob_type CLOB,
                                                 OUT p_var_binary_type VARBINARY(27), OUT p_int_array_type INT ARRAY,
@@ -711,10 +722,9 @@ function testCreateProcedures7() returns error? {
 }
 
 @test:Config {
-    groups: ["procedures"],
-    dependsOn: [testCreateProcedures7]
+    groups: ["procedures"]
 }
-function testCreateProcedures8() returns error? {
+function testCreateProcedures9() returns error? {
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectOtherDataWithInoutParams (IN p_id INT, INOUT p_varchar_type VARCHAR(255), INOUT p_char_type CHAR,
                 INOUT p_nvarcharmax_type NVARCHAR(255), INOUT p_bit_type BIT, INOUT p_boolean_type BOOLEAN, INOUT p_int_type INT,
