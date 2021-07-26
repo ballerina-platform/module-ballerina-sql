@@ -214,6 +214,8 @@ public abstract class AbstractResultParameterProcessor {
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
                                                            ColumnDefinition columnDefinition) throws ApplicationError;
 
+    public abstract Object convertArray(String objectTypeName, Object[] dataArray, Type ballerinaType);
+
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
             List<ColumnDefinition> columnDefinitions, StructureType streamConstraint) {
