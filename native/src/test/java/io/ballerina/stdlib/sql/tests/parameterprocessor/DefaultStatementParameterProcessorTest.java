@@ -53,7 +53,7 @@ public class DefaultStatementParameterProcessorTest {
         }
 
         Object[] testGetCustomStructData(Object value)throws SQLException, ApplicationError {
-            return getCustomStructData(null, TestUtils.getMockBValueJson());
+            return getCustomStructData(TestUtils.getMockBValueJson());
         }
 
         void testSetBoolean() throws SQLException, ApplicationError {

@@ -211,7 +211,8 @@ public class RecordIteratorUtils {
                 } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
                     return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
                 }
-                return resultParameterProcessor.getCustomResult(resultSet, columnIndex, columnDefinition);
+                return resultParameterProcessor.processCustomTypeFromResultSet(resultSet, columnIndex,
+                        columnDefinition);
         }
     }
 
