@@ -31,7 +31,9 @@ import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
+import io.ballerina.runtime.api.utils.JsonUtils;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -39,11 +41,13 @@ import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.CallableStatement;
@@ -53,13 +57,17 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.sql.Statement;
+import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -270,6 +278,21 @@ public class Utils {
         return null;
     }
 
+    public static ColumnDefinition getColumnDefinition(ResultSet resultSet, int columnIndex, Type type)
+            throws SQLException, ApplicationError {
+        ResultSetMetaData rsMetaData = resultSet.getMetaData();
+        String columnName = rsMetaData.getColumnLabel(columnIndex);
+        int sqlType = rsMetaData.getColumnType(columnIndex);
+        String sqlTypeName = rsMetaData.getColumnTypeName(columnIndex);
+        boolean isNullable = true;
+        if (rsMetaData.isNullable(columnIndex) == ResultSetMetaData.columnNoNulls) {
+            isNullable = false;
+        }
+        Utils.validatedInvalidFieldAssignment(sqlType, type, "Retrieved SQL type");
+
+        return new ColumnDefinition(columnName, null, sqlType, sqlTypeName, type, isNullable);
+    }
+
     public static List<ColumnDefinition> getColumnDefinitions(ResultSet resultSet, StructureType streamConstraint)
             throws SQLException, ApplicationError {
         List<ColumnDefinition> columnDefs = new ArrayList<>();
@@ -321,6 +344,139 @@ public class Utils {
             }
         }
         return new ColumnDefinition(columnName, ballerinaFieldName, sqlType, sqlTypeName, ballerinaType, isNullable);
+    }
+
+    public static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
+                                    DefaultResultParameterProcessor resultParameterProcessor)
+            throws SQLException, ApplicationError, IOException {
+        int sqlType = columnDefinition.getSqlType();
+        Type ballerinaType = columnDefinition.getBallerinaType();
+        switch (sqlType) {
+            case Types.ARRAY:
+                return resultParameterProcessor.convertArray(resultSet.getArray(columnIndex), sqlType, ballerinaType);
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+            case Types.NCHAR:
+            case Types.NVARCHAR:
+            case Types.LONGNVARCHAR:
+                if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
+                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
+                } else {
+                    return resultParameterProcessor.convertChar(resultSet.getString(columnIndex),
+                            sqlType, ballerinaType);
+                }
+            case Types.BINARY:
+            case Types.VARBINARY:
+            case Types.LONGVARBINARY:
+                if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
+                    return resultParameterProcessor.convertChar(
+                            resultSet.getString(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                } else {
+                    return resultParameterProcessor.convertByteArray(
+                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                }
+            case Types.BLOB:
+                return resultParameterProcessor.convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
+            case Types.CLOB:
+                String clobValue = getString(resultSet.getClob(columnIndex));
+                return resultParameterProcessor.convertChar(clobValue, sqlType, ballerinaType);
+            case Types.NCLOB:
+                String nClobValue = getString(resultSet.getNClob(columnIndex));
+                return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
+            case Types.DATE:
+                Date date = resultSet.getDate(columnIndex);
+                return resultParameterProcessor.convertDate(date, sqlType, ballerinaType);
+            case Types.TIME:
+                Time time = resultSet.getTime(columnIndex);
+                return resultParameterProcessor.convertTime(time, sqlType, ballerinaType);
+            case Types.TIME_WITH_TIMEZONE:
+                OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
+                return resultParameterProcessor.convertTimeWithTimezone(offsetTime, sqlType, ballerinaType);
+            case Types.TIMESTAMP:
+                Timestamp timestamp = resultSet.getTimestamp(columnIndex);
+                return resultParameterProcessor.convertTimeStamp(timestamp, sqlType, ballerinaType);
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+                OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
+                return resultParameterProcessor.convertTimestampWithTimezone(offsetDateTime, sqlType, ballerinaType);
+            case Types.ROWID:
+                return resultParameterProcessor.convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType,
+                        ballerinaType, "SQL RowID");
+            case Types.TINYINT:
+            case Types.SMALLINT:
+                long iValue = resultSet.getInt(columnIndex);
+                return resultParameterProcessor.convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.INTEGER:
+            case Types.BIGINT:
+                long lValue = resultSet.getLong(columnIndex);
+                return resultParameterProcessor.convertInteger(lValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.REAL:
+            case Types.FLOAT:
+                double fValue = resultSet.getFloat(columnIndex);
+                return resultParameterProcessor.convertDouble(fValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.DOUBLE:
+                double dValue = resultSet.getDouble(columnIndex);
+                return resultParameterProcessor.convertDouble(dValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.NUMERIC:
+            case Types.DECIMAL:
+                BigDecimal decimalValue = resultSet.getBigDecimal(columnIndex);
+                return resultParameterProcessor.convertDecimal(
+                        decimalValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.BIT:
+            case Types.BOOLEAN:
+                boolean boolValue = resultSet.getBoolean(columnIndex);
+                return resultParameterProcessor.convertBoolean(boolValue, sqlType, ballerinaType, resultSet.wasNull());
+            case Types.REF:
+            case Types.STRUCT:
+                Struct structData = (Struct) resultSet.getObject(columnIndex);
+                return resultParameterProcessor.convertStruct(structData, sqlType, ballerinaType);
+            case Types.SQLXML:
+                SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
+                return resultParameterProcessor.convertXml(sqlxml, sqlType, ballerinaType);
+            default:
+                if (ballerinaType.getTag() == TypeTags.INT_TAG) {
+                    resultParameterProcessor.convertInteger(
+                            resultSet.getInt(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                } else if (ballerinaType.getTag() == TypeTags.STRING_TAG
+                        || ballerinaType.getTag() == TypeTags.ANY_TAG
+                        || ballerinaType.getTag() == TypeTags.ANYDATA_TAG) {
+                    return resultParameterProcessor.convertChar(
+                            resultSet.getString(columnIndex), sqlType, ballerinaType);
+                } else if (ballerinaType.getTag() == TypeTags.BOOLEAN_TAG) {
+                    return resultParameterProcessor.convertBoolean(
+                            resultSet.getBoolean(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
+                        ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
+                    return resultParameterProcessor.convertByteArray(
+                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
+                    return resultParameterProcessor.convertDouble(
+                            resultSet.getDouble(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                } else if (ballerinaType.getTag() == TypeTags.DECIMAL_TAG) {
+                    return resultParameterProcessor.convertDecimal(
+                            resultSet.getBigDecimal(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                } else if (ballerinaType.getTag() == TypeTags.XML_TAG) {
+                    return resultParameterProcessor.convertXml(
+                            resultSet.getSQLXML(columnIndex), sqlType, ballerinaType);
+                } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
+                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
+                }
+                return resultParameterProcessor.processCustomTypeFromResultSet(resultSet, columnIndex,
+                        columnDefinition);
+        }
+    }
+
+    public static Object getJson(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
+                                 DefaultResultParameterProcessor resultParameterProcessor)
+            throws ApplicationError, SQLException {
+        String jsonString = resultParameterProcessor.convertChar(
+                resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
+        Reader reader = new StringReader(jsonString);
+        try {
+            return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
+        } catch (BError e) {
+            throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
+        }
     }
 
     private static boolean isValidFieldConstraint(int sqlType, Type type) {

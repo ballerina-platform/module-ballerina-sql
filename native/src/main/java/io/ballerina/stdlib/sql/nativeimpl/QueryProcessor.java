@@ -19,9 +19,11 @@
 package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
@@ -121,6 +123,138 @@ public class QueryProcessor {
         } else {
             BError errorValue = ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
             return getErrorStream(recordType, errorValue);
+        }
+    }
+
+    public static Object nativeQueryRow(
+            BObject client, Object paramSQLString,
+            BTypedesc ballerinaType,
+            AbstractStatementParameterProcessor statementParameterProcessor,
+            AbstractResultParameterProcessor resultParameterProcessor) {
+        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (dbClient != null) {
+            SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
+                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
+                        "further operations are not allowed");
+            }
+            Connection connection = null;
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            String sqlQuery = null;
+            try {
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
+                } else {
+                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                }
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                statement = connection.prepareStatement(sqlQuery);
+                if (paramSQLString instanceof BObject) {
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
+                }
+                resultSet = statement.executeQuery();
+                if (!resultSet.next()) {
+                    throw new ApplicationError("Query retrieved an empty result.");
+                }
+
+                Type describingType = ballerinaType.getDescribingType();
+
+                // If the return data type is a record
+                if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
+                    RecordType recordConstraint = (RecordType) describingType;
+                    List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
+                    return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+                }
+
+                // If the return data type is anything other than a record
+                ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
+                Object retVal = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+
+                if (resultSet.getMetaData().getColumnCount() > 1) {
+                    throw new ApplicationError("Query retrieved more than one column.");
+                }
+
+                if (resultSet.next()) {
+                    throw new ApplicationError("Query retrieved more than one row.");
+                }
+
+                return retVal;
+            } catch (SQLException e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        "Error while executing SQL query: " + sqlQuery + ". ");
+            } catch (ApplicationError applicationError) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: " + sqlQuery
+                        + ". " + applicationError.getMessage());
+            } catch (Throwable e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                String message = e.getMessage();
+                if (message == null) {
+                    message = e.getClass().getName();
+                }
+                return ErrorGenerator.getSQLApplicationError(
+                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+            }
+        } else {
+            return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
+        }
+    }
+
+    public static Object nativeQueryValue(
+            BObject client, Object paramSQLString, Object ballerinaType,
+            AbstractStatementParameterProcessor statementParameterProcessor,
+            AbstractResultParameterProcessor resultParameterProcessor) {
+        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (dbClient != null) {
+            SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
+                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
+                        "further operations are not allowed");
+            }
+            Connection connection = null;
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            String sqlQuery = null;
+            try {
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
+                } else {
+                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                }
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                statement = connection.prepareStatement(sqlQuery);
+                if (paramSQLString instanceof BObject) {
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
+                }
+                resultSet = statement.executeQuery();
+                if (!resultSet.next()) {
+                    throw new ApplicationError("Query returned an empty result.");
+                }
+                ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1,
+                        ((BTypedesc) ballerinaType).getDescribingType());
+                return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+            } catch (SQLException e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        "Error while executing SQL query: " + sqlQuery + ". ");
+            } catch (ApplicationError applicationError) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
+            } catch (Throwable e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                String message = e.getMessage();
+                if (message == null) {
+                    message = e.getClass().getName();
+                }
+                return ErrorGenerator.getSQLApplicationError(
+                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+            }
+        } else {
+            return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
         }
     }
 
