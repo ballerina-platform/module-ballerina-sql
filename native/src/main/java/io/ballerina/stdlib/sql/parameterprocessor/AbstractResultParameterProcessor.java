@@ -216,6 +216,8 @@ public abstract class AbstractResultParameterProcessor {
 
     public abstract Object convertArray(String objectTypeName, Object[] dataArray, Type ballerinaType);
 
+    public abstract Object customArrayType(Object[] dataArray, Type ballerinaType) throws ApplicationError;
+
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
             List<ColumnDefinition> columnDefinitions, StructureType streamConstraint) {

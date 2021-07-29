@@ -565,10 +565,6 @@ function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
     test:assertEquals(paraTimestampWithTz.get(time:Utc), timestampWithTzRecordUtc, "Timestamp with Timezone out parameter of procedure did not match.");
 }
 
-
-type IntArray int[];
-type StringArray string[];
-
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures8]

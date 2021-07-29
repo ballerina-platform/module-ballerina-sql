@@ -280,7 +280,11 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     public static BArray createStringArray(Object[] dataArray) {
         BArray stringDataArray = ValueCreator.createArrayValue(STRING_ARRAY);
         for (int i = 0; i < dataArray.length; i++) {
-            stringDataArray.add(i, fromString(dataArray[i].toString()));
+            if (dataArray[i] == null) {
+                stringDataArray.add(i, fromString(null));
+            } else {
+                stringDataArray.add(i, fromString(dataArray[i].toString()));
+            }
         }
         return stringDataArray;
     }
@@ -1010,7 +1014,6 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
     }
 
-    @Override
     public Object convertArray(String objectTypeName, Object[] dataArray, Type ballerinaType) {
         String name = ballerinaType.toString();
         switch (objectTypeName) {
@@ -1265,7 +1268,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         }
     }
 
-    private static Object toArray(String name, Object[] dataArray, Type ballerinaType) {
+    private Object toArray(String name, Object[] dataArray, Type ballerinaType) {
         String className = dataArray[0].getClass().getCanonicalName();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return DefaultResultParameterProcessor.createStringArray(dataArray);
@@ -1309,9 +1312,14 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
             return DefaultResultParameterProcessor.createDateArray(dataArray);
         } else {
-            return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
-                    ballerinaType + " for SQL Date data type.");
+            return customArrayType(dataArray, ballerinaType);
         }
+    }
+
+    @Override
+    public Object customArrayType(Object[] dataArray, Type ballerinaType) {
+        return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
+                ballerinaType + " for SQL Date data type.");
     }
 
     private static Object floatToFloatArray(Object[] dataArray) {
