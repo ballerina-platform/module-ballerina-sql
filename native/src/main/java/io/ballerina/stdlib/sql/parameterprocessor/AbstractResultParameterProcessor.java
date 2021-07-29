@@ -22,13 +22,16 @@ import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.Utils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
@@ -40,6 +43,8 @@ import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.util.List;
+
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 
 /**
  * This class has abstract implementation of methods to process JDBC Callable statement. Populate methods are used to
@@ -225,6 +230,25 @@ public abstract class AbstractResultParameterProcessor {
         resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
         resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
         return resultIterator;
+    }
+
+    public BMap<BString, Object> createRecord(
+            ResultSet resultSet,  List<ColumnDefinition> columnDefinitions, StructureType recordConstraint)
+            throws SQLException, ApplicationError, IOException {
+        BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
+        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
+        for (int i = 0; i < columnDefinitions.size(); i++) {
+            ColumnDefinition columnDefinition = columnDefinitions.get(i);
+            record.put(fromString(columnDefinition.getBallerinaFieldName()),
+                    Utils.getResult(resultSet, i + 1, columnDefinition, resultParameterProcessor));
+        }
+        return record;
+    }
+
+    public Object createValue(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition)
+            throws SQLException, ApplicationError, IOException {
+        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
+        return Utils.getResult(resultSet, columnIndex, columnDefinition, resultParameterProcessor);
     }
 
     public abstract BObject getBalStreamResultIterator();
