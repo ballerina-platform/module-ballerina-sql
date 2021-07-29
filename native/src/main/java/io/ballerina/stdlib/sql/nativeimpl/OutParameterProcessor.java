@@ -18,9 +18,6 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
@@ -54,10 +51,6 @@ import static io.ballerina.stdlib.sql.utils.Utils.getString;
  * @since 0.5.6
  */
 public class OutParameterProcessor {
-
-    private static final ArrayType INT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    private static final ArrayType FLOAT_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
-    private static final ArrayType DECIMAL_ARRAY = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
 
     private OutParameterProcessor() {
     }

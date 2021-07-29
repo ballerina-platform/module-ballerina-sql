@@ -1430,21 +1430,17 @@ function createSqlProcedure(ParameterizedQuery sqlQuery) returns ExecutionResult
     return result;
 }
 
-isolated function validateProcedureResult(ExecutionResult|Error result, int rowCount, int? lastId = ()) {
-    if(result is Error) {
-        test:assertFail("Procedure creation failed");
-    } else {
-        test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
+isolated function validateProcedureResult(ExecutionResult result, int rowCount, int? lastId = ()) {
+    test:assertExactEquals(result.affectedRowCount, rowCount, "Affected row count is different.");
 
-        if lastId is () {
-            test:assertEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
+    if lastId is () {
+        test:assertEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
+    } else {
+        int|string? lastInsertIdVal = result.lastInsertId;
+        if lastInsertIdVal is int {
+            test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
         } else {
-            int|string? lastInsertIdVal = result.lastInsertId;
-            if lastInsertIdVal is int {
-                test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
-            } else {
-                test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());
-            }
+            test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());
         }
     }
 }

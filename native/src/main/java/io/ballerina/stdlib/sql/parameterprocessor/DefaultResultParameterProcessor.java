@@ -1312,12 +1312,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
             return DefaultResultParameterProcessor.createDateArray(dataArray);
         } else {
-            return customArrayType(dataArray, ballerinaType);
+            return processCustomArray(dataArray, ballerinaType);
         }
     }
 
     @Override
-    public Object customArrayType(Object[] dataArray, Type ballerinaType) {
+    public Object processCustomArray(Object[] dataArray, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
                 ballerinaType + " for SQL Date data type.");
     }
