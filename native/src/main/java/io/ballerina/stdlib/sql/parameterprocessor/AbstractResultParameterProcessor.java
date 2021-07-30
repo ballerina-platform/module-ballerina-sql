@@ -214,7 +214,11 @@ public abstract class AbstractResultParameterProcessor {
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
                                                            ColumnDefinition columnDefinition) throws ApplicationError;
 
-    public abstract Object processCustomArray(Object[] dataArray, Type ballerinaType) throws ApplicationError;
+    public abstract Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType)
+            throws ApplicationError;
+
+    public abstract Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType)
+            throws ApplicationError;
 
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,

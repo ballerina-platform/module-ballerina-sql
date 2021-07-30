@@ -81,8 +81,14 @@ public class OutParameterProcessor {
                     Array array = (Array) value;
                     Object[] dataArray = (Object[]) array.getArray();
                     if (dataArray != null && dataArray.length != 0) {
-                        return resultParameterProcessor.convertArray(result.getType().getName(),
-                                dataArray, ballerinaType);
+                        String objectType = result.getType().getName();
+                        if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER) ||
+                                objectType.equals(Constants.OutParameterTypes.ARRAY)) {
+                            return resultParameterProcessor.convertArrayInOutParameter(dataArray, ballerinaType);
+                        } else {
+                            return resultParameterProcessor.convertArrayOutParameter(objectType, dataArray,
+                                    ballerinaType);
+                        }
                     }
                     return null;
                 case Types.BLOB:
