@@ -28,7 +28,7 @@ public type TypedValue object {
 };
 
 # Represents a union type of ballerina/time records.
-type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay;
+type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay|time:Civil[]|time:TimeOfDay[];
 
 # Represents ballerina typed array.
 type ArrayValueType string?[]|int?[]|boolean?[]|float?[]|decimal?[]|byte[]?[];
@@ -663,8 +663,32 @@ public distinct class CharOutParameter {
     } external;
 }
 
+# Represents Char Array Out Parameter used in procedure calls
+public distinct class CharArrayOutParameter {
+    *OutParameter;
+    # Parses returned Char SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Varchar Out Parameter used in procedure calls.
 public distinct class VarcharOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Varchar Array Out Parameter used in procedure calls.
+public distinct class VarcharArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -699,6 +723,18 @@ public distinct class NVarcharOutParameter {
     } external;
 }
 
+# Represents NVarchar Array Out Parameter used in procedure calls.
+public distinct class NVarcharArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Binary Out Parameter used in procedure calls.
 public distinct class BinaryOutParameter {
     *OutParameter;
@@ -711,8 +747,32 @@ public distinct class BinaryOutParameter {
     } external;
 }
 
+# Represents Binary Array Out Parameter used in procedure calls.
+public distinct class BinaryArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents VarBinary Out Parameter used in procedure calls.
 public distinct class VarBinaryOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents VarBinary Array Out Parameter used in procedure calls.
+public distinct class VarBinaryArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -783,8 +843,32 @@ public distinct class DateOutParameter {
     } external;
 }
 
+# Represents Date Array Out Parameter used in procedure calls.
+public distinct class DateArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Time Out Parameter used in procedure calls.
 public distinct class TimeOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Time Array Out Parameter used in procedure calls.
+public distinct class TimeArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -807,8 +891,32 @@ public distinct class TimeWithTimezoneOutParameter {
     } external;
 }
 
+# Represents Time With Timezone Array Out Parameter used in procedure calls.
+public distinct class TimeWithTimezoneArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents DateTime Out Parameter used in procedure calls.
 public distinct class DateTimeOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents DateTime Array Out Parameter used in procedure calls.
+public distinct class DateTimeArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -831,8 +939,32 @@ public distinct class TimestampOutParameter {
     } external;
 }
 
+# Represents Timestamp Array Out Parameter used in procedure calls.
+public distinct class TimestampArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Timestamp with Timezone Out Parameter used in procedure calls.
 public distinct class TimestampWithTimezoneOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Timestamp with Timezone Array Out Parameter used in procedure calls.
+public distinct class TimestampWithTimezoneArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -879,6 +1011,18 @@ public distinct class SmallIntOutParameter {
     } external;
 }
 
+# Represents SmallInt Array Out Parameter used in procedure calls.
+public distinct class SmallIntArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Integer Out Parameter used in procedure calls.
 public distinct class IntegerOutParameter {
     *OutParameter;
@@ -903,8 +1047,44 @@ public distinct class BigIntOutParameter {
     } external;
 }
 
+# Represents Integer Array Out Parameter used in procedure calls.
+public distinct class IntegerArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents BigInt Array Out Parameter used in procedure calls
+public distinct class BigIntArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Real Out Parameter used in procedure calls.
 public distinct class RealOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Real Array Out Parameter used in procedure calls.
+public distinct class RealArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -927,8 +1107,32 @@ public distinct class FloatOutParameter {
     } external;
 }
 
+# Represents Float Array Out Parameter used in procedure calls.
+public distinct class FloatArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Double Out Parameter used in procedure calls.
 public distinct class DoubleOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Double Array Out Parameter used in procedure calls.
+public distinct class DoubleArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -951,8 +1155,32 @@ public distinct class NumericOutParameter {
     } external;
 }
 
+# Represents Numeric Array Out Parameter used in procedure calls.
+public distinct class NumericArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Decimal Out Parameter used in procedure calls.
 public distinct class DecimalOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Decimal Out Parameter used in procedure calls.
+public distinct class DecimalArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
@@ -975,8 +1203,32 @@ public distinct class BitOutParameter {
     } external;
 }
 
+# Represents Bit Array Out Parameter used in procedure calls.
+public distinct class BitArrayOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
 # Represents Boolean Out Parameter used in procedure calls.
 public distinct class BooleanOutParameter {
+    *OutParameter;
+    # Parses returned SQL value to ballerina value.
+    #
+    # + typeDesc - Type description of the data that need to be converted
+    # + return - The converted ballerina value or Error
+    public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+    } external;
+}
+
+# Represents Boolean Array Out Parameter used in procedure calls.
+public distinct class BooleanArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to ballerina value.
     #
