@@ -28,6 +28,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.math.BigDecimal;
 import java.sql.Array;
@@ -58,50 +59,50 @@ public abstract class AbstractResultParameterProcessor {
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws ApplicationError;
 
-    protected abstract BArray convertArray(Array array, int sqlType, Type type)
+    public abstract BArray convertArray(Array array, int sqlType, Type type)
             throws SQLException, ApplicationError;
 
-    protected abstract BString convertChar(String value, int sqlType, Type type)
+    public abstract BString convertChar(String value, int sqlType, Type type)
             throws ApplicationError;
 
     protected abstract Object convertChar(String value, int sqlType, Type type, String sqlTypeName)
             throws ApplicationError;
 
-    protected abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
+    public abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
             throws ApplicationError;
 
-    protected abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
 
-    protected abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
+    public abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
             throws ApplicationError;
 
-    protected abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
+    public abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
             throws ApplicationError;
 
-    protected abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
-                                                           Type type)throws ApplicationError;
+    public abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
+                                                        Type type)throws ApplicationError;
 
-    protected abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
     public abstract Object convertBinary(Object value, int sqlType, Type ballerinaType) throws ApplicationError; 
 
-    protected abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
 
     public abstract Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType,
                                                      Type ballerinaType);
@@ -213,6 +214,98 @@ public abstract class AbstractResultParameterProcessor {
 
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
                                                            ColumnDefinition columnDefinition) throws ApplicationError;
+
+    public Object convertArrayOutParameter(String objectTypeName, Object[] dataArray, Type ballerinaType)
+            throws ApplicationError {
+        switch (objectTypeName) {
+            case Constants.OutParameterTypes.CHAR_ARRAY:
+            case Constants.OutParameterTypes.VARCHAR_ARRAY:
+            case Constants.OutParameterTypes.NVARCHAR_ARRAY:
+                return Utils.toStringArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.BIT_ARRAY:
+                return Utils.toBitArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.BOOLEAN_ARRAY:
+                return Utils.toBooleanArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.INTEGER_ARRAY:
+            case Constants.OutParameterTypes.SMALL_INT_ARRAY:
+            case Constants.OutParameterTypes.BIGINT_ARRAY:
+                return Utils.toIntArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.REAL_ARRAY:
+            case Constants.OutParameterTypes.DOUBLE_ARRAY:
+                return Utils.toRealArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.DATE_ARRAY:
+                return Utils.toDateArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.TIME_ARRAY:
+                return Utils.toTimeArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.TIME_WITH_TIMEZONE_ARRAY:
+                return Utils.toTimeWithTimezoneArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.DATE_TIME_ARRAY:
+                return Utils.toDateTimeArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE_ARRAY:
+                return Utils.toTimestampWithTimezoneArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.FLOAT_ARRAY:
+                return Utils.toFloatArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.DECIMAL_ARRAY:
+            case Constants.OutParameterTypes.NUMERIC_ARRAY:
+                return Utils.toNumericArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.TIMESTAMP_ARRAY:
+                return Utils.toTimestampArray(dataArray, objectTypeName, ballerinaType);
+            case Constants.OutParameterTypes.VARBINARY_ARRAY:
+            case Constants.OutParameterTypes.BINARY_ARRAY:
+                return Utils.toBinaryArray(dataArray, objectTypeName, ballerinaType);
+            default:
+                return processCustomArrayOutParameter(dataArray, ballerinaType);
+        }
+    }
+
+    public Object convertArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws ApplicationError {
+        String name = ballerinaType.toString();
+        String className = dataArray[0].getClass().getCanonicalName();
+        if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
+            return DefaultResultParameterProcessor.createStringArray(dataArray);
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE) &&
+                className.equalsIgnoreCase(Constants.Classes.BYTE)) {
+            return DefaultResultParameterProcessor.createByteArray(dataArray);
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN)) {
+            if (className.equalsIgnoreCase(Constants.Classes.INTEGER)) {
+                return Utils.booleanToIntArray(dataArray);
+            } else {
+                return DefaultResultParameterProcessor.createBooleanArray(dataArray);
+            }
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
+            if (className.equalsIgnoreCase(Constants.Classes.LONG)) {
+                return DefaultResultParameterProcessor.createLongArray(dataArray);
+            } else if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
+                return Utils.decimalToIntArray(dataArray);
+            } else {
+                return DefaultResultParameterProcessor.createIntegerArray(dataArray);
+            }
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT)) {
+            if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
+                return Utils.floatToFloatArray(dataArray);
+            } else if (className.equalsIgnoreCase(Constants.Classes.DOUBLE)) {
+                return DefaultResultParameterProcessor.createDoubleArray(dataArray);
+            } else {
+                return DefaultResultParameterProcessor.createFloatArray(dataArray);
+            }
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL)) {
+            if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
+                return DefaultResultParameterProcessor.createBigDecimalArray(dataArray);
+            } else {
+                return DefaultResultParameterProcessor.createDoubleArray(dataArray);
+            }
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
+            return DefaultResultParameterProcessor.createTimestampArray(dataArray);
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
+            return DefaultResultParameterProcessor.createTimestampArray(dataArray);
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY)) {
+            return DefaultResultParameterProcessor.createTimeArray(dataArray);
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
+            return DefaultResultParameterProcessor.createDateArray(dataArray);
+        } else {
+            return processCustomArrayInOutParameter(dataArray, ballerinaType);
+        }
+    }
 
     public abstract Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType)
             throws ApplicationError;

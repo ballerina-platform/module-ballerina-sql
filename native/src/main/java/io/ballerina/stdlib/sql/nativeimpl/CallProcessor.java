@@ -112,11 +112,6 @@ public class CallProcessor {
 
                 boolean resultType = statement.execute();
 
-                if (paramSQLString instanceof BObject) {
-                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes, 
-                            resultParameterProcessor);
-                }
-
                 BObject iteratorObject = resultParameterProcessor.getBalStreamResultIterator();
                 BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                         PROCEDURE_CALL_RESULT, iteratorObject);
@@ -142,6 +137,12 @@ public class CallProcessor {
                 } else {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
                 }
+
+                if (paramSQLString instanceof BObject) {
+                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes,
+                            resultParameterProcessor);
+                }
+
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
                 procedureCallResult.addNativeData(CONNECTION_NATIVE_DATA_FIELD, connection);
                 procedureCallResult.addNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD, recordDescriptions);
