@@ -58,50 +58,50 @@ public abstract class AbstractResultParameterProcessor {
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws ApplicationError;
 
-    protected abstract BArray convertArray(Array array, int sqlType, Type type)
+    public abstract BArray convertArray(Array array, int sqlType, Type type)
             throws SQLException, ApplicationError;
 
-    protected abstract BString convertChar(String value, int sqlType, Type type)
+    public abstract BString convertChar(String value, int sqlType, Type type)
             throws ApplicationError;
 
     protected abstract Object convertChar(String value, int sqlType, Type type, String sqlTypeName)
             throws ApplicationError;
 
-    protected abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
+    public abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
             throws ApplicationError;
 
-    protected abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
-    protected abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
 
-    protected abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
+    public abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
             throws ApplicationError;
 
-    protected abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
+    public abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
             throws ApplicationError;
 
-    protected abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
-                                                           Type type)throws ApplicationError;
+    public abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
+                                                        Type type)throws ApplicationError;
 
-    protected abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
+    public abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
             throws ApplicationError;
 
     public abstract Object convertBinary(Object value, int sqlType, Type ballerinaType) throws ApplicationError; 
 
-    protected abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
 
-    protected abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
 
     public abstract Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType,
                                                      Type ballerinaType);
