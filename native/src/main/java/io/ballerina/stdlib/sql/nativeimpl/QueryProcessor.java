@@ -203,61 +203,6 @@ public class QueryProcessor {
         }
     }
 
-    public static Object nativeQueryValue(
-            BObject client, Object paramSQLString, Object ballerinaType,
-            AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
-        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
-        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (dbClient != null) {
-            SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
-            if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
-                        "further operations are not allowed");
-            }
-            Connection connection = null;
-            PreparedStatement statement = null;
-            ResultSet resultSet = null;
-            String sqlQuery = null;
-            try {
-                if (paramSQLString instanceof BString) {
-                    sqlQuery = ((BString) paramSQLString).getValue();
-                } else {
-                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
-                }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
-                statement = connection.prepareStatement(sqlQuery);
-                if (paramSQLString instanceof BObject) {
-                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
-                }
-                resultSet = statement.executeQuery();
-                if (!resultSet.next()) {
-                    throw new ApplicationError("Query returned an empty result.");
-                }
-                ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1,
-                        ((BTypedesc) ballerinaType).getDescribingType());
-                return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
-            } catch (SQLException e) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-                return ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
-            } catch (ApplicationError applicationError) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-                return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
-            } catch (Throwable e) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-                String message = e.getMessage();
-                if (message == null) {
-                    message = e.getClass().getName();
-                }
-                return ErrorGenerator.getSQLApplicationError(
-                        "Error while executing SQL query: " + sqlQuery + ". " + message);
-            }
-        } else {
-            return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
-        }
-    }
-
     private static BStream getErrorStream(Object recordType, BError errorValue) {
         return ValueCreator.createStreamValue(
                 TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
