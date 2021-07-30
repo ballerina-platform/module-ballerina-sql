@@ -117,6 +117,22 @@ returns record {} | error? {
     return value;
 }
 
+function queryRecordMockClient(string url, string|ParameterizedQuery sqlQuery)
+returns record {} | error {
+    MockClient dbClient = check new (url = url, user = user, password = password);
+    record {} resultRecord = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    return resultRecord;
+}
+
+function queryValueMockClient(string url, string|ParameterizedQuery sqlQuery)
+returns int | error {
+    MockClient dbClient = check new (url = url, user = user, password = password);
+    int result = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    return result;
+}
+
 function exec(string command, map<string> env = {},
                      string? dir = (), string... args) returns Process|error = @java:Method {
     name: "exec",

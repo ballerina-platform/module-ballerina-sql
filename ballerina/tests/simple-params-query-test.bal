@@ -754,6 +754,81 @@ function queryArrayBasicNullParams() returns error? {
     }
 }
 
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryRecord() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryRecordNegative() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT * from EmptyDataTable WHERE row_id = ${rowId}`;
+    record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
+    if queryResult is error {
+        test:assertTrue(queryResult.message().endsWith("Query retrieved an empty result."), "Incorrect error message");
+    } else {
+        test:assertFail("Expected error when querying empty table.");
+    }
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryValue() returns error? {
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) from DataTable`;
+    int count = check queryValueMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(count, 3);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryValueNegative() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
+    if queryResult is error {
+        test:assertTrue(queryResult.message().endsWith("Query retrieved more than one column."), "Incorrect error message");
+    } else {
+        test:assertFail("Expected error when query result contains multiple columns.");
+    }
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryValueNegative2() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT row_id from DataTable`;
+    int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
+    if queryResult is error {
+        test:assertTrue(queryResult.message().endsWith("Query retrieved more than one row."), "Incorrect error message");
+    } else {
+        test:assertFail("Expected error when query result contains multiple rows.");
+    }
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryValueNegative3() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT string_type from DataTable WHERE row_id = ${rowId}`;
+    int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
+    if queryResult is error {
+        test:assertTrue(queryResult.message().endsWith("Retrieved SQL type field cannot be converted to ballerina type : int"),
+                                                       "Incorrect error message");
+    } else {
+        test:assertFail("Expected error when query result contains multiple rows.");
+    }
+}
+
 isolated function validateDataTableResult(record{}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {
