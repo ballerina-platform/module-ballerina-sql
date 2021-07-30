@@ -262,46 +262,46 @@ public abstract class AbstractResultParameterProcessor {
         String name = ballerinaType.toString();
         String className = dataArray[0].getClass().getCanonicalName();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
-            return DefaultResultParameterProcessor.createStringArray(dataArray);
+            return Utils.createStringArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE) &&
                 className.equalsIgnoreCase(Constants.Classes.BYTE)) {
-            return DefaultResultParameterProcessor.createByteArray(dataArray);
+            return Utils.createByteArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN)) {
             if (className.equalsIgnoreCase(Constants.Classes.INTEGER)) {
                 return Utils.booleanToIntArray(dataArray);
             } else {
-                return DefaultResultParameterProcessor.createBooleanArray(dataArray);
+                return Utils.createBooleanArray(dataArray);
             }
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             if (className.equalsIgnoreCase(Constants.Classes.LONG)) {
-                return DefaultResultParameterProcessor.createLongArray(dataArray);
+                return Utils.createLongArray(dataArray);
             } else if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
                 return Utils.decimalToIntArray(dataArray);
             } else {
-                return DefaultResultParameterProcessor.createIntegerArray(dataArray);
+                return Utils.createIntegerArray(dataArray);
             }
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT)) {
             if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
                 return Utils.floatToFloatArray(dataArray);
             } else if (className.equalsIgnoreCase(Constants.Classes.DOUBLE)) {
-                return DefaultResultParameterProcessor.createDoubleArray(dataArray);
+                return Utils.createDoubleArray(dataArray);
             } else {
-                return DefaultResultParameterProcessor.createFloatArray(dataArray);
+                return Utils.createFloatArray(dataArray);
             }
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL)) {
             if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
-                return DefaultResultParameterProcessor.createBigDecimalArray(dataArray);
+                return Utils.createBigDecimalArray(dataArray);
             } else {
-                return DefaultResultParameterProcessor.createDoubleArray(dataArray);
+                return Utils.createDoubleArray(dataArray);
             }
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
-            return DefaultResultParameterProcessor.createTimestampArray(dataArray);
+            return Utils.createTimestampArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
-            return DefaultResultParameterProcessor.createTimestampArray(dataArray);
+            return Utils.createTimestampArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY)) {
-            return DefaultResultParameterProcessor.createTimeArray(dataArray);
+            return Utils.createTimeArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
-            return DefaultResultParameterProcessor.createDateArray(dataArray);
+            return Utils.createDateArray(dataArray);
         } else {
             return processCustomArrayInOutParameter(dataArray, ballerinaType);
         }
