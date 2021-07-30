@@ -30,6 +30,18 @@ public type Client client object {
     remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error?>;
 
+    # Queries the database with the provided query and returns the first row as a if the expected return type is
+    # a record. If the expected return type is not a record, then a single value is returned.
+    #
+    # + sqlQuery - The query, which needs to be executed as a `string` or  an `sql:ParameterizedQuery` when the SQL
+    #               query has params to be passed in
+    # + returnType - The `typedesc` of the record/type that should be returned as a result. If this is not provided, the
+    #                default column names/type of the query result set will be used
+    # + return - Result in the type of `returnType`. If the `returnType` is not provided, the column names/type of
+    #               the query are used
+    remote isolated function queryRow(string|sql:ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
+    returns returnType|sql:Error;
+
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
     # + sqlQuery - The DDL or DML queries such as `INSERT`, `DELETE`, `UPDATE`, etc. as a `string`,
