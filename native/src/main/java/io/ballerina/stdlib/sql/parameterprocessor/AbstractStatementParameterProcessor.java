@@ -463,7 +463,7 @@ public abstract class AbstractStatementParameterProcessor {
             case Constants.SqlTypes.TIMESTAMP_ARRAY:
             case Constants.SqlTypes.BYTE_ARRAY_TYPE:
             case Constants.SqlTypes.CHAR_ARRAY:
-            case Constants.SqlTypes.TIME_OF_DAY_ARRAY:
+            case Constants.SqlTypes.TIME_OF_DAY_ARRAY_TYPE:
             case Constants.SqlTypes.CIVIL_ARRAY_TYPE:
             case Constants.SqlTypes.BIT_ARRAY:
                 sqlTypeValue = Types.ARRAY;
