@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 
@@ -60,7 +61,7 @@ public class OutParameterProcessor {
     }
 
     public static Object get(
-            BObject result, BTypedesc typeDesc, DefaultResultParameterProcessor resultParameterProcessor) {
+            BObject result, BTypedesc typeDesc, AbstractResultParameterProcessor resultParameterProcessor) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
 
