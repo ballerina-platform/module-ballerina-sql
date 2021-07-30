@@ -755,7 +755,7 @@ function queryArrayBasicNullParams() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryRecord() returns error? {
     int rowId = 1;
@@ -764,7 +764,7 @@ function queryRecord() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryRecordNegative() returns error? {
     int rowId = 1;
@@ -778,7 +778,7 @@ function queryRecordNegative() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryValue() returns error? {
     ParameterizedQuery sqlQuery = `SELECT COUNT(*) from DataTable`;
@@ -787,7 +787,7 @@ function queryValue() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryValueNegative() returns error? {
     int rowId = 1;
@@ -801,7 +801,7 @@ function queryValueNegative() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryValueNegative2() returns error? {
     int rowId = 1;
@@ -815,7 +815,7 @@ function queryValueNegative2() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryValueNegative3() returns error? {
     int rowId = 1;
