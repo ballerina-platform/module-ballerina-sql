@@ -112,11 +112,6 @@ public class CallProcessor {
 
                 boolean resultType = statement.execute();
 
-                if (paramSQLString instanceof BObject) {
-                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes, 
-                            resultParameterProcessor);
-                }
-
                 BObject iteratorObject = resultParameterProcessor.getBalStreamResultIterator();
                 BObject procedureCallResult = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                         PROCEDURE_CALL_RESULT, iteratorObject);
@@ -142,6 +137,12 @@ public class CallProcessor {
                 } else {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
                 }
+
+                if (paramSQLString instanceof BObject) {
+                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes,
+                            resultParameterProcessor);
+                }
+
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
                 procedureCallResult.addNativeData(CONNECTION_NATIVE_DATA_FIELD, connection);
                 procedureCallResult.addNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD, recordDescriptions);
@@ -407,17 +408,38 @@ public class CallProcessor {
         case Constants.OutParameterTypes.TIME:
             sqlTypeValue = Types.TIME;
             break;
-        case Constants.OutParameterTypes.TIMEWITHTIMEZONE:
+        case Constants.OutParameterTypes.TIME_WITH_TIMEZONE:
             sqlTypeValue = Types.TIME_WITH_TIMEZONE;
             break;
         case Constants.OutParameterTypes.TIMESTAMP:
-        case Constants.OutParameterTypes.DATETIME:
+        case Constants.OutParameterTypes.DATE_TIME:
             sqlTypeValue = Types.TIMESTAMP;
             break;
-        case Constants.OutParameterTypes.TIMESTAMPWITHTIMEZONE:
+        case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE:
             sqlTypeValue = Types.TIMESTAMP_WITH_TIMEZONE;
             break;
         case Constants.OutParameterTypes.ARRAY:
+        case Constants.OutParameterTypes.SMALL_INT_ARRAY:
+        case Constants.OutParameterTypes.BIGINT_ARRAY:
+        case Constants.OutParameterTypes.BINARY_ARRAY:
+        case Constants.OutParameterTypes.BIT_ARRAY:
+        case Constants.OutParameterTypes.BOOLEAN_ARRAY:
+        case Constants.OutParameterTypes.CHAR_ARRAY:
+        case Constants.OutParameterTypes.DATE_ARRAY:
+        case Constants.OutParameterTypes.DATE_TIME_ARRAY:
+        case Constants.OutParameterTypes.DECIMAL_ARRAY:
+        case Constants.OutParameterTypes.DOUBLE_ARRAY:
+        case Constants.OutParameterTypes.FLOAT_ARRAY:
+        case Constants.OutParameterTypes.INTEGER_ARRAY:
+        case Constants.OutParameterTypes.NUMERIC_ARRAY:
+        case Constants.OutParameterTypes.NVARCHAR_ARRAY:
+        case Constants.OutParameterTypes.TIME_WITH_TIMEZONE_ARRAY:
+        case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE_ARRAY:
+        case Constants.OutParameterTypes.TIMESTAMP_ARRAY:
+        case Constants.OutParameterTypes.REAL_ARRAY:
+        case Constants.OutParameterTypes.VARBINARY_ARRAY:
+        case Constants.OutParameterTypes.VARCHAR_ARRAY:
+        case Constants.OutParameterTypes.TIME_ARRAY:
             sqlTypeValue = Types.ARRAY;
             break;
         case Constants.OutParameterTypes.REF:

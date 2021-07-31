@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 
@@ -60,10 +61,9 @@ public class OutParameterProcessor {
     }
 
     public static Object get(
-            BObject result, BTypedesc typeDesc, DefaultResultParameterProcessor resultParameterProcessor) {
+            BObject result, BTypedesc typeDesc, AbstractResultParameterProcessor resultParameterProcessor) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
-
         Type ballerinaType = typeDesc.getDescribingType();
         try {
             switch (sqlType) {
@@ -79,7 +79,19 @@ public class OutParameterProcessor {
                 case Types.LONGVARBINARY:
                     return resultParameterProcessor.convertBinary(value, sqlType, ballerinaType);
                 case Types.ARRAY:
-                    return resultParameterProcessor.convertArray((Array) value, sqlType, ballerinaType);
+                    Array array = (Array) value;
+                    Object[] dataArray = (Object[]) array.getArray();
+                    if (dataArray != null && dataArray.length != 0) {
+                        String objectType = result.getType().getName();
+                        if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER) ||
+                                objectType.equals(Constants.OutParameterTypes.ARRAY)) {
+                            return resultParameterProcessor.convertArrayInOutParameter(dataArray, ballerinaType);
+                        } else {
+                            return resultParameterProcessor.convertArrayOutParameter(objectType, dataArray,
+                                    ballerinaType);
+                        }
+                    }
+                    return null;
                 case Types.BLOB:
                     return resultParameterProcessor.convertBlob((Blob) value, sqlType, ballerinaType);
                 case Types.CLOB:
