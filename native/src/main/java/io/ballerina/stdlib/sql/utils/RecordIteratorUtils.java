@@ -96,7 +96,7 @@ public class RecordIteratorUtils {
         }
     }
 
-    protected static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
+    private static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
                     DefaultResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError, IOException {
         int sqlType = columnDefinition.getSqlType();
