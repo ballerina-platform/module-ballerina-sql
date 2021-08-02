@@ -30,7 +30,7 @@ public type Client client object {
     remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error?>;
 
-    # Queries the database with the provided query and returns the first row as a if the expected return type is
+    # Queries the database with the provided query and returns the first row as a record if the expected return type is
     # a record. If the expected return type is not a record, then a single value is returned.
     #
     # + sqlQuery - The query, which needs to be executed as a `string` or  an `sql:ParameterizedQuery` when the SQL
