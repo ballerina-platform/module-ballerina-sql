@@ -766,7 +766,7 @@ function queryRecord() returns error? {
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
-function queryRecordNegative() returns error? {
+function queryRecordNegative1() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from EmptyDataTable WHERE row_id = ${rowId}`;
     record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
@@ -774,6 +774,22 @@ function queryRecordNegative() returns error? {
         test:assertTrue(queryResult.message().endsWith("Query retrieved an empty result."), "Incorrect error message");
     } else {
         test:assertFail("Expected error when querying empty table.");
+    }
+}
+
+@test:Config {
+    groups: ["queryRow", "query-simple-params"]
+}
+function queryRecordNegative2() returns error? {
+    int rowId = 1;
+    ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name from DataTable WHERE row_id = ${rowId}`;
+    record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
+    if queryResult is error {
+        io:println(queryResult.message());
+        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name from DataTable WHERE row_id =  ? ]."),
+                        "Incorrect error message");
+    } else {
+        test:assertFail("Expected error when querying with invalid column name.");
     }
 }
 

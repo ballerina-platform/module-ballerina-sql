@@ -40,6 +40,7 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -144,11 +145,7 @@ public class QueryProcessor {
             Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             return ErrorGenerator.getSQLDatabaseError(e,
                     "Error while executing SQL query: " + sqlQuery + ". ");
-        } catch (ApplicationError applicationError) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-            return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: " + sqlQuery
-                    + ". " + applicationError.getMessage());
-        } catch (Throwable e) {
+        } catch (ApplicationError | IOException e) {
             Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             String message = e.getMessage();
             if (message == null) {
@@ -161,7 +158,7 @@ public class QueryProcessor {
 
     public static ResultSet initQuery(
             BObject client, Object paramSQLString, AbstractStatementParameterProcessor statementParameterProcessor)
-            throws Exception {
+            throws ApplicationError, SQLException, IOException {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
