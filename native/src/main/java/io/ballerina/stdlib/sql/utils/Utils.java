@@ -289,7 +289,6 @@ public class Utils {
             isNullable = false;
         }
         Utils.validatedInvalidFieldAssignment(sqlType, type, "Retrieved SQL type");
-
         return new ColumnDefinition(columnName, null, sqlType, sqlTypeName, type, isNullable);
     }
 
