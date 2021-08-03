@@ -120,27 +120,29 @@ public class QueryProcessor {
             }
 
             Type describingType = ballerinaType.getDescribingType();
+            Object returnValue;
 
             // If the return data type is a record
             if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
                 RecordType recordConstraint = (RecordType) describingType;
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
-                return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+                returnValue = resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+            } else {
+                // If the return data type is anything other than a record
+                ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
+                returnValue =  resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+
+                if (resultSet.getMetaData().getColumnCount() > 1) {
+                    throw new ApplicationError("Query retrieved more than one column.");
+                }
+
+                if (resultSet.next()) {
+                    throw new ApplicationError("Query retrieved more than one row.");
+                }
             }
 
-            // If the return data type is anything other than a record
-            ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
-            Object retVal = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
-
-            if (resultSet.getMetaData().getColumnCount() > 1) {
-                throw new ApplicationError("Query retrieved more than one column.");
-            }
-
-            if (resultSet.next()) {
-                throw new ApplicationError("Query retrieved more than one row.");
-            }
-
-            return retVal;
+            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+            return returnValue;
         } catch (SQLException e) {
             Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             return ErrorGenerator.getSQLDatabaseError(e,

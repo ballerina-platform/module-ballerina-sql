@@ -778,7 +778,7 @@ function queryRecordNegative1() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryRecordNegative2() returns error? {
     int rowId = 1;
