@@ -120,17 +120,16 @@ public class QueryProcessor {
             }
 
             Type describingType = ballerinaType.getDescribingType();
-            Object returnValue;
 
             // If the return data type is a record
             if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
                 RecordType recordConstraint = (RecordType) describingType;
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
-                returnValue = resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+                return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
             } else {
                 // If the return data type is anything other than a record
                 ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
-                returnValue =  resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+                Object returnValue = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
 
                 if (resultSet.getMetaData().getColumnCount() > 1) {
                     throw new ApplicationError("Query retrieved more than one column.");
@@ -139,22 +138,21 @@ public class QueryProcessor {
                 if (resultSet.next()) {
                     throw new ApplicationError("Query retrieved more than one row.");
                 }
-            }
 
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-            return returnValue;
+                return  returnValue;
+            }
         } catch (SQLException e) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             return ErrorGenerator.getSQLDatabaseError(e,
                     "Error while executing SQL query: " + sqlQuery + ". ");
         } catch (ApplicationError | IOException e) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             String message = e.getMessage();
             if (message == null) {
                 message = e.getClass().getName();
             }
             return ErrorGenerator.getSQLApplicationError(
                     "Error while executing SQL query: " + sqlQuery + ". " + message);
+        } finally {
+            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
         }
     }
 
