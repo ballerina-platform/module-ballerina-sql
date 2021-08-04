@@ -158,8 +158,7 @@ public class QueryProcessor {
                 resultSet = statement.executeQuery();
 
                 if (!resultSet.next()) {
-                    // TODO: Specific error type (empty result)
-                    throw new ApplicationError("Query retrieved an empty result.");
+                    return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
 
                 Type describingType = ballerinaType.getDescribingType();
@@ -171,20 +170,12 @@ public class QueryProcessor {
                     return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
                 } else {
                     // If the return data type is anything other than a record
-                    ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
-                    Object returnValue = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
-
                     if (resultSet.getMetaData().getColumnCount() > 1) {
                         // TODO: New error type (suggested type mismatch)
                         throw new ApplicationError("Query retrieved more than one column.");
                     }
-
-                    // TODO: Return first row only
-                    if (resultSet.next()) {
-                        throw new ApplicationError("Query retrieved more than one row.");
-                    }
-
-                    return returnValue;
+                    ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
+                    return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
                 }
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,

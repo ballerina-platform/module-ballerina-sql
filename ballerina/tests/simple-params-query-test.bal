@@ -771,9 +771,10 @@ function queryRecordNegative1() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from EmptyDataTable WHERE row_id = ${rowId}`;
     record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("Query retrieved an empty result."), "Incorrect error message");
+        test:assertTrue(queryResult is NoRowsError, "Incorrect error type");
+        test:assertTrue(queryResult.message().endsWith("Query did not retrieve any rows."), "Incorrect error message");
     } else {
-        test:assertFail("Expected error when querying empty table.");
+        test:assertFail("Expected no rows error when querying empty table.");
     }
 }
 
@@ -819,15 +820,11 @@ function queryValueNegative() returns error? {
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
-function queryValueNegative2() returns error? {
+function queryValue2() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT row_id from DataTable`;
-    int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
-    if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("Query retrieved more than one row."), "Incorrect error message");
-    } else {
-        test:assertFail("Expected error when query result contains multiple rows.");
-    }
+    int queryResult = check queryValueMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(queryResult, 1);
 }
 
 @test:Config {
