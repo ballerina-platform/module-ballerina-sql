@@ -54,11 +54,6 @@ import java.util.List;
  */
 public class QueryProcessor {
 
-    private static TransactionResourceManager trxResourceManager = null;
-    private static Connection connection = null;
-    private static PreparedStatement statement = null;
-    private static String sqlQuery = null;
-
     private QueryProcessor() {
     }
 
@@ -75,33 +70,59 @@ public class QueryProcessor {
             BObject client, Object paramSQLString,
             Object recordType,
             AbstractStatementParameterProcessor statementParameterProcessor,
-                AbstractResultParameterProcessor resultParameterProcessor) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = initQuery(client, paramSQLString, statementParameterProcessor);
-            RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
-            List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
-            return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
-                    PredefinedTypes.TYPE_NULL), resultParameterProcessor
-                    .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
-        } catch (SQLException e) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-            BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
-                    "Error while executing SQL query: " + sqlQuery + ". ");
-            return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(),
-                    PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
-        } catch (ApplicationError applicationError) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-            BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
-            return getErrorStream(recordType, errorValue);
-        } catch (Throwable e) {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-            String message = e.getMessage();
-            if (message == null) {
-                message = e.getClass().getName();
+            AbstractResultParameterProcessor resultParameterProcessor) {
+        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (dbClient != null) {
+            SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
+            if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
+                BError errorValue = ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
+                        "further operations are not allowed");
+                return getErrorStream(recordType, errorValue);
             }
-            BError errorValue = ErrorGenerator.getSQLApplicationError(
-                    "Error while executing SQL query: " + sqlQuery + ". " + message);
+            Connection connection = null;
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            String sqlQuery = null;
+            try {
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
+                } else {
+                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                }
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                statement = connection.prepareStatement(sqlQuery);
+                if (paramSQLString instanceof BObject) {
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
+                }
+                resultSet = statement.executeQuery();
+                RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
+                List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
+                        PredefinedTypes.TYPE_NULL), resultParameterProcessor
+                        .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
+            } catch (SQLException e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
+                        "Error while executing SQL query: " + sqlQuery + ". ");
+                return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(),
+                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
+            } catch (ApplicationError applicationError) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
+                return getErrorStream(recordType, errorValue);
+            } catch (Throwable e) {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                String message = e.getMessage();
+                if (message == null) {
+                    message = e.getClass().getName();
+                }
+                BError errorValue = ErrorGenerator.getSQLApplicationError(
+                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+                return getErrorStream(recordType, errorValue);
+            }
+        } else {
+            BError errorValue = ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
             return getErrorStream(recordType, errorValue);
         }
     }
@@ -111,75 +132,75 @@ public class QueryProcessor {
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = initQuery(client, paramSQLString, statementParameterProcessor);
-
-            if (!resultSet.next()) {
-                throw new ApplicationError("Query retrieved an empty result.");
-            }
-
-            Type describingType = ballerinaType.getDescribingType();
-
-            // If the return data type is a record
-            if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
-                RecordType recordConstraint = (RecordType) describingType;
-                List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
-                return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
-            } else {
-                // If the return data type is anything other than a record
-                ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
-                Object returnValue = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
-
-                if (resultSet.getMetaData().getColumnCount() > 1) {
-                    throw new ApplicationError("Query retrieved more than one column.");
-                }
-
-                if (resultSet.next()) {
-                    throw new ApplicationError("Query retrieved more than one row.");
-                }
-
-                return  returnValue;
-            }
-        } catch (SQLException e) {
-            return ErrorGenerator.getSQLDatabaseError(e,
-                    "Error while executing SQL query: " + sqlQuery + ". ");
-        } catch (ApplicationError | IOException e) {
-            String message = e.getMessage();
-            if (message == null) {
-                message = e.getClass().getName();
-            }
-            return ErrorGenerator.getSQLApplicationError(
-                    "Error while executing SQL query: " + sqlQuery + ". " + message);
-        } finally {
-            Utils.closeResources(trxResourceManager, resultSet, statement, connection);
-        }
-    }
-
-    public static ResultSet initQuery(
-            BObject client, Object paramSQLString, AbstractStatementParameterProcessor statementParameterProcessor)
-            throws ApplicationError, SQLException, IOException {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
-        trxResourceManager = TransactionResourceManager.getInstance();
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                throw new ApplicationError("SQL Client is already closed, hence further operations are not allowed");
+               return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
+                        "further operations are not allowed");
             }
-            if (paramSQLString instanceof BString) {
-                sqlQuery = ((BString) paramSQLString).getValue();
-            } else {
-                sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+            Connection connection = null;
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            String sqlQuery = null;
+            try {
+                if (paramSQLString instanceof BString) {
+                    sqlQuery = ((BString) paramSQLString).getValue();
+                } else {
+                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                }
+                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                statement = connection.prepareStatement(sqlQuery);
+                if (paramSQLString instanceof BObject) {
+                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
+                }
+                resultSet = statement.executeQuery();
+
+                if (!resultSet.next()) {
+                    // TODO: Specific error type (empty result)
+                    throw new ApplicationError("Query retrieved an empty result.");
+                }
+
+                Type describingType = ballerinaType.getDescribingType();
+
+                // If the return data type is a record
+                if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
+                    RecordType recordConstraint = (RecordType) describingType;
+                    List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
+                    return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+                } else {
+                    // If the return data type is anything other than a record
+                    ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
+                    Object returnValue = resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+
+                    if (resultSet.getMetaData().getColumnCount() > 1) {
+                        // TODO: New error type (suggested type mismatch)
+                        throw new ApplicationError("Query retrieved more than one column.");
+                    }
+
+                    // TODO: Return first row only
+                    if (resultSet.next()) {
+                        throw new ApplicationError("Query retrieved more than one row.");
+                    }
+
+                    return returnValue;
+                }
+            } catch (SQLException e) {
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        "Error while executing SQL query: " + sqlQuery + ". ");
+            } catch (ApplicationError | IOException e) {
+                String message = e.getMessage();
+                if (message == null) {
+                    message = e.getClass().getName();
+                }
+                return ErrorGenerator.getSQLApplicationError(
+                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+            } finally {
+                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
             }
-            connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
-            statement = connection.prepareStatement(sqlQuery);
-            if (paramSQLString instanceof BObject) {
-                statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
-            }
-            return statement.executeQuery();
-        } else {
-            throw new ApplicationError("Client is not properly initialized!");
         }
+        return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
     }
 
     private static BStream getErrorStream(Object recordType, BError errorValue) {
