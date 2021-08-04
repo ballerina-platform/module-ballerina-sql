@@ -21,7 +21,9 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.JsonUtils;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
@@ -30,17 +32,27 @@ import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Struct;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.List;
+
+import static io.ballerina.stdlib.sql.utils.Utils.getString;
 
 /**
  * This class has abstract implementation of methods to process JDBC Callable statement. Populate methods are used to
@@ -213,10 +225,141 @@ public abstract class AbstractResultParameterProcessor {
             CallableStatement statement, int paramIndex, int sqlType) throws ApplicationError;
 
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                           ColumnDefinition columnDefinition) throws ApplicationError;
+                                                           ColumnDefinition columnDefinition) throws ApplicationError,
+            SQLException;
 
-    public abstract Object getAndConvertXml(ResultSet resultSet, int columnIndex, int sqlType, Type balType)
-            throws ApplicationError, SQLException;
+    public Object processArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        return convertArray(resultSet.getArray(columnIndex), sqlType, ballerinaType);
+    }
+
+    public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        return convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
+    }
+
+    public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
+                                    String sqlTypeName) throws ApplicationError, SQLException {
+        return convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType, sqlTypeName);
+    }
+
+    public Object processByteArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
+                                         String sqlTypeName) throws ApplicationError, SQLException {
+        return convertByteArray(resultSet.getBytes(columnIndex), sqlType, ballerinaType, sqlTypeName);
+    }
+
+    public Object processBlobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        return convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
+    }
+
+    public Object processClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException, IOException {
+        String clobValue = getString(resultSet.getClob(columnIndex));
+        return convertChar(clobValue, sqlType, ballerinaType);
+    }
+
+    public Object processNClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException, IOException {
+        String nClobValue = getString(resultSet.getNClob(columnIndex));
+        return convertChar(nClobValue, sqlType, ballerinaType);
+    }
+
+    public Object processDateResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        Date date = resultSet.getDate(columnIndex);
+        return convertDate(date, sqlType, ballerinaType);
+    }
+
+    public Object processTimeResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        Time time = resultSet.getTime(columnIndex);
+        return convertTime(time, sqlType, ballerinaType);
+    }
+
+    public Object processTimeWithTimezoneResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
+        return convertTimeWithTimezone(offsetTime, sqlType, ballerinaType);
+    }
+
+    public Object processTimestampResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        Timestamp timestamp = resultSet.getTimestamp(columnIndex);
+        return convertTimeStamp(timestamp, sqlType, ballerinaType);
+    }
+
+    public Object processTimestampWithTimezoneResult(ResultSet resultSet, int columnIndex, int sqlType,
+                                                     Type ballerinaType) throws ApplicationError, SQLException {
+        OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
+        return convertTimestampWithTimezone(offsetDateTime, sqlType, ballerinaType);
+    }
+
+    public Object processRowIdResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
+                                     String sqlTypeName) throws ApplicationError, SQLException {
+        return convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType,
+                ballerinaType, sqlTypeName);
+    }
+
+    public Object processIntResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        long iValue = resultSet.getInt(columnIndex);
+        return convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processLongResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        long iValue = resultSet.getLong(columnIndex);
+        return convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processFloatResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        double fValue = resultSet.getFloat(columnIndex);
+        return convertDouble(fValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processDoubleResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        double dValue = resultSet.getDouble(columnIndex);
+        return convertDouble(dValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processDecimalResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        BigDecimal decimalValue = resultSet.getBigDecimal(columnIndex);
+        return convertDecimal(decimalValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processBooleanResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        boolean boolValue = resultSet.getBoolean(columnIndex);
+        return convertBoolean(boolValue, sqlType, ballerinaType, resultSet.wasNull());
+    }
+
+    public Object processStructResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        Struct structData = (Struct) resultSet.getObject(columnIndex);
+        return convertStruct(structData, sqlType, ballerinaType);
+    }
+
+    public Object processXmlResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
+        return convertXml(sqlxml, sqlType, ballerinaType);
+    }
+
+    public Object processJsonResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
+            throws ApplicationError, SQLException {
+        String jsonString = convertChar(
+                resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
+        Reader reader = new StringReader(jsonString);
+        try {
+            return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
+        } catch (BError e) {
+            throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
+        }
+    }
 
     public Object convertArrayOutParameter(String objectTypeName, Object[] dataArray, Type ballerinaType)
             throws ApplicationError {

@@ -100,7 +100,7 @@ public class DefaultResultParameterProcessorTest {
                 2, "INT", TypeUtils.getType(1), false);
         try {
             testClass.processCustomTypeFromResultSet(null, 1, columnDefinition);
-        } catch (ApplicationError e) {
+        } catch (ApplicationError | SQLException e) {
             assertEquals(e.getMessage(), "Unsupported SQL type INT");
         }
     }
