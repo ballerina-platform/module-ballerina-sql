@@ -215,6 +215,9 @@ public abstract class AbstractResultParameterProcessor {
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
                                                            ColumnDefinition columnDefinition) throws ApplicationError;
 
+    public abstract Object getAndConvertXml(ResultSet resultSet, int columnIndex, int sqlType, Type balType)
+            throws ApplicationError, SQLException;
+
     public Object convertArrayOutParameter(String objectTypeName, Object[] dataArray, Type ballerinaType)
             throws ApplicationError {
         switch (objectTypeName) {

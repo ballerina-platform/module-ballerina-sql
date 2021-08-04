@@ -855,6 +855,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
+    public Object getAndConvertXml(ResultSet resultSet, int columnIndex, int sqlType, Type balType)
+            throws ApplicationError, SQLException {
+        SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
+        return convertXml(sqlxml, sqlType, balType);
+    }
+
+    @Override
     public Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
     }

@@ -138,7 +138,7 @@ public abstract class AbstractStatementParameterProcessor {
     protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
                                               Object value) throws SQLException, ApplicationError;
     protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
-            throws SQLException;
+            throws SQLException, ApplicationError;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws SQLException, ApplicationError, IOException {

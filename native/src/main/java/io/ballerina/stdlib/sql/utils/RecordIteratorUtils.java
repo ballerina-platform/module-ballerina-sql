@@ -39,7 +39,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.sql.Time;
@@ -181,8 +180,7 @@ public class RecordIteratorUtils {
                 Struct structData = (Struct) resultSet.getObject(columnIndex);
                 return resultParameterProcessor.convertStruct(structData, sqlType, ballerinaType);
             case Types.SQLXML:
-                SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
-                return resultParameterProcessor.convertXml(sqlxml, sqlType, ballerinaType);
+                return resultParameterProcessor.getAndConvertXml(resultSet, columnIndex, sqlType, ballerinaType);
             default:
                 if (ballerinaType.getTag() == TypeTags.INT_TAG) {
                     resultParameterProcessor.convertInteger(
