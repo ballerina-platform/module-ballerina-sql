@@ -811,6 +811,7 @@ function queryValueNegative() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
     int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
     if queryResult is error {
+        test:assertTrue(queryResult is MultipleColumnsError, "Incorrect error type");
         test:assertTrue(queryResult.message().endsWith("Query retrieved more than one column."), "Incorrect error message");
     } else {
         test:assertFail("Expected error when query result contains multiple columns.");
@@ -838,7 +839,7 @@ function queryValueNegative3() returns error? {
         test:assertTrue(queryResult.message().endsWith("Retrieved SQL type field cannot be converted to ballerina type : int"),
                                                        "Incorrect error message");
     } else {
-        test:assertFail("Expected error when query result contains multiple rows.");
+        test:assertFail("Expected error when query returns unexpected result type.");
     }
 }
 

@@ -156,7 +156,6 @@ public class QueryProcessor {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
                 }
                 resultSet = statement.executeQuery();
-
                 if (!resultSet.next()) {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
@@ -171,8 +170,7 @@ public class QueryProcessor {
                 } else {
                     // If the return data type is anything other than a record
                     if (resultSet.getMetaData().getColumnCount() > 1) {
-                        // TODO: New error type (suggested type mismatch)
-                        throw new ApplicationError("Query retrieved more than one column.");
+                        return ErrorGenerator.getMultipleColumnsError("Query retrieved more than one column.");
                     }
                     ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
                     return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);

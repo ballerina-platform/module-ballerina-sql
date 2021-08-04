@@ -70,6 +70,11 @@ public class ErrorGenerator {
                 StringUtils.fromString(message), null,  null);
     }
 
+    public static BError getMultipleColumnsError(String message) {
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.MULTIPLE_COLUMNS_ERROR,
+                StringUtils.fromString(message), null,  null);
+    }
+
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
                                                   List<BMap<BString, Object>> executionResults) {
         Map<String, Object> valueMap = new HashMap<>();
