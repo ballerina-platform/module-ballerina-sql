@@ -22,8 +22,6 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
-import io.ballerina.runtime.api.utils.JsonUtils;
-import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -32,26 +30,15 @@ import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.sql.Statement;
-import java.sql.Struct;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.List;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
-import static io.ballerina.stdlib.sql.utils.Utils.getString;
 
 /**
  * This class provides functionality for the `RecordIterator` to iterate through the sql result set.
@@ -103,7 +90,7 @@ public class RecordIteratorUtils {
         Type ballerinaType = columnDefinition.getBallerinaType();
         switch (sqlType) {
             case Types.ARRAY:
-                return resultParameterProcessor.convertArray(resultSet.getArray(columnIndex), sqlType, ballerinaType);
+                return resultParameterProcessor.processArrayResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -111,121 +98,90 @@ public class RecordIteratorUtils {
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
                 if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
+                    return resultParameterProcessor.processJsonResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else {
-                    return resultParameterProcessor.convertChar(resultSet.getString(columnIndex),
-                            sqlType, ballerinaType);
+                    return resultParameterProcessor.processCharResult(resultSet, columnIndex, sqlType, ballerinaType);
                 }
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
                 if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
-                    return resultParameterProcessor.convertChar(
-                            resultSet.getString(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                    return resultParameterProcessor.processCharResult(
+                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
                 } else {
-                    return resultParameterProcessor.convertByteArray(
-                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                    return resultParameterProcessor.processByteArrayResult(
+                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
                 }
             case Types.BLOB:
-                return resultParameterProcessor.convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
+                return resultParameterProcessor.processBlobResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.CLOB:
-                String clobValue = getString(resultSet.getClob(columnIndex));
-                return resultParameterProcessor.convertChar(clobValue, sqlType, ballerinaType);
+                return resultParameterProcessor.processClobResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.NCLOB:
-                String nClobValue = getString(resultSet.getNClob(columnIndex));
-                return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
+                return resultParameterProcessor.processNClobResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.DATE:
-                Date date = resultSet.getDate(columnIndex);
-                return resultParameterProcessor.convertDate(date, sqlType, ballerinaType);
+                return resultParameterProcessor.processDateResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.TIME:
-                Time time = resultSet.getTime(columnIndex);
-                return resultParameterProcessor.convertTime(time, sqlType, ballerinaType);
+                return resultParameterProcessor.processTimeResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.TIME_WITH_TIMEZONE:
-                OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
-                return resultParameterProcessor.convertTimeWithTimezone(offsetTime, sqlType, ballerinaType);
+                return resultParameterProcessor.processTimeWithTimezoneResult(resultSet, columnIndex, sqlType,
+                        ballerinaType);
             case Types.TIMESTAMP:
-                Timestamp timestamp = resultSet.getTimestamp(columnIndex);
-                return resultParameterProcessor.convertTimeStamp(timestamp, sqlType, ballerinaType);
+                return resultParameterProcessor.processTimestampResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
-                return resultParameterProcessor.convertTimestampWithTimezone(offsetDateTime, sqlType, ballerinaType);
+                return resultParameterProcessor.processTimestampWithTimezoneResult(resultSet, columnIndex, sqlType,
+                        ballerinaType);
             case Types.ROWID:
-                return resultParameterProcessor.convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType, 
-                            ballerinaType, "SQL RowID");
+                return resultParameterProcessor.processRowIdResult(resultSet, columnIndex, sqlType, ballerinaType,
+                        "SQL RowID");
             case Types.TINYINT:
             case Types.SMALLINT:
-                long iValue = resultSet.getInt(columnIndex);
-                return resultParameterProcessor.convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processIntResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.INTEGER:
             case Types.BIGINT:
-                long lValue = resultSet.getLong(columnIndex);
-                return resultParameterProcessor.convertInteger(lValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processLongResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.REAL:
             case Types.FLOAT:
-                double fValue = resultSet.getFloat(columnIndex);
-                return resultParameterProcessor.convertDouble(fValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processFloatResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.DOUBLE:
-                double dValue = resultSet.getDouble(columnIndex);
-                return resultParameterProcessor.convertDouble(dValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processDoubleResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.NUMERIC:
             case Types.DECIMAL:
-                BigDecimal decimalValue = resultSet.getBigDecimal(columnIndex);
-                return resultParameterProcessor.convertDecimal(
-                        decimalValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processDecimalResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.BIT:
             case Types.BOOLEAN:
-                boolean boolValue = resultSet.getBoolean(columnIndex);
-                return resultParameterProcessor.convertBoolean(boolValue, sqlType, ballerinaType, resultSet.wasNull());
+                return resultParameterProcessor.processBooleanResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.REF:
             case Types.STRUCT:
-                Struct structData = (Struct) resultSet.getObject(columnIndex);
-                return resultParameterProcessor.convertStruct(structData, sqlType, ballerinaType);
+                return resultParameterProcessor.processStructResult(resultSet, columnIndex, sqlType, ballerinaType);
             case Types.SQLXML:
-                SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
-                return resultParameterProcessor.convertXml(sqlxml, sqlType, ballerinaType);
+                return resultParameterProcessor.processXmlResult(resultSet, columnIndex, sqlType, ballerinaType);
             default:
                 if (ballerinaType.getTag() == TypeTags.INT_TAG) {
-                    resultParameterProcessor.convertInteger(
-                            resultSet.getInt(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                    resultParameterProcessor.processIntResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.STRING_TAG
                         || ballerinaType.getTag() == TypeTags.ANY_TAG
                         || ballerinaType.getTag() == TypeTags.ANYDATA_TAG) {
-                    return resultParameterProcessor.convertChar(
-                            resultSet.getString(columnIndex), sqlType, ballerinaType);
+                    return resultParameterProcessor.processCharResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.BOOLEAN_TAG) {
-                    return resultParameterProcessor.convertBoolean(
-                            resultSet.getBoolean(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                    return resultParameterProcessor.processBooleanResult(resultSet, columnIndex, sqlType,
+                            ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
                         ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
-                    return resultParameterProcessor.convertByteArray(
-                            resultSet.getBytes(columnIndex), sqlType, ballerinaType, columnDefinition.getSqlName());
+                    return resultParameterProcessor.processByteArrayResult(resultSet, columnIndex, sqlType,
+                            ballerinaType, columnDefinition.getSqlName());
                 } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
-                    return resultParameterProcessor.convertDouble(
-                            resultSet.getDouble(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                    return resultParameterProcessor.processDoubleResult(resultSet, columnIndex, sqlType,
+                            ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.DECIMAL_TAG) {
-                    return resultParameterProcessor.convertDecimal(
-                            resultSet.getBigDecimal(columnIndex), sqlType, ballerinaType, resultSet.wasNull());
+                    return resultParameterProcessor.processDecimalResult(resultSet, columnIndex, sqlType,
+                            ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.XML_TAG) {
-                    return resultParameterProcessor.convertXml(
-                            resultSet.getSQLXML(columnIndex), sqlType, ballerinaType);
+                    return resultParameterProcessor.processXmlResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    return getJson(resultSet, columnIndex, sqlType, ballerinaType, resultParameterProcessor);
+                    return resultParameterProcessor.processJsonResult(resultSet, columnIndex, sqlType, ballerinaType);
                 }
                 return resultParameterProcessor.processCustomTypeFromResultSet(resultSet, columnIndex,
                         columnDefinition);
-        }
-    }
-
-    public static Object getJson(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
-                                 DefaultResultParameterProcessor resultParameterProcessor)
-            throws ApplicationError, SQLException {
-        String jsonString = resultParameterProcessor.convertChar(
-                resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
-        Reader reader = new StringReader(jsonString);
-        try {
-            return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
-        } catch (BError e) {
-            throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
         }
     }
 

@@ -850,7 +850,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws ApplicationError {
+                                                  ColumnDefinition columnDefinition) throws ApplicationError,
+            SQLException {
         throw new ApplicationError("Unsupported SQL type " + columnDefinition.getSqlName());
     }
 
