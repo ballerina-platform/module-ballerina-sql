@@ -18,6 +18,8 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -44,6 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
+
 /**
  * This class provides the query processing implementation which executes sql queries.
  * 
@@ -64,12 +68,31 @@ public class QueryProcessor {
      * @return result stream or error
      */
     public static BStream nativeQuery(
-            BObject client, Object paramSQLString,
-            Object recordType,
+            Environment env, BObject client, Object paramSQLString, Object recordType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor) {
-        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                BStream resultStream =
+                        nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
+                                resultParameterProcessor, false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
+                    resultParameterProcessor, true, trxResourceManager);
+        }
+        return null;
+    }
+
+    private static BStream nativeQueryExecutable(
+            BObject client, Object paramSQLString, Object recordType,
+            AbstractStatementParameterProcessor statementParameterProcessor,
+            AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
+            TransactionResourceManager trxResourceManager) {
+        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
@@ -87,7 +110,7 @@ public class QueryProcessor {
                 } else {
                     sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
                 if (paramSQLString instanceof BObject) {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
@@ -99,17 +122,17 @@ public class QueryProcessor {
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
                         .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
             } catch (SQLException e) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint(),
                         PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
             } catch (ApplicationError applicationError) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
                 return getErrorStream(recordType, errorValue);
             } catch (Throwable e) {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
                 String message = e.getMessage();
                 if (message == null) {
                     message = e.getClass().getName();

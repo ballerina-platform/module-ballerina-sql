@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.sql.testutils;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
@@ -33,13 +34,13 @@ public class QueryTestUtils {
     private QueryTestUtils() {
     }
 
-    public static BStream nativeQuery(BObject client, Object paramSQLString,
+    public static BStream nativeQuery(Environment environment, BObject client, Object paramSQLString,
                                       BTypedesc recordType) {
         DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
                 .getInstance();
         DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
                 .getInstance();
-        return QueryProcessor.nativeQuery(client, paramSQLString, recordType, statementParametersProcessor,
+        return QueryProcessor.nativeQuery(environment, client, paramSQLString, recordType, statementParametersProcessor,
                 resultParametersProcessor);
     }
 }

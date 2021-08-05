@@ -18,6 +18,8 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
@@ -37,6 +39,7 @@ import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProc
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.io.IOException;
 import java.sql.CallableStatement;
@@ -56,6 +59,7 @@ import static io.ballerina.stdlib.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIE
 import static io.ballerina.stdlib.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
+import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
 import static io.ballerina.stdlib.sql.utils.Utils.getDefaultRecordType;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
@@ -80,11 +84,31 @@ public class CallProcessor {
      * @param resultParameterProcessor post-processor of the result
      * @return procedure call result or error
      */
-    public static Object nativeCall(BObject client, Object paramSQLString, BArray recordTypes, 
-            AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
-        Object dbClient = client.getNativeData(DATABASE_CLIENT);
+    public static Object nativeCall(Environment env, BObject client, Object paramSQLString, BArray recordTypes,
+                                    AbstractStatementParameterProcessor statementParameterProcessor,
+                                    AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                Object resultStream =
+                        nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
+                                resultParameterProcessor, false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
+                    resultParameterProcessor, true, trxResourceManager);
+        }
+        return null;
+
+    }
+
+    private static Object nativeCallExecutable(BObject client, Object paramSQLString, BArray recordTypes,
+                                    AbstractStatementParameterProcessor statementParameterProcessor,
+                                    AbstractResultParameterProcessor resultParameterProcessor, boolean isWithinTrxBlock,
+                                    TransactionResourceManager trxResourceManager) {
+        Object dbClient = client.getNativeData(DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
@@ -101,7 +125,7 @@ public class CallProcessor {
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
