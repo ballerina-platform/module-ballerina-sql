@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Add support for queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1604)
 - [Add completion type as nil in SQL query return stream type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1654)
+- [Implement array types for call procedure](https://github.com/ballerina-platform/ballerina-standard-library/issues/1516)
 
 ## [0.6.0-beta.2] - 2021-06-22
 

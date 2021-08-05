@@ -137,7 +137,8 @@ public abstract class AbstractStatementParameterProcessor {
             throws SQLException, ApplicationError;
     protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
                                               Object value) throws SQLException, ApplicationError;
-    protected abstract void setXml(PreparedStatement preparedStatement, int index, BXml value) throws SQLException;
+    protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
+            throws SQLException, ApplicationError;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws SQLException, ApplicationError, IOException {
@@ -174,31 +175,25 @@ public abstract class AbstractStatementParameterProcessor {
             String type = objectArray.getElementType().toString();
             if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
-                return Types.VARBINARY;
             } else if (objectArray.getElementType().getTag() == TypeTags.ARRAY_TAG ||
                     type.equals(Constants.SqlTypes.OPTIONAL_BYTE) || type.equals(Constants.SqlTypes.BYTE_ARRAY_TYPE)) {
                 setBinaryArray(connection, preparedStatement, index, objectArray);
-                return Types.VARBINARY;
             } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
                 setVarcharArray(connection, preparedStatement, index, objectArray);
-                return Types.VARCHAR;
             } else if (type.equals(Constants.SqlTypes.INT) || type.equals(Constants.SqlTypes.OPTIONAL_INT)) {
                 setIntegerArray(connection, preparedStatement, index, objectArray);
-                return Types.INTEGER;
             } else if (type.equals(Constants.SqlTypes.BOOLEAN_TYPE) ||
                     type.equals(Constants.SqlTypes.OPTIONAL_BOOLEAN)) {
                 setBooleanArray(connection, preparedStatement, index, objectArray);
-                return Types.BOOLEAN;
             } else if (type.equals(Constants.SqlTypes.FLOAT_TYPE) || type.equals(Constants.SqlTypes.OPTIONAL_FLOAT)) {
                 setFloatArray(connection, preparedStatement, index, objectArray);
-                return Types.FLOAT;
             } else if (type.equals(Constants.SqlTypes.DECIMAL_TYPE) ||
                     type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
                 setDecimalArray(connection, preparedStatement, index, objectArray);
-                return Types.DECIMAL;
             } else {
                 throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
             }
+            return Types.ARRAY;
         } else if (object instanceof BObject) {
             BObject objectValue = (BObject) object;
             if ((objectValue.getType().getTag() == TypeTags.OBJECT_TYPE_TAG)) {
@@ -212,7 +207,7 @@ public abstract class AbstractStatementParameterProcessor {
                         objectValue.getType().getQualifiedName() + " in column index: " + index);
             }
         } else if (object instanceof BXml) {
-            setXml(preparedStatement, index, (BXml) object);
+            setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else {
             throw new ApplicationError("Unsupported type passed in column index: " + index);
@@ -450,6 +445,28 @@ public abstract class AbstractStatementParameterProcessor {
                 sqlTypeValue = Types.TIMESTAMP;
                 break;
             case Constants.SqlTypes.ARRAY:
+            case Constants.SqlTypes.SMALLINT_ARRAY:
+            case Constants.SqlTypes.INTEGER_ARRAY:
+            case Constants.SqlTypes.REAL_ARRAY:
+            case Constants.SqlTypes.BIGINT_ARRAY:
+            case Constants.SqlTypes.DOUBLE_ARRAY:
+            case Constants.SqlTypes.FLOAT_ARRAY:
+            case Constants.SqlTypes.BINARY_ARRAY:
+            case Constants.SqlTypes.BOOLEAN_ARRAY:
+            case Constants.SqlTypes.DECIMAL_ARRAY:
+            case Constants.SqlTypes.NUMERIC_ARRAY:
+            case Constants.SqlTypes.NVARCHAR_ARRAY:
+            case Constants.SqlTypes.VARBINARY_ARRAY:
+            case Constants.SqlTypes.VARCHAR_ARRAY:
+            case Constants.SqlTypes.DATE_ARRAY:
+            case Constants.SqlTypes.DATETIME_ARRAY:
+            case Constants.SqlTypes.TIME_ARRAY:
+            case Constants.SqlTypes.TIMESTAMP_ARRAY:
+            case Constants.SqlTypes.BYTE_ARRAY_TYPE:
+            case Constants.SqlTypes.CHAR_ARRAY:
+            case Constants.SqlTypes.TIME_OF_DAY_ARRAY_TYPE:
+            case Constants.SqlTypes.CIVIL_ARRAY_TYPE:
+            case Constants.SqlTypes.BIT_ARRAY:
                 sqlTypeValue = Types.ARRAY;
                 break;
             case Constants.SqlTypes.REF:

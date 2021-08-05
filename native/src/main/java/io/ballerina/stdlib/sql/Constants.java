@@ -183,6 +183,8 @@ public final class Constants {
         public static final String DECIMAL_TYPE = "decimal";
         public static final String OPTIONAL_BYTE = "byte[]?";
         public static final String BYTE_ARRAY_TYPE = "byte[]";
+        public static final String CIVIL_ARRAY_TYPE = "time:Civil";
+        public static final String TIME_OF_DAY_ARRAY_TYPE = "time:TimeOfDay";
     }
 
     /**
@@ -219,33 +221,54 @@ public final class Constants {
     public static final class OutParameterTypes {
         private OutParameterTypes() {}
         public static final String CHAR = "CharOutParameter";
+        public static final String CHAR_ARRAY = "CharArrayOutParameter";
         public static final String VARCHAR = "VarcharOutParameter";
+        public static final String VARCHAR_ARRAY = "VarcharArrayOutParameter";
         public static final String NCHAR = "NCharOutParameter";
         public static final String NVARCHAR = "NVarcharOutParameter";
+        public static final String NVARCHAR_ARRAY = "NVarcharArrayOutParameter";
         public static final String BINARY = "BinaryOutParameter";
+        public static final String BINARY_ARRAY = "BinaryArrayOutParameter";
+        public static final String ARRAY = "ArrayOutParameter";
         public static final String VARBINARY = "VarBinaryOutParameter";
+        public static final String VARBINARY_ARRAY = "VarBinaryArrayOutParameter";
         public static final String TEXT = "TextOutParameter";
         public static final String BLOB = "BlobOutParameter";
         public static final String CLOB = "ClobOutParameter";
         public static final String NCLOB = "NClobOutParameter";
         public static final String DATE = "DateOutParameter";
+        public static final String DATE_ARRAY = "DateArrayOutParameter";
         public static final String TIME = "TimeOutParameter";
-        public static final String TIMEWITHTIMEZONE = "TimeWithTimezoneOutParameter";
-        public static final String DATETIME = "DateTimeOutParameter";
+        public static final String TIME_ARRAY = "TimeArrayOutParameter";
+        public static final String TIME_WITH_TIMEZONE = "TimeWithTimezoneOutParameter";
+        public static final String TIME_WITH_TIMEZONE_ARRAY = "TimeWithTimezoneArrayOutParameter";
+        public static final String DATE_TIME = "DateTimeOutParameter";
+        public static final String DATE_TIME_ARRAY = "DateTimeArrayOutParameter";
         public static final String TIMESTAMP = "TimestampOutParameter";
-        public static final String TIMESTAMPWITHTIMEZONE = "TimestampWithTimezoneOutParameter";
-        public static final String ARRAY = "ArrayOutParameter";
+        public static final String TIMESTAMP_ARRAY = "TimestampArrayOutParameter";
+        public static final String TIMESTAMP_WITH_TIMEZONE = "TimestampWithTimezoneOutParameter";
+        public static final String TIMESTAMP_WITH_TIMEZONE_ARRAY = "TimestampWithTimezoneArrayOutParameter";
         public static final String ROW = "RowOutParameter";
         public static final String SMALLINT = "SmallIntOutParameter";
+        public static final String SMALL_INT_ARRAY = "SmallIntArrayOutParameter";
         public static final String INTEGER = "IntegerOutParameter";
+        public static final String INTEGER_ARRAY = "IntegerArrayOutParameter";
         public static final String BIGINT = "BigIntOutParameter";
+        public static final String BIGINT_ARRAY = "BigIntArrayOutParameter";
         public static final String REAL = "RealOutParameter";
+        public static final String REAL_ARRAY = "RealArrayOutParameter";
         public static final String FLOAT = "FloatOutParameter";
+        public static final String FLOAT_ARRAY = "FloatArrayOutParameter";
         public static final String DOUBLE = "DoubleOutParameter";
+        public static final String DOUBLE_ARRAY = "DoubleArrayOutParameter";
         public static final String NUMERIC = "NumericOutParameter";
+        public static final String NUMERIC_ARRAY = "NumericArrayOutParameter";
         public static final String DECIMAL = "DecimalOutParameter";
+        public static final String DECIMAL_ARRAY = "DecimalArrayOutParameter";
         public static final String BIT = "BitOutParameter";
+        public static final String BIT_ARRAY = "BitArrayOutParameter";
         public static final String BOOLEAN = "BooleanOutParameter";
+        public static final String BOOLEAN_ARRAY = "BooleanArrayOutParameter";
         public static final String REF = "RefOutParameter";
         public static final String STRUCT = "StructOutParameter";
         public static final String XML = "XMLOutParameter";
@@ -276,6 +299,23 @@ public final class Constants {
         public static final String VALUE_NATIVE_DATA = "value";
 
         public static final BString IN_VALUE_FIELD = fromString("in");
+    }
+
+    /**
+     * Constants for array types.
+     */
+    public static final class ArrayTypes {
+        private ArrayTypes() {}
+        public static final String STRING = "string[]";
+        public static final String INTEGER = "int[]";
+        public static final String FLOAT = "float[]";
+        public static final String BOOLEAN = "boolean[]";
+        public static final String DATE = "time:Date[]";
+        public static final String CIVIL = "time:Civil[]";
+        public static final String TIME_OF_DAY = "time:TimeOfDay[]";
+        public static final String DECIMAL = "decimal[]";
+        public static final String UTC = "([int,decimal] & readonly)[]";
+        public static final String BYTE = "byte[][]";
     }
 
     /**

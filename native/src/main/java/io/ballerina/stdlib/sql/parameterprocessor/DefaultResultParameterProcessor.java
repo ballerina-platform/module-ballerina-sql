@@ -21,7 +21,6 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
@@ -69,27 +68,6 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 public class DefaultResultParameterProcessor extends AbstractResultParameterProcessor {
     private static final Object lock = new Object();
     private static volatile DefaultResultParameterProcessor instance;
-
-    private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
-    private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
-    private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
-    private static final ArrayType decimalArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_DECIMAL);
-    private static final ArrayType mapArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_MAP);
-    private static final ArrayType byteArrayType = TypeCreator.createArrayType(
-        TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE));
-    private static final RecordType civilRecordType = TypeCreator.createRecordType(
-        io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD,
-        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
-    private static final ArrayType civilArrayType = TypeCreator.createArrayType(civilRecordType);
-    private static final RecordType timeRecordType = TypeCreator.createRecordType(
-        io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD,
-        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
-    private static final ArrayType timeArrayType = TypeCreator.createArrayType(timeRecordType);
-    private static final RecordType dateRecordType = TypeCreator.createRecordType(
-        io.ballerina.stdlib.time.util.Constants.DATE_RECORD,
-        io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
-    private static final ArrayType dateArrayType = TypeCreator.createArrayType(dateRecordType);
 
     public DefaultResultParameterProcessor() {
     }
@@ -140,7 +118,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             return refValueArray;
         } else if (firstNonNullElement instanceof java.util.Date) {
             if (firstNonNullElement instanceof Date) {
-                refValueArray = createEmptyBBRefValueArray(dateRecordType);
+                refValueArray = createEmptyBBRefValueArray(Utils.DATE_RECORD_TYPE);
                 for (int i = 0; i < length; i++) {                    
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
@@ -151,7 +129,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else if (firstNonNullElement instanceof Time) {
-                refValueArray = createEmptyBBRefValueArray(timeRecordType);
+                refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
                 for (int i = 0; i < length; i++) {                    
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
@@ -162,7 +140,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else if (firstNonNullElement instanceof Timestamp) {
-                refValueArray = createEmptyBBRefValueArray(civilRecordType);
+                refValueArray = createEmptyBBRefValueArray(Utils.CIVIL_RECORD_TYPE);
                 for (int i = 0; i < length; i++) {
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
@@ -176,7 +154,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 throw new ApplicationError("Error while retrieving Date Array");
             } 
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {
-            refValueArray = createEmptyBBRefValueArray(timeRecordType);
+            refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
             for (int i = 0; i < length; i++) {                
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
@@ -188,7 +166,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return refValueArray;
         } else if (firstNonNullElement instanceof java.time.OffsetDateTime) {
-            refValueArray = createEmptyBBRefValueArray(civilRecordType);
+            refValueArray = createEmptyBBRefValueArray(Utils.CIVIL_RECORD_TYPE);
             for (int i = 0; i < length; i++) {                
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
@@ -239,103 +217,38 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BArray createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                          Type type, Array array)
-            throws ApplicationError, SQLException {
-        int length = dataArray.length;
+                                                          Type type, Array array) throws ApplicationError,
+            SQLException {
         String elementType = firstNonNullElement.getClass().getCanonicalName();
         switch (elementType) {
             case Constants.Classes.STRING:
-                BArray stringDataArray = ValueCreator.createArrayValue(stringArrayType);
-                for (int i = 0; i < length; i++) {
-                    stringDataArray.add(i, fromString((String) dataArray[i]));
-                }
-                return stringDataArray;
+                return Utils.createStringArray(dataArray);
             case Constants.Classes.BOOLEAN:
-                BArray boolDataArray = ValueCreator.createArrayValue(booleanArrayType);
-                for (int i = 0; i < length; i++) {
-                    boolDataArray.add(i, ((Boolean) dataArray[i]).booleanValue());
-                }
-                return boolDataArray;
+                return Utils.createBooleanArray(dataArray);
             case Constants.Classes.SHORT:
-                BArray shortDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    shortDataArray.add(i, ((Short) dataArray[i]).intValue());
-                }
-                return shortDataArray;
+                return Utils.createShortArray(dataArray);
             case Constants.Classes.INTEGER:
-                BArray intDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    intDataArray.add(i, ((Integer) dataArray[i]).intValue());
-                }
-                return intDataArray;
+                return Utils.createIntegerArray(dataArray);
             case Constants.Classes.LONG:
-                BArray longDataArray = ValueCreator.createArrayValue(intArrayType);
-                for (int i = 0; i < length; i++) {
-                    longDataArray.add(i, ((Long) dataArray[i]).longValue());
-                }
-                return longDataArray;
+                return Utils.createLongArray(dataArray);
             case Constants.Classes.FLOAT:
-                BArray floatDataArray = ValueCreator.createArrayValue(floatArrayType);
-                for (int i = 0; i < length; i++) {
-                    floatDataArray.add(i, ((Float) dataArray[i]).floatValue());
-                }
-                return floatDataArray;
+                return Utils.createFloatArray(dataArray);
             case Constants.Classes.DOUBLE:
-                BArray doubleDataArray = ValueCreator.createArrayValue(floatArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    doubleDataArray.add(i, ((Double) dataArray[i]).doubleValue());
-                }
-                return doubleDataArray;
+                return Utils.createDoubleArray(dataArray);
             case Constants.Classes.BIG_DECIMAL:
-                BArray decimalDataArray = ValueCreator.createArrayValue(decimalArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    decimalDataArray.add(i, ValueCreator.createDecimalValue((BigDecimal) dataArray[i]));
-                }
-                return decimalDataArray;
+                return Utils.createBigDecimalArray(dataArray);
             case Constants.Classes.BYTE:
-                BArray byteDataArray = ValueCreator.createArrayValue(byteArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    byteDataArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
-                }
-                return byteDataArray;
+                return Utils.createByteArray(dataArray);
             case Constants.Classes.DATE:
-                BArray mapDataArray;
-                mapDataArray = ValueCreator.createArrayValue(dateArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> dateMap = Utils.createDateRecord((Date) dataArray[i]);
-                    mapDataArray.add(i, dateMap);
-                }
-                return mapDataArray;
+                return Utils.createDateArray(dataArray);
             case Constants.Classes.TIMESTAMP:
-                mapDataArray = ValueCreator.createArrayValue(civilArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap = Utils.createTimestampRecord((Timestamp) dataArray[i]);
-                    mapDataArray.add(i, civilMap);
-                }
-                return mapDataArray;
+                return Utils.createTimestampArray(dataArray);
             case Constants.Classes.TIME:
-                mapDataArray = ValueCreator.createArrayValue(timeArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> timeMap = Utils.createTimeRecord((Time) dataArray[i]);
-                    mapDataArray.add(i, timeMap);
-                }
-                return mapDataArray;
+                return Utils.createTimeArray(dataArray);
             case Constants.Classes.OFFSET_TIME:
-                BArray mapTimeArray = ValueCreator.createArrayValue(timeArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap =
-                            Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
-                    mapTimeArray.add(i, civilMap);
-                }
-                return mapTimeArray;
+                return Utils.createOffsetArray(dataArray);
             case Constants.Classes.OFFSET_DATE_TIME:
-                BArray mapDateTimeArray = ValueCreator.createArrayValue(civilArrayType);
-                for (int i = 0; i < dataArray.length; i++) {
-                    BMap<BString, Object> civilMap =
-                            Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
-                    mapDateTimeArray.add(i, civilMap);
-                }
-                return mapDateTimeArray;
+                return Utils.createOffsetTimeArray(dataArray);
             default:
                 return createAndPopulateCustomValueArray(firstNonNullElement, type, array);
         }
@@ -937,7 +850,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws ApplicationError {
+                                                  ColumnDefinition columnDefinition) throws ApplicationError,
+            SQLException {
         throw new ApplicationError("Unsupported SQL type " + columnDefinition.getSqlName());
     }
 
@@ -949,6 +863,20 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType, Type ballerinaType) {
         return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
+    }
+
+    @Override
+    public Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType) {
+        return getError(ballerinaType);
+    }
+
+    public Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType) {
+        return getError(ballerinaType);
+    }
+
+    private Object getError(Type ballerinaType) {
+        return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
+                ballerinaType + " for SQL Date data type.");
     }
 
     public BObject getBalStreamResultIterator() {

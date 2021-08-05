@@ -603,8 +603,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
         return new Object[]{structData, structuredSQLType};
     }
-    
-    protected void setXml(PreparedStatement preparedStatement, int index, BXml value) throws SQLException {
+
+    protected void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
+            throws SQLException, ApplicationError {
         preparedStatement.setObject(index, value.getTextValue(), Types.SQLXML);
     }
 
