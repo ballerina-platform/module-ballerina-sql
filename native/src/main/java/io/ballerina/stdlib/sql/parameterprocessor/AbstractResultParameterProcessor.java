@@ -42,6 +42,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Statement;
@@ -230,27 +231,32 @@ public abstract class AbstractResultParameterProcessor {
 
     public Object processArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws ApplicationError, SQLException {
-        return convertArray(resultSet.getArray(columnIndex), sqlType, ballerinaType);
+        Array array = resultSet.getArray(columnIndex);
+        return convertArray(array, sqlType, ballerinaType);
     }
 
     public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws ApplicationError, SQLException {
-        return convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
+        String string = resultSet.getString(columnIndex);
+        return convertChar(string, sqlType, ballerinaType);
     }
 
     public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
                                     String sqlTypeName) throws ApplicationError, SQLException {
-        return convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType, sqlTypeName);
+        String string = resultSet.getString(columnIndex);
+        return convertChar(string, sqlType, ballerinaType, sqlTypeName);
     }
 
     public Object processByteArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
                                          String sqlTypeName) throws ApplicationError, SQLException {
-        return convertByteArray(resultSet.getBytes(columnIndex), sqlType, ballerinaType, sqlTypeName);
+        byte[] bytes = resultSet.getBytes(columnIndex);
+        return convertByteArray(bytes, sqlType, ballerinaType, sqlTypeName);
     }
 
     public Object processBlobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws ApplicationError, SQLException {
-        return convertBlob(resultSet.getBlob(columnIndex), sqlType, ballerinaType);
+        Blob blob = resultSet.getBlob(columnIndex);
+        return convertBlob(blob, sqlType, ballerinaType);
     }
 
     public Object processClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
@@ -297,7 +303,8 @@ public abstract class AbstractResultParameterProcessor {
 
     public Object processRowIdResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
                                      String sqlTypeName) throws ApplicationError, SQLException {
-        return convertByteArray(resultSet.getRowId(columnIndex).getBytes(), sqlType,
+        RowId rowId = resultSet.getRowId(columnIndex);
+        return convertByteArray(rowId.getBytes(), sqlType,
                 ballerinaType, sqlTypeName);
     }
 
