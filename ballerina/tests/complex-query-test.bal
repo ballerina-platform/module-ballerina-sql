@@ -113,13 +113,12 @@ function testGetPrimitiveTypes3() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testGetPrimitiveTypesRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     SelectTestAlias value = check dbClient->queryRow(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias);
+	"SELECT int_type, long_type, double_type, boolean_type, string_type from DataTable WHERE row_id = 1");
 
     check dbClient.close();
 
@@ -130,6 +129,7 @@ function testGetPrimitiveTypesRecord() returns error? {
         boolean_type: true,
         string_type: "Hello"
     };
+    test:assertTrue(value is SelectTestAlias, "Received value type is different.");
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
@@ -164,13 +164,12 @@ function testGetPrimitiveTypesLessFields() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testGetPrimitiveTypesLessFieldsRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     SelectTestAlias2 value = check dbClient->queryRow(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias2);
+	"SELECT int_type, long_type, double_type, boolean_type, string_type from DataTable WHERE row_id = 1");
 
     check dbClient.close();
 
@@ -256,7 +255,7 @@ function testComplexTypesNil() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testComplexTypesNilRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -301,7 +300,7 @@ function testArrayRetrieval() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testArrayRetrievalRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -364,7 +363,7 @@ function testComplexWithStructDef() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testComplexWithStructDefRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -464,12 +463,12 @@ function testDateTime() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testDateTimeRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     ResultDates value = check dbClient->queryRow("SELECT date_type, time_type, timestamp_type, datetime_type"
-       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates);
+       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1");
     check dbClient.close();
 
     string dateTypeString = "2017-05-23";
@@ -529,12 +528,12 @@ function testDateTime2() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
-function testDateTime2Record() returns error? {
+function testDateTimeRecord2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     ResultDates2 value = check dbClient->queryRow("SELECT date_type, time_type, timestamp_type, datetime_type, "
-            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates2);
+            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1");
     check dbClient.close();
 
     time:Date dateTypeRecord = {year: 2017, month: 5, day: 23};
@@ -604,6 +603,39 @@ function testDateTime3() returns error? {
     
     queryResult = dbClient->query("SELECT timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
     result = queryResult.next();
+    test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp with Timezone type.");
+    check dbClient.close();
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function testDateTimeRecord3() returns error? {
+    record{}|error? result;
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+
+    result = dbClient->queryRow("SELECT date_type from DateTimeTypes where row_id = 1", ResultDates3);
+    test:assertTrue(result is error, "Error Expected for Date type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Date type.");
+
+    result = dbClient->queryRow("SELECT time_type from DateTimeTypes where row_id = 1", ResultDates3);
+    test:assertTrue(result is error, "Error Expected for Time type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time type.");
+
+    result = dbClient->queryRow("SELECT timestamp_type from DateTimeTypes where row_id = 1", ResultDates3);
+    test:assertTrue(result is error, "Error Expected for Timestamp type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp type.");
+
+    result = dbClient->queryRow("SELECT datetime_type from DateTimeTypes where row_id = 1", ResultDates3);
+    test:assertTrue(result is error, "Error Expected for Datetime type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Datetime type.");
+
+    result = dbClient->queryRow("SELECT time_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
+    test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time with Timezone type.");
+
+    result = dbClient->queryRow("SELECT timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp with Timezone type.");
     check dbClient.close();
@@ -748,12 +780,12 @@ function testGetArrayTypes() returns error? {
 }
 
 @test:Config {
-    groups: ["query", "query-complex-params"]
+    groups: ["queryRow", "query-complex-params"]
 }
 function testGetArrayTypesRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     ArrayRecord value = check dbClient->queryRow(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1");
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 1,
@@ -820,6 +852,40 @@ function testGetArrayTypes2() returns error? {
 }
 
 @test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function testGetArrayTypesRecord2() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    ArrayRecord value = check dbClient->queryRow(
+      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2");
+    check dbClient.close();
+    ArrayRecord expectedData = {
+        row_id: 2,
+        blob_array: [null, null],
+        smallint_array: [null, null],
+        int_array: [null, null],
+        long_array: [null, null],
+        float_array: [null, null],
+        double_array: [null, null],
+        decimal_array: [null, null],
+        real_array: [null, null],
+        numeric_array: [null, null],
+        varchar_array:[null, null],
+        char_array: [null, null],
+        nvarchar_array: [null, null],
+        boolean_array: [null, null],
+        bit_array: [null, null],
+        date_array: [null, null],
+        time_array: [null, null],
+        datetime_array: [null, null],
+        timestamp_array: [null, null],
+        time_tz_array: [null, null],
+        timestamp_tz_array: [null, null]
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+}
+
+@test:Config {
     groups: ["query", "query-complex-params"]
 }
 function testGetArrayTypes3() returns error? {
@@ -833,6 +899,41 @@ function testGetArrayTypes3() returns error? {
     ArrayRecord expectedData = {
         row_id: 3,
         blob_array: [null, <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46], 
+                    <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46]],
+        smallint_array: [null, 12, 232],
+        int_array: [null, 1, 2, 3],
+        long_array: [null, 100000000, 200000000, 300000000],
+        float_array: [null, 245.23, 5559.49, 8796.123],
+        double_array: [null, 245.23, 5559.49, 8796.123],
+        decimal_array: [null, 245.12, 5559.12, 8796.92],
+        real_array: [null, 199.33,2399.1],
+        numeric_array: [null, 11.11, 23.23],
+        varchar_array: [null, "Hello", "Ballerina"],
+        char_array: [null, "Hello          ", "Ballerina      "],
+        nvarchar_array: [null, "Hello", "Ballerina"],
+        boolean_array: [null, true, false, true],
+         bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
+        date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
+        time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
+        datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        timestamp_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
+        time_tz_array: [null, <time:TimeOfDay>{utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"}, <time:TimeOfDay>{utcOffset: {hours: 4, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+04:30"}],
+        timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}]
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function testGetArrayTypesRecord3() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    ArrayRecord value = check dbClient->queryRow(
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 3`);
+    check dbClient.close();
+    ArrayRecord expectedData = {
+        row_id: 3,
+        blob_array: [null, <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46],
                     <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46]],
         smallint_array: [null, 12, 232],
         int_array: [null, 1, 2, 3],
@@ -892,4 +993,93 @@ function testGetArrayTypes4() returns error? {
         timestamp_tz_array: ()
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function testGetArrayTypesRecord4() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    ArrayRecord value = check dbClient->queryRow(
+      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 4`);
+    check dbClient.close();
+    ArrayRecord expectedData = {
+        row_id: 4,
+        blob_array: (),
+        smallint_array: (),
+        int_array: (),
+        long_array: (),
+        float_array: (),
+        double_array: (),
+        decimal_array: (),
+        real_array: (),
+        numeric_array: (),
+        varchar_array:(),
+        char_array: (),
+        nvarchar_array: (),
+        boolean_array: (),
+        bit_array: (),
+        date_array: (),
+        time_array: (),
+        datetime_array: (),
+        timestamp_array: (),
+        time_tz_array: (),
+        timestamp_tz_array: ()
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function queryValueTypeString() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    string sqlQuery = "SELECT string_type from DataTable WHERE row_id = 1";
+    string returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, "Hello");
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function queryValueTypeBoolean() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    string sqlQuery = "SELECT boolean_type from DataTable WHERE row_id = 1";
+    boolean returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, true);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function queryValueTypeBlob() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    string sqlQuery = "SELECT blob_type from ComplexTypes WHERE row_id = 1";
+    byte[] returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, "wso2 ballerina blob test.".toBytes());
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function queryValueTypeClob() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    string sqlQuery = "SELECT clob_type from ComplexTypes WHERE row_id = 1";
+    string returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, "very long text");
+}
+
+@test:Config {
+    groups: ["queryRow", "query-complex-params"]
+}
+function queryValueTypeBinary() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    string sqlQuery = "SELECT binary_type from ComplexTypes WHERE row_id = 1";
+    byte[] returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, "wso2 ballerina binary test.".toBytes());
 }

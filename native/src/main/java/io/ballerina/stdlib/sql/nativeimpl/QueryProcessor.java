@@ -40,7 +40,6 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -179,7 +178,7 @@ public class QueryProcessor {
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
-            } catch (ApplicationError | IOException e) {
+            } catch (Throwable e) {
                 String message = e.getMessage();
                 if (message == null) {
                     message = e.getClass().getName();

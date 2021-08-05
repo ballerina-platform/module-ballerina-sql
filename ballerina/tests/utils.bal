@@ -106,9 +106,14 @@ isolated function getUntaintedData(record {}|error? value, string fieldName) ret
     return {};
 }
 
+function getMockClient(string url) returns MockClient | error {
+    MockClient dbClient = check new (url = url, user = user, password = password);
+    return dbClient;
+}
+
 function queryMockClient(string url, string|ParameterizedQuery sqlQuery)
 returns record {} | error? {
-    MockClient dbClient = check new (url = url, user = user, password = password);
+    MockClient dbClient = check getMockClient(url);
     stream<record{}, error?> streamData = dbClient->query(sqlQuery);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -119,18 +124,10 @@ returns record {} | error? {
 
 function queryRecordMockClient(string url, string|ParameterizedQuery sqlQuery)
 returns record {} | error {
-    MockClient dbClient = check new (url = url, user = user, password = password);
+    MockClient dbClient = check getMockClient(url);
     record {} resultRecord = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     return resultRecord;
-}
-
-function queryValueMockClient(string url, string|ParameterizedQuery sqlQuery)
-returns int | error {
-    MockClient dbClient = check new (url = url, user = user, password = password);
-    int result = check dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    return result;
 }
 
 function exec(string command, map<string> env = {},
