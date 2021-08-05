@@ -70,8 +70,8 @@ public class ErrorGenerator {
                 StringUtils.fromString(message), null,  null);
     }
 
-    public static BError getMultipleColumnsError(String message) {
-        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.MULTIPLE_COLUMNS_ERROR,
+    public static BError getTypeMismatchError(String message) {
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.TYPE_MISMATCH_ERROR,
                 StringUtils.fromString(message), null,  null);
     }
 

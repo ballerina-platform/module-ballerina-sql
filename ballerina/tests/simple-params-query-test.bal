@@ -811,8 +811,8 @@ function queryValueNegative() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
     int|error queryResult = queryValueMockClient(simpleParamsDb, sqlQuery);
     if queryResult is error {
-        test:assertTrue(queryResult is MultipleColumnsError, "Incorrect error type");
-        test:assertTrue(queryResult.message().endsWith("Query retrieved more than one column."), "Incorrect error message");
+        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
+        test:assertEquals(queryResult.message(), "Expected type to be 'int' but found 'record{}'");
     } else {
         test:assertFail("Expected error when query result contains multiple columns.");
     }

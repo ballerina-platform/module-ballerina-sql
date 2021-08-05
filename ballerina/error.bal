@@ -52,5 +52,5 @@ public type ApplicationError distinct Error;
 # Represents an error that occurs when a query retrieves no rows when at least one row was expected.
 public type NoRowsError distinct Error;
 
-# Represents an error that occurs when a query retrieves multiple columns when only one column was expected.
-public type MultipleColumnsError distinct Error;
+# Represents an error that occurs when a query retrieves a result that differs from the expected result type.
+public type TypeMismatchError distinct Error;

@@ -170,7 +170,8 @@ public class QueryProcessor {
                 } else {
                     // If the return data type is anything other than a record
                     if (resultSet.getMetaData().getColumnCount() > 1) {
-                        return ErrorGenerator.getMultipleColumnsError("Query retrieved more than one column.");
+                        return ErrorGenerator.getTypeMismatchError("Expected type to be '" + describingType +
+                                "' but found 'record{}'");
                     }
                     ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
                     return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
