@@ -605,7 +605,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     protected void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
-            throws SQLException {
+            throws SQLException, ApplicationError {
         preparedStatement.setObject(index, value.getTextValue(), Types.SQLXML);
     }
 
