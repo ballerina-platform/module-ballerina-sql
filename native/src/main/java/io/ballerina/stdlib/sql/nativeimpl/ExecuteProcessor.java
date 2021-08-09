@@ -192,7 +192,6 @@ public class ExecuteProcessor {
                     true, trxResourceManager);
         }
         return null;
-
     }
 
     private static Object nativeBatchExecuteExecutable(BObject client, BArray paramSQLStrings,
