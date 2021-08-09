@@ -131,6 +131,11 @@ public class QueryProcessor {
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor) {
+        Type describingType = ballerinaType.getDescribingType();
+        if (describingType.getTag() == TypeTags.UNION_TAG) {
+            return ErrorGenerator.getSQLApplicationError("Return type cannot be a union.");
+        }
+
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
@@ -159,15 +164,11 @@ public class QueryProcessor {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
 
-                Type describingType = ballerinaType.getDescribingType();
-
-                // If the return data type is a record
                 if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
                     RecordType recordConstraint = (RecordType) describingType;
                     List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
                     return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
                 } else {
-                    // If the return data type is anything other than a record
                     if (resultSet.getMetaData().getColumnCount() > 1) {
                         return ErrorGenerator.getTypeMismatchError("Expected type to be '" + describingType +
                                 "' but found 'record{}'");

@@ -983,7 +983,6 @@ function queryRecordDateStringInvalidParam() {
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     record{}|error result = trap queryRecordMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
-    io:println(result);
 
     if result is ApplicationError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
@@ -1443,15 +1442,15 @@ function queryRecordNegative1() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["queryRowx", "query-simple-params"]
 }
-function queryRecordNegative2() returns error? {
+function queryRecordNegative3() returns error? {
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name from DataTable WHERE row_id = ${rowId}`;
-    record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
+    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    record{}|int|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name from DataTable WHERE row_id =  ? ]."),
-                        "Incorrect error message");
+        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
+        test:assertEquals(queryResult.message(), "Return type cannot be a union.");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
     }
@@ -1479,7 +1478,7 @@ function queryRecordNoCheckNegative() returns error? {
 }
 function queryValue() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
-    string sqlQuery = "SELECT COUNT(*) from DataTable";
+    string sqlQuery = "SELECT COUNT(*) FROM DataTable";
     int count = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(count, 3);

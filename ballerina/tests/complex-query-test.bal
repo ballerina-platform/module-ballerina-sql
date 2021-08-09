@@ -323,7 +323,6 @@ function testArrayRetrievalRecord() returns error? {
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
 
-
 type TestTypeData record {
     int int_type;
     int[] int_array;
@@ -912,7 +911,7 @@ function testGetArrayTypes3() returns error? {
         char_array: [null, "Hello          ", "Ballerina      "],
         nvarchar_array: [null, "Hello", "Ballerina"],
         boolean_array: [null, true, false, true],
-         bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
+        bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
         date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
@@ -947,7 +946,7 @@ function testGetArrayTypesRecord3() returns error? {
         char_array: [null, "Hello          ", "Ballerina      "],
         nvarchar_array: [null, "Hello", "Ballerina"],
         boolean_array: [null, true, false, true],
-         bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
+        bit_array: [null, <byte[]>[32], <byte[]>[96], <byte[]>[128]],
         date_array: [null, <time:Date>{year: 2017, month: 2, day: 3}, <time:Date>{year: 2017, month: 2, day: 3}],
         time_array: [null, <time:TimeOfDay>{hour: 11, minute: 22, second: 42}, <time:TimeOfDay>{hour: 12, minute: 23, second: 45}],
         datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
