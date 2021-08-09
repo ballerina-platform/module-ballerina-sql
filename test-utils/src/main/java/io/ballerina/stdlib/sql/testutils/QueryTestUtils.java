@@ -33,13 +33,21 @@ public class QueryTestUtils {
     private QueryTestUtils() {
     }
 
-    public static BStream nativeQuery(BObject client, Object paramSQLString,
-                                      BTypedesc recordType) {
+    public static BStream nativeQuery(BObject client, Object paramSQLString, BTypedesc recordType) {
         DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
                 .getInstance();
         DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
                 .getInstance();
         return QueryProcessor.nativeQuery(client, paramSQLString, recordType, statementParametersProcessor,
+                resultParametersProcessor);
+    }
+
+    public static Object nativeQueryRow(BObject client, Object paramSQLString, BTypedesc recordType) {
+        DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
+                .getInstance();
+        DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
+                .getInstance();
+        return QueryProcessor.nativeQueryRow(client, paramSQLString, recordType, statementParametersProcessor,
                 resultParametersProcessor);
     }
 }

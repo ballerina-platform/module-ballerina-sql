@@ -17,11 +17,8 @@
  */
 package io.ballerina.stdlib.sql.utils;
 
-import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.StructureType;
-import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -34,7 +31,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.List;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -66,7 +62,7 @@ public class RecordIteratorUtils {
                 for (int i = 0; i < columnDefinitions.size(); i++) {
                     ColumnDefinition columnDefinition = columnDefinitions.get(i);
                     bStruct.put(fromString(columnDefinition.getBallerinaFieldName()),
-                            getResult(resultSet, i + 1, columnDefinition, resultParameterProcessor));
+                            Utils.getResult(resultSet, i + 1, columnDefinition, resultParameterProcessor));
                 }
                 return bStruct;
             } else {
@@ -80,108 +76,6 @@ public class RecordIteratorUtils {
         } catch (Throwable throwable) {
             return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
                     "SQL result. " + throwable.getMessage());
-        }
-    }
-
-    private static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
-                    DefaultResultParameterProcessor resultParameterProcessor)
-            throws SQLException, ApplicationError, IOException {
-        int sqlType = columnDefinition.getSqlType();
-        Type ballerinaType = columnDefinition.getBallerinaType();
-        switch (sqlType) {
-            case Types.ARRAY:
-                return resultParameterProcessor.processArrayResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.CHAR:
-            case Types.VARCHAR:
-            case Types.LONGVARCHAR:
-            case Types.NCHAR:
-            case Types.NVARCHAR:
-            case Types.LONGNVARCHAR:
-                if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    return resultParameterProcessor.processJsonResult(resultSet, columnIndex, sqlType, ballerinaType);
-                } else {
-                    return resultParameterProcessor.processCharResult(resultSet, columnIndex, sqlType, ballerinaType);
-                }
-            case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-                if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
-                    return resultParameterProcessor.processCharResult(
-                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
-                } else {
-                    return resultParameterProcessor.processByteArrayResult(
-                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
-                }
-            case Types.BLOB:
-                return resultParameterProcessor.processBlobResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.CLOB:
-                return resultParameterProcessor.processClobResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.NCLOB:
-                return resultParameterProcessor.processNClobResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.DATE:
-                return resultParameterProcessor.processDateResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.TIME:
-                return resultParameterProcessor.processTimeResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.TIME_WITH_TIMEZONE:
-                return resultParameterProcessor.processTimeWithTimezoneResult(resultSet, columnIndex, sqlType,
-                        ballerinaType);
-            case Types.TIMESTAMP:
-                return resultParameterProcessor.processTimestampResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-                return resultParameterProcessor.processTimestampWithTimezoneResult(resultSet, columnIndex, sqlType,
-                        ballerinaType);
-            case Types.ROWID:
-                return resultParameterProcessor.processRowIdResult(resultSet, columnIndex, sqlType, ballerinaType,
-                        "SQL RowID");
-            case Types.TINYINT:
-            case Types.SMALLINT:
-                return resultParameterProcessor.processIntResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.INTEGER:
-            case Types.BIGINT:
-                return resultParameterProcessor.processLongResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.REAL:
-            case Types.FLOAT:
-                return resultParameterProcessor.processFloatResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.DOUBLE:
-                return resultParameterProcessor.processDoubleResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.NUMERIC:
-            case Types.DECIMAL:
-                return resultParameterProcessor.processDecimalResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.BIT:
-            case Types.BOOLEAN:
-                return resultParameterProcessor.processBooleanResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.REF:
-            case Types.STRUCT:
-                return resultParameterProcessor.processStructResult(resultSet, columnIndex, sqlType, ballerinaType);
-            case Types.SQLXML:
-                return resultParameterProcessor.processXmlResult(resultSet, columnIndex, sqlType, ballerinaType);
-            default:
-                if (ballerinaType.getTag() == TypeTags.INT_TAG) {
-                    resultParameterProcessor.processIntResult(resultSet, columnIndex, sqlType, ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.STRING_TAG
-                        || ballerinaType.getTag() == TypeTags.ANY_TAG
-                        || ballerinaType.getTag() == TypeTags.ANYDATA_TAG) {
-                    return resultParameterProcessor.processCharResult(resultSet, columnIndex, sqlType, ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.BOOLEAN_TAG) {
-                    return resultParameterProcessor.processBooleanResult(resultSet, columnIndex, sqlType,
-                            ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
-                        ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
-                    return resultParameterProcessor.processByteArrayResult(resultSet, columnIndex, sqlType,
-                            ballerinaType, columnDefinition.getSqlName());
-                } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
-                    return resultParameterProcessor.processDoubleResult(resultSet, columnIndex, sqlType,
-                            ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.DECIMAL_TAG) {
-                    return resultParameterProcessor.processDecimalResult(resultSet, columnIndex, sqlType,
-                            ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.XML_TAG) {
-                    return resultParameterProcessor.processXmlResult(resultSet, columnIndex, sqlType, ballerinaType);
-                } else if (ballerinaType.getTag() == TypeTags.JSON_TAG) {
-                    return resultParameterProcessor.processJsonResult(resultSet, columnIndex, sqlType, ballerinaType);
-                }
-                return resultParameterProcessor.processCustomTypeFromResultSet(resultSet, columnIndex,
-                        columnDefinition);
         }
     }
 
