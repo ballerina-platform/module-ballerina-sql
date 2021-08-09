@@ -48,3 +48,9 @@ public type BatchExecuteError distinct Error & error<BatchExecuteErrorDetail>;
 
 # Represents an error originating from application-level causes.
 public type ApplicationError distinct Error;
+
+# Represents an error that occurs when a query retrieves no rows when at least one row was expected.
+public type NoRowsError distinct Error;
+
+# Represents an error that occurs when a query retrieves a result that differs from the expected result type.
+public type TypeMismatchError distinct Error;

@@ -301,3 +301,94 @@ function testQueryFromNullTable() returns error? {
     test:assertEquals(returnData["NUMERIC_TYPE"], ());
     test:assertEquals(returnData["REAL_TYPE"], ());
 }
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT int_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 2147483647);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeFloat() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT float_type from NumericTypes WHERE id = 1";
+    float returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 1234.567);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeDecimal() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT decimal_type from NumericTypes WHERE id = 1";
+    decimal returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    decimal decimalValue = 1234.567;
+    test:assertEquals(returnValue, decimalValue);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeBigInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT bigint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 9223372036854774807);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeSmallInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT smallint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 32767);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeTinyInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT tinyint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 127);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeBit() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT bit_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 1);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeNumeric() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT numeric_type from NumericTypes WHERE id = 1";
+    decimal returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    decimal decimalValue = 1234.567;
+    test:assertEquals(returnValue, decimalValue);
+}
+

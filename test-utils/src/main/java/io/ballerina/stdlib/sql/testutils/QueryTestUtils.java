@@ -43,4 +43,13 @@ public class QueryTestUtils {
         return QueryProcessor.nativeQuery(environment, client, paramSQLString, recordType, statementParametersProcessor,
                 resultParametersProcessor);
     }
+
+    public static Object nativeQueryRow(BObject client, Object paramSQLString, BTypedesc recordType) {
+        DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
+                .getInstance();
+        DefaultResultParameterProcessor resultParametersProcessor = DefaultResultParameterProcessor
+                .getInstance();
+        return QueryProcessor.nativeQueryRow(client, paramSQLString, recordType, statementParametersProcessor,
+                resultParametersProcessor);
+    }
 }
