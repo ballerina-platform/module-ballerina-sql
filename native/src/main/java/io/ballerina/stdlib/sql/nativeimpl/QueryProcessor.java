@@ -149,18 +149,37 @@ public class QueryProcessor {
         }
     }
 
-    public static Object nativeQueryRow(
+    public static Object nativeQueryRow(Environment env, BObject client, Object paramSQLString,
+            BTypedesc ballerinaType, AbstractStatementParameterProcessor statementParameterProcessor,
+            AbstractResultParameterProcessor resultParameterProcessor) {
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                Object resultStream =
+                        nativeQueryRowExecutable(client, paramSQLString, ballerinaType, statementParameterProcessor,
+                                resultParameterProcessor, false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeQueryRowExecutable(client, paramSQLString, ballerinaType, statementParameterProcessor,
+                    resultParameterProcessor, true, trxResourceManager);
+        }
+        return null;
+    }
+
+    private static Object nativeQueryRowExecutable(
             BObject client, Object paramSQLString,
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
+            AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
+            TransactionResourceManager trxResourceManager) {
         Type describingType = ballerinaType.getDescribingType();
         if (describingType.getTag() == TypeTags.UNION_TAG) {
             return ErrorGenerator.getSQLApplicationError("Return type cannot be a union.");
         }
 
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
-        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
@@ -177,7 +196,7 @@ public class QueryProcessor {
                 } else {
                     sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
                 if (paramSQLString instanceof BObject) {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
@@ -210,7 +229,7 @@ public class QueryProcessor {
                 return ErrorGenerator.getSQLApplicationError(
                         "Error while executing SQL query: " + sqlQuery + ". " + message);
             } finally {
-                Utils.closeResources(trxResourceManager, resultSet, statement, connection);
+                Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }
         }
         return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
