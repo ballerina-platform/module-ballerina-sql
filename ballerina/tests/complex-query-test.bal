@@ -384,7 +384,6 @@ function testComplexWithStructDefRecord() returns error? {
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
 
-
 type ResultMap record {
     int[] int_array;
     int[] long_array;
@@ -487,7 +486,6 @@ function testDateTimeRecord() returns error? {
     test:assertEquals(value, expected, "Expected record did not match.");
 }
 
-
 type ResultDates2 record {
     time:Date date_type;
     time:TimeOfDay time_type;
@@ -552,7 +550,6 @@ function testDateTimeRecord2() returns error? {
     };
     test:assertEquals(value, expected, "Expected record did not match.");
 }
-
 
 type RandomType record {|
     int x;

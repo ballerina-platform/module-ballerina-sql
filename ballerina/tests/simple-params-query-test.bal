@@ -1442,14 +1442,14 @@ function queryRecordNegative1() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRowx", "query-simple-params"]
+    groups: ["queryRow", "query-simple-params"]
 }
-function queryRecordNegative3() returns error? {
+function queryRecordNegative2() returns error? {
     int rowId = 1;
+    MockClient dbClient = check getMockClient(simpleParamsDb);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    record{}|int|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
+    record{}|int|error queryResult = dbClient->queryRow(sqlQuery);
     if queryResult is error {
-        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
         test:assertEquals(queryResult.message(), "Return type cannot be a union.");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
@@ -1487,7 +1487,7 @@ function queryValue() returns error? {
 @test:Config {
     groups: ["queryRow", "query-simple-params"]
 }
-function queryValueNegative() returns error? {
+function queryValueNegative1() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
@@ -1504,7 +1504,7 @@ function queryValueNegative() returns error? {
 @test:Config {
     groups: ["queryRow", "query-simple-params"]
 }
-function queryValueNegative3() returns error? {
+function queryValueNegative2() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT string_type from DataTable WHERE row_id = ${rowId}`;
