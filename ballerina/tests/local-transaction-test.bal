@@ -479,6 +479,117 @@ isolated function testLocalTransactionSuccessWithFailedHelper(string status,Mock
     return a;
 }
 
+@test:Config {
+    groups: ["transaction"],
+    dependsOn: [testLocalTransactionSuccessWithFailed]
+}
+function testLocalTransactionWithBatchExecute() returns error? {
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    int retryVal = -1;
+    boolean committedBlockExecuted = false;
+    transactions:Info transInfo;
+    var data = [
+            {firstName:"James", lastName:"Clerk", registrationID:301, creditLimit:5000.75 , country:"USA" },
+            {firstName:"James", lastName:"Clerk", registrationID:301, creditLimit:5000.75 , country:"USA" }
+    ];
+    ParameterizedQuery[] sqlQueries =
+        from var row in data
+        select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+                                VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+                                ${row.country})`;
+    retry<SQLDefaultRetryManager>(1) transaction {
+        var res = check dbClient->batchExecute(sqlQueries);
+        transInfo = transactions:info();
+        var commitResult = commit;
+        if(commitResult is ()){
+            committedBlockExecuted = true;
+        }
+    }
+    retryVal = transInfo.retryNumber;
+    //check whether update action is performed
+    int count = check getCount(dbClient, "301");
+    check dbClient.close();
+
+    test:assertEquals(retryVal, 0);
+    test:assertEquals(count, 2);
+    test:assertEquals(committedBlockExecuted, true);
+}
+
+@test:Config {
+    groups: ["transaction"],
+    dependsOn: [testLocalTransactionWithBatchExecute]
+}
+function testLocalTransactionWithQuery() returns error? {
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+        int retryVal = -1;
+        boolean committedBlockExecuted = false;
+        transactions:Info transInfo;
+        var data = [
+                {firstName:"James", lastName:"Clerk", registrationID:302, creditLimit:5000.75 , country:"USA" },
+                {firstName:"James", lastName:"Clerk", registrationID:302, creditLimit:5000.75 , country:"USA" }
+        ];
+        ParameterizedQuery[] sqlQueries =
+            from var row in data
+            select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+                                    VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+                                    ${row.country})`;
+        int count = 0;
+        retry<SQLDefaultRetryManager>(1) transaction {
+            var res = check dbClient->batchExecute(sqlQueries);
+            transInfo = transactions:info();
+            var commitResult = commit;
+            if(commitResult is ()){
+                committedBlockExecuted = true;
+            }
+            count = check getCount(dbClient, "302");
+        }
+        retryVal = transInfo.retryNumber;
+        //check whether update action is performed
+        check dbClient.close();
+
+        test:assertEquals(retryVal, 0);
+        test:assertEquals(count, 2);
+        test:assertEquals(committedBlockExecuted, true);
+}
+
+@test:Config {
+    groups: ["transaction"],
+    dependsOn: [testLocalTransactionWithQuery]
+}
+function testLocalTransactionWithQueryRow() returns error? {
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+        int retryVal = -1;
+        boolean committedBlockExecuted = false;
+        transactions:Info transInfo;
+        var data = [
+                {firstName:"James", lastName:"Clerk", registrationID:303, creditLimit:5000.75 , country:"USA" },
+                {firstName:"James", lastName:"Clerk", registrationID:303, creditLimit:5000.75 , country:"USA" }
+        ];
+        ParameterizedQuery[] sqlQueries =
+            from var row in data
+            select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+                                    VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+                                    ${row.country})`;
+        int count = 0;
+        retry<SQLDefaultRetryManager>(1) transaction {
+            var res = check dbClient->batchExecute(sqlQueries);
+            transInfo = transactions:info();
+            var commitResult = commit;
+            if(commitResult is ()){
+                committedBlockExecuted = true;
+            }
+            count = check dbClient->queryRow(
+                                      `Select COUNT(*) as countval from Customers where registrationID = 303`);
+        }
+        retryVal = transInfo.retryNumber;
+        //check whether update action is performed
+        check dbClient.close();
+
+        test:assertEquals(retryVal, 0);
+        test:assertEquals(count, 2);
+        test:assertEquals(committedBlockExecuted, true);
+}
+
 isolated function getCount(MockClient dbClient, string id) returns int | error {
     stream<TransactionResultCount, Error?> streamData = dbClient->query(
         `Select COUNT(*) as countval from Customers where registrationID = ${id}`);
