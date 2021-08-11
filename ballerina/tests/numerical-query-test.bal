@@ -78,8 +78,7 @@ function testQuery() returns error? {
 }
 function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericTypeForQuery);
-    stream<NumericTypeForQuery, Error> streamData = <stream<NumericTypeForQuery, Error>>streamResult;
+    stream<NumericTypeForQuery, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericTypeForQuery);
     NumericTypeForQuery? returnData = ();
     error? e = streamData.forEach(function(NumericTypeForQuery data) {
         returnData = data;
@@ -116,8 +115,7 @@ type NumericInvalidColumn record {|
 }
 function testQueryNumericInvalidColumnRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericInvalidColumn);
-    stream<NumericInvalidColumn, Error> streamData = <stream<NumericInvalidColumn, Error>> streamResult;
+    stream<NumericInvalidColumn, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericInvalidColumn);
     record {|NumericInvalidColumn value;|}|Error? data = streamData.next();
     check streamData.close();
     check dbClient.close();
@@ -144,8 +142,7 @@ type NumericOptionalType record {
 }
 function testQueryNumericOptionalTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericOptionalType);
-    stream<NumericOptionalType, Error> streamData = <stream<NumericOptionalType, Error>>streamResult;
+    stream<NumericOptionalType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericOptionalType);
     record {|NumericOptionalType value;|}? data = check streamData.next();
     check streamData.close();
     NumericOptionalType? returnData = data?.value;
@@ -181,8 +178,7 @@ type NumericUnionType record {
 }
 function testQueryNumericUnionTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericUnionType);
-    stream<NumericUnionType, Error> streamData = <stream<NumericUnionType, Error>>streamResult;
+    stream<NumericUnionType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {|NumericUnionType value;|}? data = check streamData.next();
     check streamData.close();
     NumericUnionType? returnData = data?.value;
@@ -219,8 +215,7 @@ type NumericStringType record {
 }
 function testQueryNumericStringTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericStringType);
-    stream<NumericStringType, Error> streamData = <stream<NumericStringType, Error>>streamResult;
+    stream<NumericStringType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {|NumericStringType value;|}? data = check streamData.next();
     check streamData.close();
     NumericStringType? returnData = data?.value;
@@ -257,8 +252,7 @@ type NumericCustomType record {
 }
 function testQueryNumericCustomTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericCustomType);
-    stream<NumericCustomType, Error> streamData = <stream<NumericCustomType, Error>>streamResult;
+    stream<NumericCustomType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericCustomType);
     record {|NumericCustomType value;|}? data = check streamData.next();
     check streamData.close();
     NumericCustomType? returnData = data?.value;
