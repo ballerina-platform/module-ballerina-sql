@@ -536,12 +536,12 @@ function testLocalTransactionWithQuery() returns error? {
         int count = 0;
         retry<SQLDefaultRetryManager>(1) transaction {
             var res = check dbClient->batchExecute(sqlQueries);
+            count = check getCount(dbClient, "302");
             transInfo = transactions:info();
             var commitResult = commit;
             if(commitResult is ()){
                 committedBlockExecuted = true;
             }
-            count = check getCount(dbClient, "302");
         }
         retryVal = transInfo.retryNumber;
         //check whether update action is performed
@@ -573,13 +573,12 @@ function testLocalTransactionWithQueryRow() returns error? {
         int count = 0;
         retry<SQLDefaultRetryManager>(1) transaction {
             var res = check dbClient->batchExecute(sqlQueries);
+            count = check dbClient->queryRow(`Select COUNT(*) as countval from Customers where registrationID = 303`);
             transInfo = transactions:info();
             var commitResult = commit;
             if(commitResult is ()){
                 committedBlockExecuted = true;
             }
-            count = check dbClient->queryRow(
-                                      `Select COUNT(*) as countval from Customers where registrationID = 303`);
         }
         retryVal = transInfo.retryNumber;
         //check whether update action is performed
