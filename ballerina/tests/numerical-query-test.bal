@@ -303,7 +303,7 @@ function testQueryFromNullTable() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeInt() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -314,7 +314,7 @@ function queryValueTypeInt() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeFloat() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -325,7 +325,7 @@ function queryValueTypeFloat() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeDecimal() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -337,7 +337,7 @@ function queryValueTypeDecimal() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeBigInt() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -348,7 +348,7 @@ function queryValueTypeBigInt() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeSmallInt() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -359,7 +359,7 @@ function queryValueTypeSmallInt() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeTinyInt() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -370,7 +370,7 @@ function queryValueTypeTinyInt() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeBit() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
@@ -381,7 +381,7 @@ function queryValueTypeBit() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-numeric-params"]
+    groups: ["query-row", "query-row-numeric-params"]
 }
 function queryValueTypeNumeric() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);

@@ -113,7 +113,7 @@ function testGetPrimitiveTypes3() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetPrimitiveTypesRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -164,7 +164,7 @@ function testGetPrimitiveTypesLessFields() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetPrimitiveTypesLessFieldsRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -255,7 +255,7 @@ function testComplexTypesNil() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testComplexTypesNilRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -300,7 +300,7 @@ function testArrayRetrieval() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testArrayRetrievalRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -362,7 +362,7 @@ function testComplexWithStructDef() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testComplexWithStructDefRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -461,7 +461,7 @@ function testDateTime() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testDateTimeRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -525,7 +525,7 @@ function testDateTime2() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testDateTimeRecord2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -605,7 +605,7 @@ function testDateTime3() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testDateTimeRecord3() returns error? {
     record{}|error? result;
@@ -776,7 +776,7 @@ function testGetArrayTypes() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetArrayTypesRecord() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -848,7 +848,7 @@ function testGetArrayTypes2() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetArrayTypesRecord2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -920,7 +920,7 @@ function testGetArrayTypes3() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetArrayTypesRecord3() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -992,7 +992,7 @@ function testGetArrayTypes4() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function testGetArrayTypesRecord4() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -1026,7 +1026,7 @@ function testGetArrayTypesRecord4() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function queryValueTypeString() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -1037,7 +1037,7 @@ function queryValueTypeString() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function queryValueTypeBoolean() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -1048,7 +1048,7 @@ function queryValueTypeBoolean() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function queryValueTypeBlob() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -1059,7 +1059,7 @@ function queryValueTypeBlob() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function queryValueTypeClob() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
@@ -1070,7 +1070,7 @@ function queryValueTypeClob() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-complex-params"]
+    groups: ["query-row", "query-row-complex-params"]
 }
 function queryValueTypeBinary() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);

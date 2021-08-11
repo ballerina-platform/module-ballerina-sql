@@ -46,7 +46,7 @@ function querySingleIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordSingleIntParam() returns error? {
     int rowId = 1;
@@ -65,7 +65,7 @@ function queryDoubleIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDoubleIntParam() returns error? {
     int rowId = 1;
@@ -85,7 +85,7 @@ function queryIntAndLongParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordIntAndLongParam() returns error? {
     int rowId = 1;
@@ -104,7 +104,7 @@ function queryStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordStringParam() returns error? {
     string stringType = "Hello";
@@ -123,7 +123,7 @@ function queryIntAndStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordIntAndStringParam() returns error? {
     string stringType = "Hello";
@@ -142,7 +142,7 @@ function queryDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDoubleParam() returns error? {
     float doubleType = 2139095039.0;
@@ -160,7 +160,7 @@ function queryFloatParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordFloatParam() returns error? {
     float floatType = 123.34;
@@ -180,7 +180,7 @@ function queryDoubleAndFloatParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDoubleAndFloatParam()  returns error? {
     float floatType = 123.34;
@@ -200,7 +200,7 @@ function queryDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDecimalParam()  returns error? {
     decimal decimalValue = 23.45;
@@ -219,7 +219,7 @@ function queryDecimalAnFloatParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDecimalAnFloatParam()  returns error? {
     decimal decimalValue = 23.45;
@@ -238,7 +238,7 @@ function queryTypeVarcharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordVarcharStringParam()  returns error? {
     VarcharValue typeVal = new ("Hello");
@@ -256,7 +256,7 @@ function queryTypeCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeCharStringParam()  returns error? {
     CharValue typeVal = new ("Hello");
@@ -274,7 +274,7 @@ function queryTypeNCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
@@ -292,7 +292,7 @@ function queryTypeNVarCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNVarCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
@@ -301,7 +301,7 @@ function queryRecordTypeNVarCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryx", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryTypeVarCharIntegerParam() returns error? {
     int intVal = 1;
@@ -326,7 +326,7 @@ function queryTypeVarCharIntegerParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeVarCharIntegerParam()  returns error? {
     int intVal = 1;
@@ -360,7 +360,7 @@ function queryTypeBooleanBooleanParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBooleanBooleanParam() returns error? {
     BooleanValue typeVal = new (true);
@@ -378,7 +378,7 @@ function queryTypeBitIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBitIntParam() returns error? {
     BitValue typeVal = new (1);
@@ -396,7 +396,7 @@ function queryTypeBitStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBitStringParam() returns error? {
     BitValue typeVal = new (true);
@@ -417,7 +417,7 @@ function queryTypeBitInvalidIntParam() {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBitInvalidIntParam() returns error? {
     BitValue typeVal = new (12);
@@ -433,7 +433,7 @@ type DataTableRecord record {
 };
 
 @test:Config {
-    groups: ["query", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryIntTypeInvalidParam() returns error? {
     int rowId = 1;
@@ -453,7 +453,7 @@ function queryIntTypeInvalidParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordIntTypeInvalidParam() returns error? {
     int rowId = 1;
@@ -480,7 +480,7 @@ function queryTypeIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeIntIntParam() returns error? {
     IntegerValue typeVal = new (2147483647);
@@ -498,7 +498,7 @@ function queryTypeTinyIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeTinyIntIntParam() returns error? {
     SmallIntValue typeVal = new (127);
@@ -516,7 +516,7 @@ function queryTypeSmallIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeSmallIntIntParam() returns error? {
     SmallIntValue typeVal = new (32767);
@@ -534,7 +534,7 @@ function queryTypeBigIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBigIntIntParam() returns error? {
     BigIntValue typeVal = new (9223372036854774807);
@@ -552,7 +552,7 @@ function queryTypeDoubleDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeDoubleDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
@@ -578,7 +578,7 @@ function queryTypeDoubleIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeDoubleIntParam() returns error? {
     DoubleValue typeVal = new (1234);
@@ -600,7 +600,7 @@ function queryTypeDoubleDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeDoubleDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
@@ -619,7 +619,7 @@ function queryTypeFloatDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeFloatDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
@@ -637,7 +637,7 @@ function queryTypeRealDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeRealDoubleParam() returns error? {
     RealValue typeVal = new (1234.567);
@@ -655,7 +655,7 @@ function queryTypeNumericDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNumericDoubleParam() returns error? {
     NumericValue typeVal = new (1234.567);
@@ -681,7 +681,7 @@ function queryTypeNumericIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNumericIntParam() returns error? {
     NumericValue typeVal = new (1234);
@@ -703,7 +703,7 @@ function queryTypeNumericDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNumericDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
@@ -722,7 +722,7 @@ function queryTypeDecimalDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeDecimalDoubleParam() returns error? {
     DecimalValue typeVal = new (1234.567);
@@ -741,7 +741,7 @@ function queryTypeDecimalDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeDecimalDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
@@ -761,7 +761,7 @@ function queryByteArrayParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordByteArrayParam() returns error? {
     record {} value = check queryRecordMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -782,7 +782,7 @@ function queryTypeBinaryByteParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBinaryByteParam() returns error? {
     record {} value = check queryRecordMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -803,7 +803,7 @@ function queryTypeBinaryReadableByteChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeBinaryReadableByteChannelParam() returns error? {
     io:ReadableByteChannel byteChannel = check getByteColumnChannel();
@@ -823,7 +823,7 @@ function queryTypeVarBinaryReadableByteChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
     io:ReadableByteChannel byteChannel = check getByteColumnChannel();
@@ -844,7 +844,7 @@ function queryTypeTinyBlobByteParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeTinyBlobByteParam() returns error? {
     record {}|error? value = check queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
@@ -874,7 +874,7 @@ function queryTypeClobStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeClobStringParam() returns error? {
     ClobValue typeVal = new ("very long text");
@@ -893,7 +893,7 @@ function queryTypeClobReadableCharChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeClobReadableCharChannelParam() returns error? {
     io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
@@ -913,7 +913,7 @@ function queryTypeNClobReadableCharChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTypeNClobReadableCharChannelParam() returns error? {
     io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
@@ -932,7 +932,7 @@ function queryDateStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDateStringParam() returns error? {
     DateValue typeVal = new ("2017-02-03");
@@ -950,7 +950,7 @@ function queryDateString2Param() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDateString2Param() returns error? {
     DateValue typeVal = new ("2017-2-3");
@@ -976,7 +976,7 @@ function queryDateStringInvalidParam() {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
@@ -1003,7 +1003,7 @@ function queryDateTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDateTimeRecordParam() returns error? {
     time:Date date = {year: 2017, month:2, day: 3};
@@ -1024,7 +1024,7 @@ function queryTimestampWithTimeZoneRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
     time:Civil dateTime = {utcOffset: {hours: +8, minutes: 0}, year:2008, month:8, day:8, hour: 20, minute: 8,
@@ -1044,7 +1044,7 @@ function queryTimeStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimeStringParam() returns error? {
     TimeValue typeVal = new ("11:35:45");
@@ -1070,7 +1070,7 @@ function queryTimeStringInvalidParam() {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
@@ -1097,7 +1097,7 @@ function queryTimeTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimeTimeRecordParam() returns error? {
     time:TimeOfDay date = {hour: 11, minute: 35, second:45};
@@ -1117,7 +1117,7 @@ function queryTimeTimeRecordWithTimeZoneParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
     time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
@@ -1136,7 +1136,7 @@ function queryTimestampStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampStringParam() returns error? {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
@@ -1162,7 +1162,7 @@ function queryTimestampStringInvalidParam() {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
@@ -1189,7 +1189,7 @@ function queryTimestampTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampTimeRecordParam() returns error? {
     time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
@@ -1209,7 +1209,7 @@ function queryTimestampTimeRecordWithTimeZoneParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
     time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
@@ -1229,7 +1229,7 @@ function queryDateTimeTimeRecordWithTimeZoneParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
     time:Civil date = {year: 2017, month:2, day: 3, hour: 11, minute: 53, second:0};
@@ -1249,7 +1249,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordTimestampTimeRecordWithTimeZone2Param() returns error? {
     time:Utc date = check time:utcFromString("2008-08-08T20:08:08+08:00");
@@ -1329,7 +1329,7 @@ function queryArrayBasicParams() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordArrayBasicParams() returns error? {
     int[] paraInt = [1, 2, 3];
@@ -1387,7 +1387,7 @@ function queryArrayBasicNullParams() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordArrayBasicNullParams() returns error? {
     ParameterizedQuery sqlQuery =
@@ -1411,7 +1411,7 @@ function queryRecordArrayBasicNullParams() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordNoCheck() returns error? {
     int rowId = 1;
@@ -1427,7 +1427,7 @@ function queryRecordNoCheck() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["queryRow", "query-row-simple-params"]
 }
 function queryRecordNegative1() returns error? {
     int rowId = 1;
@@ -1442,7 +1442,7 @@ function queryRecordNegative1() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordNegative2() returns error? {
     int rowId = 1;
@@ -1457,7 +1457,7 @@ function queryRecordNegative2() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordNoCheckNegative() returns error? {
     int rowId = 1;
@@ -1474,7 +1474,7 @@ function queryRecordNoCheckNegative() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryValue() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
@@ -1485,7 +1485,7 @@ function queryValue() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryValueNegative1() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
@@ -1502,7 +1502,7 @@ function queryValueNegative1() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryValueNegative2() returns error? {
     MockClient dbClient = check getMockClient(simpleParamsDb);
