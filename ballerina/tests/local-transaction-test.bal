@@ -401,7 +401,7 @@ function testLocalTransactionFailed() returns error? {
     test:assertEquals(count, 0);
 }
 
-function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
+isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
     transactions:Info transInfo;
     int i = 0;
 
@@ -431,7 +431,7 @@ function testLocalTransactionFailedHelper(MockClient dbClient) returns string|er
     }
 }
 
-function getError() returns error? {
+isolated function getError() returns error? {
     lock {
        return error(rollbackOut);
     }
@@ -480,13 +480,13 @@ isolated function testLocalTransactionSuccessWithFailedHelper(string status,Mock
 }
 
 isolated function getCount(MockClient dbClient, string id) returns int | error {
-    stream<TransactionResultCount, Error> streamData = <stream<TransactionResultCount, Error>> dbClient->query("Select COUNT(*) as " +
-        "countval from Customers where registrationID = "+ id, TransactionResultCount);
-        record {|TransactionResultCount value;|}? data = check streamData.next();
-        check streamData.close();
-        TransactionResultCount? value = data?.value;
-        if(value is TransactionResultCount){
-           return value["COUNTVAL"];
-        }
-        return 0;
+    stream<TransactionResultCount, Error?> streamData = dbClient->query(
+        `Select COUNT(*) as countval from Customers where registrationID = ${id}`);
+    record {|TransactionResultCount value;|}? data = check streamData.next();
+    check streamData.close();
+    TransactionResultCount? value = data?.value;
+    if(value is TransactionResultCount){
+       return value["COUNTVAL"];
+    }
+    return 0;
 }

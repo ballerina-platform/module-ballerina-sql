@@ -129,7 +129,6 @@ function testGetPrimitiveTypesRecord() returns error? {
         boolean_type: true,
         string_type: "Hello"
     };
-    test:assertTrue(value is SelectTestAlias, "Received value type is different.");
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
@@ -181,7 +180,6 @@ function testGetPrimitiveTypesLessFieldsRecord() returns error? {
         STRING_TYPE: "Hello"
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    test:assertTrue(value is SelectTestAlias2, "Received value type is different.");
 }
 
 @test:Config {
