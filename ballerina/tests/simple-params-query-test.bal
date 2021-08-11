@@ -23,14 +23,14 @@ boolean initSimpleParams = false;
 boolean cleanSimpleParams = false;
 
 @test:BeforeGroups {
-	value: ["query-simple-params"]	
+	value: ["query-simple-params", "query-row-simple-params"]
 } 
 function initQueryParamsContainer() returns error? {
 	check initializeDockerContainer("sql-query-params", "querysimpleparams", "9010", "query", "simple-params-test-data.sql");
 }
 
 @test:AfterGroups {
-    value: ["query-simple-params"]
+    value: ["query-simple-params", "query-row-simple-params"]
 }
 function cleanQueryParamsContainer() returns error? {
 	check cleanDockerContainer("sql-query-params");
@@ -1427,7 +1427,7 @@ function queryRecordNoCheck() returns error? {
 }
 
 @test:Config {
-    groups: ["queryRow", "query-row-simple-params"]
+    groups: ["query-row", "query-row-simple-params"]
 }
 function queryRecordNegative1() returns error? {
     int rowId = 1;

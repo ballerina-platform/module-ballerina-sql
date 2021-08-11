@@ -74,6 +74,7 @@ Execute the commands below to build from source.
    execute | execute-basic <br> execute-params
    batch-execute | batch-execute 
    query | query-simple-params<br>query-numeric-params<br>query-complex-params
+   query-row | query-row-simple-params<br>query-row-numeric-params<br>query-row-complex-params
 
 5. To disable some specific test groups:
 
