@@ -78,7 +78,7 @@ function testQuery() returns error? {
 }
 function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericTypeForQuery, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericTypeForQuery);
+    stream<NumericTypeForQuery, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     NumericTypeForQuery? returnData = ();
     error? e = streamData.forEach(function(NumericTypeForQuery data) {
         returnData = data;
@@ -115,7 +115,7 @@ type NumericInvalidColumn record {|
 }
 function testQueryNumericInvalidColumnRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericInvalidColumn, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericInvalidColumn);
+    stream<NumericInvalidColumn, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericInvalidColumn value;|}|Error? data = streamData.next();
     check streamData.close();
     check dbClient.close();
@@ -142,7 +142,7 @@ type NumericOptionalType record {
 }
 function testQueryNumericOptionalTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericOptionalType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericOptionalType);
+    stream<NumericOptionalType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericOptionalType value;|}? data = check streamData.next();
     check streamData.close();
     NumericOptionalType? returnData = data?.value;
@@ -252,7 +252,7 @@ type NumericCustomType record {
 }
 function testQueryNumericCustomTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericCustomType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes", NumericCustomType);
+    stream<NumericCustomType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericCustomType value;|}? data = check streamData.next();
     check streamData.close();
     NumericCustomType? returnData = data?.value;
@@ -385,4 +385,3 @@ function queryValueTypeNumeric() returns error? {
     decimal decimalValue = 1234.567;
     test:assertEquals(returnValue, decimalValue);
 }
-
