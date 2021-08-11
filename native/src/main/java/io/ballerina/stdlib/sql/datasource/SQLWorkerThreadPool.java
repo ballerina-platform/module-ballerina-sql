@@ -27,6 +27,9 @@ import java.util.concurrent.ThreadFactory;
  */
 public class SQLWorkerThreadPool {
 
+    private SQLWorkerThreadPool(){
+    }
+
     public static final ExecutorService SQL_EXECUTOR_SERVICE = Executors.newCachedThreadPool(new SQLThreadFactory());
 
     static class SQLThreadFactory implements ThreadFactory {
