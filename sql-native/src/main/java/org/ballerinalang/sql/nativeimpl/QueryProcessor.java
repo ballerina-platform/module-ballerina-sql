@@ -104,8 +104,7 @@ public class QueryProcessor {
                 Utils.closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
-                return ValueCreator.createStreamValue(TypeCreator.createStreamType(Utils.getDefaultStreamConstraint()),
-                        createRecordIterator(errorValue));
+                return getErrorStream(recordType, errorValue);
             } catch (ApplicationError applicationError) {
                 Utils.closeResources(trxResourceManager, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());

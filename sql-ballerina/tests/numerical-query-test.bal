@@ -301,3 +301,22 @@ function testQueryFromNullTable() returns error? {
     test:assertEquals(returnData["NUMERIC_TYPE"], ());
     test:assertEquals(returnData["REAL_TYPE"], ());
 }
+
+type DataTable record {
+    int int_type;
+};
+
+@test:Config {
+    groups: ["query", "query-numeric-params"]
+}
+function testQueryDatabaseError() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    stream<DataTable, Error> streamData =
+            <stream<DataTable, Error>> dbClient->query(`SELECT int_type from DataTable1`, DataTable);
+
+    Error? e = streamData.forEach(function(DataTable data) {
+       // No need to do anything
+    });
+    check dbClient.close();
+    test:assertTrue(e is Error);
+}
