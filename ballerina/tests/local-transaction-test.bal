@@ -68,7 +68,7 @@ function testLocalTransaction() returns error? {
                                 "values ('James', 'Clerk', 200, 5000.75, 'USA')");
         transInfo = transactions:info();
         var commitResult = commit;
-        if(commitResult is ()){
+        if commitResult is () {
             committedBlockExecuted = true;
         }
     }
@@ -501,7 +501,7 @@ function testLocalTransactionWithBatchExecute() returns error? {
         var res = check dbClient->batchExecute(sqlQueries);
         transInfo = transactions:info();
         var commitResult = commit;
-        if(commitResult is ()){
+        if commitResult is () {
             committedBlockExecuted = true;
         }
     }
@@ -539,7 +539,7 @@ function testLocalTransactionWithQuery() returns error? {
             count = check getCount(dbClient, "302");
             transInfo = transactions:info();
             var commitResult = commit;
-            if(commitResult is ()){
+            if commitResult is () {
                 committedBlockExecuted = true;
             }
         }
@@ -576,7 +576,7 @@ function testLocalTransactionWithQueryRow() returns error? {
             count = check dbClient->queryRow(`Select COUNT(*) as countval from Customers where registrationID = 303`);
             transInfo = transactions:info();
             var commitResult = commit;
-            if(commitResult is ()){
+            if commitResult is () {
                 committedBlockExecuted = true;
             }
         }
