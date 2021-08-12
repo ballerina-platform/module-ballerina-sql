@@ -19,8 +19,6 @@ import ballerina/time;
 import ballerina/test;
 
 string simpleParamsDb = urlPrefix + "9010/querysimpleparams";
-boolean initSimpleParams = false;
-boolean cleanSimpleParams = false;
 
 @test:BeforeGroups {
 	value: ["query-simple-params", "query-row-simple-params"]
@@ -46,15 +44,6 @@ function querySingleIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordSingleIntParam() returns error? {
-    int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryDoubleIntParam() returns error? {
@@ -62,16 +51,6 @@ function queryDoubleIntParam() returns error? {
     int intType = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDoubleIntParam() returns error? {
-    int rowId = 1;
-    int intType = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -85,16 +64,6 @@ function queryIntAndLongParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordIntAndLongParam() returns error? {
-    int rowId = 1;
-    int longType = 9223372036854774807;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryStringParam() returns error? {
@@ -104,32 +73,13 @@ function queryStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordStringParam() returns error? {
-    string stringType = "Hello";
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryIntAndStringParam() returns error? {
     string stringType = "Hello";
-    int rowId =1;
+    int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordIntAndStringParam() returns error? {
-    string stringType = "Hello";
-    int rowId =1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -142,30 +92,12 @@ function queryDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDoubleParam() returns error? {
-    float doubleType = 2139095039.0;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE double_type = ${doubleType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryFloatParam() returns error? {
     float floatType = 123.34;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordFloatParam() returns error? {
-    float floatType = 123.34;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -180,32 +112,12 @@ function queryDoubleAndFloatParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDoubleAndFloatParam()  returns error? {
-    float floatType = 123.34;
-    float doubleType = 2139095039.0;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}
-                                                                    and double_type = ${doubleType}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryDecimalParam() returns error? {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDecimalParam()  returns error? {
-    decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -219,31 +131,12 @@ function queryDecimalAnFloatParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDecimalAnFloatParam()  returns error? {
-    decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}
-                                                                    and double_type = 2139095039.0`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeVarcharStringParam() returns error? {
     VarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordVarcharStringParam()  returns error? {
-    VarcharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -256,15 +149,6 @@ function queryTypeCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeCharStringParam()  returns error? {
-    CharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeNCharStringParam() returns error? {
@@ -274,30 +158,12 @@ function queryTypeNCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNCharStringParam() returns error? {
-    NCharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeNVarCharStringParam() returns error? {
     NVarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNVarCharStringParam() returns error? {
-    NCharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -326,46 +192,12 @@ function queryTypeVarCharIntegerParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeVarCharIntegerParam()  returns error? {
-    int intVal = 1;
-    NCharValue typeVal = new (intVal.toString());
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
-
-    record {}? returnData = check queryRecordMockClient(simpleParamsDb, sqlQuery);
-    test:assertNotEquals(returnData, ());
-    if returnData is () {
-        test:assertFail("Query returns ()");
-    } else {
-        decimal decimalVal = 25.45;
-        test:assertEquals(returnData["INT_TYPE"], 1);
-        test:assertEquals(returnData["LONG_TYPE"], 9372036854774807);
-        test:assertEquals(returnData["DOUBLE_TYPE"], <float> 29095039);
-        test:assertEquals(returnData["BOOLEAN_TYPE"], false);
-        test:assertEquals(returnData["DECIMAL_TYPE"], decimalVal);
-        test:assertEquals(returnData["STRING_TYPE"], "1");
-        test:assertTrue(returnData["FLOAT_TYPE"] is float);
-        test:assertEquals(returnData["ROW_ID"], 3);
-    }
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeBooleanBooleanParam() returns error? {
     BooleanValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBooleanBooleanParam() returns error? {
-    BooleanValue typeVal = new (true);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -378,30 +210,12 @@ function queryTypeBitIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBitIntParam() returns error? {
-    BitValue typeVal = new (1);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeBitStringParam() returns error? {
     BitValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBitStringParam() returns error? {
-    BitValue typeVal = new (true);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    validateDataTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -416,24 +230,12 @@ function queryTypeBitInvalidIntParam() {
     test:assertEquals(dbError.message(), "Only 1 or 0 can be passed for BitValue SQL Type, but found :12");
 }
 
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBitInvalidIntParam() returns error? {
-    BitValue typeVal = new (12);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    record{}|error returnVal = queryRecordMockClient(simpleParamsDb, sqlQuery);
-    test:assertTrue(returnVal is error);
-    error dbError = <error> returnVal;
-    test:assertTrue(dbError.message().endsWith("Only 1 or 0 can be passed for BitValue SQL Type, but found :12"));
-}
-
 type DataTableRecord record {
     float int_type;
 };
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryIntTypeInvalidParam() returns error? {
     int rowId = 1;
@@ -453,39 +255,12 @@ function queryIntTypeInvalidParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordIntTypeInvalidParam() returns error? {
-    int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT int_type from DataTable WHERE row_id = ${rowId}`;
-    MockClient dbClient = check new (url = simpleParamsDb, user = user, password = password);
-    DataTableRecord|error queryResult = dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    test:assertTrue(queryResult is error);
-    if queryResult is ApplicationError {
-        test:assertTrue(queryResult.message().endsWith("The field 'int_type' of type float cannot be mapped to the column " +
-        "'INT_TYPE' of SQL type 'INTEGER'"));
-    } else {
-        test:assertFail("ApplicationError Error expected.");
-    }
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeIntIntParam() returns error? {
     IntegerValue typeVal = new (2147483647);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE int_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeIntIntParam() returns error? {
-    IntegerValue typeVal = new (2147483647);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE int_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -498,30 +273,12 @@ function queryTypeTinyIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeTinyIntIntParam() returns error? {
-    SmallIntValue typeVal = new (127);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE tinyint_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeSmallIntIntParam() returns error? {
     SmallIntValue typeVal = new (32767);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE smallint_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeSmallIntIntParam() returns error? {
-    SmallIntValue typeVal = new (32767);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE smallint_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -534,30 +291,12 @@ function queryTypeBigIntIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBigIntIntParam() returns error? {
-    BigIntValue typeVal = new (9223372036854774807);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE bigint_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeDoubleDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeDoubleDoubleParam() returns error? {
-    DoubleValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -578,18 +317,6 @@ function queryTypeDoubleIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeDoubleIntParam() returns error? {
-    DoubleValue typeVal = new (1234);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    record{} returnData = check queryRecordMockClient(simpleParamsDb, sqlQuery);
-    test:assertEquals(returnData.length(), 10);
-    test:assertEquals(returnData["ID"], 2);
-    test:assertEquals(returnData["REAL_TYPE"], 1234.0);
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeDoubleDecimalParam() returns error? {
@@ -597,16 +324,6 @@ function queryTypeDoubleDecimalParam() returns error? {
     DoubleValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeDoubleDecimalParam() returns error? {
-    decimal decimalVal = 1234.567;
-    DoubleValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -619,15 +336,6 @@ function queryTypeFloatDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeFloatDoubleParam() returns error? {
-    DoubleValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeRealDoubleParam() returns error? {
@@ -637,30 +345,12 @@ function queryTypeRealDoubleParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeRealDoubleParam() returns error? {
-    RealValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE real_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeNumericDoubleParam() returns error? {
     NumericValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNumericDoubleParam() returns error? {
-    NumericValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -681,18 +371,6 @@ function queryTypeNumericIntParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNumericIntParam() returns error? {
-    NumericValue typeVal = new (1234);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    record{} returnData = check queryRecordMockClient(simpleParamsDb, sqlQuery);
-    test:assertEquals(returnData.length(), 10);
-    test:assertEquals(returnData["ID"], 2);
-    test:assertEquals(returnData["REAL_TYPE"], 1234.0);
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeNumericDecimalParam() returns error? {
@@ -703,31 +381,12 @@ function queryTypeNumericDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNumericDecimalParam() returns error? {
-    decimal decimalVal = 1234.567;
-    NumericValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeDecimalDoubleParam() returns error? {
     DecimalValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeDecimalDoubleParam() returns error? {
-    DecimalValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -741,16 +400,6 @@ function queryTypeDecimalDecimalParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeDecimalDecimalParam() returns error? {
-    decimal decimalVal = 1234.567;
-    DecimalValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
-    validateNumericTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryByteArrayParam() returns error? {
@@ -758,16 +407,6 @@ function queryByteArrayParam() returns error? {
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordByteArrayParam() returns error? {
-    record {} value = check queryRecordMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
-    byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -782,17 +421,6 @@ function queryTypeBinaryByteParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBinaryByteParam() returns error? {
-    record {} value = check queryRecordMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
-    byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
-    BinaryValue typeVal = new (binaryData);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeBinaryReadableByteChannelParam() returns error? {
@@ -800,16 +428,6 @@ function queryTypeBinaryReadableByteChannelParam() returns error? {
     BinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeBinaryReadableByteChannelParam() returns error? {
-    io:ReadableByteChannel byteChannel = check getByteColumnChannel();
-    BinaryValue typeVal = new (byteChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -823,16 +441,6 @@ function queryTypeVarBinaryReadableByteChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
-    io:ReadableByteChannel byteChannel = check getByteColumnChannel();
-    VarBinaryValue typeVal = new (byteChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE var_binary_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeTinyBlobByteParam() returns error? {
@@ -841,17 +449,6 @@ function queryTypeTinyBlobByteParam() returns error? {
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeTinyBlobByteParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
-    byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
-    BinaryValue typeVal = new (binaryData);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -874,15 +471,6 @@ function queryTypeClobStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeClobStringParam() returns error? {
-    ClobValue typeVal = new ("very long text");
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeClobReadableCharChannelParam() returns error? {
@@ -890,16 +478,6 @@ function queryTypeClobReadableCharChannelParam() returns error? {
     ClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeClobReadableCharChannelParam() returns error? {
-    io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
-    ClobValue typeVal = new (clobChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -913,31 +491,12 @@ function queryTypeNClobReadableCharChannelParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTypeNClobReadableCharChannelParam() returns error? {
-    io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
-    NClobValue typeVal = new (clobChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
-    validateComplexTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryDateStringParam() returns error? {
     DateValue typeVal = new ("2017-02-03");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDateStringParam() returns error? {
-    DateValue typeVal = new ("2017-02-03");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -950,38 +509,12 @@ function queryDateString2Param() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDateString2Param() returns error? {
-    DateValue typeVal = new ("2017-2-3");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
-    test:assertTrue(result is error);
-
-    if result is ApplicationError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
-                "DateTimeTypes WHERE date_type =  ? . java.lang.IllegalArgumentException"));
-    } else {
-        test:assertFail("ApplicationError Error expected.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDateStringInvalidParam() {
-    DateValue typeVal = new ("2017/2/3");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    record{}|error result = trap queryRecordMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
@@ -1003,16 +536,6 @@ function queryDateTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDateTimeRecordParam() returns error? {
-    time:Date date = {year: 2017, month:2, day: 3};
-    DateValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimestampWithTimeZoneRecordParam() returns error? {
@@ -1021,17 +544,6 @@ function queryTimestampWithTimeZoneRecordParam() returns error? {
     DateTimeValue typeVal = new (dateTime);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
-    time:Civil dateTime = {utcOffset: {hours: +8, minutes: 0}, year:2008, month:8, day:8, hour: 20, minute: 8,
-                            second:8};
-    DateTimeValue typeVal = new (dateTime);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -1044,38 +556,12 @@ function queryTimeStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimeStringParam() returns error? {
-    TimeValue typeVal = new ("11:35:45");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
-    test:assertTrue(result is error);
-
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
-        "WHERE time_type =  ? . data exception: invalid datetime format."));
-    } else {
-        test:assertFail("DatabaseError Error expected.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimeStringInvalidParam() {
-    TimeValue typeVal = new ("11-35-45");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    record{}|error? result = trap queryRecordMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
@@ -1097,16 +583,6 @@ function queryTimeTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimeTimeRecordParam() returns error? {
-    time:TimeOfDay date = {hour: 11, minute: 35, second:45};
-    TimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimeTimeRecordWithTimeZoneParam() returns error? {
@@ -1114,16 +590,6 @@ function queryTimeTimeRecordWithTimeZoneParam() returns error? {
     TimeValue typeVal = new (time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
-    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
-    TimeValue typeVal = new (time);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type2 = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -1136,38 +602,12 @@ function queryTimestampStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampStringParam() returns error? {
-    TimestampValue typeVal = new ("2017-02-03 11:53:00");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     record{}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
-    test:assertTrue(result is error);
-
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
-        "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
-    } else {
-        test:assertFail("DatabaseError Error expected.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampStringInvalidParam() {
-    TimestampValue typeVal = new ("2017/02/03 11:53:00");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    record{}|error result = queryRecordMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
@@ -1189,16 +629,6 @@ function queryTimestampTimeRecordParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampTimeRecordParam() returns error? {
-    time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimestampTimeRecordWithTimeZoneParam() returns error? {
@@ -1206,16 +636,6 @@ function queryTimestampTimeRecordWithTimeZoneParam() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
-    time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 @test:Config {
@@ -1229,16 +649,6 @@ function queryDateTimeTimeRecordWithTimeZoneParam() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
-    time:Civil date = {year: 2017, month:2, day: 3, hour: 11, minute: 53, second:0};
-    DateTimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
@@ -1246,16 +656,6 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordTimestampTimeRecordWithTimeZone2Param() returns error? {
-    time:Utc date = check time:utcFromString("2008-08-08T20:08:08+08:00");
-    TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
-    validateDateTimeTypesTableResult(check queryRecordMockClient(simpleParamsDb, sqlQuery));
 }
 
 //Can not test the SQL type TEXT with hsqldb
@@ -1329,40 +729,6 @@ function queryArrayBasicParams() returns error? {
 }
 
 @test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordArrayBasicParams() returns error? {
-    int[] paraInt = [1, 2, 3];
-    int[] paraLong = [10000, 20000, 30000];
-    float[] paraFloat = [245.23, 5559.49, 8796.123];
-    float[] paraDouble = [245.23, 5559.49, 8796.123];
-    decimal[] paraDecimal = [245, 5559, 8796];
-    string[] paraString = ["Hello", "Ballerina"];
-    boolean[] paraBool = [true, false, true];
-
-    ParameterizedQuery sqlQuery =
-    `SELECT * from ArrayTypes WHERE int_array = ${paraInt}
-                                AND long_array = ${paraLong}
-                                AND float_array = ${paraFloat}
-                                AND double_array = ${paraDouble}
-                                AND decimal_array = ${paraDecimal}
-                                AND string_array = ${paraString}
-                                AND boolean_array = ${paraBool}`;
-    record{} returnData = check queryRecordMockClient(simpleParamsDb, sqlQuery);
-    if returnData is record{} {
-        test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
-        test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
-        test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
-        test:assertEquals(returnData["STRING_ARRAY"], ["Hello", "Ballerina"]);
-        test:assertNotEquals(returnData["FLOAT_ARRAY"], ());
-        test:assertNotEquals(returnData["DECIMAL_ARRAY"], ());
-        test:assertNotEquals(returnData["DOUBLE_ARRAY"], ());
-    } else {
-        test:assertFail("Empty row returned.");
-    }
-}
-
-@test:Config {
     groups: ["query", "query-simple-params"]
 }
 function queryArrayBasicNullParams() returns error? {
@@ -1372,30 +738,6 @@ function queryArrayBasicNullParams() returns error? {
          AND boolean_array is null`;
 
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
-    if returnData is record{} {
-        test:assertEquals(returnData["INT_ARRAY"], ());
-        test:assertEquals(returnData["LONG_ARRAY"], ());
-        test:assertEquals(returnData["FLOAT_ARRAY"], ());
-        test:assertEquals(returnData["DECIMAL_ARRAY"], ());
-        test:assertEquals(returnData["DOUBLE_ARRAY"], ());
-        test:assertEquals(returnData["BOOLEAN_ARRAY"], ());
-        test:assertEquals(returnData["STRING_ARRAY"], ());
-        test:assertEquals(returnData["BLOB_ARRAY"], ());
-    } else {
-        test:assertFail("Empty row returned.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordArrayBasicNullParams() returns error? {
-    ParameterizedQuery sqlQuery =
-        `SELECT * from ArrayTypes WHERE int_array is null AND long_array is null AND float_array
-         is null AND double_array is null AND decimal_array is null AND string_array is null
-         AND boolean_array is null`;
-
-    record{} returnData = check queryRecordMockClient(simpleParamsDb, sqlQuery);
     if returnData is record{} {
         test:assertEquals(returnData["INT_ARRAY"], ());
         test:assertEquals(returnData["LONG_ARRAY"], ());
