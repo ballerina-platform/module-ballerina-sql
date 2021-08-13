@@ -487,6 +487,39 @@ function testColumnAlias() returns error? {
     check dbClient.close();
 }
 
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testQueryRowId() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    ExecutionResult result = check dbClient->execute("SET DATABASE SQL SYNTAX ORA TRUE");
+    stream<record{}, error?> streamData = dbClient->query("SELECT rownum, int_array, long_array, boolean_array," +
+         "string_array from ArrayTypes");
+
+    record{} mixTypesExpected = {
+        "ROWNUM": 1,
+        "INT_ARRAY": [1, 2, 3],
+        "LONG_ARRAY": [100000000, 200000000, 300000000],
+        "BOOLEAN_ARRAY": [true, false, true],
+        "STRING_ARRAY": ["Hello", "Ballerina"]
+    };
+
+    record{}? mixTypesActual = ();
+    int counter = 0;
+    error? e = streamData.forEach(function (record {} value) {
+        if counter == 0 {
+            mixTypesActual = value;
+        }
+        counter = counter + 1;
+    });
+    if e is error {
+        test:assertFail("Query failed");
+    }
+    test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
+    test:assertEquals(counter, 4);
+    check dbClient.close();
+}
+
 type ArrayRecord record {
     int row_id;
     int?[]? smallint_array;

@@ -50,7 +50,7 @@ function queryRecordSingleIntParam() returns error? {
 function queryRecordDoubleIntParam() returns error? {
     int rowId = 1;
     int intType = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -60,7 +60,7 @@ function queryRecordDoubleIntParam() returns error? {
 function queryRecordIntAndLongParam() returns error? {
     int rowId = 1;
     int longType = 9223372036854774807;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -69,7 +69,7 @@ function queryRecordIntAndLongParam() returns error? {
 }
 function queryRecordStringParam() returns error? {
     string stringType = "Hello";
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${stringType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -79,7 +79,7 @@ function queryRecordStringParam() returns error? {
 function queryRecordIntAndStringParam() returns error? {
     string stringType = "Hello";
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -88,7 +88,7 @@ function queryRecordIntAndStringParam() returns error? {
 }
 function queryRecordDoubleParam() returns error? {
     float doubleType = 2139095039.0;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE double_type = ${doubleType}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE double_type = ${doubleType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -97,7 +97,7 @@ function queryRecordDoubleParam() returns error? {
 }
 function queryRecordFloatParam() returns error? {
     float floatType = 123.34;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE float_type = ${floatType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -107,7 +107,7 @@ function queryRecordFloatParam() returns error? {
 function queryRecordDoubleAndFloatParam()  returns error? {
     float floatType = 123.34;
     float doubleType = 2139095039.0;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE float_type = ${floatType}
                                                                     and double_type = ${doubleType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -117,7 +117,7 @@ function queryRecordDoubleAndFloatParam()  returns error? {
 }
 function queryRecordDecimalParam()  returns error? {
     decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE decimal_type = ${decimalValue}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -126,7 +126,7 @@ function queryRecordDecimalParam()  returns error? {
 }
 function queryRecordDecimalAnFloatParam()  returns error? {
     decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE decimal_type = ${decimalValue}
                                                                     and double_type = 2139095039.0`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -136,7 +136,7 @@ function queryRecordDecimalAnFloatParam()  returns error? {
 }
 function queryRecordVarcharStringParam()  returns error? {
     VarcharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -145,7 +145,7 @@ function queryRecordVarcharStringParam()  returns error? {
 }
 function queryRecordTypeCharStringParam()  returns error? {
     CharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -154,7 +154,7 @@ function queryRecordTypeCharStringParam()  returns error? {
 }
 function queryRecordTypeNCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -163,7 +163,7 @@ function queryRecordTypeNCharStringParam() returns error? {
 }
 function queryRecordTypeNVarCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -173,7 +173,7 @@ function queryRecordTypeNVarCharStringParam() returns error? {
 function queryRecordTypeVarCharIntegerParam()  returns error? {
     int intVal = 1;
     NCharValue typeVal = new (intVal.toString());
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
 
     record {}? returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertNotEquals(returnData, ());
@@ -197,7 +197,7 @@ function queryRecordTypeVarCharIntegerParam()  returns error? {
 }
 function queryRecordTypeBooleanBooleanParam() returns error? {
     BooleanValue typeVal = new (true);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -206,7 +206,7 @@ function queryRecordTypeBooleanBooleanParam() returns error? {
 }
 function queryRecordTypeBitIntParam() returns error? {
     BitValue typeVal = new (1);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -215,7 +215,7 @@ function queryRecordTypeBitIntParam() returns error? {
 }
 function queryRecordTypeBitInvalidIntParam() returns error? {
     BitValue typeVal = new (12);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     record{}|error returnVal = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(returnVal is error);
     error dbError = <error> returnVal;
@@ -227,7 +227,7 @@ function queryRecordTypeBitInvalidIntParam() returns error? {
 }
 function queryRecordTypeBitStringParam() returns error? {
     BitValue typeVal = new (true);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -236,7 +236,7 @@ function queryRecordTypeBitStringParam() returns error? {
 }
 function queryRecordIntTypeInvalidParam() returns error? {
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT int_type from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT int_type FROM DataTable WHERE row_id = ${rowId}`;
     MockClient dbClient = check new (url = queryRowDb, user = user, password = password);
     DataTableRecord|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
@@ -254,7 +254,7 @@ function queryRecordIntTypeInvalidParam() returns error? {
 }
 function queryRecordTypeIntIntParam() returns error? {
     IntegerValue typeVal = new (2147483647);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE int_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE int_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -263,7 +263,7 @@ function queryRecordTypeIntIntParam() returns error? {
 }
 function queryRecordTypeTinyIntIntParam() returns error? {
     SmallIntValue typeVal = new (127);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE tinyint_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE tinyint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -272,7 +272,7 @@ function queryRecordTypeTinyIntIntParam() returns error? {
 }
 function queryRecordTypeSmallIntIntParam() returns error? {
     SmallIntValue typeVal = new (32767);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE smallint_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE smallint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -281,7 +281,7 @@ function queryRecordTypeSmallIntIntParam() returns error? {
 }
 function queryRecordTypeBigIntIntParam() returns error? {
     BigIntValue typeVal = new (9223372036854774807);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE bigint_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE bigint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -290,7 +290,7 @@ function queryRecordTypeBigIntIntParam() returns error? {
 }
 function queryRecordTypeDoubleDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -299,7 +299,7 @@ function queryRecordTypeDoubleDoubleParam() returns error? {
 }
 function queryRecordTypeDoubleIntParam() returns error? {
     DoubleValue typeVal = new (1234);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
@@ -312,7 +312,7 @@ function queryRecordTypeDoubleIntParam() returns error? {
 function queryRecordTypeDoubleDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
     DoubleValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -321,7 +321,7 @@ function queryRecordTypeDoubleDecimalParam() returns error? {
 }
 function queryRecordTypeFloatDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -330,7 +330,7 @@ function queryRecordTypeFloatDoubleParam() returns error? {
 }
 function queryRecordTypeRealDoubleParam() returns error? {
     RealValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE real_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE real_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -339,7 +339,7 @@ function queryRecordTypeRealDoubleParam() returns error? {
 }
 function queryRecordTypeNumericDoubleParam() returns error? {
     NumericValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -348,7 +348,7 @@ function queryRecordTypeNumericDoubleParam() returns error? {
 }
 function queryRecordTypeNumericIntParam() returns error? {
     NumericValue typeVal = new (1234);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
     record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
@@ -361,7 +361,7 @@ function queryRecordTypeNumericIntParam() returns error? {
 function queryRecordTypeNumericDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
     NumericValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -370,7 +370,7 @@ function queryRecordTypeNumericDecimalParam() returns error? {
 }
 function queryRecordTypeDecimalDoubleParam() returns error? {
     DecimalValue typeVal = new (1234.567);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -380,7 +380,7 @@ function queryRecordTypeDecimalDoubleParam() returns error? {
 function queryRecordTypeDecimalDecimalParam() returns error? {
     decimal decimalVal = 1234.567;
     DecimalValue typeVal = new (decimalVal);
-    ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -388,9 +388,9 @@ function queryRecordTypeDecimalDecimalParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordByteArrayParam() returns error? {
-    record {} value = check queryRecordMockClient(queryRowDb, "Select * from ComplexTypes where row_id = 1");
+    record {} value = check queryRecordMockClient(queryRowDb, `SELECT * FROM ComplexTypes WHERE row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -398,10 +398,10 @@ function queryRecordByteArrayParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordTypeBinaryByteParam() returns error? {
-    record {} value = check queryRecordMockClient(queryRowDb, "Select * from ComplexTypes where row_id = 1");
+    record {} value = check queryRecordMockClient(queryRowDb, `SELECT * FROM ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     BinaryValue typeVal = new (binaryData);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -411,7 +411,7 @@ function queryRecordTypeBinaryByteParam() returns error? {
 function queryRecordTypeBinaryReadableByteChannelParam() returns error? {
     io:ReadableByteChannel byteChannel = check getByteColumnChannel();
     BinaryValue typeVal = new (byteChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -421,7 +421,7 @@ function queryRecordTypeBinaryReadableByteChannelParam() returns error? {
 function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
     io:ReadableByteChannel byteChannel = check getByteColumnChannel();
     VarBinaryValue typeVal = new (byteChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE var_binary_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE var_binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -429,10 +429,10 @@ function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordTypeTinyBlobByteParam() returns error? {
-    record {}|error? value = check queryMockClient(queryRowDb, "Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = check queryMockClient(queryRowDb, `SELECT * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     BinaryValue typeVal = new (binaryData);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE blob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -441,7 +441,7 @@ function queryRecordTypeTinyBlobByteParam() returns error? {
 }
 function queryRecordTypeClobStringParam() returns error? {
     ClobValue typeVal = new ("very long text");
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -451,7 +451,7 @@ function queryRecordTypeClobStringParam() returns error? {
 function queryRecordTypeClobReadableCharChannelParam() returns error? {
     io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
     ClobValue typeVal = new (clobChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -461,7 +461,7 @@ function queryRecordTypeClobReadableCharChannelParam() returns error? {
 function queryRecordTypeNClobReadableCharChannelParam() returns error? {
     io:ReadableCharacterChannel clobChannel = check getClobColumnChannel();
     NClobValue typeVal = new (clobChannel);
-    ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -470,7 +470,7 @@ function queryRecordTypeNClobReadableCharChannelParam() returns error? {
 }
 function queryRecordDateStringParam() returns error? {
     DateValue typeVal = new ("2017-02-03");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -479,7 +479,7 @@ function queryRecordDateStringParam() returns error? {
 }
 function queryRecordDateString2Param() returns error? {
     DateValue typeVal = new ("2017-2-3");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -488,12 +488,12 @@ function queryRecordDateString2Param() returns error? {
 }
 function queryRecordDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     record{}|error result = trap queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM " +
                 "DateTimeTypes WHERE date_type =  ? . java.lang.IllegalArgumentException"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -506,7 +506,7 @@ function queryRecordDateStringInvalidParam() {
 function queryRecordDateTimeRecordParam() returns error? {
     time:Date date = {year: 2017, month:2, day: 3};
     DateValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -517,7 +517,7 @@ function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
     time:Civil dateTime = {utcOffset: {hours: +8, minutes: 0}, year:2008, month:8, day:8, hour: 20, minute: 8,
                             second:8};
     DateTimeValue typeVal = new (dateTime);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -526,7 +526,7 @@ function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
 }
 function queryRecordTimeStringParam() returns error? {
     TimeValue typeVal = new ("11:35:45");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -535,12 +535,12 @@ function queryRecordTimeStringParam() returns error? {
 }
 function queryRecordTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     record{}|error? result = trap queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " +
         "WHERE time_type =  ? . data exception: invalid datetime format."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -553,7 +553,7 @@ function queryRecordTimeStringInvalidParam() {
 function queryRecordTimeTimeRecordParam() returns error? {
     time:TimeOfDay date = {hour: 11, minute: 35, second:45};
     TimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -563,7 +563,7 @@ function queryRecordTimeTimeRecordParam() returns error? {
 function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
     time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
     TimeValue typeVal = new (time);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_tz_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -572,7 +572,7 @@ function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
 }
 function queryRecordTimestampStringParam() returns error? {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -581,12 +581,12 @@ function queryRecordTimestampStringParam() returns error? {
 }
 function queryRecordTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     record{}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " +
         "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -599,7 +599,7 @@ function queryRecordTimestampStringInvalidParam() {
 function queryRecordTimestampTimeRecordParam() returns error? {
     time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
     TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -609,7 +609,7 @@ function queryRecordTimestampTimeRecordParam() returns error? {
 function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
     time:Utc date = check time:utcFromString("2017-02-03T11:53:00.00Z");
     TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -619,7 +619,7 @@ function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
 function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
     time:Civil date = {year: 2017, month:2, day: 3, hour: 11, minute: 53, second:0};
     DateTimeValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE datetime_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -629,7 +629,7 @@ function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
 function queryRecordTimestampTimeRecordWithTimeZone2Param() returns error? {
     time:Utc date = check time:utcFromString("2008-08-08T20:08:08+08:00");
     TimestampValue typeVal = new (date);
-    ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
 
@@ -646,7 +646,7 @@ function queryRecordArrayBasicParams() returns error? {
     boolean[] paraBool = [true, false, true];
 
     ParameterizedQuery sqlQuery =
-    `SELECT * from ArrayTypes WHERE int_array = ${paraInt}
+    `SELECT * FROM ArrayTypes WHERE int_array = ${paraInt}
                                 AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
                                 AND double_array = ${paraDouble}
@@ -672,7 +672,7 @@ function queryRecordArrayBasicParams() returns error? {
 }
 function queryRecordArrayBasicNullParams() returns error? {
     ParameterizedQuery sqlQuery =
-        `SELECT * from ArrayTypes WHERE int_array is null AND long_array is null AND float_array
+        `SELECT * FROM ArrayTypes WHERE int_array is null AND long_array is null AND float_array
          is null AND double_array is null AND decimal_array is null AND string_array is null
          AND boolean_array is null`;
 
@@ -697,7 +697,7 @@ function queryRecordArrayBasicNullParams() returns error? {
 function queryRecordNoCheck() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
     record{}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is record{} {
@@ -712,7 +712,7 @@ function queryRecordNoCheck() returns error? {
 }
 function queryRecordNegative1() returns error? {
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from EmptyDataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM EmptyDataTable WHERE row_id = ${rowId}`;
     record {}|error queryResult = queryRecordMockClient(queryRowDb, sqlQuery);
     if queryResult is error {
         test:assertTrue(queryResult is NoRowsError, "Incorrect error type");
@@ -728,7 +728,7 @@ function queryRecordNegative1() returns error? {
 function queryRecordNegative2() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
     record{}|int|error queryResult = dbClient->queryRow(sqlQuery);
     if queryResult is error {
         test:assertEquals(queryResult.message(), "Return type cannot be a union.");
@@ -743,11 +743,11 @@ function queryRecordNegative2() returns error? {
 function queryRecordNoCheckNegative() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
-    ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name FROM DataTable WHERE row_id = ${rowId}`;
     record{}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name from DataTable WHERE row_id =  ? ]."),
+        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."),
                         "Incorrect error message");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
@@ -771,7 +771,7 @@ function queryValue() returns error? {
 function queryValueNegative1() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
     int|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
@@ -788,7 +788,7 @@ function queryValueNegative1() returns error? {
 function queryValueNegative2() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT string_type from DataTable WHERE row_id = ${rowId}`;
+    ParameterizedQuery sqlQuery = `SELECT string_type FROM DataTable WHERE row_id = ${rowId}`;
     int|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
@@ -804,7 +804,7 @@ function queryValueNegative2() returns error? {
 }
 function queryValueTypeInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT int_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT int_type FROM NumericTypes WHERE id = 1";
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 2147483647);
@@ -815,7 +815,7 @@ function queryValueTypeInt() returns error? {
 }
 function queryValueTypeFloat() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT float_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT float_type FROM NumericTypes WHERE id = 1";
     float returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1234.567);
@@ -826,7 +826,7 @@ function queryValueTypeFloat() returns error? {
 }
 function queryValueTypeDecimal() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT decimal_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT decimal_type FROM NumericTypes WHERE id = 1";
     decimal returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     decimal decimalValue = 1234.567;
@@ -838,7 +838,7 @@ function queryValueTypeDecimal() returns error? {
 }
 function queryValueTypeBigInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT bigint_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT bigint_type FROM NumericTypes WHERE id = 1";
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 9223372036854774807);
@@ -849,7 +849,7 @@ function queryValueTypeBigInt() returns error? {
 }
 function queryValueTypeSmallInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT smallint_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT smallint_type FROM NumericTypes WHERE id = 1";
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 32767);
@@ -860,7 +860,7 @@ function queryValueTypeSmallInt() returns error? {
 }
 function queryValueTypeTinyInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT tinyint_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT tinyint_type FROM NumericTypes WHERE id = 1";
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 127);
@@ -871,7 +871,7 @@ function queryValueTypeTinyInt() returns error? {
 }
 function queryValueTypeBit() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT bit_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT bit_type FROM NumericTypes WHERE id = 1";
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1);
@@ -882,7 +882,7 @@ function queryValueTypeBit() returns error? {
 }
 function queryValueTypeNumeric() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT numeric_type from NumericTypes WHERE id = 1";
+    string sqlQuery = "SELECT numeric_type FROM NumericTypes WHERE id = 1";
     decimal returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     decimal decimalValue = 1234.567;
@@ -894,7 +894,7 @@ function queryValueTypeNumeric() returns error? {
 }
 function queryValueTypeString() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT string_type from DataTable WHERE row_id = 1";
+    string sqlQuery = "SELECT string_type FROM DataTable WHERE row_id = 1";
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "Hello");
@@ -905,7 +905,7 @@ function queryValueTypeString() returns error? {
 }
 function queryValueTypeBoolean() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT boolean_type from DataTable WHERE row_id = 1";
+    string sqlQuery = "SELECT boolean_type FROM DataTable WHERE row_id = 1";
     boolean returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, true);
@@ -916,7 +916,7 @@ function queryValueTypeBoolean() returns error? {
 }
 function queryValueTypeBlob() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT blob_type from ComplexTypes WHERE row_id = 1";
+    string sqlQuery = "SELECT blob_type FROM ComplexTypes WHERE row_id = 1";
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina blob test.".toBytes());
@@ -927,7 +927,7 @@ function queryValueTypeBlob() returns error? {
 }
 function queryValueTypeClob() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT clob_type from ComplexTypes WHERE row_id = 1";
+    string sqlQuery = "SELECT clob_type FROM ComplexTypes WHERE row_id = 1";
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "very long text");
@@ -938,7 +938,7 @@ function queryValueTypeClob() returns error? {
 }
 function queryValueTypeBinary() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT binary_type from ComplexTypes WHERE row_id = 1";
+    string sqlQuery = "SELECT binary_type FROM ComplexTypes WHERE row_id = 1";
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina binary test.".toBytes());
@@ -1007,9 +1007,8 @@ function testComplexTypesNilRecord() returns error? {
 }
 function testArrayRetrievalRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    record{} value = check dbClient->queryRow("SELECT int_type, int_array, long_type, long_array, " +
-        "boolean_type, string_type, string_array, boolean_array " +
-        "from MixTypes where row_id =1");
+    record{} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
+        string_type, string_array, boolean_array FROM MixTypes WHERE row_id = 1`);
     check dbClient.close();
 
     float[] doubleTypeArray = [245.23, 5559.49, 8796.123];
@@ -1031,9 +1030,8 @@ function testArrayRetrievalRecord() returns error? {
 }
 function testComplexWithStructDefRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    record{} value = check dbClient->queryRow("SELECT int_type, int_array, long_type, long_array, "
-        + "boolean_type, string_type, boolean_array, string_array, json_type "
-        + "from MixTypes where row_id =1", TestTypeData);
+    record{} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
+        string_type, boolean_array, string_array, json_type FROM MixTypes WHERE row_id = 1`, TestTypeData);
     check dbClient.close();
     TestTypeData mixTypesExpected = {
         int_type: 1,
@@ -1054,8 +1052,8 @@ function testComplexWithStructDefRecord() returns error? {
 }
 function testDateTimeRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ResultDates value = check dbClient->queryRow("SELECT date_type, time_type, timestamp_type, datetime_type"
-       + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1");
+    ResultDates value = check dbClient->queryRow(`SELECT date_type, time_type, timestamp_type, datetime_type,
+        time_tz_type, timestamp_tz_type FROM DateTimeTypes WHERE row_id = 1`);
     check dbClient.close();
 
     string dateTypeString = "2017-02-03";
@@ -1080,8 +1078,8 @@ function testDateTimeRecord() returns error? {
 }
 function testDateTimeRecord2() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ResultDates2 value = check dbClient->queryRow("SELECT date_type, time_type, timestamp_type, datetime_type, "
-            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1");
+    ResultDates2 value = check dbClient->queryRow(`SELECT date_type, time_type, timestamp_type, datetime_type,
+        time_tz_type, timestamp_tz_type FROM DateTimeTypes WHERE row_id = 1`);
     check dbClient.close();
 
     time:Date dateTypeRecord = {year: 2017, month: 2, day: 3};
@@ -1109,27 +1107,27 @@ function testDateTimeRecord3() returns error? {
     record{}|error? result;
     MockClient dbClient = check getMockClient(queryRowDb);
 
-    result = dbClient->queryRow("SELECT date_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT date_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Date type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Date type.");
 
-    result = dbClient->queryRow("SELECT time_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT time_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time type.");
 
-    result = dbClient->queryRow("SELECT timestamp_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT timestamp_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp type.");
 
-    result = dbClient->queryRow("SELECT datetime_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Datetime type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Datetime type.");
 
-    result = dbClient->queryRow("SELECT time_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT time_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time with Timezone type.");
 
-    result = dbClient->queryRow("SELECT timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
+    result = dbClient->queryRow(`SELECT timestamp_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp with Timezone type.");
     check dbClient.close();
@@ -1140,8 +1138,10 @@ function testDateTimeRecord3() returns error? {
 }
 function testGetArrayTypesRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ArrayRecord value = check dbClient->queryRow(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1");
+    ArrayRecord value = check dbClient->queryRow(`SELECT row_id,smallint_array, int_array, long_array, float_array,
+        double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array,
+        bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array,
+        timestamp_tz_array FROM ArrayTypes2 WHERE row_id = 1`);
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 1,
@@ -1176,8 +1176,10 @@ function testGetArrayTypesRecord() returns error? {
 }
 function testGetArrayTypesRecord2() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ArrayRecord value = check dbClient->queryRow(
-      "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2");
+    ArrayRecord value = check dbClient->queryRow(`SELECT row_id,smallint_array, int_array, long_array, float_array,
+        double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array,
+        bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array,
+        timestamp_tz_array FROM ArrayTypes2 WHERE row_id = 2`);
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 2,
@@ -1210,8 +1212,10 @@ function testGetArrayTypesRecord2() returns error? {
 }
 function testGetArrayTypesRecord3() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ArrayRecord value = check dbClient->queryRow(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 3`);
+    ArrayRecord value = check dbClient->queryRow(`SELECT row_id,smallint_array, int_array, long_array, float_array,
+        double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array,
+        bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array,
+        timestamp_tz_array FROM ArrayTypes2 WHERE row_id = 3`);
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 3,
@@ -1245,8 +1249,10 @@ function testGetArrayTypesRecord3() returns error? {
 }
 function testGetArrayTypesRecord4() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    ArrayRecord value = check dbClient->queryRow(
-      `SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 4`);
+    ArrayRecord value = check dbClient->queryRow(`SELECT row_id,smallint_array, int_array, long_array, float_array,
+        double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array,
+        bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array,
+        timestamp_tz_array FROM ArrayTypes2 WHERE row_id = 4`);
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 4,
