@@ -21,14 +21,14 @@ import ballerina/test;
 string simpleParamsDb = urlPrefix + "9010/querysimpleparams";
 
 @test:BeforeGroups {
-	value: ["query-simple-params", "query-row-simple-params"]
+	value: ["query-simple-params"]
 } 
 function initQueryParamsContainer() returns error? {
 	check initializeDockerContainer("sql-query-params", "querysimpleparams", "9010", "query", "simple-params-test-data.sql");
 }
 
 @test:AfterGroups {
-    value: ["query-simple-params", "query-row-simple-params"]
+    value: ["query-simple-params"]
 }
 function cleanQueryParamsContainer() returns error? {
 	check cleanDockerContainer("sql-query-params");
@@ -749,114 +749,6 @@ function queryArrayBasicNullParams() returns error? {
         test:assertEquals(returnData["BLOB_ARRAY"], ());
     } else {
         test:assertFail("Empty row returned.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordNoCheck() returns error? {
-    int rowId = 1;
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    record{}|error queryResult = dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    if queryResult is record{} {
-        validateDataTableResult(queryResult);
-    } else {
-        test:assertFail("Unexpected error");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordNegative1() returns error? {
-    int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from EmptyDataTable WHERE row_id = ${rowId}`;
-    record {}|error queryResult = queryRecordMockClient(simpleParamsDb, sqlQuery);
-    if queryResult is error {
-        test:assertTrue(queryResult is NoRowsError, "Incorrect error type");
-        test:assertTrue(queryResult.message().endsWith("Query did not retrieve any rows."), "Incorrect error message");
-    } else {
-        test:assertFail("Expected no rows error when querying empty table.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordNegative2() returns error? {
-    int rowId = 1;
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    record{}|int|error queryResult = dbClient->queryRow(sqlQuery);
-    if queryResult is error {
-        test:assertEquals(queryResult.message(), "Return type cannot be a union.");
-    } else {
-        test:assertFail("Expected error when querying with invalid column name.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryRecordNoCheckNegative() returns error? {
-    int rowId = 1;
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name from DataTable WHERE row_id = ${rowId}`;
-    record{}|error queryResult = dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name from DataTable WHERE row_id =  ? ]."),
-                        "Incorrect error message");
-    } else {
-        test:assertFail("Expected error when querying with invalid column name.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryValue() returns error? {
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    string sqlQuery = "SELECT COUNT(*) FROM DataTable";
-    int count = check dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    test:assertEquals(count, 3);
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryValueNegative1() returns error? {
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
-    int|error queryResult = dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    if queryResult is error {
-        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
-        test:assertEquals(queryResult.message(), "Expected type to be 'int' but found 'record{}'");
-    } else {
-        test:assertFail("Expected error when query result contains multiple columns.");
-    }
-}
-
-@test:Config {
-    groups: ["query-row", "query-row-simple-params"]
-}
-function queryValueNegative2() returns error? {
-    MockClient dbClient = check getMockClient(simpleParamsDb);
-    int rowId = 1;
-    ParameterizedQuery sqlQuery = `SELECT string_type from DataTable WHERE row_id = ${rowId}`;
-    int|error queryResult = dbClient->queryRow(sqlQuery);
-    check dbClient.close();
-    if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("Retrieved SQL type field cannot be converted to ballerina type : int"),
-                                                       "Incorrect error message");
-    } else {
-        test:assertFail("Expected error when query returns unexpected result type.");
     }
 }
 
