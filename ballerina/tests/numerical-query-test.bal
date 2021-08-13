@@ -78,8 +78,7 @@ function testQuery() returns error? {
 }
 function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericTypeForQuery);
-    stream<NumericTypeForQuery, Error> streamData = <stream<NumericTypeForQuery, Error>>streamResult;
+    stream<NumericTypeForQuery, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     NumericTypeForQuery? returnData = ();
     error? e = streamData.forEach(function(NumericTypeForQuery data) {
         returnData = data;
@@ -116,8 +115,7 @@ type NumericInvalidColumn record {|
 }
 function testQueryNumericInvalidColumnRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericInvalidColumn);
-    stream<NumericInvalidColumn, Error> streamData = <stream<NumericInvalidColumn, Error>> streamResult;
+    stream<NumericInvalidColumn, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericInvalidColumn value;|}|Error? data = streamData.next();
     check streamData.close();
     check dbClient.close();
@@ -144,8 +142,7 @@ type NumericOptionalType record {
 }
 function testQueryNumericOptionalTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericOptionalType);
-    stream<NumericOptionalType, Error> streamData = <stream<NumericOptionalType, Error>>streamResult;
+    stream<NumericOptionalType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericOptionalType value;|}? data = check streamData.next();
     check streamData.close();
     NumericOptionalType? returnData = data?.value;
@@ -181,8 +178,7 @@ type NumericUnionType record {
 }
 function testQueryNumericUnionTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericUnionType);
-    stream<NumericUnionType, Error> streamData = <stream<NumericUnionType, Error>>streamResult;
+    stream<NumericUnionType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {|NumericUnionType value;|}? data = check streamData.next();
     check streamData.close();
     NumericUnionType? returnData = data?.value;
@@ -219,8 +215,7 @@ type NumericStringType record {
 }
 function testQueryNumericStringTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericStringType);
-    stream<NumericStringType, Error> streamData = <stream<NumericStringType, Error>>streamResult;
+    stream<NumericStringType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {|NumericStringType value;|}? data = check streamData.next();
     check streamData.close();
     NumericStringType? returnData = data?.value;
@@ -257,8 +252,7 @@ type NumericCustomType record {
 }
 function testQueryNumericCustomTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, error?> streamResult = dbClient->query("SELECT * FROM NumericTypes", NumericCustomType);
-    stream<NumericCustomType, Error> streamData = <stream<NumericCustomType, Error>>streamResult;
+    stream<NumericCustomType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericCustomType value;|}? data = check streamData.next();
     check streamData.close();
     NumericCustomType? returnData = data?.value;
@@ -300,4 +294,113 @@ function testQueryFromNullTable() returns error? {
     test:assertEquals(returnData["DECIMAL_TYPE"], ());
     test:assertEquals(returnData["NUMERIC_TYPE"], ());
     test:assertEquals(returnData["REAL_TYPE"], ());
+}
+
+type DataTable record {
+    int int_type;
+};
+
+@test:Config {
+    groups: ["query", "query-numeric-params"]
+}
+function testQueryDatabaseError() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    stream<DataTable, Error?> streamData =
+            <stream<DataTable, Error?>> dbClient->query(`SELECT int_type from DataTable1`, DataTable);
+
+    Error? e = streamData.forEach(function(DataTable data) {
+       // No need to do anything
+    });
+    check dbClient.close();
+    test:assertTrue(e is Error);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT int_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 2147483647);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeFloat() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT float_type from NumericTypes WHERE id = 1";
+    float returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 1234.567);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeDecimal() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT decimal_type from NumericTypes WHERE id = 1";
+    decimal returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    decimal decimalValue = 1234.567;
+    test:assertEquals(returnValue, decimalValue);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeBigInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT bigint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 9223372036854774807);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeSmallInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT smallint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 32767);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeTinyInt() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT tinyint_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 127);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeBit() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT bit_type from NumericTypes WHERE id = 1";
+    int returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(returnValue, 1);
+}
+
+@test:Config {
+    groups: ["queryRow", "query-numeric-params"]
+}
+function queryValueTypeNumeric() returns error? {
+    MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    string sqlQuery = "SELECT numeric_type from NumericTypes WHERE id = 1";
+    decimal returnValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    decimal decimalValue = 1234.567;
+    test:assertEquals(returnValue, decimalValue);
 }

@@ -810,6 +810,11 @@ public class TestUtils {
             }
 
             @Override
+            public long getFlags() {
+                return 0;
+            }
+
+            @Override
             public Type getImmutableType() {
                 return null;
             }
