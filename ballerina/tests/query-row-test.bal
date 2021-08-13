@@ -1326,4 +1326,3 @@ isolated function validateDateTimeTypesTableRecordResult(record{}? returnData) {
         test:assertTrue(returnData["DATE_TYPE"].toString().startsWith("2017-02-03"));
     }
 }
-
