@@ -24,7 +24,7 @@ import ballerina/lang.'object as obj;
 #
 # + value - Value of parameter passed into the SQL statement
 public type TypedValue object {
-    public anydata|object {}|anydata[]|object{}[]? value;
+    public anydata|object {}|anydata[]|object {}[]? value;
 };
 
 # Represents a union type of ballerina/time records.
@@ -247,7 +247,7 @@ public distinct class NumericArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
 
-    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -271,7 +271,7 @@ public distinct class DecimalArrayValue {
     *TypedValue;
     public int?[]|decimal?[] value;
 
-    public isolated function init(int?[]|decimal?[] value = <int?[]> []) {
+    public isolated function init(int?[]|decimal?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -295,7 +295,7 @@ public distinct class RealArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
 
-    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -319,7 +319,7 @@ public distinct class FloatArrayValue {
     *TypedValue;
     public int?[]|float?[] value;
 
-    public isolated function init(int?[]|float?[] value = <int?[]> []) {
+    public isolated function init(int?[]|float?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -343,7 +343,7 @@ public distinct class DoubleArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
 
-    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]> []) {
+    public isolated function init(int?[]|float?[]|decimal?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -367,7 +367,7 @@ public distinct class BitArrayValue {
     *TypedValue;
     public boolean?[]|int?[] value;
 
-    public isolated function init(boolean?[]|int?[] value = <int?[]> []) {
+    public isolated function init(boolean?[]|int?[] value = <int?[]>[]) {
         self.value = value;
     }
 }
@@ -475,7 +475,7 @@ public distinct class DateArrayValue {
     *TypedValue;
     public string?[]|time:Date?[] value;
 
-    public isolated function init(string?[]|time:Date?[] value = <string?[]> []) {
+    public isolated function init(string?[]|time:Date?[] value = <string?[]>[]) {
         self.value = value;
     }
 }
@@ -499,7 +499,7 @@ public distinct class TimeArrayValue {
     *TypedValue;
     public string?[]|time:TimeOfDay?[] value;
 
-    public isolated function init(string?[]|time:TimeOfDay?[] value = <string?[]> []) {
+    public isolated function init(string?[]|time:TimeOfDay?[] value = <string?[]>[]) {
         self.value = value;
     }
 }
@@ -523,7 +523,7 @@ public distinct class DateTimeArrayValue {
     *TypedValue;
     public string?[]|time:Civil?[] value;
 
-    public isolated function init(string?[]|time:Civil?[] value = <string?[]> []) {
+    public isolated function init(string?[]|time:Civil?[] value = <string?[]>[]) {
         self.value = value;
     }
 }
@@ -547,7 +547,7 @@ public distinct class TimestampArrayValue {
     *TypedValue;
     public string?[]|time:Utc?[] value;
 
-    public isolated function init(string?[]|time:Utc?[] value = <string?[]> []) {
+    public isolated function init(string?[]|time:Utc?[] value = <string?[]>[]) {
         self.value = value;
     }
 }
@@ -619,7 +619,7 @@ public type ParameterizedQuery distinct object {
 # but that no count of the number of rows it affected is available.
 public const SUCCESS_NO_INFO = -2;
 
-#Constant indicating that the specific batch statement failed.
+# Constant indicating that the specific batch statement failed.
 public const EXECUTION_FAILED = -3;
 
 # The result of the query without returning the rows.
@@ -1306,7 +1306,7 @@ public type ParameterizedCallQuery distinct object {
 };
 
 # The result iterator object that is used to iterate through the results in the event stream.
-# 
+#
 # + customResultIterator - The instance of the custom Ballerina class that is structurally equivalent to
 #                          the `customResultIterator` object type. This instance includes a custom implementation
 #                          of the `nextResult` method
@@ -1333,7 +1333,7 @@ public class ResultIterator {
             record {}|Error? result;
             if (self.customResultIterator is CustomResultIterator) {
                 result = (<CustomResultIterator>self.customResultIterator).nextResult(self);
-            }
+            } 
             else {
                 result = nextResult(self);
             }
@@ -1403,7 +1403,7 @@ public class ProcedureCallResult {
 
 # The object type that is used as a structure to define a custom class with custom
 # implementations for nextResult and getNextQueryResult in the connector modules.
-# 
+#
 public type CustomResultIterator object {
     public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
