@@ -45,12 +45,12 @@ public class Process {
     }
 }
 
-isolated function nativeWaitForExit(Process process) returns int | ProcessError = @java:Method {
+isolated function nativeWaitForExit(Process process) returns int|ProcessError = @java:Method {
     name: "waitForExit",
     'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.WaitForExit"
 } external;
 
-isolated function nativeExitCode(Process process) returns int | ProcessError = @java:Method {
+isolated function nativeExitCode(Process process) returns int|ProcessError = @java:Method {
     name: "exitCode",
     'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.ExitCode"
 } external;

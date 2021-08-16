@@ -30,19 +30,19 @@ map<anydata> connectionPoolOptions = {
 };
 
 @test:BeforeGroups {
-	value: ["pool"]	
-} 
+    value: ["pool"]
+}
 function initPoolContainer() returns error? {
-	check initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
-	check initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
+    check initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
+    check initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["pool"]	
-} 
+    value: ["pool"]
+}
 function cleanPoolContainer() returns error? {
-	check cleanDockerContainer("sql-pool1");
-	check cleanDockerContainer("sql-pool2");
+    check cleanDockerContainer("sql-pool1");
+    check cleanDockerContainer("sql-pool2");
 }
 
 @test:Config {
@@ -64,27 +64,27 @@ function testGlobalConnectionPoolsMultipleDestinations() returns error? {
     groups: ["pool"]
 }
 function testGlobalConnectionPoolSingleDestinationConcurrent() returns error? {
-    worker w1 returns [stream<record{}, error?>, stream<record{}, error?>]|error {
+    worker w1 returns [stream<record {}, error?>, stream<record {}, error?>]|error {
         return testGlobalConnectionPoolConcurrentHelper1(poolDB_1);
     }
 
-    worker w2 returns [stream<record{}, error?>, stream<record{}, error?>]|error {
+    worker w2 returns [stream<record {}, error?>, stream<record {}, error?>]|error {
         return testGlobalConnectionPoolConcurrentHelper1(poolDB_1);
     }
 
-    worker w3 returns [stream<record{}, error?>, stream<record{}, error?>]|error {
+    worker w3 returns [stream<record {}, error?>, stream<record {}, error?>]|error {
         return testGlobalConnectionPoolConcurrentHelper1(poolDB_1);
     }
 
-    worker w4 returns [stream<record{}, error?>, stream<record{}, error?>]|error {
+    worker w4 returns [stream<record {}, error?>, stream<record {}, error?>]|error {
         return testGlobalConnectionPoolConcurrentHelper1(poolDB_1);
     }
 
     record {
-        [stream<record{}, error?>, stream<record{}, error?>]|error w1;
-        [stream<record{}, error?>, stream<record{}, error?>]|error w2;
-        [stream<record{}, error?>, stream<record{}, error?>]|error w3;
-        [stream<record{}, error?>, stream<record{}, error?>]|error w4;
+        [stream<record {}, error?>, stream<record {}, error?>]|error w1;
+        [stream<record {}, error?>, stream<record {}, error?>]|error w2;
+        [stream<record {}, error?>, stream<record {}, error?>]|error w3;
+        [stream<record {}, error?>, stream<record {}, error?>]|error w4;
     } results = wait {w1, w2, w3, w4};
 
     var result2 = check testGlobalConnectionPoolConcurrentHelper2(poolDB_1);
@@ -101,16 +101,16 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() returns error? {
     // Since each select operation hold up one connection each, the last select operation should
     // return an error
     int i = 0;
-    while(i < 4) {
+    while (i < 4) {
         if returnArray[i][0] is anydata {
             test:assertEquals(returnArray[i][0], 1);
             if returnArray[i][1] is anydata {
-               test:assertEquals(returnArray[i][1], 1);
+                test:assertEquals(returnArray[i][1], 1);
             } else {
-               test:assertFail("Expected second element of array an integer" + (<error> returnArray[i][1]).message());
+                test:assertFail("Expected second element of array an integer" + (<error>returnArray[i][1]).message());
             }
         } else {
-            test:assertFail("Expected first element of array an integer" + (<error> returnArray[i][0]).message());
+            test:assertFail("Expected first element of array an integer" + (<error>returnArray[i][0]).message());
         }
         i = i + 1;
     }
@@ -127,8 +127,8 @@ function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
     MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
-    
-    (stream<record{}, error?>)[] resultArray = [];
+
+    (stream<record {}, error?>)[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient2->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[2] = dbClient3->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -154,7 +154,7 @@ function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
     // custom pool options. Since each select operation holds up one connection each, the last select
     // operation should return an error
     i = 0;
-    while(i < 5) {
+    while (i < 5) {
         test:assertEquals(returnArray[i], 1);
         i = i + 1;
     }
@@ -166,26 +166,26 @@ function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
 }
 function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? {
     ConnectionPool pool = {maxOpenConnections: 3};
-    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
+    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
+    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient6 = check new (url = poolDB_1, user = user, password = password,
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
+    MockClient dbClient6 = check new (url = poolDB_1, user = user, password = password, 
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
         connectionPoolOptions = connectionPoolOptions);
 
-    stream<record {} , error?>[] resultArray = [];
+    stream<record {}, error?>[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient2->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[2] = dbClient3->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -213,14 +213,14 @@ function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? 
 
     // Since max pool size is 3, the last select function call going through each pool should fail.
     i = 0;
-    while(i < 3) {
+    while (i < 3) {
         test:assertEquals(returnArray[i], 1);
         test:assertEquals(returnArray[i + 4], 1);
         i = i + 1;
     }
     validateConnectionTimeoutError(returnArray[3]);
     validateConnectionTimeoutError(returnArray[7]);
-    
+
 }
 
 @test:Config {
@@ -235,7 +235,7 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() returns error
     MockClient dbClient5 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient6 = check new (url = poolDB_2, user = user, password = password, connectionPool = pool, connectionPoolOptions = connectionPoolOptions);
 
-    stream<record {} , error?>[] resultArray = [];
+    stream<record {}, error?>[] resultArray = [];
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient2->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[2] = dbClient3->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -263,7 +263,7 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() returns error
 
     // Since max pool size is 3, the last select function call going through each pool should fail.
     i = 0;
-    while(i < 3) {
+    while (i < 3) {
         test:assertEquals(returnArray[i], 1);
         test:assertEquals(returnArray[i + 4], 1);
         i = i + 1;
@@ -326,18 +326,18 @@ function testLocalSharedConnectionPoolStopInitInterleave() returns error? {
     test:assertEquals(result, 1);
 }
 
-function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url)
+function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url) 
 returns error? {
-    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
+    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1, 
         connectionPoolOptions = connectionPoolOptions);
     runtime:sleep(1);
     check dbClient.close();
 }
 
-function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url)
+function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url) 
 returns int|error {
     runtime:sleep(1);
-    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
+    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1, 
         connectionPoolOptions = connectionPoolOptions);
     var dt = dbClient->query("SELECT COUNT(*) as val from Customers where registrationID = 1", Result);
     int|error count = getReturnValue(dt);
@@ -357,7 +357,7 @@ function testShutDownUnsharedLocalConnectionPool() returns error? {
     // Pool should be shutdown as the only client using it is stopped.
     check dbClient.close();
     // This should result in an error return.
-    var resultAfterPoolShutDown = dbClient->query("select count(*) as val from Customers where registrationID = 1",
+    var resultAfterPoolShutDown = dbClient->query("select count(*) as val from Customers where registrationID = 1", 
         Result);
     int|error retVal2 = getReturnValue(resultAfterPoolShutDown);
 
@@ -488,15 +488,15 @@ function getOpenConnectionCount(string url) returns (int|error) {
     return count;
 }
 
-function testGlobalConnectionPoolConcurrentHelper1(string url) returns
-    [stream<record{}, error?>, stream<record{}, error?>]|error {
+function testGlobalConnectionPoolConcurrentHelper1(string url) returns 
+    [stream<record {}, error?>, stream<record {}, error?>]|error {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
     var dt2 = dbClient->query("select count(*) as val from Customers where registrationID = 2", Result);
     return [dt1, dt2];
 }
 
-function testGlobalConnectionPoolConcurrentHelper2(string url) returns (int|error)[] | error {
+function testGlobalConnectionPoolConcurrentHelper2(string url) returns (int|error)[]|error {
     MockClient dbClient = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     (int|error)[] returnArray = [];
     var dt1 = dbClient->query("select count(*) as val from Customers where registrationID = 1", Result);
@@ -515,8 +515,8 @@ isolated function getCombinedReturnValue([stream<record{}, error?>, stream<recor
     if queryResult is error {
         return queryResult;
     } else {
-        stream<record{}, error?> x;
-        stream<record{}, error?> y;
+        stream<record {}, error?> x;
+        stream<record {}, error?> y;
         [x, y] = queryResult;
         (int|error)[] returnArray = [];
         returnArray[0] = getReturnValue(x);
@@ -525,7 +525,7 @@ isolated function getCombinedReturnValue([stream<record{}, error?>, stream<recor
     }
 }
 
-isolated function getIntVariableValue(stream<record{}, error?> queryResult) returns int|error {
+isolated function getIntVariableValue(stream<record {}, error?> queryResult) returns int|error {
     int count = -1;
     record {|record {} value;|}? data = check queryResult.next();
     if data is record {|record {} value;|} {
@@ -538,7 +538,6 @@ isolated function getIntVariableValue(stream<record{}, error?> queryResult) retu
     return count;
 }
 
-
 function drainGlobalPool(string url) returns error? {
     MockClient dbClient1 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient2 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
@@ -546,7 +545,7 @@ function drainGlobalPool(string url) returns error? {
     MockClient dbClient4 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
     MockClient dbClient5 = check new (url = url, user = user, password = password, connectionPoolOptions = connectionPoolOptions);
 
-    stream<record{}, error?>[] resultArray = [];
+    stream<record {}, error?>[] resultArray = [];
 
     resultArray[0] = dbClient1->query("select count(*) as val from Customers where registrationID = 1", Result);
     resultArray[1] = dbClient1->query("select count(*) as val from Customers where registrationID = 2", Result);
@@ -577,14 +576,14 @@ function drainGlobalPool(string url) returns error? {
     // Since each select operation hold up one connection each, the last select operation should
     // return an error
     i = 0;
-    while(i < 10) {
+    while (i < 10) {
         test:assertEquals(returnArray[i], 1);
         i = i + 1;
     }
     validateConnectionTimeoutError(returnArray[10]);
 }
 
-isolated function getReturnValue(stream<record{}, error?> queryResult) returns int|error {
+isolated function getReturnValue(stream<record {}, error?> queryResult) returns int|error {
     int count = -1;
     record {|record {} value;|}? data = check queryResult.next();
     if data is record {|record {} value;|} {
@@ -599,12 +598,12 @@ isolated function getReturnValue(stream<record{}, error?> queryResult) returns i
 
 isolated function validateApplicationError(int|error dbError) {
     test:assertTrue(dbError is error);
-    ApplicationError sqlError = <ApplicationError> dbError;
+    ApplicationError sqlError = <ApplicationError>dbError;
     test:assertTrue(strings:includes(sqlError.message(), "Client is already closed"), sqlError.message());
 }
 
 isolated function validateConnectionTimeoutError(int|error dbError) {
     test:assertTrue(dbError is error);
-    DatabaseError sqlError = <DatabaseError> dbError;
+    DatabaseError sqlError = <DatabaseError>dbError;
     test:assertTrue(strings:includes(sqlError.message(), "request timed out after"), sqlError.message());
 }
