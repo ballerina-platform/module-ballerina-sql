@@ -14,23 +14,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
-
 import ballerina/test;
 
 string batchExecuteDB = urlPrefix + "9005/batchexecute";
 
 @test:BeforeGroups {
-	value: ["batch-execute"]	
-} 
+    value: ["batch-execute"]
+}
 function initBatchExecuteContainer() returns error? {
-	check initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
+    check initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["batch-execute"]	
-} 
+    value: ["batch-execute"]
+}
 function cleanBatchExecuteContainer() returns error? {
-	check cleanDockerContainer("sql-batch-execute");
+    check cleanDockerContainer("sql-batch-execute");
 }
 
 @test:Config {
@@ -38,11 +37,11 @@ function cleanBatchExecuteContainer() returns error? {
 }
 function batchInsertIntoDataTable() returns error? {
     var data = [
-        {intVal:3, longVal:9223372036854774807, floatVal:123.34},
-        {intVal:4, longVal:9223372036854774807, floatVal:123.34},
-        {intVal:5, longVal:9223372036854774807, floatVal:123.34}
+        {intVal: 3, longVal: 9223372036854774807, floatVal: 123.34}, 
+        {intVal: 4, longVal: 9223372036854774807, floatVal: 123.34}, 
+        {intVal: 5, longVal: 9223372036854774807, floatVal: 123.34}
     ];
-    ParameterizedQuery[] sqlQueries =
+    ParameterizedQuery[] sqlQueries = 
         from var row in data
         select `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (${row.intVal}, ${row.longVal}, ${row.floatVal})`;
     validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 1, 1], [2,3,4]);
@@ -65,11 +64,11 @@ function batchInsertIntoDataTable2() returns error? {
 }
 function batchInsertIntoDataTableFailure() {
     var data = [
-        {intVal:7, longVal:9223372036854774807, floatVal:123.34},
-        {intVal:1, longVal:9223372036854774807, floatVal:123.34},
-        {intVal:9, longVal:9223372036854774807, floatVal:123.34}
+        {intVal: 7, longVal: 9223372036854774807, floatVal: 123.34}, 
+        {intVal: 1, longVal: 9223372036854774807, floatVal: 123.34}, 
+        {intVal: 9, longVal: 9223372036854774807, floatVal: 123.34}
     ];
-    ParameterizedQuery[] sqlQueries =
+    ParameterizedQuery[] sqlQueries = 
         from var row in data
         select `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (${row.intVal}, ${row.longVal}, ${row.floatVal})`;
     ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
@@ -87,7 +86,7 @@ function batchInsertIntoDataTableFailure() {
 isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
     test:assertEquals(results.length(), rowCount.length());
 
-    int i =0;
+    int i = 0;
     while (i < results.length()) {
         test:assertEquals(results[i].affectedRowCount, rowCount[i]);
         int|string? lastInsertIdVal = results[i].lastInsertId;
@@ -102,8 +101,8 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
     }
 }
 
-function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries)
-returns ExecutionResult[] | error {
+function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries) 
+returns ExecutionResult[]|error {
     MockClient dbClient = check new (url = batchExecuteDB, user = user, password = password);
     ExecutionResult[] result = check dbClient->batchExecute(sqlQueries);
     check dbClient.close();

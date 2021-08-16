@@ -107,8 +107,12 @@ public class Utils {
     private Utils() {
     }
 
-    public static void closeResources(
-            TransactionResourceManager trxResourceManager, ResultSet resultSet, Statement statement,
+    public  static boolean  isWithinTrxBlock(TransactionResourceManager trxResourceManager) {
+        return trxResourceManager.isInTransaction() &&
+                trxResourceManager.getCurrentTransactionContext().hasTransactionBlock();
+    }
+
+    public static void closeResources(boolean isWithinTrxBlock, ResultSet resultSet, Statement statement,
                                Connection connection) {
         if (resultSet != null) {
             try {
@@ -122,8 +126,7 @@ public class Utils {
             } catch (SQLException ignored) {
             }
         }
-        if (trxResourceManager == null || !trxResourceManager.isInTransaction() ||
-                !trxResourceManager.getCurrentTransactionContext().hasTransactionBlock()) {
+        if (!isWithinTrxBlock) {
             if (connection != null) {
                 try {
                     connection.close();
