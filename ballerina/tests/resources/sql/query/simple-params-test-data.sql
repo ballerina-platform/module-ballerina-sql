@@ -111,15 +111,3 @@ CREATE TABLE IF NOT EXISTS MaskTable(
 );
 
 INSERT INTO MaskTable (row_id, int_type) VALUES(1, 1);
-
-CREATE TABLE IF NOT EXISTS EmptyDataTable(
-  row_id       INTEGER,
-  int_type     INTEGER,
-  long_type    BIGINT,
-  float_type   FLOAT,
-  double_type  DOUBLE,
-  boolean_type BOOLEAN,
-  string_type  VARCHAR(50),
-  decimal_type DECIMAL(20, 2),
-  PRIMARY KEY (row_id)
-);
