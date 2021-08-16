@@ -18,6 +18,8 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
@@ -31,6 +33,7 @@ import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.io.IOException;
 import java.sql.BatchUpdateException;
@@ -46,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.closeResources;
 import static io.ballerina.stdlib.sql.utils.Utils.getGeneratedKeys;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
@@ -67,10 +71,28 @@ public class ExecuteProcessor {
      * @param statementParameterProcessor pre-processor of the statement
      * @return execution result or error
      */
-    public static Object nativeExecute(BObject client, Object paramSQLString,
-                     AbstractStatementParameterProcessor statementParameterProcessor) {
-        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
+    public static Object nativeExecute(Environment env, BObject client, Object paramSQLString,
+                                       AbstractStatementParameterProcessor statementParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                Object resultStream =
+                        nativeExecuteExecutable(client, paramSQLString, statementParameterProcessor, false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeExecuteExecutable(client, paramSQLString, statementParameterProcessor, true,
+                    trxResourceManager);
+        }
+        return null;
+    }
+
+    private static Object nativeExecuteExecutable(BObject client, Object paramSQLString,
+                                                 AbstractStatementParameterProcessor statementParameterProcessor,
+                                                 boolean isWithInTrxBlock,
+                                                 TransactionResourceManager trxResourceManager) {
+        Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
@@ -87,7 +109,7 @@ public class ExecuteProcessor {
                 } else {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
                 if (paramSQLString instanceof BObject) {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
@@ -112,7 +134,7 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             } finally {
-                closeResources(trxResourceManager, resultSet, statement, connection);
+                closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(
@@ -127,9 +149,22 @@ public class ExecuteProcessor {
      * @param statementParameterProcessor pre-processor of the statement
      * @return execution result or error
      */
-    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
+    public static Object nativeBatchExecute(Environment env, BObject client, BArray paramSQLStrings,
                                             AbstractStatementParameterProcessor statementParameterProcessor) {
-        return nativeBatchExecute(client, paramSQLStrings, statementParameterProcessor, true);
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                Object resultStream =
+                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, true,
+                                false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, true,
+                    true, trxResourceManager);
+        }
+        return null;
     }
 
     /**
@@ -140,9 +175,29 @@ public class ExecuteProcessor {
      * @param generateKeys flag to auto-generate keys
      * @return execution result or error
      */
-    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings,
+    public static Object nativeBatchExecute(Environment env, BObject client, BArray paramSQLStrings,
                                             AbstractStatementParameterProcessor statementParameterProcessor,
                                             boolean generateKeys) {
+        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
+        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
+            Future balFuture = env.markAsync();
+            SQL_EXECUTOR_SERVICE.execute(()-> {
+                Object resultStream =
+                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, generateKeys,
+                                false, null);
+                balFuture.complete(resultStream);
+            });
+        } else {
+            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, generateKeys,
+                    true, trxResourceManager);
+        }
+        return null;
+    }
+
+    private static Object nativeBatchExecuteExecutable(BObject client, BArray paramSQLStrings,
+                                            AbstractStatementParameterProcessor statementParameterProcessor,
+                                            boolean generateKeys, boolean isWithinTrxBlock,
+                                            TransactionResourceManager trxResourceManager) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -153,7 +208,6 @@ public class ExecuteProcessor {
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
-            TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
             String sqlQuery = null;
             List<BObject> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
@@ -173,7 +227,7 @@ public class ExecuteProcessor {
                                 "commands. These has to be executed in different function calls");
                     }
                 }
-                connection = SQLDatasource.getConnection(trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
 
                 if (generateKeys) {
                     statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
@@ -222,7 +276,7 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + e.getMessage());
             } finally {
-                closeResources(trxResourceManager, resultSet, statement, connection);
+                closeResources(isWithinTrxBlock, resultSet, statement, connection);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(

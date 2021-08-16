@@ -18,17 +18,17 @@ import ballerina/test;
 string jdbcURL = urlPrefix + "9009/querynumericparams";
 
 @test:BeforeGroups {
-	value: ["query-numeric-params"]
-} 
-function initQueryNumericContainer() returns error? {
-	check initializeDockerContainer("sql-query-numeric", "querynumericparams", "9009", "query", "numerical-test-data.sql");
+    value: ["query-numeric-params"]
+}
+function inißtQueryNumericContainer() returns error? {
+    check initializeDockerContainer("sql-query-numeric", "querynumericparams", "9009", "query", "numerical-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["query-numeric-params"]	
-} 
+    value: ["query-numeric-params"]
+}
 function cleanQueryNumericContainer() returns error? {
-	check cleanDockerContainer("sql-query-numeric");
+    check cleanDockerContainer("sql-query-numeric");
 }
 
 type NumericTypeForQuery record {
@@ -49,7 +49,7 @@ type NumericTypeForQuery record {
 }
 function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
+    stream<record {}, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
     record {}? returnData = ();
     error? e = streamData.forEach(function(record {} data) {
         returnData = data;
@@ -120,7 +120,7 @@ function testQueryNumericInvalidColumnRecord() returns error? {
     check streamData.close();
     check dbClient.close();
     test:assertTrue(data is error);
-    error dbError = <error> data;
+    error dbError = <error>data;
     test:assertEquals(dbError.message(), "No mapping field found for SQL table column 'ID' in the record type 'NumericInvalidColumn'", "Error message differs");
 }
 
@@ -183,7 +183,7 @@ function testQueryNumericUnionTypeRecord() returns error? {
     check streamData.close();
     NumericUnionType? returnData = data?.value;
     check dbClient.close();
-    
+
     test:assertEquals(returnData?.id, 1);
     test:assertEquals(returnData?.int_type, 2147483647);
     test:assertEquals(returnData?.bigint_type, 9223372036854774807);
@@ -194,7 +194,7 @@ function testQueryNumericUnionTypeRecord() returns error? {
     test:assertTrue(returnData?.decimal_type is decimal);
     test:assertTrue(returnData?.numeric_type is decimal);
     test:assertTrue(returnData?.float_type is float);
-    
+
 }
 
 type NumericStringType record {
@@ -276,7 +276,7 @@ function testQueryNumericCustomTypeRecord() returns error? {
 }
 function testQueryFromNullTable() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record{}, Error?> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
+    stream<record {}, Error?> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
     record {} returnData = {};
     int count = 0;
     error? e = streamData.forEach(function(record {} data) {
@@ -305,11 +305,11 @@ type DataTable record {
 }
 function testQueryDatabaseError() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<DataTable, Error?> streamData =
-            <stream<DataTable, Error?>> dbClient->query(`SELECT int_type from DataTable1`, DataTable);
+    stream<DataTable, Error?> streamData = 
+            <stream<DataTable, Error?>>dbClient->query(`SELECT int_type from DataTable1`, DataTable);
 
     Error? e = streamData.forEach(function(DataTable data) {
-       // No need to do anything
+    // No need to do anything
     });
     check dbClient.close();
     test:assertTrue(e is Error);
