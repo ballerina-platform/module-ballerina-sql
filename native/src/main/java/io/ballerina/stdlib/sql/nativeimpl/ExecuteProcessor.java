@@ -220,7 +220,8 @@ public class ExecuteProcessor {
     }
 
     private static Object batchExecuteParameterizedQuery(BObject client, SQLDatasource sqlDatasource,
-                                                         BArray paramSQLStrings, AbstractStatementParameterProcessor statementParameterProcessor,
+                                                         BArray paramSQLStrings,
+                                                         AbstractStatementParameterProcessor statementParamProcessor,
                                                          boolean generateKeys, boolean isWithinTrxBlock,
                                                          TransactionResourceManager trxResourceManager) {
         Connection connection = null;
@@ -254,7 +255,7 @@ public class ExecuteProcessor {
             }
 
             for (BObject param : parameters) {
-                statementParameterProcessor.setParams(connection, statement, param);
+                statementParamProcessor.setParams(connection, statement, param);
                 statement.addBatch();
             }
 
