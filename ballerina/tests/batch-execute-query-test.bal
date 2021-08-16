@@ -107,6 +107,40 @@ function batchInsertIntoDataTable4() returns error? {
     validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 0], [-1, -1]);
 }
 
+@test:Config {
+    groups: ["batch-execute"],
+    dependsOn: [batchInsertIntoDataTable4]
+}
+function batchInsertIntoDataTableFailure2() returns error? {
+    string[] sqlQueries =  [
+        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);",
+        "UPDATE DataTable1 SET int_type=13 WHERE int_type=13;"
+    ];
+    ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
+    test:assertTrue(result is error);
+
+    if result is BatchExecuteError {
+        BatchExecuteErrorDetail errorDetails = result.detail();
+        test:assertEquals(errorDetails.executionResults.length(), 1);
+        test:assertEquals(errorDetails.executionResults[0].affectedRowCount, 1);
+    } else {
+        test:assertFail("Database Error expected.");
+    }
+}
+
+@test:Config {
+    groups: ["batch-execute"],
+    dependsOn: [batchInsertIntoDataTableFailure2]
+}
+function batchInsertIntoDataTableFailure3() {
+    ParameterizedQuery[] sqlQueries = [
+        `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);`,
+        `UPDATE DataTable1 SET int_type=13 WHERE int_type=13;`
+    ];
+    ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
+    test:assertTrue(result is ApplicationError);
+}
+
 isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
     test:assertEquals(results.length(), rowCount.length());
 
