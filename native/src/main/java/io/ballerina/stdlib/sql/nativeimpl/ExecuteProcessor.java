@@ -20,6 +20,7 @@ package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
@@ -205,82 +206,153 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
                         " are not allowed");
             }
-            Connection connection = null;
-            PreparedStatement statement = null;
-            ResultSet resultSet = null;
-            String sqlQuery = null;
-            List<BObject> parameters = new ArrayList<>();
-            List<BMap<BString, Object>> executionResults = new ArrayList<>();
-            try {
-                Object[] paramSQLObjects = paramSQLStrings.getValues();
-                BObject parameterizedQuery = (BObject) paramSQLObjects[0];
-                sqlQuery = getSqlQuery(parameterizedQuery);
-                parameters.add(parameterizedQuery);
-                for (int i = 1; i < paramSQLStrings.size(); i++) {
-                    parameterizedQuery = (BObject) paramSQLObjects[i];
-                    String paramSQLQuery = getSqlQuery(parameterizedQuery);
-
-                    if (sqlQuery.equals(paramSQLQuery)) {
-                        parameters.add(parameterizedQuery);
-                    } else {
-                        return ErrorGenerator.getSQLApplicationError("Batch Execute cannot contain different SQL " +
-                                "commands. These has to be executed in different function calls");
-                    }
-                }
-                connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
-
-                if (generateKeys) {
-                    statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-                } else {
-                    statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
-                }
-
-                for (BObject param : parameters) {
-                    statementParameterProcessor.setParams(connection, statement, param);
-                    statement.addBatch();
-                }
-                int[] counts = statement.executeBatch();
-
-                if (generateKeys && !isDdlStatement(sqlQuery)) {
-                    resultSet = statement.getGeneratedKeys();
-                }
-                for (int count : counts) {
-                    Map<String, Object> resultField = new HashMap<>();
-                    resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                    Object lastInsertedId = null;
-                    if (resultSet != null && resultSet.next()) {
-                        lastInsertedId = getGeneratedKeys(resultSet);
-                    }
-                    resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                            Constants.EXECUTION_RESULT_RECORD, resultField));
-                }
-                return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
-                        TypeCreator.createRecordType(
-                                Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
-            } catch (BatchUpdateException e) {
-                int[] updateCounts = e.getUpdateCounts();
-                for (int count : updateCounts) {
-                    Map<String, Object> resultField = new HashMap<>();
-                    resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                    resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                            Constants.EXECUTION_RESULT_RECORD, resultField));
-                }
-                return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
-                        "Error while executing batch command starting with: '" + sqlQuery + "'.");
-            } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
-                        "command starting with : " + sqlQuery + ". ");
-            } catch (ApplicationError | IOException e) {
-                return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
-                        + e.getMessage());
-            } finally {
-                closeResources(isWithinTrxBlock, resultSet, statement, connection);
+            if (paramSQLStrings.getElementType().getTag() == TypeTags.STRING_TAG) {
+                return batchExecuteMultipleQueries(client, sqlDatasource, paramSQLStrings, generateKeys,
+                        isWithinTrxBlock, trxResourceManager);
+            } else {
+                return batchExecuteParameterizedQuery(client, sqlDatasource, paramSQLStrings,
+                        statementParameterProcessor, generateKeys, isWithinTrxBlock, trxResourceManager);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(
                     "Client is not properly initialized!");
+        }
+    }
+
+    private static Object batchExecuteParameterizedQuery(BObject client, SQLDatasource sqlDatasource,
+                                                         BArray paramSQLStrings, AbstractStatementParameterProcessor statementParameterProcessor,
+                                                         boolean generateKeys, boolean isWithinTrxBlock,
+                                                         TransactionResourceManager trxResourceManager) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        String sqlQuery = null;
+        List<BObject> parameters = new ArrayList<>();
+        List<BMap<BString, Object>> executionResults = new ArrayList<>();
+        try {
+            Object[] paramSQLObjects = paramSQLStrings.getValues();
+            BObject parameterizedQuery = (BObject) paramSQLObjects[0];
+            sqlQuery = getSqlQuery(parameterizedQuery);
+            parameters.add(parameterizedQuery);
+            for (int i = 1; i < paramSQLStrings.size(); i++) {
+                parameterizedQuery = (BObject) paramSQLObjects[i];
+                String paramSQLQuery = getSqlQuery(parameterizedQuery);
+
+                if (sqlQuery.equals(paramSQLQuery)) {
+                    parameters.add(parameterizedQuery);
+                } else {
+                    return ErrorGenerator.getSQLApplicationError("Batch Execute cannot contain different SQL " +
+                            "commands. These has to be executed in different function calls");
+                }
+            }
+            connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
+
+            if (generateKeys) {
+                statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            } else {
+                statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
+            }
+
+            for (BObject param : parameters) {
+                statementParameterProcessor.setParams(connection, statement, param);
+                statement.addBatch();
+            }
+
+            int[] counts = statement.executeBatch();
+
+            if (generateKeys && !isDdlStatement(sqlQuery)) {
+                resultSet = statement.getGeneratedKeys();
+            }
+            for (int count : counts) {
+                Map<String, Object> resultField = new HashMap<>();
+                resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                Object lastInsertedId = null;
+                if (resultSet != null && resultSet.next()) {
+                    lastInsertedId = getGeneratedKeys(resultSet);
+                }
+                resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
+                executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                        Constants.EXECUTION_RESULT_RECORD, resultField));
+            }
+            return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
+                    TypeCreator.createRecordType(
+                            Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
+        } catch (BatchUpdateException e) {
+            int[] updateCounts = e.getUpdateCounts();
+            for (int count : updateCounts) {
+                Map<String, Object> resultField = new HashMap<>();
+                resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
+                executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                        Constants.EXECUTION_RESULT_RECORD, resultField));
+            }
+            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
+                    "Error while executing batch command starting with: '" + sqlQuery + "'.");
+        } catch (SQLException e) {
+            return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
+                    "command starting with : " + sqlQuery + ". ");
+        } catch (ApplicationError | IOException e) {
+            return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
+                    + e.getMessage());
+        } finally {
+            closeResources(isWithinTrxBlock, resultSet, statement, connection);
+        }
+    }
+
+    private static Object batchExecuteMultipleQueries(BObject client, SQLDatasource sqlDatasource,
+                                                      BArray paramSQLStrings, boolean generateKeys,
+                                                      boolean isWithinTrxBlock,
+                                                      TransactionResourceManager trxResourceManager) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        String sqlQuery = null;
+        List<BMap<BString, Object>> executionResults = new ArrayList<>();
+        try {
+            String[] queries = paramSQLStrings.getStringArray();
+            sqlQuery = queries[0];
+
+            connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
+            statement = connection.createStatement();
+
+            for (String query : queries) {
+                statement.addBatch(query);
+            }
+            int[] counts = statement.executeBatch();
+
+            if (generateKeys) {
+                resultSet = statement.getGeneratedKeys();
+            }
+            for (int count : counts) {
+                Map<String, Object> resultField = new HashMap<>();
+                resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                Object lastInsertedId = null;
+                if (resultSet != null && resultSet.next()) {
+                    lastInsertedId = getGeneratedKeys(resultSet);
+                }
+                resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
+                executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                        Constants.EXECUTION_RESULT_RECORD, resultField));
+            }
+            return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
+                    TypeCreator.createRecordType(
+                            Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
+        } catch (BatchUpdateException e) {
+            int[] updateCounts = e.getUpdateCounts();
+            for (int count : updateCounts) {
+                Map<String, Object> resultField = new HashMap<>();
+                resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
+                executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                        Constants.EXECUTION_RESULT_RECORD, resultField));
+            }
+            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
+                    "Error while executing batch command starting with: '" + sqlQuery + "'.");
+        } catch (SQLException e) {
+            return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
+                    "command starting with : " + sqlQuery + ". ");
+        } finally {
+            closeResources(isWithinTrxBlock, resultSet, statement, connection);
         }
     }
 

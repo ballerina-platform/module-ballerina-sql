@@ -83,6 +83,30 @@ function batchInsertIntoDataTableFailure() {
     }
 }
 
+@test:Config {
+    groups: ["batch-execute"],
+    dependsOn: [batchInsertIntoDataTableFailure]
+}
+function batchInsertIntoDataTable3() returns error? {
+    string[] sqlQueries =  [
+        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (10, 9223372036854774807, 123.34);",
+        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (11, 9223372036854774807, 123.34);"
+    ];
+    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 1], [-1, -1]);
+}
+
+@test:Config {
+    groups: ["batch-execute"],
+    dependsOn: [batchInsertIntoDataTable3]
+}
+function batchInsertIntoDataTable4() returns error? {
+    string[] sqlQueries =  [
+        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (12, 9223372036854774807, 123.34);",
+        "UPDATE DataTable SET int_type=13 WHERE int_type=13;"
+    ];
+    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 0], [-1, -1]);
+}
+
 isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
     test:assertEquals(results.length(), rowCount.length());
 
@@ -91,7 +115,7 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
         test:assertEquals(results[i].affectedRowCount, rowCount[i]);
         int|string? lastInsertIdVal = results[i].lastInsertId;
         if lastId[i] == -1 {
-            test:assertNotEquals(lastInsertIdVal, ());
+            test:assertEquals(lastInsertIdVal, ());
         } else if lastInsertIdVal is int {
             test:assertTrue(lastInsertIdVal > 1, "Last Insert Id is nil.");
         } else {
@@ -101,7 +125,7 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
     }
 }
 
-function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries) 
+function batchExecuteQueryMockClient(string[]|ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|error {
     MockClient dbClient = check new (url = batchExecuteDB, user = user, password = password);
     ExecutionResult[] result = check dbClient->batchExecute(sqlQueries);
