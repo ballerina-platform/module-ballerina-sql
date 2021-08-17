@@ -79,7 +79,7 @@ function batchInsertIntoDataTableFailure() {
         test:assertEquals(errorDetails.executionResults.length(), 1);
         test:assertEquals(errorDetails.executionResults[0].affectedRowCount, 1);
     } else {
-        test:assertFail("Database Error expected.");
+        test:assertFail("BatchExecuteError expected.");
     }
 }
 
@@ -124,7 +124,7 @@ function batchInsertIntoDataTableFailure2() returns error? {
         test:assertEquals(errorDetails.executionResults.length(), 1);
         test:assertEquals(errorDetails.executionResults[0].affectedRowCount, 1);
     } else {
-        test:assertFail("Database Error expected.");
+        test:assertFail("BatchExecuteError expected.");
     }
 }
 
