@@ -37,20 +37,20 @@ isolated function afterSuite() {
     io:println("Test suite finished");
 }
 
-function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
+function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, 
         string scriptName) returns error? {
     int exitCode = 1;
-    Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm",
-        "-d", "--name", containerName,
-        "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
-        "-e", "HSQLDB_USER=test",
-        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts",
+    Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm", 
+        "-d", "--name", containerName, 
+        "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias, 
+        "-e", "HSQLDB_USER=test", 
+        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts", 
         "-p", port + ":9001", "blacklabelops/hsqldb");
     Process result = check execResult;
     int waitForExit = check result.waitForExit();
     exitCode = check result.exitCode();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
-    io:println("Docker container for Database '" + dbAlias +"' created.");
+    io:println("Docker container for Database '" + dbAlias + "' created.");
     runtime:sleep(20);
 
     int counter = 0;
@@ -58,19 +58,19 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5);
         execResult = exec(
-            "docker", {}, scriptPath, "exec", containerName,
+            "docker", {}, scriptPath, "exec", containerName, 
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
-            "--autoCommit",
-            "--inlineRc", "url=" + urlPrefix + "9001/" +  dbAlias + ",user=test,password=", 
+            "--autoCommit", 
+            "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=", 
             "/scripts/" + scriptName
         );
         result = check execResult;
         waitForExit = check result.waitForExit();
-        exitCode =check result.exitCode();
+        exitCode = check result.exitCode();
         counter = counter + 1;
     }
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
-    io:println("Docker container for Database '" + dbAlias +"' initialised with the script.");
+    io:println("Docker container for Database '" + dbAlias + "' initialised with the script.");
 }
 
 function cleanDockerContainer(string containerName) returns error? {
@@ -80,20 +80,20 @@ function cleanDockerContainer(string containerName) returns error? {
 
     int exitCode = check result.exitCode();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
-    io:println("Cleaned docker container '" + containerName +"'.");
+    io:println("Cleaned docker container '" + containerName + "'.");
 }
 
-isolated function getByteColumnChannel() returns io:ReadableByteChannel | error {
+isolated function getByteColumnChannel() returns io:ReadableByteChannel|error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/byteValue.txt");
     return byteChannel;
 }
 
-isolated function getBlobColumnChannel() returns io:ReadableByteChannel | error {
+isolated function getBlobColumnChannel() returns io:ReadableByteChannel|error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/blobValue.txt");
     return byteChannel;
 }
 
-isolated function getClobColumnChannel() returns io:ReadableCharacterChannel | error {
+isolated function getClobColumnChannel() returns io:ReadableCharacterChannel|error {
     io:ReadableByteChannel byteChannel = check io:openReadableFile("./tests/resources/files/clobValue.txt");
     io:ReadableCharacterChannel sourceChannel = new (byteChannel, "UTF-8");
     return sourceChannel;
@@ -106,10 +106,15 @@ isolated function getUntaintedData(record {}|error? value, string fieldName) ret
     return {};
 }
 
-function queryMockClient(string url, string|ParameterizedQuery sqlQuery)
-returns record {} | error? {
+function getMockClient(string url) returns MockClient|error {
     MockClient dbClient = check new (url = url, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query(sqlQuery);
+    return dbClient;
+}
+
+function queryMockClient(string url, string|ParameterizedQuery sqlQuery) 
+returns record {}|error? {
+    MockClient dbClient = check getMockClient(url);
+    stream<record {}, error?> streamData = dbClient->query(sqlQuery);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -117,8 +122,16 @@ returns record {} | error? {
     return value;
 }
 
-function exec(string command, map<string> env = {},
-                     string? dir = (), string... args) returns Process|error = @java:Method {
+function queryRecordMockClient(string url, string|ParameterizedQuery sqlQuery) 
+returns record {}|error {
+    MockClient dbClient = check getMockClient(url);
+    record {} resultRecord = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    return resultRecord;
+}
+
+function exec(string command, map<string> env = {}, 
+                    string? dir = (), string... args) returns Process|error = @java:Method {
     name: "exec",
     'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.Exec"
 } external;

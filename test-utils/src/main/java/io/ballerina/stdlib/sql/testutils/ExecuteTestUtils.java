@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.sql.testutils;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.sql.nativeimpl.ExecuteProcessor;
@@ -30,12 +31,13 @@ public class ExecuteTestUtils {
     private ExecuteTestUtils() {
     }
 
-    public static Object nativeExecute(BObject client, Object paramSQLString) {
-        return ExecuteProcessor.nativeExecute(client, paramSQLString, DefaultStatementParameterProcessor.getInstance());
+    public static Object nativeExecute(Environment env, BObject client, Object paramSQLString) {
+        return ExecuteProcessor.nativeExecute(env, client, paramSQLString,
+                DefaultStatementParameterProcessor.getInstance());
     }
 
-    public static Object nativeBatchExecute(BObject client, BArray paramSQLStrings) {
-        return ExecuteProcessor.nativeBatchExecute(client, paramSQLStrings,
+    public static Object nativeBatchExecute(Environment env, BObject client, BArray paramSQLStrings) {
+        return ExecuteProcessor.nativeBatchExecute(env, client, paramSQLStrings,
                 DefaultStatementParameterProcessor.getInstance());
     }
 }

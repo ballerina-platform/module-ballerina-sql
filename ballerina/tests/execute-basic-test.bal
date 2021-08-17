@@ -18,15 +18,15 @@ import ballerina/test;
 string executeDb = urlPrefix + "9006/execute";
 
 @test:BeforeGroups {
-	value: ["execute-basic"]
-} 
+    value: ["execute-basic"]
+}
 function initExecuteContainer() returns error? {
     check initializeDockerContainer("sql-execute", "execute", "9006", "execute", "execute-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["execute-basic"]
-} 
+    value: ["execute-basic"]
+}
 function cleanExecuteContainer() returns error? {
     check cleanDockerContainer("sql-execute");
 }
@@ -36,7 +36,7 @@ function cleanExecuteContainer() returns error? {
 }
 function testCreateTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    ExecutionResult result = check dbClient->execute("CREATE TABLE TestCreateTable(studentID int,"
+    ExecutionResult result = check dbClient->execute("CREATE TABLE TestCreateTable(studentID int," 
         + " LastName varchar(255))");
     check dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 0, "Affected row count is different.");
@@ -51,7 +51,7 @@ function testInsertTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     ExecutionResult result = check dbClient->execute("Insert into NumericTypes (int_type) values (20)");
     check dbClient.close();
-    
+
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
     var insertId = result.lastInsertId;
     if insertId is int {
@@ -67,7 +67,7 @@ function testInsertTable() returns error? {
 }
 function testInsertTableWithoutGeneratedKeys() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    ExecutionResult result = check dbClient->execute("Insert into StringTypes (id, varchar_type)"
+    ExecutionResult result = check dbClient->execute("Insert into StringTypes (id, varchar_type)" 
         + " values (20, 'test')");
     check dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
@@ -113,13 +113,11 @@ function testInsertAndSelectTableWithGeneratedKeys() returns error? {
     ExecutionResult result = check dbClient->execute("insert into NumericTypes (int_type) values (31)");
 
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
-    
+
     string|int? insertedId = result.lastInsertId;
     if insertedId is int {
         string query = string `SELECT * from NumericTypes where id = ${insertedId}`;
-        stream<record{}, error?> queryResult = dbClient->query(query, NumericType);
-
-        stream<NumericType, Error> streamData = <stream<NumericType, Error>>queryResult;
+        stream<NumericType, Error?> streamData = dbClient->query(query);
         record {|NumericType value;|}? data = check streamData.next();
         check streamData.close();
         test:assertNotExactEquals(data?.value, (), "Incorrect InsetId returned.");
@@ -135,8 +133,8 @@ function testInsertAndSelectTableWithGeneratedKeys() returns error? {
 }
 function testInsertWithAllNilAndSelectTableWithGeneratedKeys() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    ExecutionResult result = check dbClient->execute("Insert into NumericTypes (int_type, bigint_type, "
-        + "smallint_type, tinyint_type, bit_type, decimal_type, numeric_type, float_type, real_type) "
+    ExecutionResult result = check dbClient->execute("Insert into NumericTypes (int_type, bigint_type, " 
+        + "smallint_type, tinyint_type, bit_type, decimal_type, numeric_type, float_type, real_type) " 
         + "values (null,null,null,null,null,null,null,null,null)");
 
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
@@ -144,9 +142,7 @@ function testInsertWithAllNilAndSelectTableWithGeneratedKeys() returns error? {
     string|int? insertedId = result.lastInsertId;
     if insertedId is int {
         string query = string `SELECT * from NumericTypes where id = ${insertedId}`;
-        stream<record{}, error?> queryResult = dbClient->query(query, NumericType);
-
-        stream<NumericType, Error> streamData = <stream<NumericType, Error>>queryResult;
+        stream<NumericType, Error?> streamData = dbClient->query(query);
         record {|NumericType value;|}? data = check streamData.next();
         check streamData.close();
         test:assertNotExactEquals(data?.value, (), "Incorrect InsetId returned.");
@@ -174,17 +170,16 @@ type StringData record {
 function testInsertWithStringAndSelectTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     string intIDVal = "25";
-    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type, "
-        + "character_type, nvarcharmax_type, longvarchar_type, clob_type) values ("
+    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type, " 
+        + "character_type, nvarcharmax_type, longvarchar_type, clob_type) values (" 
         + intIDVal + ",'str1','str2','s','str4','s','str6','str7','str8')";
     ExecutionResult result = check dbClient->execute(insertQuery);
-    
+
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     StringData? insertedData = ();
     string query = string `SELECT * from StringTypes where id = ${intIDVal}`;
-    stream<record{}, error?> queryResult = dbClient->query(query, StringData);
-    stream<StringData, Error> streamData = <stream<StringData, Error>>queryResult;
+    stream<StringData, Error?> streamData = dbClient->query(query);
     record {|StringData value;|}? data = check streamData.next();
     check streamData.close();
 
@@ -211,15 +206,14 @@ function testInsertWithStringAndSelectTable() returns error? {
 function testInsertWithEmptyStringAndSelectTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     string intIDVal = "35";
-    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type,"
-        + " character_type, nvarcharmax_type, longvarchar_type, clob_type) values (" + intIDVal +
+    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type," 
+        + " character_type, nvarcharmax_type, longvarchar_type, clob_type) values (" + intIDVal + 
         ",'','','','','','','','')";
     ExecutionResult result = check dbClient->execute(insertQuery);
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     string query = string `SELECT * from StringTypes where id = ${intIDVal}`;
-    stream<record{}, error?> queryResult = dbClient->query(query, StringData);
-    stream<StringData, Error> streamData = <stream<StringData, Error>>queryResult;
+    stream<StringData, Error?> streamData = dbClient->query(query);
     record {|StringData value;|}? data = check streamData.next();
     check streamData.close();
 
@@ -259,15 +253,14 @@ function testInsertWithNilStringAndSelectTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     string intIDVal = "45";
     string test = "Insert" + intIDVal;
-    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type,"
-        + " character_type, nvarcharmax_type, longvarchar_type, clob_type) values ("
+    string insertQuery = "Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type," 
+        + " character_type, nvarcharmax_type, longvarchar_type, clob_type) values (" 
         + intIDVal + ",null,null,null,null,null,null,null,null)";
     ExecutionResult result = check dbClient->execute(insertQuery);
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     string query = string `SELECT * from StringTypes where id = ${intIDVal}`;
-    stream<record{}, error?> queryResult = dbClient->query(query, StringNilData);
-    stream<StringNilData, Error> streamData = <stream<StringNilData, Error>>queryResult;
+    stream<StringNilData, Error?> streamData = dbClient->query(query);
     record {|StringNilData value;|}? data = check streamData.next();
     check streamData.close();
 
@@ -314,12 +307,12 @@ function testInsertTableWithDatabaseError() returns error? {
 }
 function testInsertTableWithDataTypeError() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    ExecutionResult|Error result = dbClient->execute("Insert into NumericTypes (int_type) values"
+    ExecutionResult|Error result = dbClient->execute("Insert into NumericTypes (int_type) values" 
         + " ('This is wrong type')");
 
     if result is DatabaseError {
         test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " + 
-                    "(int_type) values ('This is wrong type'). data exception: invalid character value for cast."),
+                    "(int_type) values ('This is wrong type'). data exception: invalid character value for cast."), 
                     "Error message does not match, actual :'" + result.message() + "'");
         DatabaseErrorDetail errorDetails = result.detail();
         test:assertEquals(errorDetails.errorCode, -3438, "SQL Error code does not match");
@@ -343,10 +336,9 @@ function testUpdateData() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     ExecutionResult result = check dbClient->execute("Update NumericTypes set int_type = 11 where int_type = 10");
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
-    
-    stream<record{}, error?> queryResult = dbClient->query("SELECT count(*) as countval from NumericTypes"
-        + " where int_type = 11", ResultCount);
-    stream<ResultCount, Error> streamData = <stream<ResultCount, Error>>queryResult;
+
+    stream<ResultCount, Error?> streamData = dbClient->query(
+        `SELECT count(*) as countval from NumericTypes where int_type = 11`);
     record {|ResultCount value;|}? data = check streamData.next();
     check streamData.close();
     test:assertEquals(data?.value?.countVal, 1, "Update command was not successful.");
@@ -359,12 +351,12 @@ function testUpdateData() returns error? {
 }
 function testErroneousExcuteWithParams() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    BlobValue value = new([1, 2]);
+    BlobValue value = new ([1, 2]);
     ParameterizedQuery query = `Insert into NumericTypes (int_type) values (${value})`;
     ExecutionResult|error result = dbClient->execute(query);
     test:assertTrue(result is error);
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " + 
                 "(int_type) values ( ? ). incompatible data type in conversion."));
     } else {
         test:assertFail("DatabaseError Error expected.");

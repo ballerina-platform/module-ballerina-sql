@@ -34,4 +34,11 @@
         <class name="org.ballerina.stdlib.sql.nativeimpl.ExecuteProcessor"/>
         <Bug pattern="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH"/>
     </Match>
+
+    <!-- The strings from the user is passed to the statement object as per use case -->
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.nativeimpl.ExecuteProcessor"/>
+        <Method name="batchExecuteMultipleQueries"/>
+        <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
 </FindBugsFilter>

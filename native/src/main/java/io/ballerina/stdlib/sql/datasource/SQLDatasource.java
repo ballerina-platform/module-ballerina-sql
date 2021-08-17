@@ -151,19 +151,12 @@ public class SQLDatasource {
         return sqlDatasourceToBeReturned;
     }
 
-    public static Connection getConnection(TransactionResourceManager trxResourceManager, BObject client,
-            SQLDatasource datasource)
-            throws SQLException {
+    public static Connection getConnection(boolean isInTrx, TransactionResourceManager trxResourceManager,
+                                           BObject client, SQLDatasource datasource) throws SQLException {
         Connection conn;
         try {
-            if (!trxResourceManager.isInTransaction()) {
+            if (!isInTrx) {
                 return datasource.getConnection();
-            } else {
-                //This is when there is an infected transaction block. But this is not participated to the transaction
-                //since the action call is outside of the transaction block.
-                if (!trxResourceManager.getCurrentTransactionContext().hasTransactionBlock()) {
-                    return datasource.getConnection();
-                }
             }
             String connectorId = (String) client.getNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID);
             boolean isXAConnection = datasource.isXADataSource();

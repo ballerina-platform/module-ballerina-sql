@@ -137,7 +137,8 @@ public abstract class AbstractStatementParameterProcessor {
             throws SQLException, ApplicationError;
     protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
                                               Object value) throws SQLException, ApplicationError;
-    protected abstract void setXml(PreparedStatement preparedStatement, int index, BXml value) throws SQLException;
+    protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
+            throws SQLException, ApplicationError;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws SQLException, ApplicationError, IOException {
@@ -206,7 +207,7 @@ public abstract class AbstractStatementParameterProcessor {
                         objectValue.getType().getQualifiedName() + " in column index: " + index);
             }
         } else if (object instanceof BXml) {
-            setXml(preparedStatement, index, (BXml) object);
+            setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else {
             throw new ApplicationError("Unsupported type passed in column index: " + index);

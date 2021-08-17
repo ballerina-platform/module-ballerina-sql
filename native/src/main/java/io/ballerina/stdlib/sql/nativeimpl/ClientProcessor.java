@@ -24,6 +24,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 
 import java.util.UUID;
+import java.util.logging.LogManager;
 
 /**
  * This class implements the utility methods for the clients to be used.
@@ -56,6 +57,7 @@ public class ClientProcessor {
      */
     public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         try {
+            LogManager.getLogManager().reset();
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
             client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());

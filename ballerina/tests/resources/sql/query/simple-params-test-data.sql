@@ -111,4 +111,3 @@ CREATE TABLE IF NOT EXISTS MaskTable(
 );
 
 INSERT INTO MaskTable (row_id, int_type) VALUES(1, 1);
-

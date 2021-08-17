@@ -65,6 +65,16 @@ public class ErrorGenerator {
                 StringUtils.fromString(errorMessage), null, null);
     }
 
+    public static BError getNoRowsError(String message) {
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
+                StringUtils.fromString(message), null,  null);
+    }
+
+    public static BError getTypeMismatchError(String message) {
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.TYPE_MISMATCH_ERROR,
+                StringUtils.fromString(message), null,  null);
+    }
+
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
                                                   List<BMap<BString, Object>> executionResults) {
         Map<String, Object> valueMap = new HashMap<>();
@@ -89,6 +99,6 @@ public class ErrorGenerator {
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(ModuleUtils.getModule(), Constants.DATABASE_ERROR_DETAILS, valueMap);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.DATABASE_ERROR,
-                StringUtils.fromString(message), null,  sqlClientErrorDetailRecord);
+                StringUtils.fromString(message), null, sqlClientErrorDetailRecord);
     }
 }
