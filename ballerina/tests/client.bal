@@ -53,7 +53,7 @@ isolated client class MockClient {
         name: "nativeExecute"
     } external;
 
-    remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
+    remote isolated function batchExecute(string[]|ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
         if (sqlQueries.length() == 0) {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
@@ -87,7 +87,7 @@ returns Error? = @java:Method {
     'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils"
 } external;
 
-isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries) 
+isolated function nativeBatchExecute(Client sqlClient, string[]|ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
     'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils"
 } external;
