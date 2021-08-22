@@ -43,6 +43,7 @@ import io.ballerina.runtime.internal.types.BRecordType;
 import io.ballerina.runtime.internal.values.BmpStringValue;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
@@ -179,8 +180,38 @@ public class TestUtils {
             }
 
             @Override
+            public int size() {
+                return BObject.super.size();
+            }
+
+            @Override
+            public boolean isFrozen() {
+                return BObject.super.isFrozen();
+            }
+
+            @Override
+            public void freezeDirect() {
+                BObject.super.freezeDirect();
+            }
+
+            @Override
+            public void serialize(OutputStream outputStream) {
+                BObject.super.serialize(outputStream);
+            }
+
+            @Override
+            public BTypedesc getTypedesc() {
+                return null;
+            }
+
+            @Override
             public String stringValue(BLink bLink) {
                 return null;
+            }
+
+            @Override
+            public String informalStringValue(BLink parent) {
+                return BObject.super.informalStringValue(parent);
             }
 
             @Override
@@ -885,6 +916,26 @@ public class TestUtils {
             }
 
             @Override
+            public boolean isFrozen() {
+                return BArray.super.isFrozen();
+            }
+
+            @Override
+            public void freezeDirect() {
+                BArray.super.freezeDirect();
+            }
+
+            @Override
+            public void serialize(OutputStream outputStream) {
+                BArray.super.serialize(outputStream);
+            }
+
+            @Override
+            public BTypedesc getTypedesc() {
+                return null;
+            }
+
+            @Override
             public Object get(long l) {
                 return arrayList.get((int) l);
             }
@@ -1072,6 +1123,11 @@ public class TestUtils {
             @Override
             public String stringValue(BLink bLink) {
                 return null;
+            }
+
+            @Override
+            public String informalStringValue(BLink parent) {
+                return BArray.super.informalStringValue(parent);
             }
 
             @Override
