@@ -36,10 +36,8 @@ description = 'Ballerina - SQL Ballerina Generator'
 def packageName = 'sql'
 def packageOrg = 'ballerina'
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
-def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def originalConfig = ballerinaConfigFile.text
-def originalDependencies = ballerinaDependencyFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -65,24 +63,16 @@ ballerina {
 
 task updateTomlFiles {
     doLast {
-        def stdlibDependentIoVersion = stripBallerinaExtensionVersion(project.stdlibIoVersion)
-        def stdlibTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
-
         def newConfig = ballerinaConfigFile.text.replace('@project.version@', project.version.toString())
         newConfig = newConfig.replace('@toml.version@', tomlVersion)
 
         ballerinaConfigFile.text = newConfig
-
-        def newDependencyConfig = ballerinaDependencyFile.text.replace('@stdlib.io.version@', stdlibDependentIoVersion)
-        newDependencyConfig = newDependencyConfig.replace('@stdlib.time.version@', stdlibTimeVersion)
-        ballerinaDependencyFile.text = newDependencyConfig
     }
 }
 
 task revertTomlFiles {
     doLast {
         ballerinaConfigFile.text = originalConfig
-        ballerinaDependencyFile.text = originalDependencies
     }
 }
 

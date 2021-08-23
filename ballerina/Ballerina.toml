@@ -2,6 +2,7 @@
 org = "ballerina"
 name = "sql"
 version = "@toml.version@"
+distribution = "slbeta3"
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/sql-native-@project.version@.jar"
