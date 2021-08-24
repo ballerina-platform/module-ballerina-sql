@@ -151,7 +151,6 @@ public class SQLDatasource {
                     key -> createAndInitDatasource(sqlDatasourceParams));
 
         }
-
         sqlDatasourceToBeReturned.setExecuteGKFlag(executeGKFlag);
         sqlDatasourceToBeReturned.setBatchExecuteGKFlag(batchExecuteGKFlag);
         return sqlDatasourceToBeReturned;
@@ -436,7 +435,6 @@ public class SQLDatasource {
     public boolean getBatchExecuteGKFlag() {
         return this.batchExecuteGKFlag;
     }
-
 
     /**
      * This class encapsulates the parameters required for the initialization of {@code SQLDatasource} class.
