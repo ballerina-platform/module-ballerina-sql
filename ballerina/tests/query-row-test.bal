@@ -654,17 +654,13 @@ function queryRecordArrayBasicParams() returns error? {
                                 AND string_array = ${paraString}
                                 AND boolean_array = ${paraBool}`;
     record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
-    if returnData is record{} {
-        test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
-        test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
-        test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
-        test:assertEquals(returnData["STRING_ARRAY"], ["Hello", "Ballerina"]);
-        test:assertNotEquals(returnData["FLOAT_ARRAY"], ());
-        test:assertNotEquals(returnData["DECIMAL_ARRAY"], ());
-        test:assertNotEquals(returnData["DOUBLE_ARRAY"], ());
-    } else {
-        test:assertFail("Empty row returned.");
-    }
+    test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
+    test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
+    test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
+    test:assertEquals(returnData["STRING_ARRAY"], ["Hello", "Ballerina"]);
+    test:assertNotEquals(returnData["FLOAT_ARRAY"], ());
+    test:assertNotEquals(returnData["DECIMAL_ARRAY"], ());
+    test:assertNotEquals(returnData["DOUBLE_ARRAY"], ());
 }
 
 @test:Config {
@@ -677,18 +673,14 @@ function queryRecordArrayBasicNullParams() returns error? {
          AND boolean_array is null`;
 
     record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
-    if returnData is record{} {
-        test:assertEquals(returnData["INT_ARRAY"], ());
-        test:assertEquals(returnData["LONG_ARRAY"], ());
-        test:assertEquals(returnData["FLOAT_ARRAY"], ());
-        test:assertEquals(returnData["DECIMAL_ARRAY"], ());
-        test:assertEquals(returnData["DOUBLE_ARRAY"], ());
-        test:assertEquals(returnData["BOOLEAN_ARRAY"], ());
-        test:assertEquals(returnData["STRING_ARRAY"], ());
-        test:assertEquals(returnData["BLOB_ARRAY"], ());
-    } else {
-        test:assertFail("Empty row returned.");
-    }
+    test:assertEquals(returnData["INT_ARRAY"], ());
+    test:assertEquals(returnData["LONG_ARRAY"], ());
+    test:assertEquals(returnData["FLOAT_ARRAY"], ());
+    test:assertEquals(returnData["DECIMAL_ARRAY"], ());
+    test:assertEquals(returnData["DOUBLE_ARRAY"], ());
+    test:assertEquals(returnData["BOOLEAN_ARRAY"], ());
+    test:assertEquals(returnData["STRING_ARRAY"], ());
+    test:assertEquals(returnData["BLOB_ARRAY"], ());
 }
 
 @test:Config {
@@ -960,7 +952,6 @@ function testGetPrimitiveTypesRecord() returns error? {
         boolean_type: true,
         string_type: "Hello"
     };
-    test:assertTrue(value is SelectTestAlias, "Received value type is different.");
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
@@ -981,7 +972,6 @@ function testGetPrimitiveTypesLessFieldsRecord() returns error? {
         STRING_TYPE: "Hello"
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    test:assertTrue(value is SelectTestAlias2, "Received value type is different.");
 }
 
 @test:Config {
