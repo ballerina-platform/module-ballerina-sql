@@ -46,11 +46,25 @@ public type DatabaseError distinct Error & error<DatabaseErrorDetail>;
 # Represents an error occurred when a batch execution is running.
 public type BatchExecuteError distinct Error & error<BatchExecuteErrorDetail>;
 
-# Represents an error originating from application-level causes.
-public type ApplicationError distinct Error;
-
 # Represents an error that occurs when a query retrieves no rows when at least one row was expected.
 public type NoRowsError distinct Error;
 
+# Represents an error originating from application-level causes.
+public type ApplicationError distinct Error;
+
+//Level 3
+# Represents an error originating from application-level causes.
+public type DataError distinct ApplicationError;
+
+// Level 4
 # Represents an error that occurs when a query retrieves a result that differs from the expected result type.
-public type TypeMismatchError distinct Error;
+public type TypeMismatchError distinct DataError;
+
+# Represents an error that occurs when a query retrieves a result that is corrupted and cannot be converted to expected type.
+public type ConversionError distinct DataError;
+
+# Represents an error that occurs when a query retrieves a result that cannot be matched to the expected record type.
+public type FieldMismatchError distinct DataError;
+
+# Represents an error that occurs when an unsupported parameter type is added to the query.
+public type UnsupportedTypeError distinct DataError;
