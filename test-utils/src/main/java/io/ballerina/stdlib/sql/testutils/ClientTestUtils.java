@@ -35,7 +35,7 @@ public class ClientTestUtils {
     public static Object createSqlClient(BObject client, BMap<BString, Object> sqlDatasourceParams,
                                          BMap<BString, Object> globalConnectionPool) {
         return ClientProcessor.createClient(client,
-                SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool));
+                SQLDatasource.createSQLDatasourceParams(sqlDatasourceParams, globalConnectionPool), true , true);
     }
 
     public static Object close(BObject client) {

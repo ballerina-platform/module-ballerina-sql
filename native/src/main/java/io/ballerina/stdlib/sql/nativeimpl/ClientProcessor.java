@@ -55,10 +55,12 @@ public class ClientProcessor {
      *                            initialization of the newly created datasource if it doesn't exists
      * @return null if client is successfully created else error         
      */
-    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
+    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams,
+                                      boolean executeGKFlag, boolean batchExecuteGKFlag) {
         try {
             LogManager.getLogManager().reset();
-            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
+            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams, executeGKFlag,
+                                                                           batchExecuteGKFlag);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
             client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
             client.addNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS, Boolean.TRUE);
