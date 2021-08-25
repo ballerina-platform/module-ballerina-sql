@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.internal.values.MapValueImpl;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.tests.TestUtils;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
@@ -106,11 +107,11 @@ public class DefaultResultParameterProcessorTest {
     }
 
     @Test
-    void populateCustomOutParametersTest() {
+    void populateCustomOutParametersTest() throws SQLException {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
             testClass.processCustomOutParameters(null, 2, 3);
-        } catch (ApplicationError e) {
+        } catch (DataError e) {
             assertEquals(e.getMessage(), "Unsupported SQL type '3' when reading Procedure call Out" +
                     " parameter of index '2'.");
         }

@@ -41,7 +41,6 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -175,7 +174,7 @@ public class CallProcessor {
                 return procedureCallResult;
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL query: " + sqlQuery + ". ");
-            } catch (ApplicationError | IOException e) {
+            } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             }
@@ -187,7 +186,7 @@ public class CallProcessor {
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes,
                                   AbstractStatementParameterProcessor statementParameterProcessor)
-            throws SQLException, ApplicationError, IOException {
+            throws SQLException, ApplicationError {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
@@ -356,9 +355,9 @@ public class CallProcessor {
         }
     }
 
-    private static int getOutParameterType(
-            BObject typedValue, AbstractStatementParameterProcessor statementParameterProcessor
-            ) throws ApplicationError {
+    private static int getOutParameterType(BObject typedValue,
+                                           AbstractStatementParameterProcessor statementParameterProcessor)
+            throws ApplicationError, SQLException {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {

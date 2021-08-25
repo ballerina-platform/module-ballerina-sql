@@ -26,7 +26,6 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,7 +69,7 @@ public class RecordIteratorUtils {
             }
         } catch (SQLException e) {
             return ErrorGenerator.getSQLDatabaseError(e, "Error when iterating the SQL result");
-        } catch (IOException | ApplicationError e) {
+        } catch (ApplicationError e) {
             return ErrorGenerator.getSQLApplicationError("Error when iterating the SQL result. "
                     + e.getMessage());
         } catch (Throwable throwable) {

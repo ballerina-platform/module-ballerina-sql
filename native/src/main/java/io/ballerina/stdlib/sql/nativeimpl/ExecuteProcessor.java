@@ -36,7 +36,6 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -137,7 +136,7 @@ public class ExecuteProcessor {
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
-            } catch (ApplicationError | IOException e) {
+            } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             } finally {
@@ -270,7 +269,7 @@ public class ExecuteProcessor {
         } catch (SQLException e) {
             return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
                     "command starting with : " + sqlQuery + ". ");
-        } catch (ApplicationError | IOException e) {
+        } catch (ApplicationError e) {
             return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                     + e.getMessage());
         } finally {

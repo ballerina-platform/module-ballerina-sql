@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,16 +18,15 @@
 package io.ballerina.stdlib.sql.exception;
 
 /**
- * This exception represents the errors and exception caused due to the application mis configurations.
- *
- * @since 1.2.0
+ * This exception represents the errors and exception caused due to the application mis configurations or data.
  */
-public class ApplicationError extends Exception {
-    public ApplicationError(String message) {
+public class DataError extends ApplicationError {
+
+    public DataError(String message) {
         super(message);
     }
 
-    public ApplicationError(String message, Exception error) {
+    public DataError(String message, Exception error) {
         super(message, error);
     }
 }

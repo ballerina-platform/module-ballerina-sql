@@ -25,9 +25,8 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -41,107 +40,110 @@ import java.sql.Types;
  */
 public abstract class AbstractStatementParameterProcessor {
 
-    public abstract int getCustomOutParameterType(BObject typedValue) throws ApplicationError;
-    protected abstract int getCustomSQLType(BObject typedValue) throws ApplicationError;
+    public abstract int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException;
+    protected abstract int getCustomSQLType(BObject typedValue) throws DataError, SQLException;
 
     protected abstract void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
-            int index, BObject typedValue) throws SQLException, ApplicationError, IOException;
+            int index, BObject typedValue) throws DataError, SQLException;
     protected abstract void setVarchar(PreparedStatement preparedStatement, int index, Object value)
-            throws SQLException;
+            throws DataError, SQLException;
     protected abstract void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
-    protected abstract void setText(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
-    protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+                                            Object value) throws DataError, SQLException;
+    protected abstract void setText(PreparedStatement preparedStatement, int index, Object value)
+            throws DataError, SQLException;
+    protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value)
+            throws DataError, SQLException;
     protected abstract void setCharArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                             Object value) throws SQLException, ApplicationError;
-    protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value) throws SQLException;
+                                             Object value) throws DataError, SQLException;
+    protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value)
+            throws DataError, SQLException;
     protected abstract void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
-            throws SQLException;
+            throws DataError, SQLException;
     protected abstract void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                             Object value) throws SQLException, ApplicationError;
+                                             Object value) throws DataError, SQLException;
     protected abstract void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setBitArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                           Object value) throws SQLException, ApplicationError;
+                                           Object value) throws DataError, SQLException;
     protected abstract void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setBooleanArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
+                                            Object value) throws DataError, SQLException;
     protected abstract void setInteger(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setIntegerArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
+                                            Object value) throws DataError, SQLException;
     protected abstract void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setBigIntArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
+                                            Object value) throws DataError, SQLException;
     protected abstract void setSmallInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setSmallIntArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                             Object value) throws SQLException, ApplicationError;
+                                             Object value) throws DataError, SQLException;
     protected abstract void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setFloatArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws SQLException, ApplicationError;
+                                         Object value) throws DataError, SQLException;
     protected abstract void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setRealArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws SQLException, ApplicationError;
+                                         Object value) throws DataError, SQLException;
     protected abstract void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setDoubleArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws SQLException, ApplicationError;
+                                         Object value) throws DataError, SQLException;
     protected abstract void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setNumericArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
+                                            Object value) throws DataError, SQLException;
     protected abstract void setDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setDecimalArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws SQLException, ApplicationError;
+                                            Object value) throws DataError, SQLException;
     protected abstract void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError, IOException;
+            throws DataError, SQLException;
     protected abstract void setBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                           Object value) throws SQLException, ApplicationError, IOException;
+                                           Object value) throws DataError, SQLException;
     protected abstract void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError, IOException;
+            throws DataError, SQLException;
     protected abstract void setVarBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws SQLException, ApplicationError, IOException;
+                                              Object value) throws DataError, SQLException;
     protected abstract void setBlob(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError, IOException;
+            throws DataError, SQLException;
     protected abstract void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
-            int index, Object value) throws SQLException, ApplicationError;
+            int index, Object value) throws DataError, SQLException;
     protected abstract void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
-            int index, Object value) throws SQLException, ApplicationError;
+            int index, Object value) throws DataError, SQLException;
     protected abstract void setRow(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setStruct(Connection connection, PreparedStatement preparedStatement, int index,
-            Object value) throws SQLException, ApplicationError;
+            Object value) throws DataError, SQLException;
     protected abstract void setRef(Connection connection, PreparedStatement preparedStatement, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index, 
-            Object value) throws SQLException, ApplicationError, IOException;
+            Object value) throws DataError, SQLException;
     protected abstract void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setDateTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws SQLException, ApplicationError;
+                                              Object value) throws DataError, SQLException;
     protected abstract void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setTimestampArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws SQLException, ApplicationError;
+                                         Object value) throws DataError, SQLException;
     protected abstract void setDate(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setDateArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws SQLException, ApplicationError;
+                                              Object value) throws DataError, SQLException;
     protected abstract void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
     protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws SQLException, ApplicationError;
+                                              Object value) throws DataError, SQLException;
     protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
-            throws SQLException, ApplicationError, IOException {
+            throws DataError, SQLException {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
@@ -151,7 +153,7 @@ public abstract class AbstractStatementParameterProcessor {
     }
 
     public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement, int index, Object object,
-                                boolean returnType) throws SQLException, ApplicationError, IOException {
+                                boolean returnType) throws DataError, SQLException {
         if (object == null) {
             preparedStatement.setNull(index, Types.NULL);
             return Types.NULL;
@@ -191,7 +193,7 @@ public abstract class AbstractStatementParameterProcessor {
                     type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
                 setDecimalArray(connection, preparedStatement, index, objectArray);
             } else {
-                throw new ApplicationError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
+                throw new DataError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
             }
             return Types.ARRAY;
         } else if (object instanceof BObject) {
@@ -203,20 +205,20 @@ public abstract class AbstractStatementParameterProcessor {
                 }
                 return 0;
             } else {
-                throw new ApplicationError("Unsupported type:" +
+                throw new DataError("Unsupported type:" +
                         objectValue.getType().getQualifiedName() + " in column index: " + index);
             }
         } else if (object instanceof BXml) {
             setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else {
-            throw new ApplicationError("Unsupported type passed in column index: " + index);
+            throw new DataError("Unsupported type passed in column index: " + index);
         }
     }
 
     private void setSqlTypedParam(Connection connection, PreparedStatement preparedStatement, int index,
                                   BObject typedValue)
-            throws SQLException, ApplicationError, IOException {
+            throws DataError, SQLException {
         String sqlType = typedValue.getType().getName();
         Object value = typedValue.get(Constants.TypedValueFields.VALUE);
         switch (sqlType) {
@@ -366,7 +368,7 @@ public abstract class AbstractStatementParameterProcessor {
         }
     }
 
-    private int getSQLType(BObject typedValue) throws ApplicationError {
+    private int getSQLType(BObject typedValue) throws DataError, SQLException {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
