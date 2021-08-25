@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
 - [Improve the Batchupdate query to support string[]](https://github.com/ballerina-platform/ballerina-standard-library/issues/1529)
 - [Add support for async operation](https://github.com/ballerina-platform/ballerina-standard-library/issues/120)
 - [Add support for queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1604)
