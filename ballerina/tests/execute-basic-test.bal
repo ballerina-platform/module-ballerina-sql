@@ -349,15 +349,16 @@ function testUpdateData() returns error? {
 @test:Config {
     groups: ["execute", "execute-basic"]
 }
-function testErroneousExcuteWithParams() returns error? {
+function testSelectData() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    BlobValue value = new ([1, 2]);
-    ParameterizedQuery query = `Insert into NumericTypes (int_type) values (${value})`;
+    int[] ids = [1, 2];
+    ParameterizedQuery query = `SELECT * FROM NumericTypes WHERE id in (${ids})`;
     ExecutionResult|error result = dbClient->execute(query);
     test:assertTrue(result is error);
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " + 
-                "(int_type) values ( ? ). incompatible data type in conversion."));
+        test:assertTrue(result.message().startsWith("Error while executing SQL query as IN Operator is not " +
+        "supported: SELECT * FROM NumericTypes WHERE id in ( ? ). incompatible data type in conversion."),
+        "Output mismatched");
     } else {
         test:assertFail("DatabaseError Error expected.");
     }

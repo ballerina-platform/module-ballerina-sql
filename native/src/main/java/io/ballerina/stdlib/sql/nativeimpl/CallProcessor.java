@@ -173,7 +173,8 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
                 return procedureCallResult;
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL query: " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) + sqlQuery +
+                        ". ");
             } catch (ApplicationError | IOException e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());

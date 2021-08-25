@@ -125,8 +125,8 @@ public class QueryProcessor {
                         .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
             } catch (SQLException e) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
-                BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
+                BError errorValue = ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) +
+                        sqlQuery + ". ");
                 return getErrorStream(recordType, errorValue);
             } catch (ApplicationError applicationError) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
