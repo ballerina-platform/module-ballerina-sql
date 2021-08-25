@@ -111,7 +111,13 @@ public class ExecuteProcessor {
                     sqlQuery = getSqlQuery((BObject) paramSQLString);
                 }
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
-                statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+
+                if (sqlDatasource.getExecuteGKFlag()) {
+                    statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+                } else {
+                    statement = connection.prepareStatement(sqlQuery);
+                }
+
                 if (paramSQLString instanceof BObject) {
                     statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
                 }
@@ -157,39 +163,12 @@ public class ExecuteProcessor {
             Future balFuture = env.markAsync();
             SQL_EXECUTOR_SERVICE.execute(()-> {
                 Object resultStream =
-                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, true,
+                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor,
                                 false, null);
                 balFuture.complete(resultStream);
             });
         } else {
-            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, true,
-                    true, trxResourceManager);
-        }
-        return null;
-    }
-
-    /**
-     * Execute a batch of SQL statements.
-     * @param client client object
-     * @param paramSQLStrings array of SQL string for the execute statement
-     * @param statementParameterProcessor pre-processor of the statement
-     * @param generateKeys flag to auto-generate keys
-     * @return execution result or error
-     */
-    public static Object nativeBatchExecute(Environment env, BObject client, BArray paramSQLStrings,
-                                            AbstractStatementParameterProcessor statementParameterProcessor,
-                                            boolean generateKeys) {
-        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
-            Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
-                Object resultStream =
-                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, generateKeys,
-                                false, null);
-                balFuture.complete(resultStream);
-            });
-        } else {
-            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor, generateKeys,
+            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor,
                     true, trxResourceManager);
         }
         return null;
@@ -197,8 +176,7 @@ public class ExecuteProcessor {
 
     private static Object nativeBatchExecuteExecutable(BObject client, BArray paramSQLStrings,
                                             AbstractStatementParameterProcessor statementParameterProcessor,
-                                            boolean generateKeys, boolean isWithinTrxBlock,
-                                            TransactionResourceManager trxResourceManager) {
+                                            boolean isWithinTrxBlock, TransactionResourceManager trxResourceManager) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -207,11 +185,11 @@ public class ExecuteProcessor {
                         " are not allowed");
             }
             if (paramSQLStrings.getElementType().getTag() == TypeTags.STRING_TAG) {
-                return batchExecuteMultipleQueries(client, sqlDatasource, paramSQLStrings, generateKeys,
-                        isWithinTrxBlock, trxResourceManager);
+                return batchExecuteMultipleQueries(client, sqlDatasource, paramSQLStrings, isWithinTrxBlock,
+                        trxResourceManager);
             } else {
                 return batchExecuteParameterizedQuery(client, sqlDatasource, paramSQLStrings,
-                        statementParameterProcessor, generateKeys, isWithinTrxBlock, trxResourceManager);
+                        statementParameterProcessor, isWithinTrxBlock, trxResourceManager);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError(
@@ -222,7 +200,7 @@ public class ExecuteProcessor {
     private static Object batchExecuteParameterizedQuery(BObject client, SQLDatasource sqlDatasource,
                                                          BArray paramSQLStrings,
                                                          AbstractStatementParameterProcessor statementParamProcessor,
-                                                         boolean generateKeys, boolean isWithinTrxBlock,
+                                                         boolean isWithinTrxBlock,
                                                          TransactionResourceManager trxResourceManager) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -248,7 +226,7 @@ public class ExecuteProcessor {
             }
             connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
 
-            if (generateKeys) {
+            if (sqlDatasource.getBatchExecuteGKFlag()) {
                 statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
             } else {
                 statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
@@ -261,7 +239,7 @@ public class ExecuteProcessor {
 
             int[] counts = statement.executeBatch();
 
-            if (generateKeys && !isDdlStatement(sqlQuery)) {
+            if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
                 resultSet = statement.getGeneratedKeys();
             }
             for (int count : counts) {
@@ -301,8 +279,7 @@ public class ExecuteProcessor {
     }
 
     private static Object batchExecuteMultipleQueries(BObject client, SQLDatasource sqlDatasource,
-                                                      BArray paramSQLStrings, boolean generateKeys,
-                                                      boolean isWithinTrxBlock,
+                                                      BArray paramSQLStrings, boolean isWithinTrxBlock,
                                                       TransactionResourceManager trxResourceManager) {
         Connection connection = null;
         Statement statement = null;
@@ -321,7 +298,7 @@ public class ExecuteProcessor {
             }
             int[] counts = statement.executeBatch();
 
-            if (generateKeys) {
+            if (sqlDatasource.getBatchExecuteGKFlag()) {
                 resultSet = statement.getGeneratedKeys();
             }
             for (int count : counts) {

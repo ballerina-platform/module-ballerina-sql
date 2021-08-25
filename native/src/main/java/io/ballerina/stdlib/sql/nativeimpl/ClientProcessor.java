@@ -37,6 +37,7 @@ public class ClientProcessor {
     }
 
     public static Object close(BObject client) {
+        LogManager.getLogManager().reset();
         Object datasourceObj = client.getNativeData(Constants.DATABASE_CLIENT);
         // When an exception is thrown during database endpoint init (eg: driver not present) stop operation
         // of the endpoint is automatically called. But at this point, datasource is null therefore to handle that
@@ -55,10 +56,12 @@ public class ClientProcessor {
      *                            initialization of the newly created datasource if it doesn't exists
      * @return null if client is successfully created else error         
      */
-    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
+    public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams,
+                                      boolean executeGKFlag, boolean batchExecuteGKFlag) {
         try {
             LogManager.getLogManager().reset();
-            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams);
+            SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams, executeGKFlag,
+                                                                           batchExecuteGKFlag);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
             client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
             client.addNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS, Boolean.TRUE);

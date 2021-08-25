@@ -59,6 +59,8 @@ public class SQLDatasource {
     private AtomikosDataSourceBean atomikosDataSourceBean;
     private HikariDataSource hikariDataSource;
     private XADataSource xaDataSource;
+    private boolean executeGKFlag;
+    private boolean batchExecuteGKFlag;
     private static final String POOL_MAP_KEY = UUID.randomUUID().toString();
 
     private SQLDatasource(SQLDatasourceParams sqlDatasourceParams) {
@@ -121,7 +123,8 @@ public class SQLDatasource {
      *                            initialization of the newly created datasource if it doesn't exists
      * @return The existing or newly created {@link SQLDatasource} object
      */
-    public static SQLDatasource retrieveDatasource(SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
+    public static SQLDatasource retrieveDatasource(SQLDatasource.SQLDatasourceParams sqlDatasourceParams,
+                                                   boolean executeGKFlag, boolean batchExecuteGKFlag) {
         PoolKey poolKey = new PoolKey(sqlDatasourceParams.url, sqlDatasourceParams.options);
         Map<PoolKey, SQLDatasource> hikariDatasourceMap = (Map<PoolKey, SQLDatasource>) sqlDatasourceParams
                 .connectionPool.getNativeData(POOL_MAP_KEY);
@@ -148,6 +151,8 @@ public class SQLDatasource {
                     key -> createAndInitDatasource(sqlDatasourceParams));
 
         }
+        sqlDatasourceToBeReturned.setExecuteGKFlag(executeGKFlag);
+        sqlDatasourceToBeReturned.setBatchExecuteGKFlag(batchExecuteGKFlag);
         return sqlDatasourceToBeReturned;
     }
 
@@ -413,6 +418,22 @@ public class SQLDatasource {
             t = t.getCause();
         }
         return message.toString();
+    }
+
+    private void setExecuteGKFlag(boolean flag) {
+        this.executeGKFlag = flag;
+    }
+
+    private void setBatchExecuteGKFlag(boolean flag) {
+        this.batchExecuteGKFlag = flag;
+    }
+
+    public boolean getExecuteGKFlag() {
+        return this.executeGKFlag;
+    }
+
+    public boolean getBatchExecuteGKFlag() {
+        return this.batchExecuteGKFlag;
     }
 
     /**
