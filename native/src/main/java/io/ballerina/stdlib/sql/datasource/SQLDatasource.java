@@ -420,11 +420,11 @@ public class SQLDatasource {
         return message.toString();
     }
 
-    public void setExecuteGKFlag(boolean flag) {
+    private void setExecuteGKFlag(boolean flag) {
         this.executeGKFlag = flag;
     }
 
-    public void setBatchExecuteGKFlag(boolean flag) {
+    private void setBatchExecuteGKFlag(boolean flag) {
         this.batchExecuteGKFlag = flag;
     }
 

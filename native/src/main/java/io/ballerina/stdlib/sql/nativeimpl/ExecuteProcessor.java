@@ -174,33 +174,6 @@ public class ExecuteProcessor {
         return null;
     }
 
-    /**
-     * Execute a batch of SQL statements.
-     * @param client client object
-     * @param paramSQLStrings array of SQL string for the execute statement
-     * @param statementParameterProcessor pre-processor of the statement
-     * @param generateKeys flag to auto-generate keys
-     * @return execution result or error
-     */
-    public static Object nativeBatchExecute(Environment env, BObject client, BArray paramSQLStrings,
-                                            AbstractStatementParameterProcessor statementParameterProcessor,
-                                            boolean generateKeys) {
-        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
-            Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
-                Object resultStream =
-                        nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor,
-                                false, null);
-                balFuture.complete(resultStream);
-            });
-        } else {
-            return nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor,
-                    true, trxResourceManager);
-        }
-        return null;
-    }
-
     private static Object nativeBatchExecuteExecutable(BObject client, BArray paramSQLStrings,
                                             AbstractStatementParameterProcessor statementParameterProcessor,
                                             boolean isWithinTrxBlock, TransactionResourceManager trxResourceManager) {
