@@ -33,7 +33,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.Utils;
@@ -84,7 +84,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BArray createAndPopulateBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                      Type type, Array array) throws ApplicationError, SQLException {
+                                                      Type type, Array array) throws DataError, SQLException {
         BArray refValueArray = null;
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
@@ -151,7 +151,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else {
-                throw new ApplicationError("Error while retrieving Date Array");
+                throw new DataError("Error while retrieving Date Array");
             } 
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {
             refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
@@ -212,12 +212,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     protected BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type, Array array)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         return null;
     }
 
     protected BArray createAndPopulatePrimitiveValueArray(Object firstNonNullElement, Object[] dataArray,
-                                                          Type type, Array array) throws ApplicationError,
+                                                          Type type, Array array) throws DataError,
             SQLException {
         String elementType = firstNonNullElement.getClass().getCanonicalName();
         switch (elementType) {
@@ -256,12 +256,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     protected BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type, Array array)
-         throws ApplicationError, SQLException {
+         throws DataError, SQLException {
         return null;
     }
 
     protected BMap<BString, Object> createUserDefinedType(Struct structValue, StructureType structType)
-            throws ApplicationError {
+            throws DataError {
         if (structValue == null) {
             return null;
         }
@@ -271,7 +271,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             Object[] dataArray = structValue.getAttributes();
             if (dataArray != null) {
                 if (dataArray.length != internalStructFields.length) {
-                    throw new ApplicationError("specified record and the returned SQL Struct field counts " +
+                    throw new DataError("specified record and the returned SQL Struct field counts " +
                             "are different, and hence not compatible");
                 }
                 int index = 0;
@@ -320,7 +320,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
             }
         } catch (SQLException e) {
-            throw new ApplicationError("Error while retrieving data to create " + structType.getName()
+            throw new DataError("Error while retrieving data to create " + structType.getName()
                     + " record. ", e);
         }
         return struct;
@@ -328,8 +328,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     protected void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
-            throws ApplicationError {
-        throw new ApplicationError("Error while retrieving data for unsupported type " +
+            throws DataError {
+        throw new DataError("Error while retrieving data for unsupported type " +
                 internalField.getFieldType().getName() + " to create "
                 + structType.getName() + " record.");
     }
@@ -353,7 +353,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public BArray convertArray(Array array, int sqlType, Type type) throws SQLException, ApplicationError {
+    public BArray convertArray(Array array, int sqlType, Type type) throws SQLException, DataError {
         if (array != null) {
             Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Array");
             Object[] dataArray = (Object[]) array.getArray();
@@ -377,20 +377,20 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public BString convertChar(String value, int sqlType, Type type) throws ApplicationError {
+    public BString convertChar(String value, int sqlType, Type type) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL String");
         return fromString(value);
     }
 
     @Override
     public Object convertChar(
-            String value, int sqlType, Type type, String sqlTypeName) throws ApplicationError {
+            String value, int sqlType, Type type, String sqlTypeName) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, sqlTypeName);
         return fromString(value);
     }
 
     @Override
-    public Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName) throws ApplicationError {
+    public Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName) throws DataError {
         if (value != null) {
             return ValueCreator.createArrayValue(value);
         } else {
@@ -399,7 +399,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertBinary(Object value, int sqlType, Type ballerinaType) throws ApplicationError {
+    public Object convertBinary(Object value, int sqlType, Type ballerinaType) throws DataError {
         if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
             return convertChar((String) value, sqlType, ballerinaType);
         } else {
@@ -410,7 +410,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertInteger(long value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+    public Object convertInteger(long value, int sqlType, Type type, boolean isNull) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL long or integer");
         if (isNull) {
             return null;
@@ -423,7 +423,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertDouble(double value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+    public Object convertDouble(double value, int sqlType, Type type, boolean isNull) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL double or float");
         if (isNull) {
             return null;
@@ -436,7 +436,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+    public Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL decimal or real");
         if (isNull) {
             return null;
@@ -449,7 +449,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException {
+    public Object convertBlob(Blob value, int sqlType, Type type) throws DataError, SQLException {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Blob");
         if (value != null) {
             return ValueCreator.createArrayValue(value.getBytes(1L, (int) value.length()));
@@ -459,7 +459,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError {
+    public Object convertDate(java.util.Date date, int sqlType, Type type) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (date != null) {
             switch (type.getTag()) {
@@ -474,7 +474,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             return fromString(date.toString());
                         }
                     } else {
-                        throw new ApplicationError("Unsupported Ballerina type:" +
+                        throw new DataError("Unsupported Ballerina type:" +
                             type.getName() + " for SQL Date data type.");
                     }
                 case TypeTags.INT_TAG:
@@ -485,7 +485,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError {
+    public Object convertTime(java.util.Date time, int sqlType, Type type) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (time != null) {
             switch (type.getTag()) {
@@ -500,7 +500,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             return fromString(time.toString());
                         }
                     } else {
-                        throw new ApplicationError("Unsupported Ballerina type:" +
+                        throw new DataError("Unsupported Ballerina type:" +
                             type.getName() + " for SQL Time data type.");
                     }
                 case TypeTags.INT_TAG:
@@ -512,7 +512,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
-            throws ApplicationError {
+            throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (offsetTime != null) {
             switch (type.getTag()) {
@@ -523,7 +523,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     if (type.getName().equals(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
                         return Utils.createTimeWithTimezoneRecord(offsetTime);
                     } else {
-                        throw new ApplicationError("Unsupported Ballerina type:" +
+                        throw new DataError("Unsupported Ballerina type:" +
                             type.getName() + " for SQL Time with timezone data type.");
                     }
                 case TypeTags.INT_TAG:
@@ -534,7 +534,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertTimeStamp(java.util.Date timestamp, int sqlType, Type type) throws ApplicationError {
+    public Object convertTimeStamp(java.util.Date timestamp, int sqlType, Type type) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (timestamp != null) {
             switch (type.getTag()) {
@@ -546,7 +546,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         && timestamp instanceof Timestamp) {
                     return Utils.createTimestampRecord((Timestamp) timestamp);
                 } else {
-                    throw new ApplicationError("Unsupported Ballerina type:" +
+                    throw new DataError("Unsupported Ballerina type:" +
                         type.getName() + " for SQL Timestamp data type.");
                 }
                 case TypeTags.INT_TAG:
@@ -560,7 +560,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType, Type type)
-            throws ApplicationError {
+            throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Date/Time");
         if (offsetDateTime != null) {
             switch (type.getTag()) {
@@ -571,7 +571,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)) {
                         return Utils.createTimestampWithTimezoneRecord(offsetDateTime);
                     } else {
-                        throw new ApplicationError("Unsupported Ballerina type:" +
+                        throw new DataError("Unsupported Ballerina type:" +
                             type.getName() + " for SQL Timestamp with timezone data type.");
                     }
                 case TypeTags.INT_TAG:
@@ -585,7 +585,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull) throws ApplicationError {
+    public Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Boolean");
         if (!isNull) {
             switch (type.getTag()) {
@@ -605,13 +605,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError {
+    public Object convertStruct(Struct value, int sqlType, Type type) throws DataError {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Struct");
         if (value != null) {
             if (type instanceof RecordType) {
                 return createUserDefinedType(value, (RecordType) type);
             } else {
-                throw new ApplicationError("The ballerina type that can be used for SQL struct should be record type," +
+                throw new DataError("The ballerina type that can be used for SQL struct should be record type," +
                         " but found " + type.getName() + " .");
             }
         } else {
@@ -620,13 +620,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException {
+    public Object convertXml(SQLXML value, int sqlType, Type type) throws DataError, SQLException {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL XML");
         if (value != null) {
             if (type instanceof BXml) {
                 return XmlUtils.parse(value.getBinaryStream());
             } else {
-                throw new ApplicationError("The ballerina type that can be used for SQL struct should be record type," +
+                throw new DataError("The ballerina type that can be used for SQL struct should be record type," +
                         " but found " + type.getName() + " .");
             }
         } else {
@@ -843,16 +843,16 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomOutParameters(CallableStatement statement, int paramIndex, int sqlType)
-            throws ApplicationError {
-        throw new ApplicationError("Unsupported SQL type '" + sqlType + "' when reading Procedure call " +
+            throws DataError, SQLException {
+        throw new DataError("Unsupported SQL type '" + sqlType + "' when reading Procedure call " +
                 "Out parameter of index '" + paramIndex + "'.");
     }
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws ApplicationError,
+                                                  ColumnDefinition columnDefinition) throws DataError, SQLException,
             SQLException {
-        throw new ApplicationError("Unsupported SQL type " + columnDefinition.getSqlName());
+        throw new DataError("Unsupported SQL type " + columnDefinition.getSqlName());
     }
 
     @Override
