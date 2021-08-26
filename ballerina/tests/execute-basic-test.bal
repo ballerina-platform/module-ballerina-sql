@@ -349,6 +349,24 @@ function testUpdateData() returns error? {
 @test:Config {
     groups: ["execute", "execute-basic"]
 }
+function testErroneousExcuteWithParams() returns error? {
+    MockClient dbClient = check new (url = executeDb, user = user, password = password);
+    BlobValue value = new ([1, 2]);
+    ParameterizedQuery query = `Insert into NumericTypes (int_type) values (${value})`;
+    ExecutionResult|error result = dbClient->execute(query);
+    test:assertTrue(result is error);
+    if result is DatabaseError {
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " +
+                "(int_type) values ( ? ). incompatible data type in conversion."));
+    } else {
+        test:assertFail("DatabaseError Error expected.");
+    }
+    check dbClient.close();
+}
+
+@test:Config {
+    groups: ["execute", "execute-basic"]
+}
 function testSelectData() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     int[] ids = [1, 2];
