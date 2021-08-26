@@ -28,12 +28,11 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -66,312 +65,312 @@ import static io.ballerina.stdlib.sql.utils.Utils.getString;
 public abstract class AbstractResultParameterProcessor {
 
     protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type,
-            Array array) throws ApplicationError, SQLException;
+            Array array) throws DataError, SQLException;
 
     protected abstract BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type,
-            Array array) throws ApplicationError, SQLException;
+            Array array) throws DataError, SQLException;
 
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract BArray convertArray(Array array, int sqlType, Type type)
-            throws SQLException, ApplicationError;
+            throws DataError, SQLException;
 
     public abstract BString convertChar(String value, int sqlType, Type type)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     protected abstract Object convertChar(String value, int sqlType, Type type, String sqlTypeName)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertByteArray(byte[] value, int sqlType, Type type, String sqlTypeName)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertInteger(long value, int sqlType, Type type, boolean isNull)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertDouble(double value, int sqlType, Type type, boolean isNull)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertDecimal(BigDecimal value, int sqlType, Type type, boolean isNull)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
-    public abstract Object convertBlob(Blob value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertBlob(Blob value, int sqlType, Type type) throws DataError, SQLException;
 
-    public abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertDate(java.util.Date date, int sqlType, Type type) throws DataError, SQLException;
 
-    public abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertTime(java.util.Date time, int sqlType, Type type) throws DataError, SQLException;
 
     public abstract Object convertTimeWithTimezone(java.time.OffsetTime offsetTime, int sqlType, Type type)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertTimeStamp(java.util.Date timeStamp, int sqlType, Type type)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object convertTimestampWithTimezone(java.time.OffsetDateTime offsetDateTime, int sqlType,
-                                                        Type type)throws ApplicationError;
+                                                        Type type) throws DataError, SQLException;
 
     public abstract Object convertBoolean(boolean value, int sqlType, Type type, boolean isNull)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
-    public abstract Object convertBinary(Object value, int sqlType, Type ballerinaType) throws ApplicationError; 
+    public abstract Object convertBinary(Object value, int sqlType, Type ballerinaType) throws DataError, SQLException;
 
-    public abstract Object convertStruct(Struct value, int sqlType, Type type) throws ApplicationError;
+    public abstract Object convertStruct(Struct value, int sqlType, Type type) throws DataError, SQLException;
 
-    public abstract Object convertXml(SQLXML value, int sqlType, Type type) throws ApplicationError, SQLException;
+    public abstract Object convertXml(SQLXML value, int sqlType, Type type) throws DataError, SQLException;
 
     public abstract Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType,
-                                                     Type ballerinaType);
+                                                     Type ballerinaType) throws DataError, SQLException;
 
     public abstract Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType,
-                                                       Type ballerinaType);
+                                                       Type ballerinaType) throws DataError, SQLException;
 
     public abstract Object processChar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processVarchar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processLongVarchar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processNChar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processNVarchar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processLongNVarchar(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processBinary(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processVarBinary(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processLongVarBinary(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processBlob(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processClob(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processNClob(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processDate(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processTime(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processTimeWithTimeZone(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processTimestamp(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
-    public abstract Object processTimestampWithTimeZone(
-            CallableStatement statement, int paramIndex) throws SQLException;
+    public abstract Object processTimestampWithTimeZone(CallableStatement statement, int paramIndex)
+            throws DataError, SQLException;
 
     public abstract Object processArray(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processRowID(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processTinyInt(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processSmallInt(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processInteger(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processBigInt(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processReal(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processFloat(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processDouble(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processNumeric(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processDecimal(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processBit(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processBoolean(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processRef(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
     public abstract Object processStruct(CallableStatement statement, int paramIndex)
             throws SQLException;
 
     public abstract Object processXML(CallableStatement statement, int paramIndex)
-            throws SQLException;
+            throws DataError, SQLException;
 
-    public abstract Object processCustomOutParameters(
-            CallableStatement statement, int paramIndex, int sqlType) throws ApplicationError;
+    public abstract Object processCustomOutParameters(CallableStatement statement, int paramIndex, int sqlType)
+            throws DataError, SQLException;
 
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                           ColumnDefinition columnDefinition) throws ApplicationError,
-            SQLException;
+                                                          ColumnDefinition columnDefinition)
+            throws DataError, SQLException;
 
     public Object processArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Array array = resultSet.getArray(columnIndex);
         return convertArray(array, sqlType, ballerinaType);
     }
 
     public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         String string = resultSet.getString(columnIndex);
         return convertChar(string, sqlType, ballerinaType);
     }
 
     public Object processCharResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
-                                    String sqlTypeName) throws ApplicationError, SQLException {
+                                    String sqlTypeName) throws DataError, SQLException {
         String string = resultSet.getString(columnIndex);
         return convertChar(string, sqlType, ballerinaType, sqlTypeName);
     }
 
     public Object processByteArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
-                                         String sqlTypeName) throws ApplicationError, SQLException {
+                                         String sqlTypeName) throws DataError, SQLException {
         byte[] bytes = resultSet.getBytes(columnIndex);
         return convertByteArray(bytes, sqlType, ballerinaType, sqlTypeName);
     }
 
     public Object processBlobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Blob blob = resultSet.getBlob(columnIndex);
         return convertBlob(blob, sqlType, ballerinaType);
     }
 
     public Object processClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException, IOException {
+            throws DataError, SQLException {
         String clobValue = getString(resultSet.getClob(columnIndex));
         return convertChar(clobValue, sqlType, ballerinaType);
     }
 
     public Object processNClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException, IOException {
+            throws DataError, SQLException {
         String nClobValue = getString(resultSet.getNClob(columnIndex));
         return convertChar(nClobValue, sqlType, ballerinaType);
     }
 
     public Object processDateResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Date date = resultSet.getDate(columnIndex);
         return convertDate(date, sqlType, ballerinaType);
     }
 
     public Object processTimeResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Time time = resultSet.getTime(columnIndex);
         return convertTime(time, sqlType, ballerinaType);
     }
 
     public Object processTimeWithTimezoneResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         OffsetTime offsetTime = resultSet.getObject(columnIndex, OffsetTime.class);
         return convertTimeWithTimezone(offsetTime, sqlType, ballerinaType);
     }
 
     public Object processTimestampResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Timestamp timestamp = resultSet.getTimestamp(columnIndex);
         return convertTimeStamp(timestamp, sqlType, ballerinaType);
     }
 
     public Object processTimestampWithTimezoneResult(ResultSet resultSet, int columnIndex, int sqlType,
-                                                     Type ballerinaType) throws ApplicationError, SQLException {
+                                                     Type ballerinaType) throws DataError, SQLException {
         OffsetDateTime offsetDateTime = resultSet.getObject(columnIndex, OffsetDateTime.class);
         return convertTimestampWithTimezone(offsetDateTime, sqlType, ballerinaType);
     }
 
     public Object processRowIdResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType,
-                                     String sqlTypeName) throws ApplicationError, SQLException {
+                                     String sqlTypeName) throws DataError, SQLException {
         RowId rowId = resultSet.getRowId(columnIndex);
         return convertByteArray(rowId.getBytes(), sqlType,
                 ballerinaType, sqlTypeName);
     }
 
     public Object processIntResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         long iValue = resultSet.getInt(columnIndex);
         return convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processLongResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         long iValue = resultSet.getLong(columnIndex);
         return convertInteger(iValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processFloatResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         double fValue = resultSet.getFloat(columnIndex);
         return convertDouble(fValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processDoubleResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         double dValue = resultSet.getDouble(columnIndex);
         return convertDouble(dValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processDecimalResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         BigDecimal decimalValue = resultSet.getBigDecimal(columnIndex);
         return convertDecimal(decimalValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processBooleanResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         boolean boolValue = resultSet.getBoolean(columnIndex);
         return convertBoolean(boolValue, sqlType, ballerinaType, resultSet.wasNull());
     }
 
     public Object processStructResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         Struct structData = (Struct) resultSet.getObject(columnIndex);
         return convertStruct(structData, sqlType, ballerinaType);
     }
 
     public Object processXmlResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         SQLXML sqlxml = resultSet.getSQLXML(columnIndex);
         return convertXml(sqlxml, sqlType, ballerinaType);
     }
 
     public Object processJsonResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
-            throws ApplicationError, SQLException {
+            throws DataError, SQLException {
         String jsonString = convertChar(
                 resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
         Reader reader = new StringReader(jsonString);
         try {
             return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
         } catch (BError e) {
-            throw new ApplicationError("Error while converting to JSON type. " + e.getDetails());
+            throw new DataError("Error while converting to JSON type. " + e.getDetails());
         }
     }
 
     public Object convertArrayOutParameter(String objectTypeName, Object[] dataArray, Type ballerinaType)
-            throws ApplicationError {
+            throws DataError, SQLException {
         switch (objectTypeName) {
             case Constants.OutParameterTypes.CHAR_ARRAY:
             case Constants.OutParameterTypes.VARCHAR_ARRAY:
@@ -413,7 +412,7 @@ public abstract class AbstractResultParameterProcessor {
         }
     }
 
-    public Object convertArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws ApplicationError {
+    public Object convertArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws DataError, SQLException {
         String name = ballerinaType.toString();
         String className = dataArray[0].getClass().getCanonicalName();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
@@ -463,10 +462,10 @@ public abstract class AbstractResultParameterProcessor {
     }
 
     public abstract Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public abstract Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType)
-            throws ApplicationError;
+            throws DataError, SQLException;
 
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
@@ -483,7 +482,7 @@ public abstract class AbstractResultParameterProcessor {
 
     public BMap<BString, Object> createRecord(
             ResultSet resultSet,  List<ColumnDefinition> columnDefinitions, StructureType recordConstraint)
-            throws SQLException, ApplicationError, IOException {
+            throws SQLException, DataError {
         BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         for (int i = 0; i < columnDefinitions.size(); i++) {
@@ -495,7 +494,7 @@ public abstract class AbstractResultParameterProcessor {
     }
 
     public Object createValue(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition)
-            throws SQLException, ApplicationError, IOException {
+            throws SQLException, DataError {
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         return Utils.getResult(resultSet, columnIndex, columnDefinition, resultParameterProcessor);
     }

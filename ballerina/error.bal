@@ -53,7 +53,7 @@ public type NoRowsError distinct Error;
 public type ApplicationError distinct Error;
 
 //Level 3
-# Represents an error originating from application-level causes.
+# Represents an error during the processing of the returned data or parameters.
 public type DataError distinct ApplicationError;
 
 // Level 4

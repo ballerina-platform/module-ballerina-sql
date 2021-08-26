@@ -40,6 +40,7 @@ import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
@@ -149,20 +150,20 @@ public class Utils {
     }
 
 
-    public static ApplicationError throwInvalidParameterError(Object value, String sqlType) {
+    public static DataError throwInvalidParameterError(Object value, String sqlType) {
         String valueName;
         if (value instanceof BValue) {
             valueName = ((BValue) value).getType().getName();
         } else {
             valueName = value.getClass().getName();
         }
-        return new ApplicationError("Invalid parameter :" + valueName + " is passed as value for SQL type : "
+        return new DataError("Invalid parameter :" + valueName + " is passed as value for SQL type : "
                 + sqlType);
     }
 
 
 
-    public static String getString(Clob data) throws IOException, SQLException {
+    public static String getString(Clob data) throws DataError, SQLException {
         if (data == null) {
             return null;
         }
@@ -173,6 +174,8 @@ public class Utils {
                 sb.append((char) pos);
             }
             return sb.toString();
+        } catch (IOException e) {
+            throw new DataError("Error when converting Clob type.", e);
         }
     }
 
@@ -270,10 +273,9 @@ public class Utils {
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
     }
 
-    public static void validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName)
-            throws ApplicationError {
+    public static void validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName) throws DataError {
         if (!isValidFieldConstraint(sqlType, type)) {
-            throw new ApplicationError(sqlTypeName + " field cannot be converted to ballerina type : "
+            throw new DataError(sqlTypeName + " field cannot be converted to ballerina type : "
                     + type.getName());
         }
     }
@@ -364,7 +366,7 @@ public class Utils {
 
     public static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
                                     DefaultResultParameterProcessor resultParameterProcessor)
-            throws SQLException, ApplicationError, IOException {
+            throws SQLException, DataError {
         int sqlType = columnDefinition.getSqlType();
         Type ballerinaType = columnDefinition.getBallerinaType();
         switch (sqlType) {

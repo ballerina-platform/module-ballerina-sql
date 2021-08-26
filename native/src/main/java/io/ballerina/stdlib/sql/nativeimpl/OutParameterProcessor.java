@@ -27,7 +27,6 @@ import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcess
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
@@ -168,7 +167,7 @@ public class OutParameterProcessor {
                                 ballerinaType);
                     }
             }
-        } catch (ApplicationError | IOException applicationError) {
+        } catch (ApplicationError applicationError) {
             return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
         } catch (SQLException sqlException) {
             return ErrorGenerator.getSQLDatabaseError(sqlException, "Error when parsing out parameter.");

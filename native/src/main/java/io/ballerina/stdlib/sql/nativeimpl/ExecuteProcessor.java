@@ -36,7 +36,6 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -135,9 +134,9 @@ public class ExecuteProcessor {
                 return ValueCreator.createRecordValue(ModuleUtils.getModule(),
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) + sqlQuery +
-                        ". ");
-            } catch (ApplicationError | IOException e) {
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        "Error while executing SQL query: " + sqlQuery + ". ");
+            } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             } finally {
@@ -265,10 +264,12 @@ public class ExecuteProcessor {
                 executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
                         Constants.EXECUTION_RESULT_RECORD, resultField));
             }
-            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) + sqlQuery + ".");
+            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) +
+                    sqlQuery + ".");
         } catch (SQLException e) {
-            return ErrorGenerator.getSQLDatabaseError(e, getErrorMsg(sqlQuery) + sqlQuery + ". ");
-        } catch (ApplicationError | IOException e) {
+            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) +
+                    sqlQuery + ".");
+        } catch (ApplicationError e) {
             return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                     + e.getMessage());
         } finally {

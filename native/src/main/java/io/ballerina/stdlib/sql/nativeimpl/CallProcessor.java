@@ -41,7 +41,6 @@ import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
 
-import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -141,9 +140,10 @@ public class CallProcessor {
                         PROCEDURE_CALL_RESULT, iteratorObject);
                 Object[] recordDescriptions = recordTypes.getValues();
                 int resultSetCount = 0;
-                if (resultType && (resultSet = statement.getResultSet()) != null) {
+                if (resultType) {
                     List<ColumnDefinition> columnDefinitions;
                     StructureType streamConstraint;
+                    resultSet = statement.getResultSet();
                     if (recordTypes.size() == 0) {
                         columnDefinitions = getColumnDefinitions(resultSet, null);
                         streamConstraint = getDefaultRecordType(columnDefinitions);
@@ -173,9 +173,9 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
                 return procedureCallResult;
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) + sqlQuery +
-                        ". ");
-            } catch (ApplicationError | IOException e) {
+                return ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) +
+                        sqlQuery + ". ");
+            } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
             }
@@ -187,7 +187,7 @@ public class CallProcessor {
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                   BObject paramString, HashMap<Integer, Integer> outputParamTypes,
                                   AbstractStatementParameterProcessor statementParameterProcessor)
-            throws SQLException, ApplicationError, IOException {
+            throws SQLException, ApplicationError {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
@@ -356,9 +356,9 @@ public class CallProcessor {
         }
     }
 
-    private static int getOutParameterType(
-            BObject typedValue, AbstractStatementParameterProcessor statementParameterProcessor
-            ) throws ApplicationError {
+    private static int getOutParameterType(BObject typedValue,
+                                           AbstractStatementParameterProcessor statementParameterProcessor)
+            throws ApplicationError, SQLException {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
