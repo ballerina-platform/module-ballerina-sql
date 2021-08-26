@@ -376,8 +376,8 @@ function testSelectData() returns error? {
     test:assertTrue(result is error);
     io:println(result);
     if result is UnsupportedTypeError {
-        test:assertTrue(result.message().startsWith("The parameterized query doesn't support IN operator: SELECT * FROM NumericTypes WHERE id in"),
-        "Output mismatched");
+        test:assertTrue(result.message().startsWith("The parameterized query doesn't support IN operator: SELECT * " +
+        "FROM NumericTypes WHERE id in"), "Output mismatched");
     } else {
         test:assertFail("UnsupportedTypeError Error expected.");
     }
