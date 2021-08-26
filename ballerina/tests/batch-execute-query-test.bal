@@ -68,9 +68,9 @@ function batchInsertIntoDataTable5() returns error? {
     ParameterizedQuery[] sqlQueries = [sqlQuery];
     ExecutionResult[]|error result = batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is error);
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL batch command as IN Operator " +
-        "is not supported: SELECT * FROM DataTable WHERE int_type in ( ? ). incompatible data type in conversion."),
+    if result is error {
+        test:assertTrue(result.message().startsWith("Error while executing SQL batch command as IN Operator is " +
+        "not supported: SELECT * FROM DataTable WHERE int_type in ( ? ).incompatible data type in conversion."),
         "Output mismatched");
     } else {
         test:assertFail("DatabaseError Error expected.");

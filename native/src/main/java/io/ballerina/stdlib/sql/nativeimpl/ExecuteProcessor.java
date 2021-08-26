@@ -134,8 +134,8 @@ public class ExecuteProcessor {
                 return ValueCreator.createRecordValue(ModuleUtils.getModule(),
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLDatabaseError(e, Utils.getErrorMsg(sqlQuery) +
+                        sqlQuery + ". ");
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                         + sqlQuery + ". " + e.getMessage());
