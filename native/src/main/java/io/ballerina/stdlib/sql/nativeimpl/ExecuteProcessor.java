@@ -267,7 +267,7 @@ public class ExecuteProcessor {
             return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) +
                     sqlQuery + ".");
         } catch (SQLException e) {
-            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) +
+            return ErrorGenerator.getSQLDatabaseError(e, getErrorMsg(sqlQuery) +
                     sqlQuery + ".");
         } catch (ApplicationError e) {
             return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
