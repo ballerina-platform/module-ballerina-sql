@@ -24,6 +24,7 @@ import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -107,7 +108,12 @@ public class ExecuteProcessor {
                 if (paramSQLString instanceof BString) {
                     sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
-                    sqlQuery = getSqlQuery((BObject) paramSQLString);
+                    Object query = getSqlQuery((BObject) paramSQLString);
+                    if (query instanceof BError) {
+                        return query;
+                    } else {
+                        sqlQuery =  query.toString();
+                    }
                 }
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
 
@@ -210,11 +216,22 @@ public class ExecuteProcessor {
         try {
             Object[] paramSQLObjects = paramSQLStrings.getValues();
             BObject parameterizedQuery = (BObject) paramSQLObjects[0];
-            sqlQuery = getSqlQuery(parameterizedQuery);
+            Object query = getSqlQuery(parameterizedQuery);
+            if (query instanceof BError) {
+                return query;
+            } else {
+                sqlQuery =  query.toString();
+            }
             parameters.add(parameterizedQuery);
             for (int i = 1; i < paramSQLStrings.size(); i++) {
                 parameterizedQuery = (BObject) paramSQLObjects[i];
-                String paramSQLQuery = getSqlQuery(parameterizedQuery);
+                String paramSQLQuery;
+                query = getSqlQuery(parameterizedQuery);
+                if (query instanceof BError) {
+                    return query;
+                } else {
+                    paramSQLQuery =  query.toString();
+                }
 
                 if (sqlQuery.equals(paramSQLQuery)) {
                     parameters.add(parameterizedQuery);

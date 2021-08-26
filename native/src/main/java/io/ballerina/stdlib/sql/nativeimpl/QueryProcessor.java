@@ -49,6 +49,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
+import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 
 /**
  * This class provides the query processing implementation which executes sql queries.
@@ -110,7 +111,12 @@ public class QueryProcessor {
                 if (paramSQLString instanceof BString) {
                     sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
-                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                    Object query = getSqlQuery((BObject) paramSQLString);
+                    if (query instanceof BError) {
+                        return getErrorStream(recordType, (BError) query);
+                    } else {
+                        sqlQuery =  query.toString();
+                    }
                 }
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
@@ -193,7 +199,12 @@ public class QueryProcessor {
                 if (paramSQLString instanceof BString) {
                     sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
-                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
+                    Object query = getSqlQuery((BObject) paramSQLString);
+                    if (query instanceof BError) {
+                        return query;
+                    } else {
+                        sqlQuery =  query.toString();
+                    }
                 }
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);

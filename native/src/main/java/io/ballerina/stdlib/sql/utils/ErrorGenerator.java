@@ -65,6 +65,11 @@ public class ErrorGenerator {
                 StringUtils.fromString(errorMessage), null, null);
     }
 
+    public static BError getUnsupportedTypeError(String errorMessage) {
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.UNSUPPORTED_TYPE_ERROR,
+                StringUtils.fromString(errorMessage), null, null);
+    }
+
     public static BError getNoRowsError(String message) {
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
                 StringUtils.fromString(message), null,  null);

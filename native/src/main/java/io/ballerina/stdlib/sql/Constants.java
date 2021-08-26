@@ -42,6 +42,7 @@ public final class Constants {
     public static final String DATABASE_ERROR_DETAILS = "DatabaseErrorDetail";
     public static final String DATABASE_ERROR = "DatabaseError";
     public static final String APPLICATION_ERROR = "ApplicationError";
+    public static final String UNSUPPORTED_TYPE_ERROR = "UnsupportedTypeError";
     public static final String NO_ROWS_ERROR = "NoRowsError";
     public static final String TYPE_MISMATCH_ERROR = "TypeMismatchError";
     public static final String DATABASE_ERROR_MESSAGE = "Database Error Occurred";

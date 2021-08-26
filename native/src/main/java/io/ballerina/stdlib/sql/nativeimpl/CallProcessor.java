@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
@@ -122,7 +123,12 @@ public class CallProcessor {
                 if (paramSQLString instanceof BString) {
                     sqlQuery = ((BString) paramSQLString).getValue();
                 } else {
-                    sqlQuery = getSqlQuery((BObject) paramSQLString);
+                    Object query = getSqlQuery((BObject) paramSQLString);
+                    if (query instanceof BError) {
+                        return query;
+                    } else {
+                        sqlQuery =  query.toString();
+                    }
                 }
                 connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);

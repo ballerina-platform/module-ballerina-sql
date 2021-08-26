@@ -137,14 +137,19 @@ public class Utils {
         }
     }
 
-    public static String getSqlQuery(BObject paramString) {
+    public static Object getSqlQuery(BObject paramString) throws DataError {
         BArray stringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
         StringBuilder sqlQuery = new StringBuilder();
         for (int i = 0; i < stringsArray.size(); i++) {
+            String query = stringsArray.get(i).toString();
+            if (query.toLowerCase(Locale.getDefault()).contains(("IN (").toLowerCase(Locale.getDefault()))) {
+                return ErrorGenerator.getUnsupportedTypeError("The parameterized query doesn't support " +
+                        "IN operator: " + query);
+            }
             if (i > 0) {
                 sqlQuery.append(" ? ");
             }
-            sqlQuery.append(stringsArray.get(i).toString());
+            sqlQuery.append(query);
         }
         return sqlQuery.toString();
     }

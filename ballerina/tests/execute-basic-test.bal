@@ -13,6 +13,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/io;
 import ballerina/test;
 
 string executeDb = urlPrefix + "9006/execute";
@@ -373,12 +374,12 @@ function testSelectData() returns error? {
     ParameterizedQuery query = `SELECT * FROM NumericTypes WHERE id in (${ids})`;
     ExecutionResult|error result = dbClient->execute(query);
     test:assertTrue(result is error);
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query as IN Operator is not " +
-        "supported: SELECT * FROM NumericTypes WHERE id in ( ? ). incompatible data type in conversion."),
+    io:println(result);
+    if result is UnsupportedTypeError {
+        test:assertTrue(result.message().startsWith("The parameterized query doesn't support IN operator: SELECT * FROM NumericTypes WHERE id in"),
         "Output mismatched");
     } else {
-        test:assertFail("DatabaseError Error expected.");
+        test:assertFail("UnsupportedTypeError Error expected.");
     }
     check dbClient.close();
 }
