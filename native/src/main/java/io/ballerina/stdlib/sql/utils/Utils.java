@@ -1156,12 +1156,4 @@ public class Utils {
                 ballerinaType + " for SQL Date data type:" + objectTypeName.replace("ArrayOutParameter",
                 " array"));
     }
-
-    public static String getErrorMsg(String sqlQuery) {
-        if (sqlQuery.toLowerCase(Locale.getDefault()).contains(("IN (").toLowerCase(Locale.getDefault()))) {
-            return "Error while executing SQL query as IN Operator is not supported: ";
-        } else {
-            return "Error while executing SQL query: ";
-        }
-    }
 }
