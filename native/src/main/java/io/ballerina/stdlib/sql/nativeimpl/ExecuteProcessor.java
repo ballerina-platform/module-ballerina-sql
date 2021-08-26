@@ -281,11 +281,11 @@ public class ExecuteProcessor {
                 executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
                         Constants.EXECUTION_RESULT_RECORD, resultField));
             }
-            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults, getErrorMsg(sqlQuery) +
-                    sqlQuery + ".");
+            return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
+                    "Error while executing batch command starting with: '" + sqlQuery + "'.");
         } catch (SQLException e) {
-            return ErrorGenerator.getSQLDatabaseError(e, getErrorMsg(sqlQuery) +
-                    sqlQuery + ".");
+            return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
+                    "command starting with : " + sqlQuery + ". ");
         } catch (ApplicationError e) {
             return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
                     + e.getMessage());
@@ -357,13 +357,5 @@ public class ExecuteProcessor {
 
     private enum DdlKeyword {
         CREATE, ALTER, DROP, TRUNCATE, COMMENT, RENAME
-    }
-
-    private static String getErrorMsg(String sqlQuery) {
-        if (sqlQuery.toLowerCase(Locale.getDefault()).contains(("IN (").toLowerCase(Locale.getDefault()))) {
-            return "Error while executing SQL batch command as IN Operator is not supported: ";
-        } else {
-            return "Error while executing SQL batch command starting with : ";
-        }
     }
 }
