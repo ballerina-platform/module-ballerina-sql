@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 string batchExecuteDB = urlPrefix + "9005/batchexecute";
@@ -69,7 +68,6 @@ function batchInsertIntoDataTable5() returns error? {
     ParameterizedQuery[] sqlQueries = [sqlQuery];
     ExecutionResult[]|error result = batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is error);
-    io:println(result);
     if result is UnsupportedTypeError {
         test:assertTrue(result.message().startsWith("The parameterized query doesn't support IN " +
         "operator: SELECT * FROM DataTable WHERE int_type in"), "Output mismatched");
