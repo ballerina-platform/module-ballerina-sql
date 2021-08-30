@@ -618,7 +618,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         throw new DataError("Unsupported type passed in column index: " + index);
     }
 
-
     private void setString(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         if (value == null) {
