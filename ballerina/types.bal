@@ -34,7 +34,7 @@ type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay|time:Civil[]|time
 type ArrayValueType string?[]|int?[]|boolean?[]|float?[]|decimal?[]|byte[]?[];
 
 # Possible type of parameters that can be passed into the SQL query.
-public type Value string|int|boolean|float|decimal|byte[]|xml|DateTimeType|ArrayValueType|TypedValue?;
+public type Value string|int|boolean|float|decimal|byte[]|xml|record {}|DateTimeType|ArrayValueType|TypedValue?;
 
 # Represents Varchar SQL field.
 #

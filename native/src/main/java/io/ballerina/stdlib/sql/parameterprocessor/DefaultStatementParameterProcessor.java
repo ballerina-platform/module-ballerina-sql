@@ -612,6 +612,13 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         preparedStatement.setObject(index, value.getTextValue(), Types.SQLXML);
     }
 
+    @Override
+    protected int setCustomBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
+                                      Object value, boolean returnType) throws DataError, SQLException {
+        throw new DataError("Unsupported type passed in column index: " + index);
+    }
+
+
     private void setString(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         if (value == null) {
