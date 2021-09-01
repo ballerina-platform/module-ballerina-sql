@@ -593,7 +593,6 @@ function queryInvalidRecordParam() {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${recordValue}`;
     record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
-    io:println(result);
     if result is ApplicationError {
         test:assertTrue(result.message().startsWith("Unsupported type passed in column index: 1"));
     } else {
