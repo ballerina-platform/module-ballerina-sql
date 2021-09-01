@@ -581,6 +581,26 @@ function queryTimeStringInvalidParam() {
     }
 }
 
+type InvalidRecord record {
+    int id;
+};
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryInvalidRecordParam() {
+    InvalidRecord recordValue = {id : 1};
+    ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${recordValue}`;
+    record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertTrue(result is error);
+    io:println(result);
+    if result is ApplicationError {
+        test:assertTrue(result.message().startsWith("Unsupported type passed in column index: 1"));
+    } else {
+        test:assertFail("ApplicationError Error expected.");
+    }
+}
+
 @test:Config {
     groups: ["query", "query-simple-params"]
 }

@@ -613,7 +613,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     @Override
-    protected int setCustomBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
+    protected int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
                                       Object value, boolean returnType) throws DataError, SQLException {
         throw new DataError("Unsupported type passed in column index: " + index);
     }

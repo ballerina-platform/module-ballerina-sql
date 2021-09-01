@@ -142,7 +142,7 @@ public abstract class AbstractStatementParameterProcessor {
                                               Object value) throws DataError, SQLException;
     protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
             throws DataError, SQLException;
-    protected abstract int setCustomBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
+    protected abstract int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
                                          Object value, boolean returnType) throws DataError, SQLException;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
@@ -493,6 +493,6 @@ public abstract class AbstractStatementParameterProcessor {
 
     private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
                                                Object value, boolean returnType) throws DataError, SQLException {
-        return setCustomBMapParams(connection, preparedStatement, index, value, returnType);
+        return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
     }
 }
