@@ -21,6 +21,7 @@ package io.ballerina.stdlib.sql.parameterprocessor;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
@@ -141,6 +142,8 @@ public abstract class AbstractStatementParameterProcessor {
                                               Object value) throws DataError, SQLException;
     protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
             throws DataError, SQLException;
+    protected abstract int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
+                                         Object value, boolean returnType) throws DataError, SQLException;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws DataError, SQLException {
@@ -211,6 +214,8 @@ public abstract class AbstractStatementParameterProcessor {
         } else if (object instanceof BXml) {
             setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
+        } else if (object instanceof BMap) {
+            return setBMapParams(connection, preparedStatement, index, object, returnType);
         } else {
             throw new DataError("Unsupported type passed in column index: " + index);
         }
@@ -486,4 +491,8 @@ public abstract class AbstractStatementParameterProcessor {
         return sqlTypeValue;
     }
 
+    private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
+                                               Object value, boolean returnType) throws DataError, SQLException {
+        return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+    }
 }
