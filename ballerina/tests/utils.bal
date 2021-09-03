@@ -45,7 +45,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias, 
         "-e", "HSQLDB_USER=test", 
         "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts", 
-        "-p", port + ":9001", "blacklabelops/hsqldb");
+        "-p", port + ":9001", "kaneeldias/hsqldb");
     Process result = check execResult;
     int waitForExit = check result.waitForExit();
     exitCode = check result.exitCode();
