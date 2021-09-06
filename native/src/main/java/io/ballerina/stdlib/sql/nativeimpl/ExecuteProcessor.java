@@ -137,14 +137,12 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
             } catch (ApplicationError e) {
-                return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
-                        + sqlQuery + ". " + e.getMessage());
+                return ErrorGenerator.getSQLApplicationError(e);
             } finally {
                 closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }
         } else {
-            return ErrorGenerator.getSQLApplicationError(
-                    "Client is not properly initialized!");
+            return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
         }
     }
 
@@ -191,8 +189,7 @@ public class ExecuteProcessor {
                         statementParameterProcessor, isWithinTrxBlock, trxResourceManager);
             }
         } else {
-            return ErrorGenerator.getSQLApplicationError(
-                    "Client is not properly initialized!");
+            return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
         }
     }
 
@@ -270,8 +267,7 @@ public class ExecuteProcessor {
             return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
                     "command starting with : " + sqlQuery + ". ");
         } catch (ApplicationError e) {
-            return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
-                    + e.getMessage());
+            return ErrorGenerator.getSQLApplicationError(e);
         } finally {
             closeResources(isWithinTrxBlock, resultSet, statement, connection);
         }

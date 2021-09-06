@@ -25,6 +25,12 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.ConversionError;
+import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.FieldMismatchError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
+import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -63,6 +69,30 @@ public class ErrorGenerator {
     public static BError getSQLApplicationError(String errorMessage) {
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.APPLICATION_ERROR,
                 StringUtils.fromString(errorMessage), null, null);
+    }
+
+    public static BError getSQLApplicationError(ApplicationError error) {
+        String message = error.getMessage();
+        if (message == null) {
+            message = error.getClass().getName();
+        }
+
+        String errorName;
+        if (error instanceof ConversionError) {
+            errorName = Constants.CONVERSION_ERROR;
+        } else if (error instanceof TypeMismatchError) {
+            errorName = Constants.TYPE_MISMATCH_ERROR;
+        } else if (error instanceof FieldMismatchError) {
+            errorName = Constants.FIELD_MISMATCH_ERROR;
+        } else if (error instanceof UnsupportedTypeError) {
+            errorName = Constants.UNSUPPORTED_TYPE_ERROR;
+        } else if (error instanceof DataError) {
+            errorName = Constants.DATA_ERROR;
+        } else {
+            errorName = Constants.APPLICATION_ERROR;
+        }
+        return ErrorCreator.createError(ModuleUtils.getModule(), errorName,
+                StringUtils.fromString(message), null, null);
     }
 
     public static BError getNoRowsError(String message) {

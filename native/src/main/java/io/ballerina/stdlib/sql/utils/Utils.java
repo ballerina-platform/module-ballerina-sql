@@ -40,7 +40,9 @@ import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
@@ -157,13 +159,13 @@ public class Utils {
         } else {
             valueName = value.getClass().getName();
         }
-        return new DataError("Invalid parameter :" + valueName + " is passed as value for SQL type : "
+        return new TypeMismatchError("Invalid parameter :" + valueName + " is passed as value for SQL type : "
                 + sqlType);
     }
 
 
 
-    public static String getString(Clob data) throws DataError, SQLException {
+    public static String getString(Clob data, int columnIndex) throws DataError, SQLException {
         if (data == null) {
             return null;
         }
@@ -175,7 +177,10 @@ public class Utils {
             }
             return sb.toString();
         } catch (IOException e) {
-            throw new DataError("Error when converting Clob type.", e);
+            if (columnIndex > 0) {
+                throw new ConversionError(columnIndex, "", "string", e.getMessage());
+            }
+            throw new ConversionError("", "string", e.getMessage());
         }
     }
 
@@ -275,8 +280,7 @@ public class Utils {
 
     public static void validatedInvalidFieldAssignment(int sqlType, Type type, String sqlTypeName) throws DataError {
         if (!isValidFieldConstraint(sqlType, type)) {
-            throw new DataError(sqlTypeName + " field cannot be converted to ballerina type : "
-                    + type.getName());
+            throw new TypeMismatchError(sqlTypeName, type.getName());
         }
     }
 
@@ -787,7 +791,8 @@ public class Utils {
         return civilMap;
     }
 
-    public static Object toStringArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toStringArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -796,7 +801,8 @@ public class Utils {
         }
     }
 
-    public static Object toBooleanArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toBooleanArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             return booleanToIntArray(dataArray);
@@ -809,7 +815,8 @@ public class Utils {
         }
     }
 
-    public static Object toBitArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toBitArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             return booleanToIntArray(dataArray);
@@ -833,7 +840,8 @@ public class Utils {
         return intDataArray;
     }
 
-    public static Object toIntArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toIntArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         String className = dataArray[0].getClass().getCanonicalName();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER) &&
@@ -849,7 +857,8 @@ public class Utils {
         }
     }
 
-    public static Object toRealArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toRealArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
@@ -869,7 +878,8 @@ public class Utils {
 
     }
 
-    public static Object toDateArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toDateArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -881,7 +891,8 @@ public class Utils {
 
     }
 
-    public static Object toTimeArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toTimeArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -910,7 +921,8 @@ public class Utils {
         return floatDataArray;
     }
 
-    public static Object toTimeWithTimezoneArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toTimeWithTimezoneArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -922,7 +934,8 @@ public class Utils {
 
     }
 
-    public static Object toDateTimeArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toDateTimeArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -933,7 +946,8 @@ public class Utils {
         }
 
     }
-    public static Object toTimestampWithTimezoneArray(Object[] dataArray, String objectTypeName, Type ballerinaType) {
+    public static Object toTimestampWithTimezoneArray(Object[] dataArray, String objectTypeName, Type ballerinaType)
+            throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -946,7 +960,7 @@ public class Utils {
     }
 
     public static Object toFloatArray(Object[] dataArray, String objectTypeName,
-                                      Type ballerinaType) {
+                                      Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
@@ -966,7 +980,7 @@ public class Utils {
     }
 
     public static Object toNumericArray(Object[] dataArray, String objectTypeName,
-                                        Type ballerinaType) {
+                                        Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -982,7 +996,7 @@ public class Utils {
     }
 
     public static Object toTimestampArray(Object[] dataArray, String objectTypeName,
-                                          Type ballerinaType) {
+                                          Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -994,7 +1008,7 @@ public class Utils {
     }
 
     public static Object toBinaryArray(Object[] dataArray, String objectTypeName,
-                                       Type ballerinaType) {
+                                       Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -1146,9 +1160,15 @@ public class Utils {
         return mapDateTimeArray;
     }
     
-    private static BError getError(Type ballerinaType, String objectTypeName) {
-        return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
-                ballerinaType + " for SQL Date data type:" + objectTypeName.replace("ArrayOutParameter",
-                " array"));
+    private static BError getError(Type ballerinaType, String objectTypeName) throws TypeMismatchError {
+        throw new TypeMismatchError("SQL Date", getBTypeName(ballerinaType),
+                objectTypeName.replace("ArrayOutParameter", " array"));
+    }
+
+    public static String getBTypeName(Type ballerinaType) {
+        if (ballerinaType.getName() == null || ballerinaType.getName().equals("")) {
+            return ballerinaType.toString();
+        }
+        return ballerinaType.getName();
     }
 }

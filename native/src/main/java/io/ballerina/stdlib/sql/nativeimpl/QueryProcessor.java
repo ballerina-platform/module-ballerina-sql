@@ -130,7 +130,7 @@ public class QueryProcessor {
                 return getErrorStream(recordType, errorValue);
             } catch (ApplicationError applicationError) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
-                BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
+                BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError);
                 return getErrorStream(recordType, errorValue);
             } catch (Throwable e) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
@@ -175,7 +175,7 @@ public class QueryProcessor {
             TransactionResourceManager trxResourceManager) {
         Type describingType = ballerinaType.getDescribingType();
         if (describingType.getTag() == TypeTags.UNION_TAG) {
-            return ErrorGenerator.getSQLApplicationError("Return type cannot be a union.");
+            return ErrorGenerator.getSQLApplicationError("Return type cannot be a union of multiple types.");
         }
 
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
@@ -220,6 +220,8 @@ public class QueryProcessor {
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         "Error while executing SQL query: " + sqlQuery + ". ");
+            } catch (ApplicationError e) {
+                return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable e) {
                 String message = e.getMessage();
                 if (message == null) {

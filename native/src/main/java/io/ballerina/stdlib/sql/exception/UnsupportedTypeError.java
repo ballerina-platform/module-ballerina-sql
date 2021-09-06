@@ -18,15 +18,20 @@
 package io.ballerina.stdlib.sql.exception;
 
 /**
- * This exception represents the errors and exception during the processing of the returned data or parameters.
+ * This exception represents error that occurs when an unsupported parameter type is added to the query.
  */
-public class DataError extends ApplicationError {
+public class UnsupportedTypeError extends DataError {
 
-    public DataError(String message) {
+    public UnsupportedTypeError(String unsupportedType, int paramIndex) {
+        super(String.format(
+                "ParameterizedQuery parameter %d is of unsupported type '%s'.", paramIndex, unsupportedType));
+    }
+
+    public UnsupportedTypeError(String message) {
         super(message);
     }
 
-    public DataError(String message, Exception error) {
+    public UnsupportedTypeError(String message, Exception error) {
         super(message, error);
     }
 }

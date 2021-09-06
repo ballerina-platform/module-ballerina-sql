@@ -1247,9 +1247,9 @@ function negativeOutParamsTest() returns error? {
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
     byte[][]|Error result = smallint_array.get(ByteArray);
-    if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:SmallInt array"));
+    if (result is TypeMismatchError) {
+        test:assertEquals(result.message(),
+        "The ballerina type expected for 'SQL Date' type is 'SmallInt array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1257,159 +1257,159 @@ function negativeOutParamsTest() returns error? {
     result = int_array.get(ByteArray);
 
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data " +
-        "type:Integer array"));
+        test:assertEquals(result.message(),
+        "The ballerina type expected for 'SQL Date' type is 'Integer array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = real_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Real array"));
+        test:assertEquals(result.message(),
+               "The ballerina type expected for 'SQL Date' type is 'Real array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = numeric_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Numeric array"));
+    test:assertEquals(result.message(),
+               "The ballerina type expected for 'SQL Date' type is 'Numeric array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = nvarchar_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:NVarchar array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'NVarchar array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = long_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:BigInt array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'BigInt array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = float_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Float array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Float array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = double_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Double array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Double array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = decimal_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Decimal array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Decimal array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = char_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Char array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Char array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = varchar_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Varchar array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Varchar array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = string_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data type."));
+        test:assertEquals(result.message(), "Unsupported SQL Custom Array InOut Parameter.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = date_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Date array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Date array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = time_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Time array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Time array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = timestamp_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Timestamp array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Timestamp array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = datetime_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:DateTime array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'DateTime array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = timestamp_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for " +
-        "SQL Date data type:Timestamp array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Timestamp array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = time_tz_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data " +
-        "type:TimeWithTimezone array"));
+        test:assertEquals(result.message(),
+             "The ballerina type expected for 'SQL Date' type is 'TimeWithTimezone array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = timestamp_tz_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data " +
-        "type:TimestampWithTimezone array"));
+        test:assertEquals(result.message(),
+         "The ballerina type expected for 'SQL Date' type is 'TimestampWithTimezone array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = boolean_array.get(ByteArray);
     if (result is Error) {
-        test:assertTrue(result.toString().includes("Unsupported Ballerina type:byte[][] for SQL Date data " +
-        "type:Boolean array"));
+        test:assertEquals(result.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Boolean array' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     float[]|Error output = binary_array.get(FloatArray);
     if (output is Error) {
-        test:assertTrue(output.toString().includes("Unsupported Ballerina type:float[] for SQL Date " +
-        "data type:Binary array"));
+        test:assertEquals(output.message(),
+                   "The ballerina type expected for 'SQL Date' type is 'Binary array' but found type 'float[]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }

@@ -94,10 +94,10 @@ public class OutParameterProcessor {
                 case Types.BLOB:
                     return resultParameterProcessor.convertBlob((Blob) value, sqlType, ballerinaType);
                 case Types.CLOB:
-                    String clobValue = getString((Clob) value);
+                    String clobValue = getString((Clob) value, -1);
                     return resultParameterProcessor.convertChar(clobValue, sqlType, ballerinaType);
                 case Types.NCLOB:
-                    String nClobValue = getString((NClob) value);
+                    String nClobValue = getString((NClob) value, -1);
                     return resultParameterProcessor.convertChar(nClobValue, sqlType, ballerinaType);
                 case Types.DATE:
                     return resultParameterProcessor.convertDate((Date) value, sqlType, ballerinaType);
@@ -168,7 +168,7 @@ public class OutParameterProcessor {
                     }
             }
         } catch (ApplicationError applicationError) {
-            return ErrorGenerator.getSQLApplicationError(applicationError.getMessage());
+            return ErrorGenerator.getSQLApplicationError(applicationError);
         } catch (SQLException sqlException) {
             return ErrorGenerator.getSQLDatabaseError(sqlException, "Error when parsing out parameter.");
         }

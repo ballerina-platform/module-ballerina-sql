@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/lang.'string as strings;
 import ballerina/test;
 import ballerina/time;
 
@@ -723,7 +722,7 @@ function queryRecordNegative2() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
     record{}|int|error queryResult = dbClient->queryRow(sqlQuery);
     if queryResult is error {
-        test:assertEquals(queryResult.message(), "Return type cannot be a union.");
+        test:assertEquals(queryResult.message(), "Return type cannot be a union of multiple types.");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
     }
@@ -784,8 +783,8 @@ function queryValueNegative2() returns error? {
     int|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("Retrieved SQL type field cannot be converted to ballerina type : int"),
-                                                       "Incorrect error message");
+        test:assertEquals(queryResult.message(),
+                        "SQL Type Retrieved SQL type cannot be converted to ballerina type int.");
     } else {
         test:assertFail("Expected error when query returns unexpected result type.");
     }
@@ -1099,27 +1098,40 @@ function testDateTimeRecord3() returns error? {
 
     result = dbClient->queryRow(`SELECT date_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Date type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Date type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Datetime type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Datetime type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Time with Timezone type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported Ballerina type"), "Wrong Error Message for Timestamp with Timezone type.");
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.",
+        "Wrong Error Message for Date type.");
+
     check dbClient.close();
 }
 

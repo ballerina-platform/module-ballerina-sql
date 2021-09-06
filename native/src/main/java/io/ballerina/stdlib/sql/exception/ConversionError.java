@@ -18,15 +18,26 @@
 package io.ballerina.stdlib.sql.exception;
 
 /**
- * This exception represents the errors and exception during the processing of the returned data or parameters.
+ * This exception represents the occurs when a query retrieves a result that is corrupted and cannot be converted to
+ * expected type.
  */
-public class DataError extends ApplicationError {
+public class ConversionError extends DataError {
 
-    public DataError(String message) {
+    public ConversionError(int columnIndex, String result, String fieldType, String errorDetails) {
+        super(String.format("Retrieved column %s result %s could not be converted to %s, %s.",
+                columnIndex, result, fieldType, errorDetails));
+    }
+
+    public ConversionError(String result, String fieldType, String errorDetails) {
+        super(String.format("Retrieved result %s could not be converted to %s, %s.",
+                result, fieldType, errorDetails));
+    }
+
+    public ConversionError(String message) {
         super(message);
     }
 
-    public DataError(String message, Exception error) {
+    public ConversionError(String message, Exception error) {
         super(message, error);
     }
 }

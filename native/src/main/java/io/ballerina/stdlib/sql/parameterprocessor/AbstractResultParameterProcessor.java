@@ -28,6 +28,7 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
@@ -262,13 +263,13 @@ public abstract class AbstractResultParameterProcessor {
 
     public Object processClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws DataError, SQLException {
-        String clobValue = getString(resultSet.getClob(columnIndex));
+        String clobValue = getString(resultSet.getClob(columnIndex), columnIndex);
         return convertChar(clobValue, sqlType, ballerinaType);
     }
 
     public Object processNClobResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws DataError, SQLException {
-        String nClobValue = getString(resultSet.getNClob(columnIndex));
+        String nClobValue = getString(resultSet.getNClob(columnIndex), columnIndex);
         return convertChar(nClobValue, sqlType, ballerinaType);
     }
 
@@ -365,7 +366,7 @@ public abstract class AbstractResultParameterProcessor {
         try {
             return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);
         } catch (BError e) {
-            throw new DataError("Error while converting to JSON type. " + e.getDetails());
+            throw new ConversionError(columnIndex, jsonString, "JSON", e.getMessage());
         }
     }
 
