@@ -113,7 +113,7 @@ public class UtilsTest {
         try {
             Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_INT, "New Type");
         } catch (ApplicationError e) {
-            assertEquals(e.getMessage(), "SQL Type New Type cannot be converted to ballerina type int.");
+            assertEquals(e.getMessage(), "SQL Type 'New Type' cannot be converted to ballerina type 'int'.");
         }
     }
 
@@ -122,7 +122,7 @@ public class UtilsTest {
         try {
             Utils.validatedInvalidFieldAssignment(1, PredefinedTypes.TYPE_CLONEABLE, "New Type");
         } catch (ApplicationError e) {
-            assertEquals(e.getMessage(), "SQL Type New Type cannot be converted to ballerina type Cloneable.");
+            assertEquals(e.getMessage(), "SQL Type 'New Type' cannot be converted to ballerina type 'Cloneable'.");
         }
     }
 

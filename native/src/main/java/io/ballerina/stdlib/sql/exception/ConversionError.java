@@ -24,12 +24,12 @@ package io.ballerina.stdlib.sql.exception;
 public class ConversionError extends DataError {
 
     public ConversionError(int columnIndex, String result, String fieldType, String errorDetails) {
-        super(String.format("Retrieved column %s result %s could not be converted to %s, %s.",
+        super(String.format("Retrieved column %d result '%s' could not be converted to '%s', %s.",
                 columnIndex, result, fieldType, errorDetails));
     }
 
     public ConversionError(String result, String fieldType, String errorDetails) {
-        super(String.format("Retrieved result %s could not be converted to %s, %s.",
+        super(String.format("Retrieved result '%s' could not be converted to '%s', %s.",
                 result, fieldType, errorDetails));
     }
 

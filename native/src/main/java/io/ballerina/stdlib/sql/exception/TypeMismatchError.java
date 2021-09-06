@@ -35,7 +35,7 @@ public class TypeMismatchError extends DataError {
     }
 
     public TypeMismatchError(String sqlType, String typeFound) {
-        super(String.format("SQL Type %s cannot be converted to ballerina type %s.", sqlType, typeFound));
+        super(String.format("SQL Type '%s' cannot be converted to ballerina type '%s'.", sqlType, typeFound));
     }
 
     public TypeMismatchError(String message) {

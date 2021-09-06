@@ -24,8 +24,8 @@ package io.ballerina.stdlib.sql.exception;
 public class FieldMismatchError extends DataError {
 
     public FieldMismatchError(String bRecordName, int recordFieldCount, int returnedRowCount) {
-        super(String.format("%s record field count %d and the returned SQL Struct field count "
-                + "'%d' are different.", bRecordName, recordFieldCount, returnedRowCount));
+        super(String.format("Record '%s' field count %d and the returned SQL Struct field count "
+                + "%d are different.", bRecordName, recordFieldCount, returnedRowCount));
     }
 
     public FieldMismatchError(String message) {

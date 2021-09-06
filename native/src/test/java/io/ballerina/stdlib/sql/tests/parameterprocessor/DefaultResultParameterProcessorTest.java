@@ -168,7 +168,7 @@ public class DefaultResultParameterProcessorTest {
                     PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE);
         } catch (Exception e) {
             assertEquals(e.getMessage(),
-                    "$$returnType$$ record field count 1 and the returned SQL Struct field count '2' are different.");
+                    "Record '$$returnType$$' field count 1 and the returned SQL Struct field count 2 are different.");
         }
     }
 
