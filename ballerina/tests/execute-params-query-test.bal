@@ -25,7 +25,7 @@ string executeParamsDb = urlPrefix + "9007/executeparams";
     value: ["execute-params"]
 }
 function initExecuteParamsContainer() returns error? {
-    check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+   check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
 }
 
 @test:AfterGroups {
@@ -353,6 +353,31 @@ function insertIntoDateTimeTable4() returns error? {
     ParameterizedQuery sqlQuery = 
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${nilType}, ${nilType}, ${nilType}, ${nilType})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoDateTimeTable5() returns error? {
+    int rowId = 6;
+    time:Utc currentTime = time:utcNow();
+    time:Civil currentCivil = time:utcToCivil(currentTime);
+
+    ParameterizedQuery sqlQuery =
+            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentCivil})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoDateTimeTable6() returns error? {
+    int rowId = 7;
+    time:Utc currentTime = time:utcNow();
+
+    ParameterizedQuery sqlQuery =
+            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentTime})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 

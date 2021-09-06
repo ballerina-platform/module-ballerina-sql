@@ -185,6 +185,8 @@ public final class Constants {
         public static final String BYTE_ARRAY_TYPE = "byte[]";
         public static final String CIVIL_ARRAY_TYPE = "time:Civil";
         public static final String TIME_OF_DAY_ARRAY_TYPE = "time:TimeOfDay";
+        public static final String CIVIL = "Civil";
+        public static final String UTC = "[int,decimal] & readonly";
     }
 
     /**

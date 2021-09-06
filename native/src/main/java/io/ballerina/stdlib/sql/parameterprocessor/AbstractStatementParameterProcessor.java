@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BRefValue;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
@@ -42,7 +43,7 @@ import java.sql.Types;
 public abstract class AbstractStatementParameterProcessor {
 
     public abstract int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException;
-    protected abstract int getCustomSQLType(BObject typedValue) throws DataError, SQLException;
+    protected abstract int getCustomSQLType(BRefValue typedValue) throws DataError, SQLException;
 
     protected abstract void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
             int index, BObject typedValue) throws DataError, SQLException;
@@ -177,6 +178,13 @@ public abstract class AbstractStatementParameterProcessor {
             return Types.BOOLEAN;
         } else if (object instanceof BArray) {
             BArray objectArray = (BArray) object;
+
+            // If the type passed is time:Utc
+            if (objectArray.getType().toString().equals(Constants.SqlTypes.UTC)) {
+                setTimestamp(preparedStatement, objectArray.getType().getName(), index, objectArray);
+                return Types.TIMESTAMP;
+            }
+
             String type = objectArray.getElementType().toString();
             if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
@@ -215,7 +223,12 @@ public abstract class AbstractStatementParameterProcessor {
             setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else if (object instanceof BMap) {
-            return setBMapParams(connection, preparedStatement, index, object, returnType);
+            BMap mapValue = (BMap) object;
+            setBMapParams(connection, preparedStatement, index, mapValue, returnType);
+            if (returnType) {
+                return getSQLType(mapValue);
+            }
+            return 0;
         } else {
             throw new DataError("Unsupported type passed in column index: " + index);
         }
@@ -373,7 +386,7 @@ public abstract class AbstractStatementParameterProcessor {
         }
     }
 
-    private int getSQLType(BObject typedValue) throws DataError, SQLException {
+    private int getSQLType(BRefValue typedValue) throws DataError, SQLException {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
@@ -449,6 +462,7 @@ public abstract class AbstractStatementParameterProcessor {
                 break;
             case Constants.SqlTypes.TIMESTAMP:
             case Constants.SqlTypes.DATETIME:
+            case Constants.SqlTypes.CIVIL:
                 sqlTypeValue = Types.TIMESTAMP;
                 break;
             case Constants.SqlTypes.ARRAY:
@@ -491,8 +505,13 @@ public abstract class AbstractStatementParameterProcessor {
         return sqlTypeValue;
     }
 
-    private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
-                                               Object value, boolean returnType) throws DataError, SQLException {
-        return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+    private void setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
+                                               BMap value, boolean returnType) throws DataError, SQLException {
+        String sqlType = value.getType().getName();
+        if (Constants.SqlTypes.CIVIL.equals(sqlType)) {
+            setTimestamp(preparedStatement, sqlType, index, value);
+        } else {
+            setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+        }
     }
 }
