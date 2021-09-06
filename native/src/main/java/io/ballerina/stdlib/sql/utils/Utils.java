@@ -268,11 +268,10 @@ public class Utils {
 
     public static void updateProcedureCallExecutionResult(CallableStatement statement, BObject procedureCallResult)
             throws SQLException {
-        Object lastInsertedId = null;
         int count = statement.getUpdateCount();
         Map<String, Object> resultFields = new HashMap<>();
         resultFields.put(AFFECTED_ROW_COUNT_FIELD, count);
-        resultFields.put(LAST_INSERTED_ID_FIELD, lastInsertedId);
+        resultFields.put(LAST_INSERTED_ID_FIELD, null);
         BMap<BString, Object> executionResult = ValueCreator.createRecordValue(
                 ModuleUtils.getModule(), EXECUTION_RESULT_RECORD, resultFields);
         procedureCallResult.set(EXECUTION_RESULT_FIELD, executionResult);
@@ -307,10 +306,7 @@ public class Utils {
         String columnName = rsMetaData.getColumnLabel(columnIndex);
         int sqlType = rsMetaData.getColumnType(columnIndex);
         String sqlTypeName = rsMetaData.getColumnTypeName(columnIndex);
-        boolean isNullable = true;
-        if (rsMetaData.isNullable(columnIndex) == ResultSetMetaData.columnNoNulls) {
-            isNullable = false;
-        }
+        boolean isNullable = rsMetaData.isNullable(columnIndex) != ResultSetMetaData.columnNoNulls;
         Utils.validatedInvalidFieldAssignment(sqlType, type, "Retrieved SQL type");
         return new ColumnDefinition(columnName, null, sqlType, sqlTypeName, type, isNullable);
     }
@@ -329,10 +325,7 @@ public class Utils {
             }
             int sqlType = rsMetaData.getColumnType(i);
             String sqlTypeName = rsMetaData.getColumnTypeName(i);
-            boolean isNullable = true;
-            if (rsMetaData.isNullable(i) == ResultSetMetaData.columnNoNulls) {
-                isNullable = false;
-            }
+            boolean isNullable = rsMetaData.isNullable(i) != ResultSetMetaData.columnNoNulls;
             columnDefs.add(generateColumnDefinition(colName, sqlType, sqlTypeName, streamConstraint, isNullable));
             columnNames.add(colName);
         }
@@ -617,7 +610,7 @@ public class Utils {
     }
 
     public static BMap<BString, Object> createDateRecord(Date date) {
-        LocalDate dateObj = ((Date) date).toLocalDate();
+        LocalDate dateObj = date.toLocalDate();
         BMap<BString, Object> dateMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.DATE_RECORD);
@@ -634,7 +627,7 @@ public class Utils {
     }
 
     public static BMap<BString, Object> createTimeRecord(Time time) {
-        LocalTime timeObj = ((Time) time).toLocalTime();
+        LocalTime timeObj = time.toLocalTime();
         BMap<BString, Object> timeMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD);
@@ -707,7 +700,7 @@ public class Utils {
     }
 
     public static BMap<BString, Object> createTimestampRecord(Timestamp timestamp) {
-        LocalDateTime dateTimeObj = ((Timestamp) timestamp).toLocalDateTime();
+        LocalDateTime dateTimeObj = timestamp.toLocalDateTime();
         BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD);

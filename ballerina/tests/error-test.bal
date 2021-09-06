@@ -14,7 +14,6 @@
 // under the License.
 
 import ballerina/test;
-import ballerina/io;
 
 string errorDB = urlPrefix + "9013/error";
 
@@ -39,6 +38,5 @@ function queryCorruptedJson() returns error? {
     ParameterizedQuery sqlQuery = `SELECT string_type from DataTable WHERE row_id = 1`;
     MockClient mockClient = check getMockClient(errorDB);
     json|Error jsonVal = mockClient->queryRow(sqlQuery);
-    io:println(jsonVal);
     test:assertTrue(jsonVal is ConversionError);
 }

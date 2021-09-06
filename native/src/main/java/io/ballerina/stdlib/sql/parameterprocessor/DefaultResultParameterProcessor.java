@@ -88,15 +88,15 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     protected BArray createAndPopulateBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
                                                       Type type, Array array) throws DataError, SQLException {
-        BArray refValueArray = null;
+        BArray refValueArray;
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_STRING);
-            for (int i = 0; i < length; i++) {
-                if (dataArray[i] == null) {
+            for (Object data : dataArray) {
+                if (data == null) {
                     refValueArray.append(null);
                 } else {
-                    refValueArray.append(fromString(String.valueOf(dataArray[i])));
+                    refValueArray.append(fromString(String.valueOf(data)));
                 }
             }
             return refValueArray;
@@ -765,13 +765,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public Object processSmallInt(CallableStatement statement, int paramIndex)
             throws SQLException {
-        return Integer.valueOf(statement.getShort(paramIndex));
+        return (int) statement.getShort(paramIndex);
     }
 
     @Override
     public Object processInteger(CallableStatement statement, int paramIndex)
             throws SQLException {
-        return Long.valueOf(statement.getInt(paramIndex));
+        return (long) statement.getInt(paramIndex);
     }
 
     @Override
@@ -838,8 +838,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws DataError, SQLException,
-            SQLException {
+                                                  ColumnDefinition columnDefinition) throws DataError, SQLException {
         throw new UnsupportedTypeError(columnDefinition.getSqlName(), columnIndex);
     }
 
