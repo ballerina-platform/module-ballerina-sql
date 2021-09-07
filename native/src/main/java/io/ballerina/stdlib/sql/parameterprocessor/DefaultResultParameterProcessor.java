@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.utils.XmlUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
@@ -34,8 +35,10 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.FieldMismatchError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
+import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
-import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.math.BigDecimal;
@@ -85,15 +88,15 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     protected BArray createAndPopulateBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
                                                       Type type, Array array) throws DataError, SQLException {
-        BArray refValueArray = null;
+        BArray refValueArray;
         int length = dataArray.length;
         if (firstNonNullElement instanceof String) {
             refValueArray = createEmptyBBRefValueArray(PredefinedTypes.TYPE_STRING);
-            for (int i = 0; i < length; i++) {
-                if (dataArray[i] == null) {
+            for (Object data : dataArray) {
+                if (data == null) {
                     refValueArray.append(null);
                 } else {
-                    refValueArray.append(fromString(String.valueOf(dataArray[i])));
+                    refValueArray.append(fromString(String.valueOf(data)));
                 }
             }
             return refValueArray;
@@ -151,7 +154,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 }
                 return refValueArray;
             } else {
-                throw new DataError("Error while retrieving Date Array");
+                throw new UnsupportedTypeError(firstNonNullElement.getClass().getName(), 0);
             } 
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {
             refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
@@ -261,67 +264,60 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     protected BMap<BString, Object> createUserDefinedType(Struct structValue, StructureType structType)
-            throws DataError {
+            throws DataError, SQLException {
         if (structValue == null) {
             return null;
         }
         Field[] internalStructFields = structType.getFields().values().toArray(new Field[0]);
         BMap<BString, Object> struct = ValueCreator.createMapValue(structType);
-        try {
-            Object[] dataArray = structValue.getAttributes();
-            if (dataArray != null) {
-                if (dataArray.length != internalStructFields.length) {
-                    throw new DataError("specified record and the returned SQL Struct field counts " +
-                            "are different, and hence not compatible");
-                }
-                int index = 0;
-                for (Field internalField : internalStructFields) {
-                    int type = internalField.getFieldType().getTag();
-                    BString fieldName = fromString(internalField.getFieldName());
-                    Object value = dataArray[index];
-                    switch (type) {
-                        case TypeTags.INT_TAG:
-                            if (value instanceof BigDecimal) {
-                                struct.put(fieldName, ((BigDecimal) value).intValue());
-                            } else {
-                                struct.put(fieldName, value);
-                            }
-                            break;
-                        case TypeTags.FLOAT_TAG:
-                            if (value instanceof BigDecimal) {
-                                struct.put(fieldName, ((BigDecimal) value).doubleValue());
-                            } else {
-                                struct.put(fieldName, value);
-                            }
-                            break;
-                        case TypeTags.DECIMAL_TAG:
-                            if (value instanceof BigDecimal) {
-                                struct.put(fieldName, value);
-                            } else {
-                                struct.put(fieldName, ValueCreator.createDecimalValue((BigDecimal) value));
-                            }
-                            break;
-                        case TypeTags.STRING_TAG:
-                            struct.put(fieldName, value);
-                            break;
-                        case TypeTags.BOOLEAN_TAG:
-                            struct.put(fieldName, ((int) value) == 1);
-                            break;
-                        case TypeTags.OBJECT_TYPE_TAG:
-                        case TypeTags.RECORD_TYPE_TAG:
-                            struct.put(fieldName,
-                                    createUserDefinedType((Struct) value,
-                                            (StructureType) internalField.getFieldType()));
-                            break;
-                        default:
-                            createUserDefinedTypeSubtype(internalField, structType);
-                    }
-                    ++index;
-                }
+        Object[] dataArray = structValue.getAttributes();
+        if (dataArray != null) {
+            if (dataArray.length != internalStructFields.length) {
+                throw new FieldMismatchError(structType.getName(), internalStructFields.length, dataArray.length);
             }
-        } catch (SQLException e) {
-            throw new DataError("Error while retrieving data to create " + structType.getName()
-                    + " record. ", e);
+            int index = 0;
+            for (Field internalField : internalStructFields) {
+                int type = internalField.getFieldType().getTag();
+                BString fieldName = fromString(internalField.getFieldName());
+                Object value = dataArray[index];
+                switch (type) {
+                    case TypeTags.INT_TAG:
+                        if (value instanceof BigDecimal) {
+                            struct.put(fieldName, ((BigDecimal) value).intValue());
+                        } else {
+                            struct.put(fieldName, value);
+                        }
+                        break;
+                    case TypeTags.FLOAT_TAG:
+                        if (value instanceof BigDecimal) {
+                            struct.put(fieldName, ((BigDecimal) value).doubleValue());
+                        } else {
+                            struct.put(fieldName, value);
+                        }
+                        break;
+                    case TypeTags.DECIMAL_TAG:
+                        if (value instanceof BigDecimal) {
+                            struct.put(fieldName, value);
+                        } else {
+                            struct.put(fieldName, ValueCreator.createDecimalValue((BigDecimal) value));
+                        }
+                        break;
+                    case TypeTags.STRING_TAG:
+                        struct.put(fieldName, value);
+                        break;
+                    case TypeTags.BOOLEAN_TAG:
+                        struct.put(fieldName, ((int) value) == 1);
+                        break;
+                    case TypeTags.OBJECT_TYPE_TAG:
+                    case TypeTags.RECORD_TYPE_TAG:
+                        struct.put(fieldName,
+                                createUserDefinedType((Struct) value, (StructureType) internalField.getFieldType()));
+                        break;
+                    default:
+                        createUserDefinedTypeSubtype(internalField, structType);
+                }
+                ++index;
+            }
         }
         return struct;
     }
@@ -329,7 +325,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     protected void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws DataError {
-        throw new DataError("Error while retrieving data for unsupported type " +
+        throw new TypeMismatchError("Error while retrieving data for unsupported type " +
                 internalField.getFieldType().getName() + " to create "
                 + structType.getName() + " record.");
     }
@@ -474,8 +470,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             return fromString(date.toString());
                         }
                     } else {
-                        throw new DataError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Date data type.");
+                        throw new TypeMismatchError("SQL Date", Utils.getBTypeName(type), "time:Date");
                     }
                 case TypeTags.INT_TAG:
                     return date.getTime();
@@ -500,8 +495,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                             return fromString(time.toString());
                         }
                     } else {
-                        throw new DataError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Time data type.");
+                        throw new TypeMismatchError("SQL Time", type.getName(), "time:TimeOfDay");
                     }
                 case TypeTags.INT_TAG:
                     return time.getTime();
@@ -523,8 +517,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     if (type.getName().equals(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD)) {
                         return Utils.createTimeWithTimezoneRecord(offsetTime);
                     } else {
-                        throw new DataError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Time with timezone data type.");
+                        throw new TypeMismatchError("SQL Time with Timezone", type.getName(), "time:TimeOfDay");
                     }
                 case TypeTags.INT_TAG:
                     return Time.valueOf(offsetTime.toLocalTime()).getTime();
@@ -546,8 +539,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                         && timestamp instanceof Timestamp) {
                     return Utils.createTimestampRecord((Timestamp) timestamp);
                 } else {
-                    throw new DataError("Unsupported Ballerina type:" +
-                        type.getName() + " for SQL Timestamp data type.");
+                    throw new TypeMismatchError("SQL Timestamp", type.getName(), "time:Civil");
                 }
                 case TypeTags.INT_TAG:
                     return timestamp.getTime();
@@ -571,8 +563,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)) {
                         return Utils.createTimestampWithTimezoneRecord(offsetDateTime);
                     } else {
-                        throw new DataError("Unsupported Ballerina type:" +
-                            type.getName() + " for SQL Timestamp with timezone data type.");
+                        throw new TypeMismatchError("SQL Timestamp with Timezone", type.getName(), "time:Civil");
                     }
                 case TypeTags.INT_TAG:
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
@@ -605,14 +596,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     }
 
     @Override
-    public Object convertStruct(Struct value, int sqlType, Type type) throws DataError {
+    public Object convertStruct(Struct value, int sqlType, Type type) throws DataError, SQLException {
         Utils.validatedInvalidFieldAssignment(sqlType, type, "SQL Struct");
         if (value != null) {
             if (type instanceof RecordType) {
                 return createUserDefinedType(value, (RecordType) type);
             } else {
-                throw new DataError("The ballerina type that can be used for SQL struct should be record type," +
-                        " but found " + type.getName() + " .");
+                throw new TypeMismatchError("SQL Struct", type.getName(), "record type");
             }
         } else {
             return null;
@@ -626,8 +616,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             if (type instanceof BXml) {
                 return XmlUtils.parse(value.getBinaryStream());
             } else {
-                throw new DataError("The ballerina type that can be used for SQL struct should be record type," +
-                        " but found " + type.getName() + " .");
+                throw new TypeMismatchError("SQL XML", TypeUtils.getType(value).getName(), "xml");
             }
         } else {
             return null;
@@ -776,13 +765,13 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public Object processSmallInt(CallableStatement statement, int paramIndex)
             throws SQLException {
-        return Integer.valueOf(statement.getShort(paramIndex));
+        return (int) statement.getShort(paramIndex);
     }
 
     @Override
     public Object processInteger(CallableStatement statement, int paramIndex)
             throws SQLException {
-        return Long.valueOf(statement.getInt(paramIndex));
+        return (long) statement.getInt(paramIndex);
     }
 
     @Override
@@ -844,39 +833,34 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
     @Override
     public Object processCustomOutParameters(CallableStatement statement, int paramIndex, int sqlType)
             throws DataError, SQLException {
-        throw new DataError("Unsupported SQL type '" + sqlType + "' when reading Procedure call " +
-                "Out parameter of index '" + paramIndex + "'.");
+        throw new UnsupportedTypeError(JDBCType.valueOf(sqlType).getName(), paramIndex);
     }
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws DataError, SQLException,
-            SQLException {
-        throw new DataError("Unsupported SQL type " + columnDefinition.getSqlName());
+                                                  ColumnDefinition columnDefinition) throws DataError, SQLException {
+        throw new UnsupportedTypeError(columnDefinition.getSqlName(), columnIndex);
     }
 
     @Override
-    public Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType, Type ballerinaType) {
-        return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
+    public Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType, Type ballerinaType)
+            throws DataError {
+        throw new UnsupportedTypeError("Unsupported SQL Custom Out Parameter of type " + JDBCType.valueOf(sqlType));
     }
 
     @Override
-    public Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType, Type ballerinaType) {
-        return ErrorGenerator.getSQLApplicationError("Unsupported SQL type " + sqlType);
+    public Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType, Type ballerinaType)
+            throws DataError {
+        throw new UnsupportedTypeError("Unsupported SQL Custom InOut Parameter of type " + JDBCType.valueOf(sqlType));
     }
 
     @Override
-    public Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType) {
-        return getError(ballerinaType);
+    public Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType) throws DataError {
+        throw new UnsupportedTypeError("Unsupported SQL Custom Array Out Parameter.");
     }
 
-    public Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType) {
-        return getError(ballerinaType);
-    }
-
-    private Object getError(Type ballerinaType) {
-        return ErrorGenerator.getSQLApplicationError("Unsupported Ballerina type:" +
-                ballerinaType + " for SQL Date data type.");
+    public Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws DataError {
+        throw new UnsupportedTypeError("Unsupported SQL Custom Array InOut Parameter.");
     }
 
     public BObject getBalStreamResultIterator() {

@@ -341,9 +341,9 @@ public class SQLDatasource {
             }
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
-                optionMap.entrySet().forEach(entry -> {
-                    config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue());
-                });
+                optionMap.entrySet().forEach(entry ->
+                    config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
+                );
             }
             hikariDataSource = new HikariDataSource(config);
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
@@ -387,9 +387,9 @@ public class SQLDatasource {
             }
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
-                optionMap.entrySet().forEach(entry -> {
-                    xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString());
-                });
+                optionMap.entrySet().forEach(entry ->
+                    xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString())
+                );
             }
 
             atomikosDataSource.setXaProperties(xaProperties);

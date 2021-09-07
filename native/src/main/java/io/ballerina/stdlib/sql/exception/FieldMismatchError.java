@@ -18,15 +18,21 @@
 package io.ballerina.stdlib.sql.exception;
 
 /**
- * This exception represents the errors and exception during the processing of the returned data or parameters.
+ * This exception represents the error that occurs when a query retrieves a result that cannot be matched to the
+ * expected record type.
  */
-public class DataError extends ApplicationError {
+public class FieldMismatchError extends DataError {
 
-    public DataError(String message) {
+    public FieldMismatchError(String bRecordName, int recordFieldCount, int returnedRowCount) {
+        super(String.format("Record '%s' field count %d and the returned SQL Struct field count "
+                + "%d are different.", bRecordName, recordFieldCount, returnedRowCount));
+    }
+
+    public FieldMismatchError(String message) {
         super(message);
     }
 
-    public DataError(String message, Exception error) {
+    public FieldMismatchError(String message, Exception error) {
         super(message, error);
     }
 }

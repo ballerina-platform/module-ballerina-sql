@@ -19,6 +19,10 @@
 package io.ballerina.stdlib.sql.tests.exception;
 
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.ConversionError;
+import io.ballerina.stdlib.sql.exception.FieldMismatchError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
+import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -36,4 +40,57 @@ public class ApplicationErrorTest {
         ApplicationError error = new ApplicationError("Application Error", new SQLException("new SQL Exception"));
         assertEquals(error.getMessage(), "Application Error");
     }
+
+    @Test
+    void conversionErrorTest1() {
+        ConversionError error = new ConversionError("Conversion Error", new SQLException("new SQL Exception"));
+        assertEquals(error.getMessage(), "Conversion Error");
+    }
+
+    @Test
+    void conversionErrorTest2() {
+        ConversionError error = new ConversionError("Conversion Error");
+        assertEquals(error.getMessage(), "Conversion Error");
+    }
+
+    @Test
+    void conversionErrorTest3() {
+        ConversionError error = new ConversionError("{}sdf", "JSON", "Expected :");
+        assertEquals(error.getMessage(), "Retrieved result '{}sdf' could not be converted to 'JSON', Expected :.");
+    }
+
+    @Test
+    void fieldMismatchErrorTest1() {
+        FieldMismatchError error = new FieldMismatchError("FieldMismatch Error", new SQLException("new SQL Exception"));
+        assertEquals(error.getMessage(), "FieldMismatch Error");
+    }
+
+    @Test
+    void fieldMismatchErrorTest2() {
+        FieldMismatchError error = new FieldMismatchError("FieldMismatch Error");
+        assertEquals(error.getMessage(), "FieldMismatch Error");
+    }
+
+    @Test
+    void unsupportedTypeErrorTest2() {
+        UnsupportedTypeError error = new UnsupportedTypeError("Unsupported Error",
+                new SQLException("new SQL Exception"));
+        assertEquals(error.getMessage(), "Unsupported Error");
+    }
+
+    @Test
+    void typeMismatchErrorTest1() {
+        TypeMismatchError error = new TypeMismatchError("TypeMismatch Error", new SQLException("new SQL Exception"));
+        assertEquals(error.getMessage(), "TypeMismatch Error");
+    }
+
+    @Test
+    void typeMismatchErrorTest2() {
+        TypeMismatchError error = new TypeMismatchError("SQL Time", "byte",
+                new String[]{"time:TimeOfDay", "time:Time"});
+        assertEquals(error.getMessage(),
+                "The ballerina type expected for 'SQL Time' type are '[time:TimeOfDay, time:Time]' " +
+                        "but found type 'byte'.");
+    }
+
 }

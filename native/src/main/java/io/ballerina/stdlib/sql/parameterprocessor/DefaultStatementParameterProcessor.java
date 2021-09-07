@@ -627,7 +627,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    private void setNstring(PreparedStatement preparedStatement, int index, Object value)
+    private void setNString(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         if (value == null) {
             preparedStatement.setNString(index, null);
@@ -874,12 +874,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     protected void setNChar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
-        setNstring(preparedStatement, index, value);
+        setNString(preparedStatement, index, value);
     }
 
     protected void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
-        setNstring(preparedStatement, index, value);
+        setNString(preparedStatement, index, value);
     }
 
     protected void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
