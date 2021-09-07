@@ -122,7 +122,7 @@ public class DefaultResultParameterProcessorTest {
         BObject bObject = TestUtils.getMockObject("ObjectType");
         try {
             Object object = testClass.convertCustomOutParameter(bObject, "", 1, null);
-        } catch (DataError e) {
+        } catch (DataError | SQLException e) {
             assertEquals(e.getMessage(), "Unsupported SQL Custom Out Parameter of type CHAR");
         }
     }

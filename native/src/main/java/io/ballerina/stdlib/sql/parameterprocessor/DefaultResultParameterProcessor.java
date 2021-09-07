@@ -844,22 +844,24 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object convertCustomOutParameter(Object value, String outParamObjectName, int sqlType, Type ballerinaType)
-            throws DataError {
+            throws DataError, SQLException {
         throw new UnsupportedTypeError("Unsupported SQL Custom Out Parameter of type " + JDBCType.valueOf(sqlType));
     }
 
     @Override
     public Object convertCustomInOutParameter(Object value, Object inParamValue, int sqlType, Type ballerinaType)
-            throws DataError {
+            throws DataError, SQLException {
         throw new UnsupportedTypeError("Unsupported SQL Custom InOut Parameter of type " + JDBCType.valueOf(sqlType));
     }
 
     @Override
-    public Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType) throws DataError {
+    public Object processCustomArrayOutParameter(Object[] dataArray, Type ballerinaType)
+            throws DataError, SQLException {
         throw new UnsupportedTypeError("Unsupported SQL Custom Array Out Parameter.");
     }
 
-    public Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws DataError {
+    public Object processCustomArrayInOutParameter(Object[] dataArray, Type ballerinaType)
+            throws DataError, SQLException {
         throw new UnsupportedTypeError("Unsupported SQL Custom Array InOut Parameter.");
     }
 
