@@ -780,6 +780,37 @@ function queryArrayBasicNullParams() returns error? {
     }
 }
 
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function testInOperator1() returns error? {
+    int[] ids = [1,2,3];
+    ParameterizedQuery sqlQuery = concatQuery(`SELECT count(*) as total FROM DataTable`,
+                                                      ` WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`);
+    record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(returnData["TOTAL"], 3, "Update command was not successful.");
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function testInOperator2() returns error? {
+    ParameterizedQuery sqlQuery = concatQuery(`SELECT count(*) as total FROM DataTable`,
+                                                      ` WHERE row_id in (1, 2, 3)`);
+    record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(returnData["TOTAL"], 3, "Update command was not successful.");
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function testInOperator3() returns error? {
+    int[] ids = [1,2,3];
+    ParameterizedQuery sqlQuery = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
+    record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(returnData["TOTAL"], 3, "Update command was not successful.");
+}
+
 isolated function validateDataTableResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {
