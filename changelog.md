@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Introduce util function to concatenate queries
+
 ### Changed
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
 - [Improve the Batchupdate query to support string[]](https://github.com/ballerina-platform/ballerina-standard-library/issues/1529)
