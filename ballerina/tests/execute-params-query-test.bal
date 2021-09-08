@@ -25,7 +25,7 @@ string executeParamsDb = urlPrefix + "9007/executeparams";
     value: ["execute-params"]
 }
 function initExecuteParamsContainer() returns error? {
-   check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+    check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
 }
 
 @test:AfterGroups {

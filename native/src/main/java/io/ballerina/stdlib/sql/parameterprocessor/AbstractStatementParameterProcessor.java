@@ -225,10 +225,7 @@ public abstract class AbstractStatementParameterProcessor {
         } else if (object instanceof BMap) {
             BMap mapValue = (BMap) object;
             setBMapParams(connection, preparedStatement, index, mapValue, returnType);
-            if (returnType) {
-                return getSQLType(mapValue);
-            }
-            return 0;
+            return getSQLType(mapValue);
         } else {
             throw new DataError("Unsupported type passed in column index: " + index);
         }
