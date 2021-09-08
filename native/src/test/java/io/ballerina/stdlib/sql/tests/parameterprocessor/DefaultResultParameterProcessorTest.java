@@ -57,7 +57,7 @@ public class DefaultResultParameterProcessorTest {
             return createAndPopulateCustomBBRefValueArray(null, null, null);
         }
 
-        BMap<BString, Object> testNullCreateUserDefinedType() throws ApplicationError {
+        BMap<BString, Object> testNullCreateUserDefinedType() throws ApplicationError, SQLException {
             return createUserDefinedType(null, null);
         }
 
@@ -102,7 +102,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             testClass.processCustomTypeFromResultSet(null, 1, columnDefinition);
         } catch (ApplicationError | SQLException e) {
-            assertEquals(e.getMessage(), "Unsupported SQL type INT");
+            assertEquals(e.getMessage(), "ParameterizedQuery parameter 1 is of unsupported type 'INT'.");
         }
     }
 
@@ -112,8 +112,7 @@ public class DefaultResultParameterProcessorTest {
         try {
             testClass.processCustomOutParameters(null, 2, 3);
         } catch (DataError e) {
-            assertEquals(e.getMessage(), "Unsupported SQL type '3' when reading Procedure call Out" +
-                    " parameter of index '2'.");
+            assertEquals(e.getMessage(), "ParameterizedQuery parameter 2 is of unsupported type 'DECIMAL'.");
         }
     }
 
@@ -123,8 +122,8 @@ public class DefaultResultParameterProcessorTest {
         BObject bObject = TestUtils.getMockObject("ObjectType");
         try {
             Object object = testClass.convertCustomOutParameter(bObject, "", 1, null);
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), null);
+        } catch (DataError | SQLException e) {
+            assertEquals(e.getMessage(), "Unsupported SQL Custom Out Parameter of type CHAR");
         }
     }
 
@@ -156,8 +155,8 @@ public class DefaultResultParameterProcessorTest {
         try {
             testClass.convertStruct(TestUtils.getStruct(), Types.INTEGER, PredefinedTypes.TYPE_INT);
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "The ballerina type that can be used for SQL struct should be record type," +
-                    " but found int .");
+            assertEquals(e.getMessage(),
+                    "The ballerina type expected for 'SQL Struct' type is 'record type' but found type 'int'.");
         }
     }
 
@@ -168,8 +167,8 @@ public class DefaultResultParameterProcessorTest {
             Object object = testClass.convertStruct(TestUtils.getStruct(), Types.STRUCT,
                     PredefinedTypes.STRING_ITR_NEXT_RETURN_TYPE);
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "specified record and the returned SQL Struct field counts are " +
-                    "different, and hence not compatible");
+            assertEquals(e.getMessage(),
+                    "Record '$$returnType$$' field count 1 and the returned SQL Struct field count 2 are different.");
         }
     }
 

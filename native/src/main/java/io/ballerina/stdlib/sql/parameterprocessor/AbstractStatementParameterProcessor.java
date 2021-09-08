@@ -27,6 +27,7 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -196,7 +197,8 @@ public abstract class AbstractStatementParameterProcessor {
                     type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
                 setDecimalArray(connection, preparedStatement, index, objectArray);
             } else {
-                throw new DataError("Invalid array type[" + type + "] set into the ParameterizedQuery.");
+                // Cannot be reached as this is validated with `ArrayValueType` in ballerina
+                throw new UnsupportedTypeError(type + "array type", index);
             }
             return Types.ARRAY;
         } else if (object instanceof BObject) {
@@ -208,8 +210,7 @@ public abstract class AbstractStatementParameterProcessor {
                 }
                 return 0;
             } else {
-                throw new DataError("Unsupported type:" +
-                        objectValue.getType().getQualifiedName() + " in column index: " + index);
+                throw new UnsupportedTypeError(objectValue.getType().getQualifiedName(), index);
             }
         } else if (object instanceof BXml) {
             setXml(connection, preparedStatement, index, (BXml) object);
@@ -217,7 +218,8 @@ public abstract class AbstractStatementParameterProcessor {
         } else if (object instanceof BMap) {
             return setBMapParams(connection, preparedStatement, index, object, returnType);
         } else {
-            throw new DataError("Unsupported type passed in column index: " + index);
+            // Cannot be achieved since this is validated at compiler for `Value`
+            throw new UnsupportedTypeError(object.getClass().getName(), index);
         }
     }
 
