@@ -1408,3 +1408,45 @@ public type CustomResultIterator object {
     public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
 };
+
+public function concatQuery(ParameterizedQuery... queries) returns ParameterizedQuery {
+    if queries.length() == 0 {
+        return ``;
+    } else if queries.length() == 1 {
+        return queries[0];
+    } else {
+        return prepareParameterizedQuery(queries);
+    }
+}
+
+function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
+    ParameterizedQuery newParameterQuery = ``;
+    string queryInString = "";
+    string nullValue = "";
+    string[] strings = [];
+    Value[] values = [];
+    foreach ParameterizedQuery query in queries {
+        string[] stringValues = query.strings;
+        Value[] insertionValues = query.insertions;
+        int i = 0;
+        if insertionValues.length() == 0 {
+            queryInString += stringValues[0];
+        } else {
+            foreach string value in stringValues {
+                queryInString += value;
+                strings.push(queryInString);
+                if insertionValues.length() != i {
+                    values.push(insertionValues[i]);
+                    i += 1;
+                }
+                queryInString = nullValue;
+            }
+        }
+    }
+    if queryInString != nullValue {
+        strings.push(queryInString);
+    }
+    newParameterQuery.insertions = values;
+    newParameterQuery.strings = strings.cloneReadOnly();
+    return newParameterQuery;
+}
