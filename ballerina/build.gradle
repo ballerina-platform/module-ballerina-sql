@@ -16,6 +16,9 @@ import org.apache.tools.ant.taskdefs.condition.Os
  * limitations under the License.
  *
  */
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven {
@@ -35,9 +38,9 @@ description = 'Ballerina - SQL Ballerina Generator'
 
 def packageName = 'sql'
 def packageOrg = 'ballerina'
-def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
+def ballerinaTomlFilePlaceHolder = new File("${project.rootDir}/build-config/resources/Ballerina.toml")
+def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
-def originalConfig = ballerinaConfigFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -63,16 +66,25 @@ ballerina {
 
 task updateTomlFiles {
     doLast {
-        def newConfig = ballerinaConfigFile.text.replace('@project.version@', project.version.toString())
+        def newConfig = ballerinaTomlFilePlaceHolder.text.replace('@project.version@', project.version.toString())
         newConfig = newConfig.replace('@toml.version@', tomlVersion)
+        newConfig = newConfig.replace('@hikkaricp.lib.version@', project.hikkariLibVersion)
+        newConfig = newConfig.replace('@hsql.connector.version@', project.hsqlDriverVersion)
 
-        ballerinaConfigFile.text = newConfig
+        ballerinaTomlFile.text = newConfig
     }
 }
 
-task revertTomlFiles {
+task commitTomlFiles {
     doLast {
-        ballerinaConfigFile.text = originalConfig
+        project.exec {
+            ignoreExitValue true
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                commandLine 'cmd', '/c', "git commit Ballerina.toml -m '[Automated] Update native jar versions in Ballerina.toml'"
+            } else {
+                commandLine 'sh', '-c', "git commit Ballerina.toml -m '[Automated] Update native jar versions in Ballerina.toml'"
+            }
+        }
     }
 }
 
