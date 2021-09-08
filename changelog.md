@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Introduce util function to concatenate queries
+- [Introduce util function to concatenate queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 
 ### Changed
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
