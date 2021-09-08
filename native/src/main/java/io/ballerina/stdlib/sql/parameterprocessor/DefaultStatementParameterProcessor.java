@@ -29,7 +29,6 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.api.values.BRefValue;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.io.channels.base.Channel;
@@ -825,7 +824,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         throw new DataError("Unsupported OutParameter type: " + sqlType);
     }
 
-    protected int getCustomSQLType(BRefValue typedValue) throws DataError {
+    protected int getCustomSQLType(BObject typedValue) throws DataError {
         String sqlType = typedValue.getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
