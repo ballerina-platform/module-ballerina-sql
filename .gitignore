@@ -24,7 +24,6 @@ hs_err_pid*
 
 # Ballerina
 Ballerina.lock
-ballerina/Dependencies.toml
 
 #Idea files
 .idea

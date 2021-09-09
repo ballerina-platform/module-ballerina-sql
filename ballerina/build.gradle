@@ -80,9 +80,9 @@ task commitTomlFiles {
         project.exec {
             ignoreExitValue true
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "git commit Ballerina.toml -m '[Automated] Update native jar versions in Ballerina.toml'"
+                commandLine 'cmd', '/c', "git commit Ballerina.toml Dependencies.toml -m \"[Automated] Update native jar versions in toml files\""
             } else {
-                commandLine 'sh', '-c', "git commit Ballerina.toml -m '[Automated] Update native jar versions in Ballerina.toml'"
+                commandLine 'sh', '-c', "git commit Ballerina.toml Dependencies.toml -m \"[Automated] Update native jar versions in toml files\""
             }
         }
     }
