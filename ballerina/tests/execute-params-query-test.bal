@@ -359,6 +359,31 @@ function insertIntoDateTimeTable4() returns error? {
 @test:Config {
     groups: ["execute", "execute-params"]
 }
+function insertIntoDateTimeTable5() returns error? {
+    int rowId = 6;
+    time:Utc currentTime = time:utcNow();
+    time:Civil currentCivil = time:utcToCivil(currentTime);
+
+    ParameterizedQuery sqlQuery =
+            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentCivil})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
+function insertIntoDateTimeTable6() returns error? {
+    int rowId = 7;
+    time:Utc currentTime = time:utcNow();
+
+    ParameterizedQuery sqlQuery =
+            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentTime})`;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
 function insertIntoArrayTable() returns error? {
     int[] paraInt = [1, 2, 3];
     int[] paraLong = [100000000, 200000000, 300000000];

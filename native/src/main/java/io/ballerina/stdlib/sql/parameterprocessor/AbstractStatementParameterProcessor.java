@@ -178,6 +178,13 @@ public abstract class AbstractStatementParameterProcessor {
             return Types.BOOLEAN;
         } else if (object instanceof BArray) {
             BArray objectArray = (BArray) object;
+
+            // If the type passed is time:Utc
+            if (objectArray.getType().toString().equals(Constants.SqlTypes.UTC)) {
+                setTimestamp(preparedStatement, objectArray.getType().getName(), index, objectArray);
+                return Types.TIMESTAMP;
+            }
+
             String type = objectArray.getElementType().toString();
             if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
                 preparedStatement.setBytes(index, objectArray.getBytes());
@@ -216,7 +223,7 @@ public abstract class AbstractStatementParameterProcessor {
             setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;
         } else if (object instanceof BMap) {
-            return setBMapParams(connection, preparedStatement, index, object, returnType);
+            return setBMapParams(connection, preparedStatement, index, (BMap) object, returnType);
         } else {
             // Cannot be achieved since this is validated at compiler for `Value`
             throw new UnsupportedTypeError(object.getClass().getName(), index);
@@ -494,7 +501,13 @@ public abstract class AbstractStatementParameterProcessor {
     }
 
     private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
-                                               Object value, boolean returnType) throws DataError, SQLException {
-        return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+                                               BMap value, boolean returnType) throws DataError, SQLException {
+        String sqlType = value.getType().getName();
+        if (Constants.SqlTypes.CIVIL.equals(sqlType)) {
+            setTimestamp(preparedStatement, sqlType, index, value);
+            return Types.TIMESTAMP;
+        } else {
+            return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+        }
     }
 }

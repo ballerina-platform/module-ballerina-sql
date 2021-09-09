@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- [Add support for passing time:UTC type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1800)
+- [Add support for passing time:Civil type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1799)
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
 - [Improve the Batchupdate query to support string[]](https://github.com/ballerina-platform/ballerina-standard-library/issues/1529)
 - [Add support for async operation](https://github.com/ballerina-platform/ballerina-standard-library/issues/120)
