@@ -362,10 +362,12 @@ function insertIntoDateTimeTable4() returns error? {
 function insertIntoDateTimeTable5() returns error? {
     int rowId = 6;
     time:Utc currentTime = time:utcNow();
+    time:Date dateRecord = {year: 2020, month: 9, day: 8};
+    time:TimeOfDay timeRecord = {hour: 7, minute: 10, second: 59};
     time:Civil currentCivil = time:utcToCivil(currentTime);
 
     ParameterizedQuery sqlQuery =
-            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentCivil})`;
+            `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type) VALUES(${rowId}, ${dateRecord}, ${timeRecord}, ${currentCivil})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 

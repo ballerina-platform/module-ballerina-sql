@@ -501,11 +501,23 @@ public abstract class AbstractStatementParameterProcessor {
     private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
                                                BMap value, boolean returnType) throws DataError, SQLException {
         String sqlType = value.getType().getName();
-        if (Constants.SqlTypes.CIVIL.equals(sqlType)) {
-            setTimestamp(preparedStatement, sqlType, index, value);
-            return Types.TIMESTAMP;
-        } else {
-            return setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
+        int sqlTypeValue;
+        switch (sqlType) {
+            case Constants.SqlTypes.CIVIL:
+                setTimestamp(preparedStatement, sqlType, index, value);
+                sqlTypeValue = Types.TIMESTAMP;
+                break;
+            case Constants.SqlTypes.DATE_RECORD:
+                setDate(preparedStatement, sqlType, index, value);
+                sqlTypeValue = Types.DATE;
+                break;
+            case Constants.SqlTypes.TIME_RECORD:
+                setTime(preparedStatement, sqlType, index, value);
+                sqlTypeValue = Types.TIME;
+                break;
+            default:
+                sqlTypeValue = setCustomBOpenRecord(connection, preparedStatement, index, value, returnType);
         }
+        return sqlTypeValue;
     }
 }
