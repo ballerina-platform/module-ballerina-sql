@@ -16,7 +16,7 @@
 
 import ballerina/lang.'string;
 
-# Concatenates all the given queries.
+# Concatenates all the queries.
 #
 # + queries - Set of `ParameterizedQuery`
 # + return - A `ParameterizedQuery`
@@ -30,7 +30,7 @@ public function queryConcat(ParameterizedQuery... queries) returns Parameterized
     }
 }
 
-# Flattens the given array.
+# Flattens the array.
 #
 # + values - An array of `Value`
 # + return - A `ParameterizedQuery`
