@@ -49,7 +49,7 @@ function queryRecordSingleIntParam() returns error? {
 function queryRecordDoubleIntParam() returns error? {
     int rowId = 1;
     int intType = 1;
-    ParameterizedQuery sqlQuery = concatQuery(`SELECT * FROM DataTable`,
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
                                     ` WHERE row_id = ${rowId} AND int_type =  ${intType}`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -126,7 +126,7 @@ function queryRecordDecimalParam()  returns error? {
 }
 function queryRecordDecimalAnFloatParam()  returns error? {
     decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = concatQuery(`SELECT * FROM DataTable`,
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
                                     ` WHERE decimal_type = ${decimalValue} and double_type = 2139095039.0`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }

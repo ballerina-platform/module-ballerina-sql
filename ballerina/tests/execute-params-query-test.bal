@@ -122,7 +122,7 @@ function deleteDataTable1() returns error? {
     ParameterizedQuery query2 = ` where row_id=${rowId} AND int_type=${intType} AND long_type=${longType} AND
     float_type=${floatType} AND double_type=${doubleType} AND boolean_type=${boolType} AND string_type=${stringType}
     AND decimal_type=${decimalType}`;
-    ParameterizedQuery sqlQuery = concatQuery(query1, query2);
+    ParameterizedQuery sqlQuery = queryConcat(query1, query2);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
@@ -163,7 +163,7 @@ function deleteDataTable3() returns error? {
 }
 function insertIntoComplexTable() returns error? {
     int id = 1;
-    ParameterizedQuery queries = concatQuery(`Select * from ComplexTypes`, ` where row_id = ${id}`);
+    ParameterizedQuery queries = queryConcat(`Select * from ComplexTypes`, ` where row_id = ${id}`);
     record {}? value = check queryMockClient(executeParamsDb, queries);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
@@ -252,7 +252,7 @@ function insertIntoNumericTable() returns error? {
     bit_type, decimal_type, numeric_type, float_type, real_type)`;
     ParameterizedQuery query1 = ` VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType}, ${bitType},
     ${decimalType},${decimalType},${decimalType},${decimalType})`;
-    ParameterizedQuery sqlQuery = concatQuery(query, query1);
+    ParameterizedQuery sqlQuery = queryConcat(query, query1);
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 
