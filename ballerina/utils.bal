@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import lang.'string;
+import ballerina/lang.'string;
 
 # Concatenates all the given queries.
 #
