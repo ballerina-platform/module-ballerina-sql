@@ -175,8 +175,7 @@ public class CallProcessor {
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL query: " + sqlQuery + ". ");
             } catch (ApplicationError e) {
-                return ErrorGenerator.getSQLApplicationError("Error while executing SQL query: "
-                        + sqlQuery + ". " + e.getMessage());
+                return ErrorGenerator.getSQLApplicationError(e);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");

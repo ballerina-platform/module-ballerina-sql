@@ -40,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class DefaultStatementParameterProcessorTest {
     static class NullAndErrorCheckClass extends DefaultStatementParameterProcessor {
-        int testGetCustomSQLType(String name) throws ApplicationError {
+        int testGetCustomSQLType(String name) throws ApplicationError, SQLException {
             return getCustomSQLType(TestUtils.getMockObject(name));
         }
 
-        void testSetCustomSqlTypedParam(String name) throws SQLException, ApplicationError, IOException {
+        void testSetCustomSqlTypedParam(String name) throws SQLException, ApplicationError {
             setCustomSqlTypedParam(null , null, 0, TestUtils.getMockObject(name));
         }
 
-        Object[] testGetCustomArrayData(Object value) throws ApplicationError {
+        Object[] testGetCustomArrayData(Object value) throws ApplicationError, SQLException {
             return getCustomArrayData(value);
         }
 
@@ -204,7 +204,7 @@ public class DefaultStatementParameterProcessorTest {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
             testClass.testGetCustomSQLType("Object");
-        } catch (ApplicationError e) {
+        } catch (ApplicationError | SQLException e) {
             assertEquals(e.getMessage(), "Unsupported SQL type: Object");
         }
     }

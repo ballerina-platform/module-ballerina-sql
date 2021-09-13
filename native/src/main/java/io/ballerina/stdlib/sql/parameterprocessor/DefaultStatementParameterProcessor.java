@@ -94,7 +94,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         return instance;
     }
 
-    private Object[] getArrayData(Object value) throws DataError {
+    private Object[] getArrayData(Object value) throws DataError, SQLException {
         Type type = TypeUtils.getType(value);
         if (value == null || type.getTag() != TypeTags.ARRAY_TAG) {
             return new Object[]{null, null};
@@ -627,7 +627,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    private void setNstring(PreparedStatement preparedStatement, int index, Object value)
+    private void setNString(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
         if (value == null) {
             preparedStatement.setNString(index, null);
@@ -819,12 +819,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         }
     }
 
-    public int getCustomOutParameterType(BObject typedValue) throws DataError {
+    public int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException {
         String sqlType = typedValue.getType().getName();
         throw new DataError("Unsupported OutParameter type: " + sqlType);
     }
 
-    protected int getCustomSQLType(BObject typedValue) throws DataError {
+    protected int getCustomSQLType(BObject typedValue) throws DataError, SQLException {
         String sqlType = typedValue.getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
@@ -836,11 +836,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
 
-    protected Object[] getCustomArrayData(Object value) throws DataError {
+    protected Object[] getCustomArrayData(Object value) throws DataError, SQLException {
         throw Utils.throwInvalidParameterError(value, Constants.SqlTypes.ARRAY);
     }
 
-    protected Object[] getCustomStructData(Object value) throws DataError {
+    protected Object[] getCustomStructData(Object value) throws DataError, SQLException {
         Type type = TypeUtils.getType(value);
         String structuredSQLType = type.getName().toUpperCase(Locale.getDefault());
         throw new DataError("unsupported data type of " + structuredSQLType
@@ -874,12 +874,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     protected void setNChar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
-        setNstring(preparedStatement, index, value);
+        setNString(preparedStatement, index, value);
     }
 
     protected void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws SQLException {
-        setNstring(preparedStatement, index, value);
+        setNString(preparedStatement, index, value);
     }
 
     protected void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index, Object value)
