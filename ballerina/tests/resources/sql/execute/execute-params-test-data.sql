@@ -65,11 +65,12 @@ INSERT INTO NumericTypes (id, int_type, bigint_type, smallint_type, tinyint_type
     1234);
 
 CREATE TABLE DateTimeTypes(
-  row_id         INT,
-  date_type      DATE,
-  time_type      TIME,
-  timestamp_type TIMESTAMP,
-  datetime_type  DATETIME,
+  row_id            INT,
+  date_type         DATE,
+  time_type         TIME,
+  timestamp_type    TIMESTAMP,
+  datetime_type     DATETIME,
+  timestamp_tz_type TIMESTAMP WITH TIME ZONE,
   PRIMARY KEY (row_id)
 );
 
