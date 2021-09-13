@@ -356,17 +356,62 @@ function insertIntoDateTimeTable4() returns error? {
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
+type DateTimeResultRecord record {
+    time:Date date_type;
+    time:TimeOfDay time_type;
+    time:Civil datetime_type;
+    time:Civil timestamp_tz_type;
+};
+
 @test:Config {
     groups: ["execute", "execute-params"]
 }
 function insertIntoDateTimeTable5() returns error? {
     int rowId = 6;
-    time:Utc currentTime = time:utcNow();
-    time:Civil currentCivil = time:utcToCivil(currentTime);
+    time:Date dateRecord = {year: 2020, month: 9, day: 8};
+    time:TimeOfDay timeRecord = {hour: 7, minute: 10, second: 59};
+    time:Civil civilRecord = {
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
+    time:Civil timestampWithTimezoneRecord = {
+        utcOffset: {hours: -8, minutes: 0},
+        timeAbbrev: "-08:00",
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
 
-    ParameterizedQuery sqlQuery =
-            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentCivil})`;
+    ParameterizedQuery sqlQuery = `
+        INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_tz_type)
+        VALUES(${rowId}, ${dateRecord}, ${timeRecord}, ${civilRecord}, ${timestampWithTimezoneRecord})
+    `;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
+    stream<record {}, error?> queryResult = dbClient->query(`
+        SELECT date_type, time_type, datetime_type, timestamp_tz_type
+        FROM DateTimeTypes WHERE row_id = 6
+    `, DateTimeResultRecord);
+    record {|record {} value;|}? data = check queryResult.next();
+    record {}? value = data?.value;
+    check dbClient.close();
+
+    DateTimeResultRecord expected = {
+        date_type: dateRecord,
+        time_type: timeRecord,
+        datetime_type: civilRecord,
+        timestamp_tz_type: timestampWithTimezoneRecord
+    };
+
+    test:assertEquals(value, expected, "Inserted data did not match retrieved data.");
 }
 
 @test:Config {
@@ -374,11 +419,18 @@ function insertIntoDateTimeTable5() returns error? {
 }
 function insertIntoDateTimeTable6() returns error? {
     int rowId = 7;
-    time:Utc currentTime = time:utcNow();
+    string timeString = "2021-09-13T10:15:30.12Z";
+    time:Utc timeUtc = check time:utcFromString(timeString);
 
     ParameterizedQuery sqlQuery =
-            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${currentTime})`;
+            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${timeUtc})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
+    string retrievedTime = check dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes WHERE row_id = 7`);
+    check dbClient.close();
+
+    test:assertEquals(retrievedTime, "2021-09-13 10:15:30.12", "Inserted data did not match retrieved data.");
 }
 
 @test:Config {

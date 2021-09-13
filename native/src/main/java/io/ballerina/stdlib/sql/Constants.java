@@ -192,6 +192,8 @@ public final class Constants {
         public static final String TIME_OF_DAY_ARRAY_TYPE = "time:TimeOfDay";
         public static final String CIVIL = "Civil";
         public static final String UTC = "[int,decimal] & readonly";
+        public static final String DATE_RECORD = "Date";
+        public static final String TIME_RECORD = "TimeOfDay";
     }
 
     /**
