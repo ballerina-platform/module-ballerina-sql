@@ -398,7 +398,7 @@ function insertIntoDateTimeTable5() returns error? {
     MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
     stream<record {}, error?> queryResult = dbClient->query(`
         SELECT date_type, time_type, datetime_type, timestamp_tz_type
-        FROM DateTimeTypes WHERE row_id = 6
+        FROM DateTimeTypes WHERE row_id = ${rowId}
     `, DateTimeResultRecord);
     record {|record {} value;|}? data = check queryResult.next();
     record {}? value = data?.value;
@@ -419,18 +419,21 @@ function insertIntoDateTimeTable5() returns error? {
 }
 function insertIntoDateTimeTable6() returns error? {
     int rowId = 7;
-    string timeString = "2021-09-13T10:15:30.12Z";
-    time:Utc timeUtc = check time:utcFromString(timeString);
+    time:Utc timeUtc = time:utcNow();
 
     ParameterizedQuery sqlQuery =
-            `INSERT INTO DateTimeTypes (row_id, datetime_type) VALUES(${rowId}, ${timeUtc})`;
+            `INSERT INTO DateTimeTypes (row_id, timestamp_tz_type) VALUES(${rowId}, ${timeUtc})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 
     MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
-    string retrievedTime = check dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes WHERE row_id = 7`);
+    time:Utc retrievedTimeUtc = check dbClient->queryRow(`
+        SELECT timestamp_tz_type FROM DateTimeTypes WHERE row_id = ${rowId}
+    `);
     check dbClient.close();
 
-    test:assertEquals(retrievedTime, "2021-09-13 10:15:30.12", "Inserted data did not match retrieved data.");
+    // The two values will not be equal since only upto 3 decimal places of seconds are stored in the database.
+    test:assertTrue(time:utcDiffSeconds(timeUtc, retrievedTimeUtc) < <decimal>0.001,
+        "Inserted data did not match retrieved data.");
 }
 
 @test:Config {
