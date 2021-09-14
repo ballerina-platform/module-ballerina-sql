@@ -39,7 +39,7 @@ public type Client client object {
     #                default column names/type of the query result set will be used
     # + return - Result in the type of `returnType`. If the `returnType` is not provided, the column names/type of
     #               the query are used
-    remote isolated function queryRow(string|ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
+    remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
     returns returnType|Error;
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.

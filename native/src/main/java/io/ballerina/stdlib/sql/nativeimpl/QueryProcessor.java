@@ -148,7 +148,7 @@ public class QueryProcessor {
         }
     }
 
-    public static Object nativeQueryRow(Environment env, BObject client, Object paramSQLString,
+    public static Object nativeQueryRow(Environment env, BObject client, BObject paramSQLString,
             BTypedesc ballerinaType, AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
@@ -168,7 +168,7 @@ public class QueryProcessor {
     }
 
     private static Object nativeQueryRowExecutable(
-            BObject client, Object paramSQLString,
+            BObject client, BObject paramSQLString,
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
@@ -190,16 +190,10 @@ public class QueryProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof BString) {
-                    sqlQuery = ((BString) paramSQLString).getValue();
-                } else {
-                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
-                }
+                sqlQuery = Utils.getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                if (paramSQLString instanceof BObject) {
-                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
-                }
+                statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
                 if (!resultSet.next()) {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
