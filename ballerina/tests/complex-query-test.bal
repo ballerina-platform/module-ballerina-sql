@@ -464,6 +464,31 @@ function testDateTime3() returns error? {
     check dbClient.close();
 }
 
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testDateTime4() returns error? {
+    time:Civil timestampWithTimezone = {
+            utcOffset: {hours: -8, minutes: 0},
+            timeAbbrev: "-08:00",
+            year: 2017,
+            month: 1,
+            day: 25,
+            hour: 16,
+            minute: 33,
+            second: 55
+    };
+    time:Utc timeUtc = check time:utcFromCivil(timestampWithTimezone);
+
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    time:Utc retrievedTimeUtc = check dbClient->queryRow(`
+        SELECT timestamp_tz_type from DateTimeTypes where row_id = 1
+    `);
+    check dbClient.close();
+
+    test:assertEquals(retrievedTimeUtc, timeUtc, "Expected UTC timestamp did not match.");
+}
+
 type ResultSetTestAlias record {
     int int_type;
     int long_type;
