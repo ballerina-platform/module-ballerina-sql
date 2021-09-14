@@ -419,7 +419,17 @@ function insertIntoDateTimeTable5() returns error? {
 }
 function insertIntoDateTimeTable6() returns error? {
     int rowId = 7;
-    time:Utc timeUtc = time:utcNow();
+    time:Civil timeCivil = {
+        utcOffset: {hours: -8, minutes: 0},
+        timeAbbrev: "-08:00",
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
+    time:Utc timeUtc = check time:utcFromCivil(timeCivil);
 
     ParameterizedQuery sqlQuery =
             `INSERT INTO DateTimeTypes (row_id, timestamp_tz_type) VALUES(${rowId}, ${timeUtc})`;
@@ -431,9 +441,7 @@ function insertIntoDateTimeTable6() returns error? {
     `);
     check dbClient.close();
 
-    // The two values will not be equal since only upto 3 decimal places of seconds are stored in the database.
-    test:assertTrue(time:utcDiffSeconds(timeUtc, retrievedTimeUtc) < <decimal>0.001,
-        "Inserted data did not match retrieved data.");
+    test:assertEquals(retrievedTimeUtc, timeUtc, "Inserted data did not match retrieved data.");
 }
 
 @test:Config {
