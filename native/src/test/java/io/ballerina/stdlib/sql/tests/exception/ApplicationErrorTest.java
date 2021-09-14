@@ -89,7 +89,7 @@ public class ApplicationErrorTest {
         TypeMismatchError error = new TypeMismatchError("SQL Time", "byte",
                 new String[]{"time:TimeOfDay", "time:Time"});
         assertEquals(error.getMessage(),
-                "The ballerina type expected for 'SQL Time' type are '[time:TimeOfDay, time:Time]' " +
+                "The ballerina type expected for 'SQL Time' type are 'time:TimeOfDay', and 'time:Time' " +
                         "but found type 'byte'.");
     }
 
