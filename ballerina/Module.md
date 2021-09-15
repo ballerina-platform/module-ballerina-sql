@@ -156,6 +156,35 @@ string|int? generatedKey = result.lastInsertId;
 These samples show how to demonstrate the different usages of the `query` operation to query the
 database table and obtain the results. 
 
+The `ParameterizedQuery` is used to construct the dynamic query to execute by the client. So, you can create a simple query like below.
+```
+int id = 10;
+int age = 12;
+ParameterizedQuery query = `SELECT * FROM students WHERE id < ${id} AND age > ${age}`;
+```
+
+The `queryConcat()` makes it easier to create a dynamic complex query by concatenating sub-dynamic queries.
+The following sample shows how to concatenate queries:
+
+```
+int intType = 2147483647;
+int bigIntType = 9223372036854774807;
+int smallIntType = 32767;
+ParameterizedQuery query = `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type)`;
+ParameterizedQuery query1 = ` VALUES(${intType},${bigIntType},${smallIntType})`;
+ParameterizedQuery sqlQuery = queryConcat(query, query1);
+```
+
+Another util function is `arrayFlattenQuery()`, which accepts the array value and returns parameterized query.
+So by using both functions, you can construct the complex dynamic query like below,
+
+```
+VarcharValue stringValue1 = new("Hello");
+VarcharValue stringValue2 = new("1");
+VarcharValue[] values = [stringValue1, stringValue2];
+ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
+```
+
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
 according to the requirement. If an open record is defined, the returned stream type will include both defined fields
@@ -190,6 +219,10 @@ error? e = resultStream.forEach(function(Student student) {
    //Can perform any operations using 'student' and can access any fields in the returned record of type Student.
 });
 ```
+
+##### Concatenate queries
+
+This sample demonstrates creating a complex or dynamic query by concatenating sub-queries. Hence, You can create a query easily.
 
 Defining the return type is optional and you can query the database without providing the result type. Hence, 
 the above sample can be modified as follows with an open record type as the return type. The property name in the open record 
