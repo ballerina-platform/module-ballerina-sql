@@ -118,11 +118,11 @@ function deleteDataTable1() returns error? {
     boolean boolType = true;
     string stringType = "Hello";
     decimal decimalType = 23.45;
-
-    ParameterizedQuery sqlQuery = 
-            `DELETE FROM DataTable where row_id=${rowId} AND int_type=${intType} AND long_type=${longType}
-              AND float_type=${floatType} AND double_type=${doubleType} AND boolean_type=${boolType}
-              AND string_type=${stringType} AND decimal_type=${decimalType}`;
+    ParameterizedQuery query1 = `DELETE FROM DataTable`;
+    ParameterizedQuery query2 = ` where row_id=${rowId} AND int_type=${intType} AND long_type=${longType} AND
+    float_type=${floatType} AND double_type=${doubleType} AND boolean_type=${boolType} AND string_type=${stringType}
+    AND decimal_type=${decimalType}`;
+    ParameterizedQuery sqlQuery = queryConcat(query1, query2);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
@@ -162,11 +162,13 @@ function deleteDataTable3() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoComplexTable() returns error? {
-    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    int id = 1;
+    ParameterizedQuery queries = queryConcat(`Select * from ComplexTypes`, ` where row_id = ${id}`);
+    record {}? value = check queryMockClient(executeParamsDb, queries);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
     string stringType = "very long text";
-    ParameterizedQuery sqlQuery = 
+    ParameterizedQuery sqlQuery =
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${binaryData}, CONVERT(${stringType}, CLOB), ${binaryData}, ${binaryData})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -246,11 +248,11 @@ function insertIntoNumericTable() returns error? {
     int smallIntType = 32767;
     int tinyIntType = 127;
     decimal decimalType = 1234.567;
-
-    ParameterizedQuery sqlQuery = 
-        `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
-        numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
-        ${bitType},${decimalType},${decimalType},${decimalType},${decimalType})`;
+    ParameterizedQuery query = `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type,
+    bit_type, decimal_type, numeric_type, float_type, real_type)`;
+    ParameterizedQuery query1 = ` VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType}, ${bitType},
+    ${decimalType},${decimalType},${decimalType},${decimalType})`;
+    ParameterizedQuery sqlQuery = queryConcat(query, query1);
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 

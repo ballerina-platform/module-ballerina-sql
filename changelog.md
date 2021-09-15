@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Add support for passing time:UTC type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1800)
 - [Add support for passing time:Civil type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1799)
 - [Add support for retrieving time:Utc type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1909)
+- [Introduce util function to concatenate queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
+- [Introduce arrayFlattenQuery() function to add IN operator values by using concatenate queries function](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 
 ### Changed
 
