@@ -18,8 +18,8 @@ import ballerina/lang.'string;
 
 # Concatenates all provided `sql:ParameterizedQuery`s into a single `sql:ParameterizedQuery`.
 #
-# + queries - Set of `sql:ParameterizedQuery`
-# + return - A `sql:ParameterizedQuery`
+# + queries - Set of `sql:ParameterizedQuery` queries
+# + return - An `sql:ParameterizedQuery`
 public isolated function queryConcat(ParameterizedQuery... queries) returns ParameterizedQuery {
     if queries.length() == 0 {
         return ``;
@@ -82,10 +82,10 @@ isolated function addValues(Value[] insertionValues, Value[] values) {
     }
 }
 
-# Joins the elements in the array with `,` delimiter into a `sql:ParameterizedQuery`.
+# Joins the elements in the array with the `,` delimiter into an `sql:ParameterizedQuery`.
 #
-# + values - An array of `sql:Value`
-# + return - A `sql:ParameterizedQuery`
+# + values - An array of `sql:Value` values
+# + return - An `sql:ParameterizedQuery`
 public isolated function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
     string[] strings = [];
@@ -101,9 +101,9 @@ public isolated function arrayFlattenQuery(Value[] values) returns Parameterized
     return newParameterizedQuery;
 }
 
-# Generates a stream consisting of `sql:Error` element.
+# Generates a stream consisting of `sql:Error` elements.
 #
-# + message - Error message used to initialise `sql:Error`
+# + message - Error message used to initialise an `sql:Error`
 # + return - A stream
 public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error?> {
     ApplicationError applicationErr = error ApplicationError(message);

@@ -193,7 +193,7 @@ stream<Student, sql:Error?> resultStream = dbClient->query(query);
 // Iterating the returned table.
 error? e = resultStream.forEach(function(Student student) {
    //Can perform any operations using 'student' and 
-   //access any fields in the returned record of type Student.
+   //access any fields in the returned record of the type `Student`.
 });
 ```
 
@@ -213,7 +213,7 @@ stream<record{}, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
 error? e = resultStream.forEach(function(record{} student) {
-    //Can perform any operations using the 'student' and 
+    //Can perform any operations using 'student' and 
     //access any fields in the returned record.
     io:println("Student name: ", student.value["name"]);
 });
