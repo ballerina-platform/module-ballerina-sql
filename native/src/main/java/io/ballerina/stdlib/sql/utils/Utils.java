@@ -791,7 +791,7 @@ public class Utils {
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.STRING);
         }
     }
 
@@ -805,7 +805,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.BOOLEAN, Constants.ArrayTypes.INTEGER,
+                    Constants.ArrayTypes.STRING);
         }
     }
 
@@ -821,7 +822,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE)) {
             return createByteArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.INTEGER, Constants.ArrayTypes.BOOLEAN,
+                    Constants.ArrayTypes.STRING, Constants.ArrayTypes.BYTE);
         }
     }
 
@@ -847,7 +849,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.INTEGER, Constants.ArrayTypes.STRING);
         }
     }
 
@@ -867,7 +869,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT)) {
             return toFloatArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.INTEGER,
+                    Constants.ArrayTypes.DECIMAL, Constants.ArrayTypes.FLOAT, Constants.ArrayTypes.STRING);
         }
 
     }
@@ -880,7 +883,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
             return createDateArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.DATE, Constants.ArrayTypes.STRING);
         }
 
     }
@@ -893,7 +896,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY)) {
             return createTimeArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.TIME_OF_DAY,
+                    Constants.ArrayTypes.STRING);
         }
 
     }
@@ -923,7 +927,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY)) {
             return createOffsetArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.TIME_OF_DAY,
+                    Constants.ArrayTypes.STRING);
         }
 
     }
@@ -936,7 +941,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
             return createTimestampArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.CIVIL, Constants.ArrayTypes.STRING);
         }
 
     }
@@ -948,7 +953,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
             return createOffsetTimeArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.CIVIL, Constants.ArrayTypes.STRING);
         }
 
     }
@@ -968,7 +973,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.FLOAT, Constants.ArrayTypes.INTEGER,
+                    Constants.ArrayTypes.STRING);
         }
 
     }
@@ -985,7 +991,8 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             return decimalToIntArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.INTEGER, Constants.ArrayTypes.DECIMAL,
+                    Constants.ArrayTypes.FLOAT, Constants.ArrayTypes.STRING);
         }
     }
 
@@ -997,7 +1004,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
             return createTimestampArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, "time:Utc[]", Constants.ArrayTypes.STRING);
         }
     }
 
@@ -1009,7 +1016,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE)) {
             return createByteArray(dataArray);
         } else {
-            return getError(ballerinaType, objectTypeName);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.BYTE, Constants.ArrayTypes.STRING);
         }
     }
 
@@ -1154,9 +1161,15 @@ public class Utils {
         return mapDateTimeArray;
     }
     
-    private static BError getError(Type ballerinaType, String objectTypeName) throws TypeMismatchError {
-        throw new TypeMismatchError("SQL Date", getBTypeName(ballerinaType),
-                objectTypeName.replace("ArrayOutParameter", " array"));
+    private static BError getError(String sqlTypeName, Type ballerinaType, String... expectedType)
+            throws TypeMismatchError {
+        if (expectedType.length == 1) {
+            throw new TypeMismatchError(sqlTypeName.replace("ArrayOutParameter", " Array"),
+                    getBTypeName(ballerinaType), expectedType[0]);
+        } else {
+            throw new TypeMismatchError(sqlTypeName.replace("ArrayOutParameter", " Array"),
+                    getBTypeName(ballerinaType), expectedType);
+        }
     }
 
     public static String getBTypeName(Type ballerinaType) {
