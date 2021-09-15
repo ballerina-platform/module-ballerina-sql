@@ -20,7 +20,7 @@ import ballerina/lang.'string;
 #
 # + queries - Set of `ParameterizedQuery`
 # + return - A `ParameterizedQuery`
-public function queryConcat(ParameterizedQuery... queries) returns ParameterizedQuery {
+public isolated function queryConcat(ParameterizedQuery... queries) returns ParameterizedQuery {
     if queries.length() == 0 {
         return ``;
     } else if queries.length() == 1 {
@@ -30,7 +30,7 @@ public function queryConcat(ParameterizedQuery... queries) returns Parameterized
     }
 }
 
-function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
+isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
     string queryInString = "";
     string nullValue = "";
@@ -72,7 +72,7 @@ function prepareParameterizedQuery(ParameterizedQuery[] queries) returns Paramet
     return newParameterizedQuery;
 }
 
-function addValues(Value[] insertionValues, Value[] values) {
+isolated function addValues(Value[] insertionValues, Value[] values) {
     foreach Value insertionValue in insertionValues {
         if insertionValue is null {
             values.push(null);
@@ -85,7 +85,7 @@ function addValues(Value[] insertionValues, Value[] values) {
 #
 # + values - An array of `Value`
 # + return - A `ParameterizedQuery`
-public function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
+public isolated function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
     string[] strings = [];
     if values.length() == 1 {
