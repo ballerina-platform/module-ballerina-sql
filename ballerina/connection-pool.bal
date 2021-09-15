@@ -63,6 +63,9 @@ isolated function initGlobalPoolContainer(ConnectionPool poolConfig) = @java:Met
 // of connection pools.
 final GlobalConnectionPoolContainer globalPoolContainer = new;
 
+# Returns the Global Connection Pool.
+#
+# + return - The Connection Pool
 public isolated function getGlobalConnectionPool() returns ConnectionPool {
     return globalPoolContainer.getGlobalConnectionPool();
 }
