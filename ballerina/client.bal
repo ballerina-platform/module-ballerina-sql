@@ -39,7 +39,7 @@ public type Client client object {
     #                default column names/type of the query result set will be used
     # + return - Result in the type of `returnType`. If the `returnType` is not provided, the column names/type of
     #               the query are used
-    remote isolated function queryRow(string|ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
+    remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
     returns returnType|Error;
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
@@ -60,7 +60,7 @@ public type Client client object {
     #            will return an `sql:BatchExecuteError`. However, the driver may or may not continue to process the
     #            remaining commands in the batch after a failure. The summary of the executed queries in case of an error
     #            can be accessed as `(<sql:BatchExecuteError> result).detail()?.executionResults`
-    remote isolated function batchExecute(string[]|ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
+    remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
     # Executes a SQL stored procedure and returns the result as stream and execution summary.
     #

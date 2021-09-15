@@ -751,7 +751,7 @@ function queryRecordNoCheckNegative() returns error? {
 }
 function queryValue() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT COUNT(*) FROM DataTable";
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) FROM DataTable`;
     int count = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(count, 3);
@@ -796,7 +796,7 @@ function queryValueNegative2() returns error? {
 }
 function queryValueTypeInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT int_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT int_type FROM NumericTypes WHERE id = 1`;
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 2147483647);
@@ -807,7 +807,7 @@ function queryValueTypeInt() returns error? {
 }
 function queryValueTypeFloat() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT float_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT float_type FROM NumericTypes WHERE id = 1`;
     float returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1234.567);
@@ -818,7 +818,7 @@ function queryValueTypeFloat() returns error? {
 }
 function queryValueTypeDecimal() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT decimal_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT decimal_type FROM NumericTypes WHERE id = 1`;
     decimal returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     decimal decimalValue = 1234.567;
@@ -830,7 +830,7 @@ function queryValueTypeDecimal() returns error? {
 }
 function queryValueTypeBigInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT bigint_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT bigint_type FROM NumericTypes WHERE id = 1`;
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 9223372036854774807);
@@ -841,7 +841,7 @@ function queryValueTypeBigInt() returns error? {
 }
 function queryValueTypeSmallInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT smallint_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT smallint_type FROM NumericTypes WHERE id = 1`;
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 32767);
@@ -852,7 +852,7 @@ function queryValueTypeSmallInt() returns error? {
 }
 function queryValueTypeTinyInt() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT tinyint_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT tinyint_type FROM NumericTypes WHERE id = 1`;
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 127);
@@ -863,7 +863,7 @@ function queryValueTypeTinyInt() returns error? {
 }
 function queryValueTypeBit() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT bit_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT bit_type FROM NumericTypes WHERE id = 1`;
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1);
@@ -874,7 +874,7 @@ function queryValueTypeBit() returns error? {
 }
 function queryValueTypeNumeric() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT numeric_type FROM NumericTypes WHERE id = 1";
+    ParameterizedQuery sqlQuery = `SELECT numeric_type FROM NumericTypes WHERE id = 1`;
     decimal returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     decimal decimalValue = 1234.567;
@@ -886,7 +886,7 @@ function queryValueTypeNumeric() returns error? {
 }
 function queryValueTypeString() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT string_type FROM DataTable WHERE row_id = 1";
+    ParameterizedQuery sqlQuery = `SELECT string_type FROM DataTable WHERE row_id = 1`;
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "Hello");
@@ -897,7 +897,7 @@ function queryValueTypeString() returns error? {
 }
 function queryValueTypeBoolean() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT boolean_type FROM DataTable WHERE row_id = 1";
+    ParameterizedQuery sqlQuery = `SELECT boolean_type FROM DataTable WHERE row_id = 1`;
     boolean returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, true);
@@ -908,7 +908,7 @@ function queryValueTypeBoolean() returns error? {
 }
 function queryValueTypeBlob() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT blob_type FROM ComplexTypes WHERE row_id = 1";
+    ParameterizedQuery sqlQuery = `SELECT blob_type FROM ComplexTypes WHERE row_id = 1`;
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina blob test.".toBytes());
@@ -919,7 +919,7 @@ function queryValueTypeBlob() returns error? {
 }
 function queryValueTypeClob() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT clob_type FROM ComplexTypes WHERE row_id = 1";
+    ParameterizedQuery sqlQuery = `SELECT clob_type FROM ComplexTypes WHERE row_id = 1`;
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "very long text");
@@ -930,7 +930,7 @@ function queryValueTypeClob() returns error? {
 }
 function queryValueTypeBinary() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    string sqlQuery = "SELECT binary_type FROM ComplexTypes WHERE row_id = 1";
+    ParameterizedQuery sqlQuery = `SELECT binary_type FROM ComplexTypes WHERE row_id = 1`;
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina binary test.".toBytes());

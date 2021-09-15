@@ -122,7 +122,7 @@ returns record {}|error? {
     return value;
 }
 
-function queryRecordMockClient(string url, string|ParameterizedQuery sqlQuery) 
+function queryRecordMockClient(string url, ParameterizedQuery sqlQuery)
 returns record {}|error {
     MockClient dbClient = check getMockClient(url);
     record {} resultRecord = check dbClient->queryRow(sqlQuery);
