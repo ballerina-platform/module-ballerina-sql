@@ -233,6 +233,23 @@ if result is record {|record {} value;|} {
 error? e = resultStream.close();
 ```
 
+There are situations in which you may not want to iterate through the database and in that case, you may decide
+to only use the `queryRow()` operation. This method returns only the first row retrieved by the query as a record.
+```ballerina
+int id = 10;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id = ${id}`;
+Student retrievedStudent = check dbClient->queryRow(query);
+```
+
+The `queryRow()` operation can also be used to retrieve a single value from the database (e.g. querying using `COUNT()`
+and other SQL aggregation functions). If the provided return type is not a record (i.e. a primitive data type), this
+operation will return the value of the first column of the first row retrieved by the query.
+```ballerina
+int age = 12;
+sql:ParameterizedQuery query = `SELECT COUNT(*) FROM students WHERE age < ${age}`;
+int youngStudents = check dbClient->queryRow(query);
+```
+
 #### Updating Data
 
 This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote function of 
