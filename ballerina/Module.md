@@ -157,32 +157,39 @@ These samples show how to demonstrate the different usages of the `query` operat
 database table and obtain the results. 
 
 The `ParameterizedQuery` is used to construct the dynamic query to execute by the client. So, you can create a simple query like below.
-```
+```ballerina
 int id = 10;
 int age = 12;
-ParameterizedQuery query = `SELECT * FROM students WHERE id < ${id} AND age > ${age}`;
+ParameterizedQuery query = `SELECT * FROM students WHERE 
+                            id < ${id} AND age > ${age}`;
 ```
 
 The `queryConcat()` makes it easier to create a dynamic complex query by concatenating sub-dynamic queries.
 The following sample shows how to concatenate queries:
 
-```
+```ballerina
 int intType = 2147483647;
 int bigIntType = 9223372036854774807;
 int smallIntType = 32767;
-ParameterizedQuery query = `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type)`;
-ParameterizedQuery query1 = ` VALUES(${intType},${bigIntType},${smallIntType})`;
+ParameterizedQuery query = `INSERT INTO NumericTypes (int_type,
+                            bigint_type, smallint_type)`;
+ParameterizedQuery query1 = ` VALUES(${intType}, ${bigIntType}, 
+                            ${smallIntType})`;
 ParameterizedQuery sqlQuery = queryConcat(query, query1);
 ```
 
 Another util function is `arrayFlattenQuery()`, which accepts the array value and returns parameterized query.
 So by using both functions, you can construct the complex dynamic query like below,
 
-```
-VarcharValue stringValue1 = new("Hello");
-VarcharValue stringValue2 = new("1");
+```ballerina
+VarcharValue stringValue1 = new ("Hello");
+VarcharValue stringValue2 = new ("1");
 VarcharValue[] values = [stringValue1, stringValue2];
-ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
+ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+                            WHERE string_type IN (`;
+ParameterizedQuery sqlQuery = queryConcat(query, 
+                                          arrayFlattenQuery(values), 
+                                          `)`);
 ```
 
 This sample demonstrates querying data from a table in a database.
