@@ -53,7 +53,7 @@ function testConnection2() returns error? {
 function testConnectionAfterClose() returns error? {
     MockClient testDB = check new (connectDB, user, password);
     check testDB.close();
-    stream<record{}, error?> streamData = testDB->query("SELECT * FROM Customers");
+    stream<record{}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
@@ -63,7 +63,7 @@ function testConnectionAfterClose() returns error? {
         test:assertFail("ApplicationError Error expected.");
     }
 
-    ExecutionResult|Error result = testDB->execute("INSERT INTO Customers (firstName) VALUES ('Peter')");
+    ExecutionResult|Error result = testDB->execute(`INSERT INTO Customers (firstName) VALUES ('Peter')`);
     if result is Error {
         test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " +
                     "allowed"));
@@ -87,7 +87,7 @@ function testConnectionAfterClose() returns error? {
 }
 function testStreamNextAfterClose() returns error? {
     MockClient testDB = check new (connectDB, user, password);
-    stream<record{}, error?> streamData = testDB->query("SELECT * FROM Customers");
+    stream<record{}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
     var iterator = streamData.iterator();
     check streamData.close();
     record {|record {} value;|}?|error data = iterator.next();
