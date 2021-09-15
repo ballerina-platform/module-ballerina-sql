@@ -220,10 +220,6 @@ error? e = resultStream.forEach(function(Student student) {
 });
 ```
 
-##### Concatenate queries
-
-This sample demonstrates creating a complex or dynamic query by concatenating sub-queries. Hence, You can create a query easily.
-
 Defining the return type is optional and you can query the database without providing the result type. Hence, 
 the above sample can be modified as follows with an open record type as the return type. The property name in the open record 
 type will be the same as how the column is defined in the database. 
