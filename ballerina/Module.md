@@ -156,7 +156,8 @@ string|int? generatedKey = result.lastInsertId;
 These samples show how to demonstrate the different usages of the `query` operation to query the
 database table and obtain the results. 
 
-The `ParameterizedQuery` is used to construct the dynamic query to execute by the client. So, you can create a simple query like below.
+The `ParameterizedQuery` is used to construct the dynamic query to be executed by the client. You can create a simple query like below.
+
 ```ballerina
 int id = 10;
 int age = 12;
@@ -165,7 +166,7 @@ ParameterizedQuery query = `SELECT * FROM students WHERE
 ```
 
 The `queryConcat()` makes it easier to create a dynamic complex query by concatenating sub-dynamic queries.
-The following sample shows how to concatenate queries:
+The sample below shows how to concatenate queries.
 
 ```ballerina
 int intType = 2147483647;
@@ -178,8 +179,8 @@ ParameterizedQuery query1 = ` VALUES(${intType}, ${bigIntType},
 ParameterizedQuery sqlQuery = queryConcat(query, query1);
 ```
 
-Another util function is `arrayFlattenQuery()`, which accepts the array value and returns parameterized query.
-So by using both functions, you can construct the complex dynamic query like below,
+The `arrayFlattenQuery()` util function accepts the array value and returns a parameterized query.
+You can construct the complex dynamic query by using both functions like below.
 
 ```ballerina
 VarcharValue stringValue1 = new ("Hello");
