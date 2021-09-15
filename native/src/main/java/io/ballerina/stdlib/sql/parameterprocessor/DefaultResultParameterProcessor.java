@@ -544,6 +544,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 case TypeTags.INT_TAG:
                     return timestamp.getTime();
                 case TypeTags.INTERSECTION_TAG:
+                case TypeTags.TUPLE_TAG:
                     return Utils.createTimeStruct(timestamp.getTime());
             }
         }
@@ -568,6 +569,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 case TypeTags.INT_TAG:
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
                 case TypeTags.INTERSECTION_TAG:
+                case TypeTags.TUPLE_TAG:
                     return Utils.createTimeStruct(Timestamp.valueOf(
                             offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()).getTime());
             }

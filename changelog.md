@@ -7,18 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- [Add support for queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1604)
+- [Add support for async operation](https://github.com/ballerina-platform/ballerina-standard-library/issues/120)
+- [Implement array types for call procedure](https://github.com/ballerina-platform/ballerina-standard-library/issues/1516)
+- [Add support for passing time:Date and time:TimeOfDay types directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1891)
+- [Add support for passing time:UTC type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1800)
+- [Add support for passing time:Civil type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1799)
+- [Add support for retrieving time:Utc type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1909)
 - [Introduce util function to concatenate queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 - [Introduce arrayFlattenQuery() function to add IN operator values by using concatenate queries function](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 
 ### Changed
-- [Add support for passing time:UTC type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1800)
-- [Add support for passing time:Civil type directly into parameterized queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1799)
+
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
 - [Improve the Batchupdate query to support string[]](https://github.com/ballerina-platform/ballerina-standard-library/issues/1529)
-- [Add support for async operation](https://github.com/ballerina-platform/ballerina-standard-library/issues/120)
-- [Add support for queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1604)
 - [Add completion type as nil in SQL query return stream type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1654)
-- [Implement array types for call procedure](https://github.com/ballerina-platform/ballerina-standard-library/issues/1516)
 - [Fix type cast error for query api containing database error](https://github.com/ballerina-platform/ballerina-standard-library/issues/1759)
 
 ## [0.6.0-beta.2] - 2021-06-22

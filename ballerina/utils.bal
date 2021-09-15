@@ -88,9 +88,8 @@ function addValues(Value[] insertionValues, Value[] values) {
 public function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
     string[] strings = [];
-    string newQuery = "";
     if values.length() == 1 {
-        strings.push(newQuery);
+        strings.push("");
     } else {
         foreach var i in 1..<values.length() {
             strings.push(",");
