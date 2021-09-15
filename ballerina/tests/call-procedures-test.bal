@@ -399,18 +399,12 @@ function testCallWithInoutParams() returns error? {
     TimestampValue timestampVal = new();
     DateTimeValue datetimeVal = new();
     int[] intArr = [1, 2];
-    ArrayValue intArrayVal = new(intArr);
     string[] strArr = ["Hello", "Ballerina"];
-    ArrayValue strArrayVal = new(strArr);
     boolean[] booArr = [false, false, true];
-    ArrayValue booArrayVal = new(booArr);
     float[] floArr = [245.23, 5559.49, 8796.123];
-    ArrayValue floArrayVal = new(floArr);
     decimal[] decArr = [245.34, 5559.43, 8796.43];
-    ArrayValue decArrayVal = new(decArr);
     byte[][] byteArr = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
-    ArrayValue byteArrayVal = new(byteArr);
-    ArrayValue emptyArrayVal = new();
+    string[] emptyArrayVal = [];
 
     InOutParameter paraVarChar = new(varCharVal);
     InOutParameter paraChar = new(charVal);
@@ -432,12 +426,12 @@ function testCallWithInoutParams() returns error? {
     InOutParameter paraDate = new(dateVal);
     InOutParameter paraTime = new(timeVal);
     InOutParameter paraTimestamp = new(timestampVal);
-    InOutParameter paraIntArray = new(intArrayVal);
-    InOutParameter paraStrArray = new(strArrayVal);
-    InOutParameter paraFloArray = new(floArrayVal);
-    InOutParameter paraDecArray = new(decArrayVal);
-    InOutParameter paraBooArray = new(booArrayVal);
-    InOutParameter paraByteArray = new(byteArrayVal);
+    InOutParameter paraIntArray = new(intArr);
+    InOutParameter paraStrArray = new(strArr);
+    InOutParameter paraFloArray = new(floArr);
+    InOutParameter paraDecArray = new(decArr);
+    InOutParameter paraBooArray = new(booArr);
+    InOutParameter paraByteArray = new(byteArr);
     InOutParameter paraEmptyArray = new(emptyArrayVal);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
