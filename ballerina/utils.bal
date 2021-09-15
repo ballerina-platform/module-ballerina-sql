@@ -99,3 +99,10 @@ public isolated function arrayFlattenQuery(Value[] values) returns Parameterized
     newParameterizedQuery.insertions = values;
     return newParameterizedQuery;
 }
+
+public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error?> {
+    ApplicationError applicationErr = error ApplicationError(message);
+    ResultIterator resultIterator = new (err = applicationErr);
+    stream<record {}, Error?> errorStream = new (resultIterator);
+    return errorStream;
+}

@@ -81,13 +81,6 @@ isolated function closedStreamInvocationError() returns Error {
     return error ApplicationError("Stream is closed. Therefore, no operations are allowed further on the stream.");
 }
 
-public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error?> {
-    ApplicationError applicationErr = error ApplicationError(message);
-    ResultIterator resultIterator = new (err = applicationErr);
-    stream<record {}, Error?> errorStream = new (resultIterator);
-    return errorStream;
-}
-
 isolated function nextResult(ResultIterator iterator) returns record {}|Error? = @java:Method {
     'class: "io.ballerina.stdlib.sql.utils.RecordIteratorUtils"
 } external;
