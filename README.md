@@ -3,7 +3,7 @@ Ballerina SQL Library
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/commits/master)
-  [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/sql.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql)
+  [![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/sql.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-sql/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-sql)
 
@@ -40,7 +40,7 @@ This repository only contains the source code for the package.
 
 2. Download and install [Docker](https://www.docker.com/get-started)
    
-3. Export Github Personal access token with read package permissions as follows,
+3. Export GitHub Personal access token with read package permissions as follows,
         
         export packageUser=<Username>
         export packagePAT=<Personal access token>
