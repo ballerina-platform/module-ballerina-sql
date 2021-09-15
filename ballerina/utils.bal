@@ -30,6 +30,57 @@ public function queryConcat(ParameterizedQuery... queries) returns Parameterized
     }
 }
 
+function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
+    ParameterizedQuery newParameterizedQuery = ``;
+    string queryInString = "";
+    string nullValue = "";
+    string[] strings = [];
+    Value[] values = [];
+    int i = 0;
+    foreach ParameterizedQuery query in queries {
+        string[] stringValues = query.strings;
+        Value[] insertionValues = query.insertions;
+        if insertionValues.length() == 0 {
+            queryInString += stringValues[0];
+        } else {
+            foreach string value in stringValues {
+                if 'string:startsWith(value, ",") {
+                    if queryInString != nullValue {
+                        strings.push(queryInString);
+                    }
+                    if value != nullValue {
+                        strings.push(value);
+                    }
+                } else if value == nullValue && queryInString != nullValue && !'string:endsWith(queryInString, "=") {
+                     if queryInString != nullValue {
+                        strings.push(queryInString);
+                     }
+                } else {
+                    queryInString += value;
+                    strings.push(queryInString);
+                }
+                queryInString = nullValue;
+            }
+            addValues(insertionValues, values);
+        }
+    }
+    if queryInString != nullValue {
+        strings.push(queryInString);
+    }
+    newParameterizedQuery.insertions = values;
+    newParameterizedQuery.strings = strings.cloneReadOnly();
+    return newParameterizedQuery;
+}
+
+function addValues(Value[] insertionValues, Value[] values) {
+    foreach Value insertionValue in insertionValues {
+        if insertionValue is null {
+            values.push(null);
+        } else {
+            values.push(insertionValue);
+        }
+    }
+}
 # Flattens the array.
 #
 # + values - An array of `Value`
@@ -38,70 +89,14 @@ public function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
     string[] strings = [];
     string newQuery = "";
-    foreach Value value in values {
-        if value is TypedValue {
-            anydata|object {}|anydata[]|object {}[]? inValues = value.value;
-            if inValues is anydata[] {
-                newQuery += "ARRAY[";
-                string stingArray = "";
-                foreach var inValue in inValues {
-                    stingArray += convertToInValue(inValue);
-                }
-                newQuery += 'string:substring(stingArray, 0, stingArray.length() - 1) + "],";
-            } else if (inValues is anydata) {
-                newQuery += convertToInValue(inValues);
-            }
-        } else {
-            newQuery += convertToInValue(value);
-        }
-    }
-    strings[0] = 'string:substring(newQuery, 0, newQuery.length() - 1);
-    newParameterizedQuery.strings = strings.cloneReadOnly();
-    return newParameterizedQuery;
-}
-
-function convertToInValue(anydata value) returns string {
-    if (value is null) {
-        return "NULL" + ",";
-    } else if (value is string) {
-        return "'" + value + "',";
+    if values.length() == 1 {
+        strings.push(newQuery);
     } else {
-        return value.toString()+ ",";
-    }
-}
-
-function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
-    ParameterizedQuery newParameterizedQuery = ``;
-    string queryInString = "";
-    string nullValue = "";
-    string[] strings = [];
-    Value[] values = [];
-    foreach ParameterizedQuery query in queries {
-        string[] stringValues = query.strings;
-        Value[] insertionValues = query.insertions;
-        int i = 0;
-        if insertionValues.length() == 0 {
-            queryInString += stringValues[0];
-        } else {
-            foreach string value in stringValues {
-                queryInString += value;
-                strings.push(queryInString);
-                if insertionValues.length() != i {
-                    if insertionValues[i] is null {
-                        values.push(null);
-                    } else {
-                        values.push(insertionValues[i]);
-                    }
-                    i += 1;
-                }
-                queryInString = nullValue;
-            }
+        foreach var i in 1..<values.length() {
+            strings.push(",");
         }
     }
-    if queryInString != nullValue {
-        strings.push(queryInString);
-    }
-    newParameterizedQuery.insertions = values;
     newParameterizedQuery.strings = strings.cloneReadOnly();
+    newParameterizedQuery.insertions = values;
     return newParameterizedQuery;
 }

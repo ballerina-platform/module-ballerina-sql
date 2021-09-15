@@ -815,7 +815,7 @@ function testInOperator3() returns error? {
 }
 function testInOperator4() returns error? {
     int[] ids = [1,2,3];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id IN(`, arrayFlattenQuery(ids), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id IN (`, arrayFlattenQuery(ids), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
@@ -825,7 +825,7 @@ function testInOperator4() returns error? {
 }
 function testInOperator5() returns error? {
     string?[] values = ["Hello", "1", null];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN(`, arrayFlattenQuery(values), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
 }
@@ -835,7 +835,7 @@ function testInOperator5() returns error? {
 }
 function testInOperator6() returns error? {
     boolean?[] values = [true, false, null];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE boolean_type IN(`, arrayFlattenQuery(values), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE boolean_type IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
@@ -845,7 +845,7 @@ function testInOperator6() returns error? {
 }
 function testInOperator7() returns error? {
     BigIntValue[] longValue = [new (9223372036854774807), new (9372036854774807)];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE long_type IN(`, arrayFlattenQuery(longValue), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE long_type IN (`, arrayFlattenQuery(longValue), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
 }
@@ -857,7 +857,7 @@ function testInOperator8() returns error? {
     VarcharValue stringValue1 = new("Hello");
     VarcharValue stringValue2 = new("1");
     VarcharValue[] values = [stringValue1, stringValue2];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN(`, arrayFlattenQuery(values), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
 }
@@ -866,10 +866,10 @@ function testInOperator8() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function testInOperator9() returns error? {
-    FloatValue floatValue1 = new(123.34);
-    FloatValue floatValue2 = new(123.14);
-    FloatValue[] values = [floatValue1, floatValue2];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE float_type IN(`, arrayFlattenQuery(values), `)`);
+    DoubleValue doubleValue1 = new(2139055039);
+    DoubleValue doubleValue2 = new(29095039);
+    DoubleValue[] values = [doubleValue1, doubleValue2];
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE double_type IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
 }
@@ -881,7 +881,7 @@ function testInOperator10() returns error? {
     SmallIntArrayValue intArrayValue1 = new([1, 2, 3]);
     SmallIntArrayValue intArrayValue2 = new([null, 2, 3]);
     SmallIntArrayValue[] values = [intArrayValue1, intArrayValue2];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE int_array IN(`, arrayFlattenQuery(values), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE int_array IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
 }
@@ -893,9 +893,32 @@ function testInOperator11() returns error? {
     VarcharArrayValue stringArrayValue1 = new(["Hello", "Ballerina"]);
     VarcharArrayValue stringArrayValue2 = new([null, "Ballerina"]);
     VarcharArrayValue[] values = [stringArrayValue1, stringArrayValue2];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE string_array IN(`, arrayFlattenQuery(values), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE string_array IN (`, arrayFlattenQuery(values), `)`);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function testInOperator12() returns error? {
+    time:Utc date = check time:utcFromString("2008-08-08T20:08:08+08:00");
+    TimestampValue typeVal = new (date);
+    TimestampValue[] values = [typeVal];
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DateTimeTypes WHERE timestamp_type2 IN (`, arrayFlattenQuery(values), `)`);
+    record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(returnData["TOTAL"], 1, "Total count is different.");
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function testInOperator13() returns error? {
+    int[] ids = [1,2,3];
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id in (`,
+    `${ids[0]}, ${ids[1]}, ${ids[2]})`);
+    record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
+    test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
 
 isolated function validateDataTableResult(record {}? returnData) {
