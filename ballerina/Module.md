@@ -92,6 +92,59 @@ sql:ExecutionResult result = check dbClient->execute("CREATE TABLE student(id IN
 //A value of the sql:ExecutionResult type is returned for 'result'. 
 ```
 
+### Parameterized Query
+
+The `ParameterizedQuery` is used to construct the SQL query to be executed by the client. 
+You can create a query with constant or dynamic input data as follows.
+
+*Query with constant values*
+
+```ballerina
+ParameterizedQuery query = `SELECT * FROM students WHERE 
+                            id < 10 AND age > 12`;
+```
+
+*Query with dynamic values*
+
+```ballerina
+int[] ids = [10, 50];
+int age = 12;
+ParameterizedQuery query = `SELECT * FROM students WHERE 
+                            id < ${ids[0]} AND age > ${age}`;
+```
+
+You can create the complex query by following the above samples. 
+But Ballerina has the following util functions that make it easier 
+to create a dynamic/constant complex query.
+
+* `queryConcat()`: This is used to create a parameterized query by concatenating sub-parameterized queries.
+  The sample below shows how to concatenate queries.
+    ```ballerina
+    int intType = 2147483647;
+    int bigIntType = 9223372036854774807;
+    int smallIntType = 32767;
+    ParameterizedQuery query = `INSERT INTO NumericTypes (int_type,
+                                bigint_type, smallint_type)`;
+    ParameterizedQuery query1 = ` VALUES(${intType}, ${bigIntType}, 
+                                ${smallIntType})`;
+    ParameterizedQuery sqlQuery = queryConcat(query, query1);
+    ```
+  
+* `arrayFlattenQuery()`: This makes array flatten easier which accepts the array value and returns parameterized query.
+  So, it is very useful for creating a query with the `IN` operator. You can construct the complex dynamic query 
+  with `IN` operator by using both functions like below.
+
+    ```ballerina
+    VarcharValue stringValue1 = new ("Hello");
+    VarcharValue stringValue2 = new ("1");
+    VarcharValue[] values = [stringValue1, stringValue2];
+    ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+                                WHERE string_type IN (`;
+    ParameterizedQuery sqlQuery = queryConcat(query, 
+                                              arrayFlattenQuery(values), 
+                                              `)`);
+    ```
+
 #### Inserting Data
 
 These samples show the data insertion by executing an `INSERT` statement using the `execute` remote function 
@@ -154,44 +207,7 @@ string|int? generatedKey = result.lastInsertId;
 #### Querying Data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
-database table and obtain the results. 
-
-The `ParameterizedQuery` is used to construct the dynamic query to be executed by the client. You can create a simple query like below.
-
-```ballerina
-int id = 10;
-int age = 12;
-ParameterizedQuery query = `SELECT * FROM students WHERE 
-                            id < ${id} AND age > ${age}`;
-```
-
-The `queryConcat()` makes it easier to create a dynamic complex query by concatenating sub-dynamic queries.
-The sample below shows how to concatenate queries.
-
-```ballerina
-int intType = 2147483647;
-int bigIntType = 9223372036854774807;
-int smallIntType = 32767;
-ParameterizedQuery query = `INSERT INTO NumericTypes (int_type,
-                            bigint_type, smallint_type)`;
-ParameterizedQuery query1 = ` VALUES(${intType}, ${bigIntType}, 
-                            ${smallIntType})`;
-ParameterizedQuery sqlQuery = queryConcat(query, query1);
-```
-
-The `arrayFlattenQuery()` util function accepts the array value and returns a parameterized query.
-You can construct the complex dynamic query by using both functions like below.
-
-```ballerina
-VarcharValue stringValue1 = new ("Hello");
-VarcharValue stringValue2 = new ("1");
-VarcharValue[] values = [stringValue1, stringValue2];
-ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
-                            WHERE string_type IN (`;
-ParameterizedQuery sqlQuery = queryConcat(query, 
-                                          arrayFlattenQuery(values), 
-                                          `)`);
-```
+database table and obtain the results.
 
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
