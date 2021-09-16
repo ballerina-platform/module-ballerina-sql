@@ -217,24 +217,23 @@ error? e = resultStream.forEach(function(record{} student) {
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
-to only use the `next()` operation in the result `stream` and retrieve the first record. In such cases, the returned
-result stream will not be closed, and you have to explicitly invoke the `close` operation on the 
-`sql:Client` to release the connection resources and avoid a connection leak as shown below.
+to use the `queryRow()` operation. If the provided return type is a record, this method returns only the first row 
+retrieved by the query as a record.
 
 ```ballerina
-stream<record{}, sql:Error?> resultStream = 
-                              dbClient->query(`SELECT count(*) as total FROM students`);
+int id = 10;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id = ${id}`;
+Student retrievedStudent = check dbClient->queryRow(query);
+```
 
-record {|record {} value;|}? result = check resultStream.next();
+The `queryRow()` operation can also be used to retrieve a single value from the database (e.g., when querying using 
+`COUNT()` and other SQL aggregation functions). If the provided return type is not a record (i.e., a primitive data type)
+, this operation will return the value of the first column of the first row retrieved by the query.
 
-if result is record {|record {} value;|} {
-    // A valid result is returned.
-    io:println("total students: ", result.value["total"]);
-} else {
-    // Student table must be empty.
-}
-
-error? e = resultStream.close();
+```ballerina
+int age = 12;
+sql:ParameterizedQuery query = `SELECT COUNT(*) FROM students WHERE age < ${age}`;
+int youngStudents = check dbClient->queryRow(query);
 ```
 
 #### Updating Data
