@@ -80,26 +80,9 @@ Once the client is created, database operations can be executed through that cli
 and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
-#### Creating Tables
-
-This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
-The `CREATE` statement is executed via the `execute` remote function of the client.
-
-```ballerina
-// Create the ‘Students’ table with the  ‘id’, 'name', and ‘age’ fields.
-sql:ExecutionResult result = 
-                check dbClient->execute(`CREATE TABLE student (
-                                           id INT AUTO_INCREMENT,
-                                           age INT, 
-                                           name VARCHAR(255), 
-                                           PRIMARY KEY (id)
-                                         )`);
-//A value of the sql:ExecutionResult type is returned for 'result'. 
-```
-
 ### Parameterized Query
 
-The `ParameterizedQuery` is used to construct the SQL query to be executed by the client. 
+The `ParameterizedQuery` is used to construct the SQL query to be executed by the client.
 You can create a query with constant or dynamic input data as follows.
 
 *Query with constant values*
@@ -118,37 +101,54 @@ ParameterizedQuery query = `SELECT * FROM students WHERE
                             id < ${ids[0]} AND age > ${age}`;
 ```
 
-You can create the complex query by following the above samples. 
-But Ballerina has the following util functions that make it easier 
+Moreover, the SQL package has `queryConcat()` and `arrayFlattenQuery()` util functions which make it easier
 to create a dynamic/constant complex query.
 
-* `queryConcat()`: This is used to create a parameterized query by concatenating sub-parameterized queries.
-  The sample below shows how to concatenate queries.
-    ```ballerina
-    int intType = 2147483647;
-    int bigIntType = 9223372036854774807;
-    int smallIntType = 32767;
-    ParameterizedQuery query = `INSERT INTO NumericTypes (int_type,
-                                bigint_type, smallint_type)`;
-    ParameterizedQuery query1 = ` VALUES(${intType}, ${bigIntType}, 
-                                ${smallIntType})`;
-    ParameterizedQuery sqlQuery = queryConcat(query, query1);
-    ```
-  
-* `arrayFlattenQuery()`: This makes array flatten easier which accepts the array value and returns parameterized query.
-  So, it is very useful for creating a query with the `IN` operator. You can construct the complex dynamic query 
-  with `IN` operator by using both functions like below.
+The `queryConcat()` is used to create a parameterized query by concatenating a set of parameterized queries.
+The sample below shows how to concatenate queries.
 
-    ```ballerina
-    VarcharValue stringValue1 = new ("Hello");
-    VarcharValue stringValue2 = new ("1");
-    VarcharValue[] values = [stringValue1, stringValue2];
-    ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
-                                WHERE string_type IN (`;
-    ParameterizedQuery sqlQuery = queryConcat(query, 
-                                              arrayFlattenQuery(values), 
-                                              `)`);
-    ```
+```ballerina
+int id = 10;
+int age = 12;
+ParameterizedQuery query = `SELECT * FROM students`;
+ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
+ParameterizedQuery sqlQuery = queryConcat(query, query1);
+```
+
+The query with the `IN` operator can be created by using the `ParameterizedQuery` like below.
+
+```ballerina
+int[] ids = [1, 2, 3];
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
+```
+
+It is difficult for a large set of elements array. Hence, the `arrayFlattenQuery()` makes the inclusion 
+of varying array elements into the query easier by flattening the array to return a parameterized query. 
+It is very useful for creating a query with the `IN` operator. You can construct the complex dynamic 
+query with `IN` operator by using both functions like below.
+
+```ballerina
+int[] ids = [1, 2];
+ParameterizedQuery query = `SELECT * FROM DataTable WHERE id IN (`;
+ParameterizedQuery sqlQuery = queryConcat(query, arrayFlattenQuery(ids), `)`);
+```
+
+#### Creating Tables
+
+This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
+The `CREATE` statement is executed via the `execute` remote function of the client.
+
+```ballerina
+// Create the ‘Students’ table with the  ‘id’, 'name', and ‘age’ fields.
+sql:ExecutionResult result = 
+                check dbClient->execute(`CREATE TABLE student (
+                                           id INT AUTO_INCREMENT,
+                                           age INT, 
+                                           name VARCHAR(255), 
+                                           PRIMARY KEY (id)
+                                         )`);
+//A value of the sql:ExecutionResult type is returned for 'result'. 
+```
 
 #### Inserting Data
 
