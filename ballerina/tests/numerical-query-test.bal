@@ -49,7 +49,7 @@ type NumericTypeForQuery record {
 }
 function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<record {}, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
+    stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {}? returnData = ();
     error? e = streamData.forEach(function(record {} data) {
         returnData = data;
@@ -178,7 +178,7 @@ type NumericUnionType record {
 }
 function testQueryNumericUnionTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericUnionType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
+    stream<NumericUnionType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericUnionType value;|}? data = check streamData.next();
     check streamData.close();
     NumericUnionType? returnData = data?.value;
@@ -215,7 +215,7 @@ type NumericStringType record {
 }
 function testQueryNumericStringTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<NumericStringType, Error?> streamData = dbClient->query("SELECT * FROM NumericTypes");
+    stream<NumericStringType, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {|NumericStringType value;|}? data = check streamData.next();
     check streamData.close();
     NumericStringType? returnData = data?.value;
@@ -276,6 +276,7 @@ function testQueryNumericCustomTypeRecord() returns error? {
 }
 function testQueryFromNullTable() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
+    // Usage of string in the query API is depreciated
     stream<record {}, Error?> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
     record {} returnData = {};
     int count = 0;

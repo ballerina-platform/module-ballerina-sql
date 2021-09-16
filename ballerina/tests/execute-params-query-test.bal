@@ -212,7 +212,7 @@ function insertIntoComplexTable3() returns error? {
     dependsOn: [insertIntoComplexTable3]
 }
 function deleteComplexTable() returns error? {
-    record {}|error? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = check queryMockClient(executeParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
 
     int rowId = 2;
@@ -458,7 +458,7 @@ function insertIntoArrayTable() returns error? {
     string[] paraString = ["Hello", "Ballerina"];
     boolean[] paraBool = [true, false, true];
 
-    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}? value = check queryMockClient(executeParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
 
     int rowId = 5;
@@ -502,7 +502,7 @@ function insertIntoArrayTable3() returns error? {
     BinaryArrayValue paraBinary = new ([byteArray1, byteArray2]);
     VarBinaryArrayValue paraVarBinary = new ([byteArray1, byteArray2]);
     io:ReadableByteChannel byteChannel = check getBlobColumnChannel();
-    record {}? value = check queryMockClient(executeParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}? value = check queryMockClient(executeParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
     int rowId = 7;
 
