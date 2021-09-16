@@ -85,52 +85,7 @@ function batchInsertIntoDataTableFailure() {
 
 @test:Config {
     groups: ["batch-execute"],
-    dependsOn: [batchInsertIntoDataTableFailure]
-}
-function batchInsertIntoDataTable3() returns error? {
-    string[] sqlQueries =  [
-        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (10, 9223372036854774807, 123.34);",
-        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (11, 9223372036854774807, 123.34);"
-    ];
-    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 1], [-1, -1]);
-}
-
-@test:Config {
-    groups: ["batch-execute"],
-    dependsOn: [batchInsertIntoDataTable3]
-}
-function batchInsertIntoDataTable4() returns error? {
-    string[] sqlQueries =  [
-        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (12, 9223372036854774807, 123.34);",
-        "UPDATE DataTable SET int_type=13 WHERE int_type=13;"
-    ];
-    validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 0], [-1, -1]);
-}
-
-@test:Config {
-    groups: ["batch-execute"],
-    dependsOn: [batchInsertIntoDataTable4]
-}
-function batchInsertIntoDataTableFailure2() returns error? {
-    string[] sqlQueries =  [
-        "INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);",
-        "UPDATE DataTable1 SET int_type=13 WHERE int_type=13;"
-    ];
-    ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
-    test:assertTrue(result is error);
-
-    if result is BatchExecuteError {
-        BatchExecuteErrorDetail errorDetails = result.detail();
-        test:assertEquals(errorDetails.executionResults.length(), 1);
-        test:assertEquals(errorDetails.executionResults[0].affectedRowCount, 1);
-    } else {
-        test:assertFail("BatchExecuteError expected.");
-    }
-}
-
-@test:Config {
-    groups: ["batch-execute"],
-    dependsOn: [batchInsertIntoDataTableFailure2]
+    dependsOn: [batchInsertIntoDataTable2]
 }
 function batchInsertIntoDataTableFailure3() {
     ParameterizedQuery[] sqlQueries = [
@@ -159,7 +114,7 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
     }
 }
 
-function batchExecuteQueryMockClient(string[]|ParameterizedQuery[] sqlQueries)
+function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|error {
     MockClient dbClient = check new (url = batchExecuteDB, user = user, password = password);
     ExecutionResult[] result = check dbClient->batchExecute(sqlQueries);

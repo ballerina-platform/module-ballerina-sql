@@ -21,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
-- [Improve the Batchupdate query to support string[]](https://github.com/ballerina-platform/ballerina-standard-library/issues/1529)
 - [Add completion type as nil in SQL query return stream type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1654)
 - [Fix type cast error for query api containing database error](https://github.com/ballerina-platform/ballerina-standard-library/issues/1759)
 
