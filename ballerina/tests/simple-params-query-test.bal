@@ -405,7 +405,7 @@ function queryTypeDecimalDecimalParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryByteArrayParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
@@ -415,7 +415,7 @@ function queryByteArrayParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeBinaryByteParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
@@ -446,7 +446,7 @@ function queryTypeVarBinaryReadableByteChannelParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeTinyBlobByteParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, "Select * from ComplexTypes where row_id = 1");
+    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;

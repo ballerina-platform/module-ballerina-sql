@@ -46,8 +46,8 @@ type SelectTestAlias record {
 function testGetPrimitiveTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record{}, error?> streamData = dbClient->query(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias);
+	                                                 `SELECT int_type, long_type, double_type, boolean_type, string_type
+	                                                 from DataTable WHERE row_id = 1`, SelectTestAlias);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -68,9 +68,8 @@ function testGetPrimitiveTypes() returns error? {
 }
 function testGetPrimitiveTypes2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<SelectTestAlias, error?> streamData = dbClient->query(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias);
+    stream<SelectTestAlias, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type, boolean_type,
+                                            string_type from DataTable WHERE row_id = 1`, SelectTestAlias);
     record {|SelectTestAlias value;|}? data = check streamData.next();
     check streamData.close();
     SelectTestAlias? value = data?.value;
@@ -92,9 +91,8 @@ function testGetPrimitiveTypes2() returns error? {
 }
 function testGetPrimitiveTypes3() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<SelectTestAlias, error?> streamData = dbClient->query(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1");
+    stream<SelectTestAlias, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type, boolean_type,
+                                                                        string_type from DataTable WHERE row_id = 1`);
     record {|SelectTestAlias value;|}? data = check streamData.next();
     check streamData.close();
     SelectTestAlias? value = data?.value;
@@ -122,9 +120,8 @@ type SelectTestAlias2 record {
 }
 function testGetPrimitiveTypesLessFields() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<SelectTestAlias2, error?> streamData = dbClient->query(
-	"SELECT int_type, long_type, double_type,"
-        + "boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias2);
+    stream<SelectTestAlias2, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type,
+                                        boolean_type, string_type from DataTable WHERE row_id = 1`, SelectTestAlias2);
     record {|SelectTestAlias2 value;|}? data = check streamData.next();
     check streamData.close();
     SelectTestAlias2? value = data?.value;
@@ -146,8 +143,8 @@ function testGetPrimitiveTypesLessFields() returns error? {
 }
 function testToJson() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query(
-	"SELECT int_type, long_type, double_type, boolean_type, string_type from DataTable WHERE row_id = 1", SelectTestAlias);
+    stream<record{}, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type, boolean_type,
+                                                    string_type from DataTable WHERE row_id = 1`, SelectTestAlias);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -174,8 +171,8 @@ function testToJson() returns error? {
 }
 function testToJsonComplexTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query("SELECT blob_type,clob_type,binary_type from" +
-        " ComplexTypes where row_id = 1");
+    stream<record{}, error?> streamData = dbClient->query(`SELECT blob_type,clob_type,binary_type from ComplexTypes
+                                                            where row_id = 1`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -195,8 +192,8 @@ function testToJsonComplexTypes() returns error? {
 }
 function testComplexTypesNil() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query("SELECT blob_type, clob_type, binary_type, other_type, uuid_type from " + 
-        " ComplexTypes where row_id = 2");
+    stream<record {}, error?> streamData = dbClient->query(`SELECT blob_type, clob_type, binary_type, other_type,
+                                                                uuid_type from ComplexTypes where row_id = 2`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -216,9 +213,9 @@ function testComplexTypesNil() returns error? {
 }
 function testArrayRetrieval() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, " + 
-        "boolean_type, string_type, string_array, boolean_array " + 
-        "from MixTypes where row_id =1");
+    stream<record {}, error?> streamData = dbClient->query(`SELECT int_type, int_array, long_type, long_array,
+                                                            boolean_type, string_type, string_array, boolean_array
+                                                            from MixTypes where row_id =1`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -255,9 +252,9 @@ type TestTypeData record {
 }
 function testComplexWithStructDef() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query("SELECT int_type, int_array, long_type, long_array, " 
-        + "boolean_type, string_type, boolean_array, string_array, json_type " 
-        + "from MixTypes where row_id =1", TestTypeData);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT int_type, int_array, long_type, long_array,
+                                                                boolean_type, string_type, boolean_array, string_array,
+                                                                json_type from MixTypes where row_id =1`, TestTypeData);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -288,8 +285,8 @@ type ResultMap record {
 }
 function testMultipleRecordRetrieval() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query("SELECT int_array, long_array, boolean_array," + 
-        "string_array from ArrayTypes", ResultMap);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT int_array, long_array, boolean_array,string_array
+                                                                from ArrayTypes`, ResultMap);
 
     ResultMap mixTypesExpected = {
         int_array: [1, 2, 3],
@@ -329,8 +326,9 @@ type ResultDates record {
 }
 function testDateTime() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type" 
-        + ", time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates);
+    stream<record {}, error?> queryResult = dbClient->query(`SELECT date_type, time_type, timestamp_type, datetime_type,
+                                                                time_tz_type, timestamp_tz_type from DateTimeTypes
+                                                                where row_id = 1`, ResultDates);
     record {|record {} value;|}? data = check queryResult.next();
     record {}? value = data?.value;
     check dbClient.close();
@@ -366,8 +364,9 @@ type ResultDates2 record {
 }
 function testDateTime2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> queryResult = dbClient->query("SELECT date_type, time_type, timestamp_type, datetime_type, " 
-            + "time_tz_type, timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates2);
+    stream<record {}, error?> queryResult = dbClient->query(`SELECT date_type, time_type, timestamp_type, datetime_type,
+                                                                time_tz_type, timestamp_tz_type from DateTimeTypes
+                                                                where row_id = 1`, ResultDates2);
     record {|record {} value;|}? data = check queryResult.next();
     record {}? value = data?.value;
     check dbClient.close();
@@ -419,42 +418,42 @@ function testDateTime3() returns error? {
     record {|record {} value;|}|error? result;
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
 
-    queryResult = dbClient->query("SELECT date_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT date_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Date type.");
     test:assertEquals((<error>result).message(),
         "Error when iterating the SQL result. The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT time_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT time_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time type.");
     test:assertEquals((<error>result).message(),
         "Error when iterating the SQL result. The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT timestamp_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT timestamp_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
     test:assertEquals((<error>result).message(),
         "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT datetime_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT datetime_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Datetime type.");
     test:assertEquals((<error>result).message(),
         "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT time_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT time_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
     test:assertEquals((<error>result).message(),
         "Error when iterating the SQL result. The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
-    queryResult = dbClient->query("SELECT timestamp_tz_type from DateTimeTypes where row_id = 1", ResultDates3);
+    queryResult = dbClient->query(`SELECT timestamp_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
     test:assertEquals((<error>result).message(),
@@ -504,9 +503,11 @@ type ResultSetTestAlias record {
 }
 function testColumnAlias() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> queryResult = dbClient->query("SELECT dt1.int_type, dt1.long_type, dt1.float_type," + 
-            "dt1.double_type,dt1.boolean_type, dt1.string_type,dt2.int_type as dt2int_type from DataTable dt1 " + 
-            "left join DataTableRep dt2 on dt1.row_id = dt2.row_id WHERE dt1.row_id = 1;", ResultSetTestAlias);
+    stream<record {}, error?> queryResult = dbClient->query(`SELECT dt1.int_type, dt1.long_type, dt1.float_type,
+                                                             dt1.double_type,dt1.boolean_type, dt1.string_type,
+                                                             dt2.int_type as dt2int_type from DataTable dt1
+                                                             left join DataTableRep dt2 on dt1.row_id = dt2.row_id
+                                                             WHERE dt1.row_id = 1;`, ResultSetTestAlias);
     ResultSetTestAlias expectedData = {
         int_type: 1,
         long_type: 9223372036854774807,
@@ -537,9 +538,9 @@ function testColumnAlias() returns error? {
 }
 function testQueryRowId() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    ExecutionResult result = check dbClient->execute("SET DATABASE SQL SYNTAX ORA TRUE");
-    stream<record {}, error?> streamData = dbClient->query("SELECT rownum, int_array, long_array, boolean_array," + 
-        "string_array from ArrayTypes");
+    ExecutionResult result = check dbClient->execute(`SET DATABASE SQL SYNTAX ORA TRUE`);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT rownum, int_array, long_array, boolean_array,
+                                                            string_array from ArrayTypes`);
 
     record {} mixTypesExpected = {
         "ROWNUM": 1,
@@ -594,8 +595,12 @@ type ArrayRecord record {
 }
 function testGetArrayTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query(
-        "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 1", ArrayRecord);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT row_id,smallint_array, int_array, long_array,
+                                                            float_array, double_array, decimal_array, real_array,
+                                                            numeric_array, varchar_array, char_array, nvarchar_array,
+                                                            boolean_array, bit_array, date_array, time_array, datetime_array,
+                                                            timestamp_array, blob_array, time_tz_array, timestamp_tz_array
+                                                            from ArrayTypes2 WHERE row_id = 1`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -632,8 +637,12 @@ function testGetArrayTypes() returns error? {
 }
 function testGetArrayTypes2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query(
-    "SELECT row_id,smallint_array, int_array, long_array, float_array, double_array, decimal_array, real_array,numeric_array, varchar_array, char_array, nvarchar_array, boolean_array, bit_array, date_array, time_array, datetime_array, timestamp_array, blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2 WHERE row_id = 2", ArrayRecord);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT row_id,smallint_array, int_array, long_array,
+                                                            float_array, double_array, decimal_array, real_array,numeric_array,
+                                                            varchar_array, char_array, nvarchar_array, boolean_array,
+                                                            bit_array, date_array, time_array, datetime_array, timestamp_array,
+                                                            blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2
+                                                            WHERE row_id = 2`, ArrayRecord);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;

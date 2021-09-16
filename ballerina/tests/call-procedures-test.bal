@@ -881,10 +881,10 @@ function testMultipleRecords() returns error? {
 
     _ = check createSqlProcedure(createProcedure);
 
-    ParameterizedCallQuery callProcedureQuery = `call FetchMultipleRecords()`;
-
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult result = check dbClient->call(callProcedureQuery, [Person]);
+
+    // Usage of string in the call API is depreciated
+    ProcedureCallResult result = check dbClient->call("call FetchMultipleRecords();", [Person]);
     boolean|Error status = result.getNextQueryResult();
     stream<record {}, Error?>? streamData = result.queryResult;
     check result.close();
@@ -1099,7 +1099,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     check ret.close();
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query("SELECT * FROM ProArrayTypes WHERE row_id = 1");
+    stream<record{}, error?> streamData = dbClient->query(`SELECT * FROM ProArrayTypes WHERE row_id = 1`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
