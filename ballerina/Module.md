@@ -119,16 +119,16 @@ The query with the `IN` operator can be created using the `ParameterizedQuery` l
 
 ```ballerina
 int[] ids = [1, 2, 3];
-sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+                                WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
 ```
 
 The util function `arrayFlattenQuery()` is introduced to make the array flatten easier. It makes the inclusion of varying array elements into the query easier by flattening the array to return a parameterized query. You can construct the complex dynamic query with the `IN` operator by using both functions like below.
 
 ```ballerina
 int[] ids = [1, 2];
-ParameterizedQuery sqlQuery = queryConcat(
-                                `SELECT * FROM DataTable WHERE id IN (`, 
-                                 arrayFlattenQuery(ids), `)`);
+ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
+                                           arrayFlattenQuery(ids), `)`);
 ```
 
 #### Creating Tables
