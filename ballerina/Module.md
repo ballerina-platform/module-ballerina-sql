@@ -129,8 +129,7 @@ query with `IN` operator by using both functions like below.
 
 ```ballerina
 int[] ids = [1, 2];
-ParameterizedQuery query = `SELECT * FROM DataTable WHERE id IN (`;
-ParameterizedQuery sqlQuery = queryConcat(query, arrayFlattenQuery(ids), `)`);
+ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable WHERE id IN (`, arrayFlattenQuery(ids), `)`);
 ```
 
 #### Creating Tables
