@@ -80,6 +80,57 @@ Once the client is created, database operations can be executed through that cli
 and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
+#### Parameterized Query
+
+The `ParameterizedQuery` is used to construct the SQL query to be executed by the client.
+You can create a query with constant or dynamic input data as follows.
+
+*Query with constant values*
+
+```ballerina
+ParameterizedQuery query = `SELECT * FROM students WHERE 
+                            id < 10 AND age > 12`;
+```
+
+*Query with dynamic values*
+
+```ballerina
+int[] ids = [10, 50];
+int age = 12;
+ParameterizedQuery query = `SELECT * FROM students WHERE 
+                            id < ${ids[0]} AND age > ${age}`;
+```
+
+Moreover, the SQL package has `queryConcat()` and `arrayFlattenQuery()` util functions which make it easier
+to create a dynamic/constant complex query.
+
+The `queryConcat()` is used to create a parameterized query by concatenating a set of parameterized queries.
+The sample below shows how to concatenate queries.
+
+```ballerina
+int id = 10;
+int age = 12;
+ParameterizedQuery query = `SELECT * FROM students`;
+ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
+ParameterizedQuery sqlQuery = queryConcat(query, query1);
+```
+
+The query with the `IN` operator can be created using the `ParameterizedQuery` like below. Here you need to flatten the array and pass each element separated by a comma.
+
+```ballerina
+int[] ids = [1, 2, 3];
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
+```
+
+The util function `arrayFlattenQuery()` is introduced to make the array flatten easier. It makes the inclusion of varying array elements into the query easier by flattening the array to return a parameterized query. You can construct the complex dynamic query with the `IN` operator by using both functions like below.
+
+```ballerina
+int[] ids = [1, 2];
+ParameterizedQuery sqlQuery = queryConcat(
+                                `SELECT * FROM DataTable WHERE id IN (`, 
+                                 arrayFlattenQuery(ids), `)`);
+```
+
 #### Creating Tables
 
 This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
@@ -158,7 +209,7 @@ string|int? generatedKey = result.lastInsertId;
 #### Querying Data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
-database table and obtain the results. 
+database table and obtain the results.
 
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
