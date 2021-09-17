@@ -80,7 +80,7 @@ Once the client is created, database operations can be executed through that cli
 and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
-### Parameterized Query
+#### Parameterized Query
 
 The `ParameterizedQuery` is used to construct the SQL query to be executed by the client.
 You can create a query with constant or dynamic input data as follows.
