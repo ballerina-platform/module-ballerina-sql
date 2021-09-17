@@ -115,7 +115,7 @@ ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
 ParameterizedQuery sqlQuery = queryConcat(query, query1);
 ```
 
-The query with the `IN` operator can be created by using the `ParameterizedQuery` like below.
+The query with the `IN` operator can be created using the `ParameterizedQuery` like below. Here you need to flatten the array and pass each element separated by a comma.
 
 ```ballerina
 int[] ids = [1, 2, 3];
