@@ -31,7 +31,7 @@ public class ExecuteTestUtils {
     private ExecuteTestUtils() {
     }
 
-    public static Object nativeExecute(Environment env, BObject client, Object paramSQLString) {
+    public static Object nativeExecute(Environment env, BObject client, BObject paramSQLString) {
         return ExecuteProcessor.nativeExecute(env, client, paramSQLString,
                 DefaultStatementParameterProcessor.getInstance());
     }

@@ -82,7 +82,7 @@ public class CallProcessor {
      * @param resultParameterProcessor post-processor of the result
      * @return procedure call result or error
      */
-    public static Object nativeCall(Environment env, BObject client, Object paramSQLString, BArray recordTypes,
+    public static Object nativeCall(Environment env, BObject client, BObject paramSQLString, BArray recordTypes,
                                     AbstractStatementParameterProcessor statementParameterProcessor,
                                     AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
@@ -102,7 +102,7 @@ public class CallProcessor {
 
     }
 
-    private static Object nativeCallExecutable(BObject client, Object paramSQLString, BArray recordTypes,
+    private static Object nativeCallExecutable(BObject client, BObject paramSQLString, BArray recordTypes,
                                     AbstractStatementParameterProcessor statementParameterProcessor,
                                     AbstractResultParameterProcessor resultParameterProcessor, boolean isWithinTrxBlock,
                                     TransactionResourceManager trxResourceManager) {
@@ -118,19 +118,13 @@ public class CallProcessor {
             ResultSet resultSet;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof BString) {
-                    sqlQuery = ((BString) paramSQLString).getValue();
-                } else {
-                    sqlQuery = getSqlQuery((BObject) paramSQLString);
-                }
+                sqlQuery = getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
-                if (paramSQLString instanceof BObject) {
-                    setCallParameters(connection, statement, (BObject) paramSQLString, outputParamTypes, 
-                                statementParameterProcessor);
-                }
+                setCallParameters(connection, statement, paramSQLString, outputParamTypes,
+                            statementParameterProcessor);
 
                 boolean resultType = statement.execute();
 
@@ -160,10 +154,8 @@ public class CallProcessor {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
                 }
 
-                if (paramSQLString instanceof BObject) {
-                    populateOutParameters(statement, (BObject) paramSQLString, outputParamTypes,
-                            resultParameterProcessor);
-                }
+                populateOutParameters(statement, paramSQLString, outputParamTypes,
+                        resultParameterProcessor);
 
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
                 procedureCallResult.addNativeData(CONNECTION_NATIVE_DATA_FIELD, connection);
