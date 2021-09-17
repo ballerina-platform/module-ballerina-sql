@@ -122,10 +122,7 @@ int[] ids = [1, 2, 3];
 sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
 ```
 
-It is difficult for a large set of elements array. Hence, the `arrayFlattenQuery()` makes the inclusion 
-of varying array elements into the query easier by flattening the array to return a parameterized query. 
-It is very useful for creating a query with the `IN` operator. You can construct the complex dynamic 
-query with `IN` operator by using both functions like below.
+The util function `arrayFlattenQuery()` is introduced to make the array flatten easier. It makes the inclusion of varying array elements into the query easier by flattening the array to return a parameterized query. You can construct the complex dynamic query with the `IN` operator by using both functions like below.
 
 ```ballerina
 int[] ids = [1, 2];
