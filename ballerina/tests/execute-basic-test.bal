@@ -329,8 +329,7 @@ type ResultCount record {
 }
 function testUpdateData() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
-    // Usage of string in the execute API is depreciated
-    ExecutionResult result = check dbClient->execute("Update NumericTypes set int_type = 11 where int_type = 10");
+    ExecutionResult result = check dbClient->execute(`Update NumericTypes set int_type = 11 where int_type = 10`);
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     stream<ResultCount, Error?> streamData = dbClient->query(

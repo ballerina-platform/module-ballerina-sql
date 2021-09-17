@@ -22,11 +22,11 @@ public type Client client object {
 
     # Queries the database with the query provided by the user, and returns the result as a stream.
     #
-    # + sqlQuery - The query, which needs to be executed as an `sql:ParameterizedQuery`. Usage of `string` is depreciated
+    # + sqlQuery - The query, which needs to be executed as an `sql:ParameterizedQuery`
     # + rowType - The `typedesc` of the record that should be returned as a result. If this is not provided, the default
     #             column names of the query result set will be used for the record attributes
     # + return - Stream of records in the type of `rowType`
-    remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
+    remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error?>;
 
     # Queries the database with the provided query and returns the first row as a record if the expected return type is
@@ -41,11 +41,10 @@ public type Client client object {
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
-    # + sqlQuery - The DDL or DML query such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`.
-    #              Usage of `string` is depreciated
+    # + sqlQuery - The DDL or DML query such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`
     # + return - Summary of the SQL update query as an `sql:ExecutionResult` or an `sql:Error`
     #            if any error occurred when executing the query
-    remote isolated function execute(string|ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
+    remote isolated function execute(ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
 
     # Executes a provided batch of parameterized DDL or DML SQL queries
     # and returns the summary of the execution.
@@ -61,11 +60,11 @@ public type Client client object {
 
     # Executes a SQL stored procedure and returns the result as stream and execution summary.
     #
-    # + sqlQuery - The query to execute the SQL stored procedure as an `sql:ParameterizedQuery`. Usage of `string` is depreciated
+    # + sqlQuery - The query to execute the SQL stored procedure as an `sql:ParameterizedQuery`
     # + rowTypes - The array of `typedesc` of the records that should be returned as a result. If this is not provided,
     #               the default column names of the query result set will be used for the record attributes
     # + return - Summary of the execution is returned in an `sql:ProcedureCallResult`, or an `sql:Error`
-    remote isolated function call(string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
     # Closes the SQL client.

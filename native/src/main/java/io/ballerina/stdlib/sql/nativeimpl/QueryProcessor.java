@@ -29,7 +29,6 @@ import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
-import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
@@ -70,7 +69,7 @@ public class QueryProcessor {
      * @return result stream or error
      */
     public static BStream nativeQuery(
-            Environment env, BObject client, Object paramSQLString, Object recordType,
+            Environment env, BObject client, BObject paramSQLString, Object recordType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
@@ -90,7 +89,7 @@ public class QueryProcessor {
     }
 
     private static BStream nativeQueryExecutable(
-            BObject client, Object paramSQLString, Object recordType,
+            BObject client, BObject paramSQLString, Object recordType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
             TransactionResourceManager trxResourceManager) {
@@ -107,16 +106,10 @@ public class QueryProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof BString) {
-                    sqlQuery = ((BString) paramSQLString).getValue();
-                } else {
-                    sqlQuery = Utils.getSqlQuery((BObject) paramSQLString);
-                }
+                sqlQuery = Utils.getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                if (paramSQLString instanceof BObject) {
-                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
-                }
+                statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
                 RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
