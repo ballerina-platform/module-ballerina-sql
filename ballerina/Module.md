@@ -82,14 +82,14 @@ updating, and batch updating data.
 
 #### Parameterized Query
 
-The `ParameterizedQuery` is used to construct the SQL query to be executed by the client.
+The `sql:ParameterizedQuery` is used to construct the SQL query to be executed by the client.
 You can create a query with constant or dynamic input data as follows.
 
 *Query with constant values*
 
 ```ballerina
-ParameterizedQuery query = `SELECT * FROM students WHERE 
-                            id < 10 AND age > 12`;
+sql:ParameterizedQuery query = `SELECT * FROM students 
+                                WHERE id < 10 AND age > 12`;
 ```
 
 *Query with dynamic values*
@@ -97,38 +97,39 @@ ParameterizedQuery query = `SELECT * FROM students WHERE
 ```ballerina
 int[] ids = [10, 50];
 int age = 12;
-ParameterizedQuery query = `SELECT * FROM students WHERE 
-                            id < ${ids[0]} AND age > ${age}`;
+sql:ParameterizedQuery query = `SELECT * FROM students 
+                                WHERE id < ${ids[0]} AND age > ${age}`;
 ```
 
-Moreover, the SQL package has `queryConcat()` and `arrayFlattenQuery()` util functions which make it easier
+Moreover, the SQL package has `sql:queryConcat()` and `sql:arrayFlattenQuery()` util functions which make it easier
 to create a dynamic/constant complex query.
 
-The `queryConcat()` is used to create a parameterized query by concatenating a set of parameterized queries.
+The `sql:queryConcat()` is used to create a parameterized query by concatenating a set of parameterized queries.
 The sample below shows how to concatenate queries.
 
 ```ballerina
 int id = 10;
 int age = 12;
-ParameterizedQuery query = `SELECT * FROM students`;
-ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
-ParameterizedQuery sqlQuery = queryConcat(query, query1);
+sql:ParameterizedQuery query = `SELECT * FROM students`;
+sql:ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
+sql:ParameterizedQuery sqlQuery = sql:queryConcat(query, query1);
 ```
 
-The query with the `IN` operator can be created using the `ParameterizedQuery` like below. Here you need to flatten the array and pass each element separated by a comma.
+The query with the `IN` operator can be created using the `sql:ParameterizedQuery` like below. Here you need to flatten the array and pass each element separated by a comma.
 
 ```ballerina
 int[] ids = [1, 2, 3];
 sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
-                                WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`
+                                WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
 ```
 
-The util function `arrayFlattenQuery()` is introduced to make the array flatten easier. It makes the inclusion of varying array elements into the query easier by flattening the array to return a parameterized query. You can construct the complex dynamic query with the `IN` operator by using both functions like below.
+The util function `sql:arrayFlattenQuery()` is introduced to make the array flatten easier. It makes the inclusion of varying array elements into the query easier by flattening the array to return a parameterized query. You can construct the complex dynamic query with the `IN` operator by using both functions like below.
 
 ```ballerina
 int[] ids = [1, 2];
-ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
-                                           arrayFlattenQuery(ids), `)`);
+sql:ParameterizedQuery sqlQuery = 
+                         sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
+                                             arrayFlattenQuery(ids), `)`);
 ```
 
 #### Creating Tables
@@ -158,7 +159,7 @@ remote function.
 
 ```ballerina
 sql:ExecutionResult result = check dbClient->execute(`INSERT INTO student(age, name)
-                                                        values (23, 'john')`);
+                                                        VALUES (23, 'john')`);
 ```
 
 In this sample, the parameter values, which are in local variables are used to parameterize the SQL query in 
@@ -171,12 +172,12 @@ string name = "Anne";
 int age = 8;
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
-                                  values (${age}, ${name})`;
+                                  VALUES (${age}, ${name})`;
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
 In this sample, the parameter values are passed as a `sql:TypedValue` to the `execute` remote function. Use the 
-corresponding subtype of the `sql:TypedValue` such as `sql:Varchar`, `sql:Char`, `sql:Integer`, etc., when you need to 
+corresponding subtype of the `sql:TypedValue` such as `sql:VarcharValue`, `sql:CharValue`, `sql:IntegerValue`, etc., when you need to 
 provide more details such as the exact SQL type of the parameter.
 
 ```ballerina
@@ -184,7 +185,7 @@ sql:VarcharValue name = new ("James");
 sql:IntegerValue age = new (10);
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
-                                  values (${age}, ${name})`;
+                                  VALUES (${age}, ${name})`;
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
@@ -198,7 +199,7 @@ int age = 31;
 string name = "Kate";
 
 sql:ParameterizedQuery query = `INSERT INTO student(age, name)
-                                  values (${age}, ${name})`;
+                                  VALUES (${age}, ${name})`;
 sql:ExecutionResult result = check dbClient->execute(query);
 //Number of rows affected by the execution of the query.
 int? count = result.affectedRowCount;
@@ -268,7 +269,7 @@ error? e = resultStream.forEach(function(record{} student) {
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
-to use the `queryRow()` operation. If the provided return type is a record, this method returns only the first row 
+to use the `sql:queryRow()` operation. If the provided return type is a record, this method returns only the first row 
 retrieved by the query as a record.
 
 ```ballerina
@@ -277,7 +278,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students WHERE id = ${id}`;
 Student retrievedStudent = check dbClient->queryRow(query);
 ```
 
-The `queryRow()` operation can also be used to retrieve a single value from the database (e.g., when querying using 
+The `sql:queryRow()` operation can also be used to retrieve a single value from the database (e.g., when querying using 
 `COUNT()` and other SQL aggregation functions). If the provided return type is not a record (i.e., a primitive data type)
 , this operation will return the value of the first column of the first row retrieved by the query.
 
