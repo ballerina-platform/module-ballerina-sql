@@ -126,7 +126,9 @@ The util function `arrayFlattenQuery()` is introduced to make the array flatten 
 
 ```ballerina
 int[] ids = [1, 2];
-ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable WHERE id IN (`, arrayFlattenQuery(ids), `)`);
+ParameterizedQuery sqlQuery = queryConcat(
+                                                        `SELECT * FROM DataTable WHERE id IN (`, 
+                                                        arrayFlattenQuery(ids), `)`);
 ```
 
 #### Creating Tables
