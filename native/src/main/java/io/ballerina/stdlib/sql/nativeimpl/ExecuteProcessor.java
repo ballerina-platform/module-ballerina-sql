@@ -137,6 +137,8 @@ public class ExecuteProcessor {
                         "Error while executing SQL query: " + sqlQuery + ". ");
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (Throwable th) {
+                return ErrorGenerator.getSQLError(th, "Error while executing SQL query: " + sqlQuery + ". ");
             } finally {
                 closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }
@@ -250,6 +252,8 @@ public class ExecuteProcessor {
                         "command starting with : " + sqlQuery + ". ");
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (Throwable th) {
+                return ErrorGenerator.getSQLError(th, "Error while executing SQL query: " + sqlQuery + ". ");
             } finally {
                 closeResources(isWithinTrxBlock, resultSet, statement, connection);
             }

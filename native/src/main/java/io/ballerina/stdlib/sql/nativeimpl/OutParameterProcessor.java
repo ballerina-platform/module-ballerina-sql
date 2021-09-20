@@ -171,6 +171,8 @@ public class OutParameterProcessor {
             return ErrorGenerator.getSQLApplicationError(applicationError);
         } catch (SQLException sqlException) {
             return ErrorGenerator.getSQLDatabaseError(sqlException, "Error when parsing out parameter.");
+        } catch (Throwable th) {
+            return ErrorGenerator.getSQLError(th, "Error when parsing out parameter.");
         }
     }
 }

@@ -95,6 +95,15 @@ public class ErrorGenerator {
                 StringUtils.fromString(message), null, null);
     }
 
+    public static BError getSQLError(Throwable th, String thMessage) {
+        String message = th.getMessage();
+        if (message == null) {
+            message = th.getClass().getName();
+        }
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.SQL_ERROR,
+                StringUtils.fromString(thMessage + message), null, null);
+    }
+
     public static BError getNoRowsError(String message) {
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
                 StringUtils.fromString(message), null,  null);
