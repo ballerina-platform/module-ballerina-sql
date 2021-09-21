@@ -72,11 +72,7 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLApplicationError(ApplicationError error) {
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getName();
-        }
-
+        String message = error.getMessage() != null ? error.getMessage() : error.getClass().getSimpleName();
         String errorName;
         if (error instanceof ConversionError) {
             errorName = Constants.CONVERSION_ERROR;
@@ -96,10 +92,7 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLError(Throwable th, String thMessage) {
-        String message = th.getMessage();
-        if (message == null) {
-            message = th.getClass().getName();
-        }
+        String message = th.getMessage() != null ? th.getMessage() : th.getClass().getSimpleName();
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.SQL_ERROR,
                 StringUtils.fromString(thMessage + message), null, null);
     }
