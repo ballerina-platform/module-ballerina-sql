@@ -129,7 +129,7 @@ The util function `sql:arrayFlattenQuery()` is introduced to make the array flat
 int[] ids = [1, 2];
 sql:ParameterizedQuery sqlQuery = 
                          sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
-                                             arrayFlattenQuery(ids), `)`);
+                                          sql:arrayFlattenQuery(ids), `)`);
 ```
 
 #### Creating Tables
