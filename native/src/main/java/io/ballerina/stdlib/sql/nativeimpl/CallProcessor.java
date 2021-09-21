@@ -34,6 +34,7 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
@@ -111,8 +112,8 @@ public class CallProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
-                        " are not allowed");
+                return ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection;
             CallableStatement statement;
@@ -173,11 +174,12 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
                 return procedureCallResult;
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL query: " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable th) {
-                return ErrorGenerator.getSQLError(th, "Error while executing SQL query: " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
             }
         } else {
             return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
@@ -195,8 +197,7 @@ public class CallProcessor {
             if (object instanceof BObject) {
                 BObject objectValue = (BObject) object;
                 if ((objectValue.getType().getTag() != TypeTags.OBJECT_TYPE_TAG)) {
-                    throw new ApplicationError("Unsupported type:" +
-                            objectValue.getType().getQualifiedName() + " in column index: " + index);
+                    throw new UnsupportedTypeError(objectValue.getType().getQualifiedName(), index);
                 }
 
                 String parameterType;
