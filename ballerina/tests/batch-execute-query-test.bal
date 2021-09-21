@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/file;
 import ballerina/io;
 import ballerina/test;
 import ballerina/regex;
@@ -103,7 +104,9 @@ function batchInsertIntoDataTableFailure3() {
     groups: ["batch-execute"]
 }
 function batchInsertNegative() returns error? {
-    string path = "tests/resources/sample/parameterized_query.bal";
+    string path = "../ballerina/tests/resources/sample/parameterized_query.bal";
+    boolean fileExists = check file:test(path, file:EXISTS);
+    io:println(fileExists);
     Process process = check exec("bal", {}, (), "run", path);
     int waitForExit = check process.waitForExit();
     int exitCode = check process.exitCode();
