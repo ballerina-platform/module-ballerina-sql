@@ -105,6 +105,7 @@ function batchInsertIntoDataTableFailure3() {
 }
 function batchInsertNegative() returns error? {
     string path = check file:getAbsolutePath("tests/resources/sample/parameterized_query.bal");
+    io:println(path);
     Process process = check exec("bal", {}, (), "run", path);
     int waitForExit = check process.waitForExit();
     int exitCode = check process.exitCode();
