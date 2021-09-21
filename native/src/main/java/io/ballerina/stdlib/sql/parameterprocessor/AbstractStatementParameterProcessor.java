@@ -210,15 +210,11 @@ public abstract class AbstractStatementParameterProcessor {
             return Types.ARRAY;
         } else if (object instanceof BObject) {
             BObject objectValue = (BObject) object;
-            if ((objectValue.getType().getTag() == TypeTags.OBJECT_TYPE_TAG)) {
-                setSqlTypedParam(connection, preparedStatement, index, objectValue);
-                if (returnType) {
-                    return getSQLType(objectValue);
-                }
-                return 0;
-            } else {
-                throw new UnsupportedTypeError(objectValue.getType().getQualifiedName(), index);
+            setSqlTypedParam(connection, preparedStatement, index, objectValue);
+            if (returnType) {
+                return getSQLType(objectValue);
             }
+            return 0;
         } else if (object instanceof BXml) {
             setXml(connection, preparedStatement, index, (BXml) object);
             return Types.SQLXML;

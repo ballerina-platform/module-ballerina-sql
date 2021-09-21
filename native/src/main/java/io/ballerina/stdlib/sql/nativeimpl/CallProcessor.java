@@ -21,7 +21,6 @@ package io.ballerina.stdlib.sql.nativeimpl;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
@@ -34,7 +33,6 @@ import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
-import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
@@ -196,10 +194,6 @@ public class CallProcessor {
             int index = i + 1;
             if (object instanceof BObject) {
                 BObject objectValue = (BObject) object;
-                if ((objectValue.getType().getTag() != TypeTags.OBJECT_TYPE_TAG)) {
-                    throw new UnsupportedTypeError(objectValue.getType().getQualifiedName(), index);
-                }
-
                 String parameterType;
                 String objectType = objectValue.getType().getName();
                 if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
