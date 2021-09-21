@@ -50,7 +50,7 @@ public class ErrorGenerator {
                                                  List<BMap<BString, Object>> executionResults,
                                                  String messagePrefix) {
         String sqlErrorMessage =
-                exception.getMessage() != null ? exception.getMessage() : Constants.BATCH_EXECUTE_ERROR_MESSAGE;
+                exception.getMessage() != null ? exception.getMessage() : exception.getClass().getSimpleName();
         int vendorCode = exception.getErrorCode();
         String sqlState = exception.getSQLState();
         String errorMessage = messagePrefix + sqlErrorMessage + ".";
@@ -59,7 +59,7 @@ public class ErrorGenerator {
 
     public static BError getSQLDatabaseError(SQLException exception, String messagePrefix) {
         String sqlErrorMessage =
-                exception.getMessage() != null ? exception.getMessage() : Constants.DATABASE_ERROR_MESSAGE;
+                exception.getMessage() != null ? exception.getMessage() : exception.getClass().getSimpleName();
         int vendorCode = exception.getErrorCode();
         String sqlState = exception.getSQLState();
         String errorMessage = messagePrefix + sqlErrorMessage + ".";
