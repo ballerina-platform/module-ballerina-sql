@@ -12,9 +12,6 @@ path = "../test-utils/build/libs/sql-test-utils-1.0.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/io-native-1.0.0-20210910-115700-1621e18.jar"
-
-[[platform.java11.dependency]]
 path = "./lib/HikariCP-3.3.1.jar"
 
 [[platform.java11.dependency]]
