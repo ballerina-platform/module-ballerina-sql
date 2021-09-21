@@ -13,6 +13,7 @@ scope = "testOnly"
 
 [[platform.java11.dependency]]
 path = "./lib/io-native-@io.native.version@.jar"
+scope = "testOnly"
 
 [[platform.java11.dependency]]
 path = "./lib/HikariCP-@hikkaricp.lib.version@.jar"

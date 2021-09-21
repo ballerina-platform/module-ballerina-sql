@@ -103,7 +103,7 @@ function batchInsertIntoDataTableFailure3() {
 @test:Config {
     groups: ["batch-execute"]
 }
-function batchInsertIntoDataTable4() returns error? {
+function batchInsertNegative() returns error? {
     string path = check file:getAbsolutePath("tests/resources/sample/parameterized_query.bal");
     Process process = check exec("bal", {}, (), "run", path);
     int waitForExit = check process.waitForExit();
