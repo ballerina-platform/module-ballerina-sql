@@ -14,7 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/file;
+import ballerina/io;
 import ballerina/test;
+import ballerina/regex;
+import ballerina/lang.'string as strings;
 
 string batchExecuteDB = urlPrefix + "9005/batchexecute";
 
@@ -94,6 +98,21 @@ function batchInsertIntoDataTableFailure3() {
     ];
     ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is ApplicationError);
+}
+
+@test:Config {
+    groups: ["batch-execute"]
+}
+function batchInsertIntoDataTable4() returns error? {
+    string path = check file:getAbsolutePath("tests/resources/sample/parameterized_query.bal");
+    Process process = check exec("bal", {}, (), "run", path);
+    int waitForExit = check process.waitForExit();
+    int exitCode = check process.exitCode();
+    io:ReadableByteChannel readableResult = process.stderr();
+    io:ReadableCharacterChannel sc = new (readableResult, "UTF-8");
+    string outText = check sc.read(100000);
+    string[] texts = regex:split(outText, "\n");
+    test:assertTrue(strings:includes(texts[3], "method is too large"));
 }
 
 isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {

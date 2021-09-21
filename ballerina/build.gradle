@@ -70,6 +70,7 @@ task updateTomlFiles {
         newConfig = newConfig.replace('@toml.version@', tomlVersion)
         newConfig = newConfig.replace('@hikkaricp.lib.version@', project.hikkariLibVersion)
         newConfig = newConfig.replace('@hsql.connector.version@', project.hsqlDriverVersion)
+        newConfig = newConfig.replace('@io.native.version@', project.stdlibIoVersion)
 
         ballerinaTomlFile.text = newConfig
     }
