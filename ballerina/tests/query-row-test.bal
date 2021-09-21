@@ -768,7 +768,7 @@ function queryValueNegative1() returns error? {
     check dbClient.close();
     if queryResult is error {
         test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
-        test:assertEquals(queryResult.message(), "Expected type to be 'int' but found 'record{}'");
+        test:assertEquals(queryResult.message(), "Expected type to be 'int' but found 'record{}'.");
     } else {
         test:assertFail("Expected error when query result contains multiple columns.");
     }

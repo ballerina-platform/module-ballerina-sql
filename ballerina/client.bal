@@ -41,7 +41,7 @@ public type Client client object {
 
     # Executes the provided DDL or DML SQL query and returns a summary of the execution.
     #
-    # + sqlQuery - The DDL or DML queries such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`.
+    # + sqlQuery - The DDL or DML query such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`.
     #              Usage of `string` is depreciated
     # + return - Summary of the SQL update query as an `sql:ExecutionResult` or an `sql:Error`
     #            if any error occurred when executing the query

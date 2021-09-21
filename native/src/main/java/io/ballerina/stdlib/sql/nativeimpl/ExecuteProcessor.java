@@ -95,8 +95,8 @@ public class ExecuteProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
-                        " are not allowed");
+                return ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection = null;
             PreparedStatement statement = null;
@@ -134,9 +134,11 @@ public class ExecuteProcessor {
                         Constants.EXECUTION_RESULT_RECORD, resultFields);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
+                        String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (Throwable th) {
+                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
             } finally {
                 closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }
@@ -177,8 +179,8 @@ public class ExecuteProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
-                        " are not allowed");
+                return ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection = null;
             PreparedStatement statement = null;
@@ -244,12 +246,15 @@ public class ExecuteProcessor {
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
-                        "Error while executing batch command starting with: '" + sqlQuery + "'.");
+                        String.format("Error while executing batch command starting with: '%s'.", sqlQuery));
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL batch " +
-                        "command starting with : " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        String.format("Error while executing batch command starting with: '%s'. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (Throwable th) {
+                return ErrorGenerator.getSQLError(th,
+                        String.format("Error while executing batch command starting with: '%s'. ", sqlQuery));
             } finally {
                 closeResources(isWithinTrxBlock, resultSet, statement, connection);
             }

@@ -98,8 +98,8 @@ public class QueryProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                BError errorValue = ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
-                        "further operations are not allowed");
+                BError errorValue = ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
                 return getErrorStream(recordType, errorValue);
             }
             Connection connection = null;
@@ -126,7 +126,7 @@ public class QueryProcessor {
             } catch (SQLException e) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
+                        String.format("Error while executing SQL query: %s. ", sqlQuery));
                 return getErrorStream(recordType, errorValue);
             } catch (ApplicationError applicationError) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
@@ -139,7 +139,7 @@ public class QueryProcessor {
                     message = e.getClass().getName();
                 }
                 BError errorValue = ErrorGenerator.getSQLApplicationError(
-                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+                        String.format("Error while executing SQL query: %s. %s", sqlQuery, message));
                 return getErrorStream(recordType, errorValue);
             }
         } else {
@@ -182,8 +182,8 @@ public class QueryProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-               return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence " +
-                        "further operations are not allowed");
+               return ErrorGenerator.getSQLApplicationError(
+                       "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection = null;
             PreparedStatement statement = null;
@@ -205,15 +205,15 @@ public class QueryProcessor {
                     return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
                 } else {
                     if (resultSet.getMetaData().getColumnCount() > 1) {
-                        return ErrorGenerator.getTypeMismatchError("Expected type to be '" + describingType +
-                                "' but found 'record{}'");
+                        return ErrorGenerator.getTypeMismatchError(
+                                String.format("Expected type to be '%s' but found 'record{}'.", describingType));
                     }
                     ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
                     return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
                 }
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
-                        "Error while executing SQL query: " + sqlQuery + ". ");
+                        String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable e) {
@@ -222,7 +222,7 @@ public class QueryProcessor {
                     message = e.getClass().getName();
                 }
                 return ErrorGenerator.getSQLApplicationError(
-                        "Error while executing SQL query: " + sqlQuery + ". " + message);
+                        String.format("Error while executing SQL query: %s. %s", sqlQuery, message));
             } finally {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }

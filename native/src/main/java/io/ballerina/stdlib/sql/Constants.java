@@ -35,10 +35,9 @@ public final class Constants {
     public static final String DATABASE_CLIENT_ACTIVE_STATUS = "clientActive";
     public static final String SQL_CONNECTOR_TRANSACTION_ID = "sql-transaction-id";
 
-
+    public static final String SQL_ERROR = "Error";
     public static final String BATCH_EXECUTE_ERROR_DETAIL = "BatchExecuteErrorDetail";
     public static final String BATCH_EXECUTE_ERROR = "BatchExecuteError";
-    public static final String BATCH_EXECUTE_ERROR_MESSAGE = "Error occurred when batch executing commands.";
     public static final String DATABASE_ERROR_DETAILS = "DatabaseErrorDetail";
     public static final String DATABASE_ERROR = "DatabaseError";
     public static final String APPLICATION_ERROR = "ApplicationError";
@@ -48,8 +47,6 @@ public final class Constants {
     public static final String CONVERSION_ERROR = "ConversionError";
     public static final String FIELD_MISMATCH_ERROR = "FieldMismatchError";
     public static final String UNSUPPORTED_TYPE_ERROR = "UnsupportedTypeError";
-
-    public static final String DATABASE_ERROR_MESSAGE = "Database Error Occurred";
 
     public static final String RESULT_ITERATOR_OBJECT = "ResultIterator";
     public static final String RESULT_SET_NATIVE_DATA_FIELD = "ResultSet";
