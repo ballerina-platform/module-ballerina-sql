@@ -70,5 +70,3 @@ isolated function nativeStderr(Process process) returns io:ReadableByteChannel =
     name: "stderr",
     'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.Stderr"
 } external;
-
-
