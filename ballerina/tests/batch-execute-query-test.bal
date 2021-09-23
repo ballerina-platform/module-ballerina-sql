@@ -104,13 +104,22 @@ function batchInsertIntoDataTableFailure3() {
 }
 function batchInsertNegative() returns error? {
     string path = "../ballerina/tests/resources/sample/parameterized_query.bal";
-    Process process = check exec("bal", {}, (), "run", path);
+    Process process = check exec("bal", {}, (), "version");
     int waitForExit = check process.waitForExit();
     int exitCode = check process.exitCode();
+    io:ReadableByteChannel readableOutResult = process.stdout();
+    io:ReadableCharacterChannel sc2 = new (readableOutResult, "UTF-8");
+    string outText2 = checkpanic sc2.read(100000);
+    string[] ioLines = regex:split(outText2, "\n");
+    io:println(ioLines);
+    process = check exec("bal", {}, (), "run", path);
+    waitForExit = check process.waitForExit();
+    exitCode = check process.exitCode();
     io:ReadableByteChannel readableResult = process.stderr();
     io:ReadableCharacterChannel sc = new (readableResult, "UTF-8");
     string outText = check sc.read(100000);
     string[] texts = regex:split(outText, "\n");
+    io:println(texts);
     test:assertTrue(strings:includes(texts[3], "method is too large"));
 }
 

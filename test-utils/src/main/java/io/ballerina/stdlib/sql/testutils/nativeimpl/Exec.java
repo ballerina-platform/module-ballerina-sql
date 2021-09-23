@@ -25,7 +25,6 @@ import io.ballerina.stdlib.sql.testutils.utils.OSUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,8 +50,6 @@ public class Exec {
             Map<String, String> pbEnv = pb.environment();
             env.entrySet().forEach(entry -> pbEnv.put(entry.getKey().getValue(), entry.getValue().getValue()));
         }
-        PrintStream print = System.out;
-        print.println(pb.command());
         try {
             return OSUtils.getProcessObject(pb.start());
         } catch (IOException e) {
