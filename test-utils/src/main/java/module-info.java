@@ -18,7 +18,6 @@
 
 module io.ballerina.stdlib.sql.testutils {
     requires io.ballerina.runtime;
-    requires io.ballerina.stdlib.io;
     requires io.ballerina.stdlib.sql;
     exports io.ballerina.stdlib.sql.testutils;
 }

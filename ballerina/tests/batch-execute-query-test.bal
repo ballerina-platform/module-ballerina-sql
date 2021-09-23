@@ -14,10 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
-import ballerina/regex;
-import ballerina/lang.'string as strings;
 
 string batchExecuteDB = urlPrefix + "9005/batchexecute";
 
@@ -97,30 +94,6 @@ function batchInsertIntoDataTableFailure3() {
     ];
     ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is ApplicationError);
-}
-
-@test:Config {
-    groups: ["batch-execute"]
-}
-function batchInsertNegative() returns error? {
-    string path = "../ballerina/tests/resources/sample/parameterized_query.bal";
-    Process process = check exec("ballerina", {}, (), "version");
-    int waitForExit = check process.waitForExit();
-    int exitCode = check process.exitCode();
-    io:ReadableByteChannel readableOutResult = process.stdout();
-    io:ReadableCharacterChannel sc2 = new (readableOutResult, "UTF-8");
-    string outText2 = checkpanic sc2.read(100000);
-    string[] ioLines = regex:split(outText2, "\n");
-    io:println(ioLines);
-    process = check exec("ballerina", {}, (), "run", path);
-    waitForExit = check process.waitForExit();
-    exitCode = check process.exitCode();
-    io:ReadableByteChannel readableResult = process.stderr();
-    io:ReadableCharacterChannel sc = new (readableResult, "UTF-8");
-    string outText = check sc.read(100000);
-    string[] texts = regex:split(outText, "\n");
-    io:println(texts);
-    test:assertTrue(strings:includes(texts[3], "method is too large"));
 }
 
 isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] rowCount, int[] lastId) {
