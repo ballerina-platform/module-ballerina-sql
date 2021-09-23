@@ -14,6 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/test;
+
 type InsertValues record {
     string Name;
     string AccountId;
@@ -685,9 +687,9 @@ InsertValues[] values = [{Name: "test", AccountId: "1223", Chanel: "test", Close
                           ];
 
 @test:Config {
-    groups: ["batch-execute"]
+    groups: ["array-params-query"]
 }
-function testParameterizedQueryArrayLength() returns error? {
+function testParameterizedQueryArrayLength1() returns error? {
     ParameterizedQuery[] insertQueries = [];
     int noOfQuery = 0;
     foreach InsertValues value in values {
@@ -848,15 +850,14 @@ Customer[] values = [{Name: "test"}, {Name: "test"}, {Name: "test"}, {Name: "tes
                       ];
 
 @test:Config {
-    groups: ["batch-execute"]
+    groups: ["array-params-query"]
 }
-function testParameterizedQueryArrayLength() returns error? {
+function testParameterizedQueryArrayLength2() returns error? {
     ParameterizedQuery[] insertQueries = [];
     int noOfQuery = 0;
     foreach Customer value in values {
         insertQueries[noOfQuery] =  `INSERT INTO Details(Name})`;
         noOfQuery += 1;
     }
-    io:println(noOfQuery);
     test:assertTrue(noOfQuery is 762);
 }
