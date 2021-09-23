@@ -236,6 +236,7 @@ version = "2.0.0"
 scope = "testOnly"
 transitive = true
 dependencies = [
+	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "observe"}
 ]
@@ -294,6 +295,27 @@ scope = "testOnly"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
+]
+
+[[package]]
+org = "ballerina"
+name = "sql"
+version = "1.0.0"
+transitive = false
+dependencies = [
+	{org = "ballerina", name = "file"},
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.object"},
+	{org = "ballerina", name = "lang.runtime"},
+	{org = "ballerina", name = "lang.string"},
+	{org = "ballerina", name = "lang.transaction"},
+	{org = "ballerina", name = "test"},
+	{org = "ballerina", name = "time"},
+	{org = "ballerinai", name = "transaction"}
+]
+modules = [
+	{org = "ballerina", packageName = "sql", moduleName = "sql"}
 ]
 
 [[package]]
