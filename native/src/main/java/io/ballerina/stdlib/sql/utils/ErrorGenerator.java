@@ -50,7 +50,7 @@ public class ErrorGenerator {
                                                  List<BMap<BString, Object>> executionResults,
                                                  String messagePrefix) {
         String sqlErrorMessage =
-                exception.getMessage() != null ? exception.getMessage() : Constants.BATCH_EXECUTE_ERROR_MESSAGE;
+                exception.getMessage() != null ? exception.getMessage() : exception.getClass().getSimpleName();
         int vendorCode = exception.getErrorCode();
         String sqlState = exception.getSQLState();
         String errorMessage = messagePrefix + sqlErrorMessage + ".";
@@ -59,7 +59,7 @@ public class ErrorGenerator {
 
     public static BError getSQLDatabaseError(SQLException exception, String messagePrefix) {
         String sqlErrorMessage =
-                exception.getMessage() != null ? exception.getMessage() : Constants.DATABASE_ERROR_MESSAGE;
+                exception.getMessage() != null ? exception.getMessage() : exception.getClass().getSimpleName();
         int vendorCode = exception.getErrorCode();
         String sqlState = exception.getSQLState();
         String errorMessage = messagePrefix + sqlErrorMessage + ".";
@@ -72,11 +72,7 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLApplicationError(ApplicationError error) {
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getName();
-        }
-
+        String message = error.getMessage() != null ? error.getMessage() : error.getClass().getSimpleName();
         String errorName;
         if (error instanceof ConversionError) {
             errorName = Constants.CONVERSION_ERROR;
@@ -93,6 +89,12 @@ public class ErrorGenerator {
         }
         return ErrorCreator.createError(ModuleUtils.getModule(), errorName,
                 StringUtils.fromString(message), null, null);
+    }
+
+    public static BError getSQLError(Throwable th, String thMessage) {
+        String message = th.getMessage() != null ? th.getMessage() : th.getClass().getSimpleName();
+        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.SQL_ERROR,
+                StringUtils.fromString(thMessage + message), null, null);
     }
 
     public static BError getNoRowsError(String message) {

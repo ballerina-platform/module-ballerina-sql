@@ -21,7 +21,6 @@ package io.ballerina.stdlib.sql.nativeimpl;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
@@ -111,8 +110,8 @@ public class CallProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-                return ErrorGenerator.getSQLApplicationError("SQL Client is already closed, hence further operations" +
-                        " are not allowed");
+                return ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection;
             CallableStatement statement;
@@ -173,9 +172,12 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
                 return procedureCallResult;
             } catch (SQLException e) {
-                return ErrorGenerator.getSQLDatabaseError(e, "Error while executing SQL query: " + sqlQuery + ". ");
+                return ErrorGenerator.getSQLDatabaseError(e,
+                        String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (Throwable th) {
+                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
             }
         } else {
             return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
@@ -192,11 +194,6 @@ public class CallProcessor {
             int index = i + 1;
             if (object instanceof BObject) {
                 BObject objectValue = (BObject) object;
-                if ((objectValue.getType().getTag() != TypeTags.OBJECT_TYPE_TAG)) {
-                    throw new ApplicationError("Unsupported type:" +
-                            objectValue.getType().getQualifiedName() + " in column index: " + index);
-                }
-
                 String parameterType;
                 String objectType = objectValue.getType().getName();
                 if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
