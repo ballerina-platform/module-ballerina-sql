@@ -156,7 +156,7 @@ function testParameterizedQueryArrayLength() returns error? {
     ParameterizedQuery[] insertQueries = [];
     int noOfQuery = 0;
     foreach Customer value in values {
-        insertQueries[noOfQuery] =  `INSERT INTO Details(Name})`;
+        insertQueries[noOfQuery] =  `INSERT INTO Details(${value.Name})`;
         noOfQuery += 1;
     }
     test:assertTrue(noOfQuery is 762);
