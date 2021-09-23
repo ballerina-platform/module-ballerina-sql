@@ -104,7 +104,7 @@ function batchInsertIntoDataTableFailure3() {
 }
 function batchInsertNegative() returns error? {
     string path = "../ballerina/tests/resources/sample/parameterized_query.bal";
-    Process process = check exec("bal", {}, (), "version");
+    Process process = check exec("ballerina", {}, (), "version");
     int waitForExit = check process.waitForExit();
     int exitCode = check process.exitCode();
     io:ReadableByteChannel readableOutResult = process.stdout();
@@ -112,7 +112,7 @@ function batchInsertNegative() returns error? {
     string outText2 = checkpanic sc2.read(100000);
     string[] ioLines = regex:split(outText2, "\n");
     io:println(ioLines);
-    process = check exec("bal", {}, (), "run", path);
+    process = check exec("ballerina", {}, (), "run", path);
     waitForExit = check process.waitForExit();
     exitCode = check process.exitCode();
     io:ReadableByteChannel readableResult = process.stderr();
