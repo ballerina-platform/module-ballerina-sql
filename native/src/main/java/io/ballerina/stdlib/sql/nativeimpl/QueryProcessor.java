@@ -199,7 +199,7 @@ public class QueryProcessor {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
 
-                if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG) {
+                if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG && !Utils.isKnownRecordType(describingType)) {
                     RecordType recordConstraint = (RecordType) describingType;
                     List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
                     return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);

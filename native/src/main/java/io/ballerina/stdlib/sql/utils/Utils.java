@@ -110,7 +110,7 @@ public class Utils {
     private Utils() {
     }
 
-    public  static boolean  isWithinTrxBlock(TransactionResourceManager trxResourceManager) {
+    public  static boolean isWithinTrxBlock(TransactionResourceManager trxResourceManager) {
         return trxResourceManager.isInTransaction() &&
                 trxResourceManager.getCurrentTransactionContext().hasTransactionBlock();
     }
@@ -1178,4 +1178,20 @@ public class Utils {
         }
         return ballerinaType.getName();
     }
+
+    public static boolean isKnownRecordType(Type ballerinaType) {
+        String[] knownRecordTypes = {
+                Constants.SqlTypes.CIVIL,
+                Constants.SqlTypes.DATE_RECORD,
+                Constants.SqlTypes.TIME_RECORD
+        };
+        String typeName = getBTypeName(ballerinaType);
+        for (String type: knownRecordTypes) {
+            if (type.equals(typeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
