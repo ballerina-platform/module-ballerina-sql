@@ -1182,7 +1182,7 @@ public class Utils {
         return ballerinaType.getName();
     }
 
-    public static boolean isKnownRecordType(Type ballerinaType) {
+    public static boolean isSupportedRecordType(Type ballerinaType) {
         return KNOWN_RECORD_TYPES.contains(getBTypeName(ballerinaType));
     }
 
