@@ -66,6 +66,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,11 +107,13 @@ public class Utils {
             io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD,
             io.ballerina.stdlib.time.util.ModuleUtils.getModule(), 0, true, 0);
     public static final ArrayType TIME_ARRAY_TYPE = TypeCreator.createArrayType(TIME_RECORD_TYPE);
+    private static final List<String> KNOWN_RECORD_TYPES = Arrays.asList(
+            Constants.SqlTypes.CIVIL, Constants.SqlTypes.DATE_RECORD, Constants.SqlTypes.TIME_RECORD);
 
     private Utils() {
     }
 
-    public  static boolean  isWithinTrxBlock(TransactionResourceManager trxResourceManager) {
+    public static boolean isWithinTrxBlock(TransactionResourceManager trxResourceManager) {
         return trxResourceManager.isInTransaction() &&
                 trxResourceManager.getCurrentTransactionContext().hasTransactionBlock();
     }
@@ -1178,4 +1181,9 @@ public class Utils {
         }
         return ballerinaType.getName();
     }
+
+    public static boolean isSupportedRecordType(Type ballerinaType) {
+        return KNOWN_RECORD_TYPES.contains(getBTypeName(ballerinaType));
+    }
+
 }
