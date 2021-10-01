@@ -1,14 +1,14 @@
 [package]
 org = "ballerina"
 name = "sql"
-version = "1.0.0"
+version = "1.0.1"
 distribution = "slbeta3"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/sql-native-1.0.0-SNAPSHOT.jar"
+path = "../native/build/libs/sql-native-1.0.1-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/sql-test-utils-1.0.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/sql-test-utils-1.0.1-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
