@@ -1,5 +1,10 @@
 # Add functionality to map multiple fields in the return query result to a single typed record field
 
+_Owners_: @daneshk @niveathika  
+_Reviewers_: @daneshk  
+_Created_: 2021/10/05  
+_Issues_: [#1924](https://github.com/ballerina-platform/ballerina-standard-library/issues/1924)
+
 ## Summary
 
 Users can use this functionality to map multiple returned data columns to a single typed record field during the query operation. It is an n:1 mapping of the results through typed records.
