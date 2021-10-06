@@ -939,6 +939,72 @@ function queryValueTypeBinary() returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
+function queryValueTypeCivil() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT datetime_type FROM DateTimeTypes WHERE row_id = 1`;
+    time:Civil retrievedValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    time:Civil timestampTypeRecord = {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0};
+    test:assertEquals(retrievedValue, timestampTypeRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryValueTypeCivilWithTimezone() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT timestamp_tz_type FROM DateTimeTypes WHERE row_id = 1`;
+    time:Civil retrievedValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    time:Civil timestampWithTimezone = {utcOffset: {hours: 8, minutes: 0}, timeAbbrev: "+08:00", year:2008,
+                                        month:8, day:8, hour: 20, minute: 8, second:8};
+    test:assertEquals(retrievedValue, timestampWithTimezone);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryValueTypeDate() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT date_type FROM DateTimeTypes WHERE row_id = 1`;
+    time:Date retrievedValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    time:Date dateTypeRecord = {year: 2017, month: 2, day: 3};
+    test:assertEquals(retrievedValue, dateTypeRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryValueTypeTime() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT time_type FROM DateTimeTypes WHERE row_id = 1`;
+    time:TimeOfDay retrievedValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second:45};
+    test:assertEquals(retrievedValue, timeTypeRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryValueTypeTimeWithTimezone() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT time_tz_type FROM DateTimeTypes WHERE row_id = 1`;
+    time:TimeOfDay retrievedValue = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    time:TimeOfDay timeWithTimezone = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8, "timeAbbrev": "-08:00"};
+    test:assertEquals(retrievedValue, timeWithTimezone);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
 function testGetPrimitiveTypesRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     SelectTestAlias value = check dbClient->queryRow(
