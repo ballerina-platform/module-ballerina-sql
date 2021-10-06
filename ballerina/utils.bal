@@ -14,8 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/lang.'string;
-
 # Concatenates all provided `sql:ParameterizedQuery`s into a single `sql:ParameterizedQuery`.
 #
 # + queries - Set of `sql:ParameterizedQuery` queries
@@ -32,43 +30,24 @@ public isolated function queryConcat(ParameterizedQuery... queries) returns Para
 
 isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
-    string queryInString = "";
-    string nullValue = "";
-    string[] strings = [];
-    Value[] values = [];
-    int i = 0;
+    string[] newQueryStrings = [];
+    Value[] newQueryInsertions = [];
+    string previousString = "";
     foreach ParameterizedQuery query in queries {
-        string[] stringValues = query.strings;
-        Value[] insertionValues = query.insertions;
-        if insertionValues.length() == 0 {
-            queryInString += stringValues[0];
-        } else {
-            foreach string value in stringValues {
-                if 'string:startsWith(value, ",") {
-                    if queryInString != nullValue {
-                        strings.push(queryInString);
-                    }
-                    if value != nullValue {
-                        strings.push(value);
-                    }
-                } else if value == nullValue && queryInString != nullValue && !'string:endsWith(queryInString, "=") {
-                     if queryInString != nullValue {
-                        strings.push(queryInString);
-                     }
-                } else {
-                    queryInString += value;
-                    strings.push(queryInString);
-                }
-                queryInString = nullValue;
+        int length = query.strings.length();
+        previousString = previousString + query.strings[0];
+        if (length > 1) {
+            newQueryStrings.push(previousString);
+            foreach var i in 1 ... length - 2 {
+                newQueryStrings.push(query.strings[i]);
             }
-            addValues(insertionValues, values);
+            previousString = query.strings[length -1];
         }
+        addValues(query.insertions, newQueryInsertions);
     }
-    if queryInString != nullValue {
-        strings.push(queryInString);
-    }
-    newParameterizedQuery.insertions = values;
-    newParameterizedQuery.strings = strings.cloneReadOnly();
+    newQueryStrings.push(previousString);
+    newParameterizedQuery.insertions = newQueryInsertions;
+    newParameterizedQuery.strings = newQueryStrings.cloneReadOnly();
     return newParameterizedQuery;
 }
 
@@ -87,17 +66,13 @@ isolated function addValues(Value[] insertionValues, Value[] values) {
 # + values - An array of `sql:Value` values
 # + return - An `sql:ParameterizedQuery`
 public isolated function arrayFlattenQuery(Value[] values) returns ParameterizedQuery {
-    ParameterizedQuery newParameterizedQuery = ``;
-    string[] strings = [];
-    if values.length() == 1 {
-        strings.push("");
-    } else {
-        foreach var i in 1..<values.length() {
-            strings.push(",");
-        }
+    if values.length() == 0 {
+        return ``;
     }
-    newParameterizedQuery.strings = strings.cloneReadOnly();
-    newParameterizedQuery.insertions = values;
+    ParameterizedQuery newParameterizedQuery = `${values[0]}`;
+    foreach var i in 1..<values.length() {
+        newParameterizedQuery = queryConcat(newParameterizedQuery, `, ${values[i]}`);
+    }
     return newParameterizedQuery;
 }
 
