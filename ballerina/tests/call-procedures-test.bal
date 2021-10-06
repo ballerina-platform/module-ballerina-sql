@@ -45,14 +45,14 @@ type StringDataSingle record {
 };
 
 @test:BeforeGroups {
-	value: ["procedures"]	
+	value: ["procedures"]
 } 
 function initproceduresContainer() returns error? {
 	check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["procedures"]	
+	value: ["procedures"]
 } 
 function cleanproceduresContainer() returns error? {
 	check cleanDockerContainer("sql-procedures");
@@ -874,7 +874,7 @@ function testMultipleRecords() returns error? {
         CREATE PROCEDURE FetchMultipleRecords ()
             READS SQL DATA DYNAMIC RESULT SETS 1
             BEGIN ATOMIC
-                 declare curs cursor with return for select * from MultipleRecords;
+                 declare curs cursor with return for SELECT * FROM MultipleRecords WHERE id = 2;
                  open curs;
             END
         `;
@@ -889,8 +889,62 @@ function testMultipleRecords() returns error? {
     stream<record {}, Error?>? streamData = result.queryResult;
     check result.close();
     check dbClient.close();
-    test:assertTrue(streamData is stream<record {}, Error?>, "streamData is nil.");
     test:assertTrue(status is boolean, "streamData is not boolean.");
+
+    record {}? returnData = ();
+
+    if streamData is stream<record {}, Error?> {
+        error? e = streamData.forEach(function(record {} data) {
+            returnData = data;
+        });
+    } else {
+        test:assertFail("streamData is nil.");
+    }
+
+    if returnData is Person {
+        test:assertEquals(returnData.id, 2);
+        test:assertEquals(returnData.name, "John");
+        test:assertEquals(returnData.age, 25);
+        test:assertEquals(returnData.birthday, "2012-10-12");
+        test:assertEquals(returnData.country_code, "US");
+    } else {
+        test:assertFail("Return data is not of type 'Person'.");
+    }
+
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testMultipleRecords]
+}
+function testMultipleRecordsWithNoReturnType() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(`call FetchMultipleRecords();`);
+    boolean|Error status = result.getNextQueryResult();
+    stream<record {}, Error?>? streamData = result.queryResult;
+    check result.close();
+    check dbClient.close();
+    test:assertTrue(status is boolean, "streamData is not boolean.");
+
+    record {}? returnData = ();
+
+    if streamData is stream<record {}, Error?> {
+        error? e = streamData.forEach(function(record {} data) {
+            returnData = data;
+        });
+    } else {
+        test:assertFail("streamData is nil.");
+    }
+
+    if returnData is record {} {
+        test:assertEquals(returnData["ID"], 2);
+        test:assertEquals(returnData["NAME"], "John");
+        test:assertEquals(returnData["AGE"], 25);
+        test:assertEquals(returnData["BIRTHDAY"], "2012-10-12");
+        test:assertEquals(returnData["COUNTRY_CODE"], "US");
+    } else {
+        test:assertFail("Return data is not a record.");
+    }
 }
 
 @test:Config {
