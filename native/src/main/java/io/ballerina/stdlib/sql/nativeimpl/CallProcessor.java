@@ -59,7 +59,7 @@ import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
-import static io.ballerina.stdlib.sql.utils.Utils.getDefaultRecordType;
+import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
 
@@ -138,8 +138,8 @@ public class CallProcessor {
                     StructureType streamConstraint;
                     resultSet = statement.getResultSet();
                     if (recordTypes.size() == 0) {
-                        columnDefinitions = getColumnDefinitions(resultSet, null);
-                        streamConstraint = getDefaultRecordType(columnDefinitions);
+                        streamConstraint = getDefaultStreamConstraint();
+                        columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                     } else {
                         streamConstraint = (StructureType) ((BTypedesc) recordDescriptions[0]).getDescribingType();
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);

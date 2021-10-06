@@ -44,7 +44,7 @@ import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
-import static io.ballerina.stdlib.sql.utils.Utils.getDefaultRecordType;
+import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
 import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
 
 /**
@@ -73,8 +73,8 @@ public class ProcedureCallResultUtils {
                 int totalRecordDescriptions = (int) procedureCallResult
                         .getNativeData(RESULT_SET_TOTAL_NATIVE_DATA_FIELD);
                 if (totalRecordDescriptions == 0) {
-                    columnDefinitions = getColumnDefinitions(resultSet, null);
-                    streamConstraint = getDefaultRecordType(columnDefinitions);
+                    streamConstraint = getDefaultStreamConstraint();
+                    columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                 } else {
                     Object[] recordDescriptions = (Object[]) procedureCallResult
                             .getNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD);
