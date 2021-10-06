@@ -805,7 +805,9 @@ function testInOperator2() returns error? {
 }
 function testInOperator3() returns error? {
     int[] ids = [1,2,3];
+    io:println("Correct query");
     ParameterizedQuery sqlQuery = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
+    io:println(sqlQuery.strings);
     record{}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
