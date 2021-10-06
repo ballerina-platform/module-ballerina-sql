@@ -35,7 +35,7 @@ isolated client class MockClient {
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
 
-    remote isolated function query(string|ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>) 
+    remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream<rowType, Error?> = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
         name: "nativeQuery"
@@ -47,7 +47,7 @@ isolated client class MockClient {
         name: "nativeQueryRow"
     } external;
 
-    remote isolated function execute(string|ParameterizedQuery sqlQuery) 
+    remote isolated function execute(ParameterizedQuery sqlQuery)
     returns ExecutionResult|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils",
         name: "nativeExecute"
@@ -60,7 +60,7 @@ isolated client class MockClient {
         return nativeBatchExecute(self, sqlQueries);
     }
 
-    remote isolated function call(string|ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = []) 
+    remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.CallTestUtils",
         name: "nativeCall"
