@@ -185,6 +185,7 @@ modules = [
 org = "ballerina"
 name = "lang.string"
 version = "0.0.0"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
