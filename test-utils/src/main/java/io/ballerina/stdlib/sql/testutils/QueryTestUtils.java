@@ -34,7 +34,7 @@ public class QueryTestUtils {
     private QueryTestUtils() {
     }
 
-    public static BStream nativeQuery(Environment environment, BObject client, Object paramSQLString,
+    public static BStream nativeQuery(Environment environment, BObject client, BObject paramSQLString,
                                       BTypedesc recordType) {
         DefaultStatementParameterProcessor statementParametersProcessor = DefaultStatementParameterProcessor
                 .getInstance();

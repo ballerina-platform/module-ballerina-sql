@@ -883,8 +883,7 @@ function testMultipleRecords() returns error? {
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
 
-    // Usage of string in the call API is depreciated
-    ProcedureCallResult result = check dbClient->call("call FetchMultipleRecords();", [Person]);
+    ProcedureCallResult result = check dbClient->call(`call FetchMultipleRecords();`, [Person]);
     boolean|Error status = result.getNextQueryResult();
     stream<record {}, Error?>? streamData = result.queryResult;
     check result.close();

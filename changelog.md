@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [Remove support for string parameter in SQL APIs](https://github.com/ballerina-platform/ballerina-standard-library/issues/2010)
 - [Improve Errors](https://github.com/ballerina-platform/ballerina-standard-library/issues/1758)
 - [Add completion type as nil in SQL query return stream type](https://github.com/ballerina-platform/ballerina-standard-library/issues/1654)
 - [Fix type cast error for query api containing database error](https://github.com/ballerina-platform/ballerina-standard-library/issues/1759)

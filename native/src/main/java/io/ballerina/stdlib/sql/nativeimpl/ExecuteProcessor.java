@@ -70,7 +70,7 @@ public class ExecuteProcessor {
      * @param statementParameterProcessor pre-processor of the statement
      * @return execution result or error
      */
-    public static Object nativeExecute(Environment env, BObject client, Object paramSQLString,
+    public static Object nativeExecute(Environment env, BObject client, BObject paramSQLString,
                                        AbstractStatementParameterProcessor statementParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
@@ -87,7 +87,7 @@ public class ExecuteProcessor {
         return null;
     }
 
-    private static Object nativeExecuteExecutable(BObject client, Object paramSQLString,
+    private static Object nativeExecuteExecutable(BObject client, BObject paramSQLString,
                                                  AbstractStatementParameterProcessor statementParameterProcessor,
                                                  boolean isWithInTrxBlock,
                                                  TransactionResourceManager trxResourceManager) {
@@ -103,11 +103,7 @@ public class ExecuteProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                if (paramSQLString instanceof BString) {
-                    sqlQuery = ((BString) paramSQLString).getValue();
-                } else {
-                    sqlQuery = getSqlQuery((BObject) paramSQLString);
-                }
+                sqlQuery = getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
 
                 if (sqlDatasource.getExecuteGKFlag()) {
@@ -116,9 +112,8 @@ public class ExecuteProcessor {
                     statement = connection.prepareStatement(sqlQuery);
                 }
 
-                if (paramSQLString instanceof BObject) {
-                    statementParameterProcessor.setParams(connection, statement, (BObject) paramSQLString);
-                }
+                statementParameterProcessor.setParams(connection, statement, paramSQLString);
+
                 int count = statement.executeUpdate();
                 Object lastInsertedId = null;
                 if (!isDdlStatement(sqlQuery)) {
