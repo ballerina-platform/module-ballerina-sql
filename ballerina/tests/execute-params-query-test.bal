@@ -183,7 +183,6 @@ function deleteDataTable4() returns error? {
     ParameterizedQuery query5 = ` AND boolean_type=${boolType} AND string_type=${stringType}`;
     ParameterizedQuery query6 = ` AND decimal_type=${decimalType}`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
-    io:println(sqlQuery);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
@@ -211,7 +210,6 @@ function deleteDataTable5() returns error? {
     ParameterizedQuery query5 = ` AND boolean_type=${boolType} AND string_type=${stringType} AND`;
     ParameterizedQuery query6 = ` decimal_type=23.45`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
-    io:println(sqlQuery.strings);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 
@@ -239,7 +237,6 @@ function deleteDataTable6() returns error? {
     ParameterizedQuery query5 = ` AND boolean_type=${boolType} AND string_type=${stringType} AND`;
     ParameterizedQuery query6 = ` decimal_type=23.45`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
-    io:println(sqlQuery.strings);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
 

@@ -33,23 +33,19 @@ isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) return
     string[] strings = [];
     Value[] values = [];
     string previousString = "";
-    string firstStringValue = "";
     foreach ParameterizedQuery query in queries {
         string[] stringValues = query.strings;
         Value[] insertionValues = query.insertions;
         int length = stringValues.length();
         if (length > 1) {
-            firstStringValue = previousString + stringValues[0];
-            strings.push(firstStringValue);
+            strings.push(previousString + stringValues[0]);
             previousString = "";
 
             foreach var i in 1 ... length - 2 {
                 strings.push(stringValues[i]);
             }
         }
-        if (length >= 1) {
-            previousString = previousString + stringValues[stringValues.length() -1];
-        }
+        previousString = previousString + stringValues[stringValues.length() -1];
         addValues(insertionValues, values);
     }
     strings.push(previousString);
@@ -78,7 +74,7 @@ public isolated function arrayFlattenQuery(Value[] values) returns Parameterized
     }
     ParameterizedQuery newParameterizedQuery = `${values[0]}`;
     foreach var i in 1..<values.length() {
-        newParameterizedQuery = queryConcat(newParameterizedQuery, `, ${values[1]}`);
+        newParameterizedQuery = queryConcat(newParameterizedQuery, `, ${values[i]}`);
     }
     return newParameterizedQuery;
 }
