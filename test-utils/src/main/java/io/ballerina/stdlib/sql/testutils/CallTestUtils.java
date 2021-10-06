@@ -32,7 +32,7 @@ public class CallTestUtils {
     private CallTestUtils(){ 
     }
     
-    public static Object nativeCall(Environment env, BObject client, Object paramSQLString, BArray recordTypes) {
+    public static Object nativeCall(Environment env, BObject client, BObject paramSQLString, BArray recordTypes) {
         return CallProcessor.nativeCall(env, client, paramSQLString, recordTypes,
                 DefaultStatementParameterProcessor.getInstance(), DefaultResultParameterProcessor.getInstance());
     }

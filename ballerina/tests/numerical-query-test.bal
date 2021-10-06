@@ -276,8 +276,7 @@ function testQueryNumericCustomTypeRecord() returns error? {
 }
 function testQueryFromNullTable() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    // Usage of string in the query API is depreciated
-    stream<record {}, Error?> streamData = dbClient->query("SELECT * FROM NumericNullTypes");
+    stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericNullTypes`);
     record {} returnData = {};
     int count = 0;
     error? e = streamData.forEach(function(record {} data) {
