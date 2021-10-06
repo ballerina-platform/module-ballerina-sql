@@ -30,27 +30,24 @@ public isolated function queryConcat(ParameterizedQuery... queries) returns Para
 
 isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) returns ParameterizedQuery {
     ParameterizedQuery newParameterizedQuery = ``;
-    string[] strings = [];
-    Value[] values = [];
+    string[] newQueryStrings = [];
+    Value[] newQueryInsertions = [];
     string previousString = "";
     foreach ParameterizedQuery query in queries {
-        string[] stringValues = query.strings;
-        Value[] insertionValues = query.insertions;
-        int length = stringValues.length();
+        int length = query.strings.length();
+        previousString = previousString + query.strings[0];
         if (length > 1) {
-            strings.push(previousString + stringValues[0]);
-            previousString = "";
-
+            newQueryStrings.push(previousString);
             foreach var i in 1 ... length - 2 {
-                strings.push(stringValues[i]);
+                newQueryStrings.push(query.strings[i]);
             }
+            previousString = query.strings[length -1];
         }
-        previousString = previousString + stringValues[stringValues.length() -1];
-        addValues(insertionValues, values);
+        addValues(query.insertions, newQueryInsertions);
     }
-    strings.push(previousString);
-    newParameterizedQuery.insertions = values;
-    newParameterizedQuery.strings = strings.cloneReadOnly();
+    newQueryStrings.push(previousString);
+    newParameterizedQuery.insertions = newQueryInsertions;
+    newParameterizedQuery.strings = newQueryStrings.cloneReadOnly();
     return newParameterizedQuery;
 }
 
