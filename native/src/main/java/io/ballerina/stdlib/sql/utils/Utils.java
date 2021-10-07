@@ -425,8 +425,7 @@ public class Utils {
                                                     ResultSet resultSet, BMap<BString, Object> bStruct,
                                                     List<ColumnDefinition> columnDefinitions)
             throws SQLException, DataError {
-        for (int i = 0; i < columnDefinitions.size(); i++) {
-            ColumnDefinition columnDefinition = columnDefinitions.get(i);
+        for (ColumnDefinition columnDefinition : columnDefinitions) {
             if (columnDefinition instanceof RecordColumnDefinition) {
                 RecordColumnDefinition recordColumnDef = (RecordColumnDefinition) columnDefinition;
                 BMap<BString, Object> innerRecord = ValueCreator.createMapValue(recordColumnDef.getBallerinaType());
@@ -440,8 +439,8 @@ public class Utils {
                 PrimitiveTypeColumnDefinition definition = (PrimitiveTypeColumnDefinition) columnDefinition;
                 bStruct.put(fromString(columnDefinition.getBallerinaFieldName()), Utils.getResult(resultSet,
                         definition.getResultSetColumnIndex(), definition, resultParameterProcessor));
-            } // Not possible to reach the final else since there is only two types of Column Definition
-
+            }
+            // Not possible to reach the final else since there is only two types of Column Definition
         }
     }
 
