@@ -53,7 +53,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
@@ -68,7 +67,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -225,32 +223,32 @@ public class TestUtils {
     public static Connection getMockConnection(boolean isClosed) {
         return new Connection() {
             @Override
-            public Statement createStatement() throws SQLException {
+            public Statement createStatement() {
                 return null;
             }
 
             @Override
-            public PreparedStatement prepareStatement(String sql) throws SQLException {
+            public PreparedStatement prepareStatement(String sql) {
                 return null;
             }
 
             @Override
-            public CallableStatement prepareCall(String sql) throws SQLException {
+            public CallableStatement prepareCall(String sql) {
                 return null;
             }
 
             @Override
-            public String nativeSQL(String sql) throws SQLException {
+            public String nativeSQL(String sql) {
                 return null;
             }
 
             @Override
-            public void setAutoCommit(boolean autoCommit) throws SQLException {
+            public void setAutoCommit(boolean autoCommit) {
 
             }
 
             @Override
-            public boolean getAutoCommit() throws SQLException {
+            public boolean getAutoCommit() {
                 return false;
             }
 
@@ -270,247 +268,244 @@ public class TestUtils {
             }
 
             @Override
-            public boolean isClosed() throws SQLException {
+            public boolean isClosed() {
                 return isClosed;
             }
 
             @Override
-            public DatabaseMetaData getMetaData() throws SQLException {
+            public DatabaseMetaData getMetaData() {
                 return null;
             }
 
             @Override
-            public void setReadOnly(boolean readOnly) throws SQLException {
+            public void setReadOnly(boolean readOnly) {
 
             }
 
             @Override
-            public boolean isReadOnly() throws SQLException {
+            public boolean isReadOnly() {
                 return false;
             }
 
             @Override
-            public void setCatalog(String catalog) throws SQLException {
+            public void setCatalog(String catalog) {
 
             }
 
             @Override
-            public String getCatalog() throws SQLException {
+            public String getCatalog() {
                 return null;
             }
 
             @Override
-            public void setTransactionIsolation(int level) throws SQLException {
+            public void setTransactionIsolation(int level) {
 
             }
 
             @Override
-            public int getTransactionIsolation() throws SQLException {
+            public int getTransactionIsolation() {
+                return Connection.TRANSACTION_NONE;
+            }
+
+            @Override
+            public SQLWarning getWarnings() {
+                return null;
+            }
+
+            @Override
+            public void clearWarnings() {
+
+            }
+
+            @Override
+            public Statement createStatement(int resultSetType, int resultSetConcurrency) {
+                return null;
+            }
+
+            @Override
+            public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) {
+                return null;
+            }
+
+            @Override
+            public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) {
+                return null;
+            }
+
+            @Override
+            public Map<String, Class<?>> getTypeMap() {
+                return null;
+            }
+
+            @Override
+            public void setTypeMap(Map<String, Class<?>> map) {
+
+            }
+
+            @Override
+            public void setHoldability(int holdability) {
+
+            }
+
+            @Override
+            public int getHoldability() {
                 return 0;
             }
 
             @Override
-            public SQLWarning getWarnings() throws SQLException {
+            public Savepoint setSavepoint() {
                 return null;
             }
 
             @Override
-            public void clearWarnings() throws SQLException {
-
-            }
-
-            @Override
-            public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+            public Savepoint setSavepoint(String name) {
                 return null;
             }
 
             @Override
-            public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-                    throws SQLException {
-                return null;
-            }
-
-            @Override
-            public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
-                    throws SQLException {
-                return null;
-            }
-
-            @Override
-            public Map<String, Class<?>> getTypeMap() throws SQLException {
-                return null;
-            }
-
-            @Override
-            public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+            public void rollback(Savepoint savepoint) {
 
             }
 
             @Override
-            public void setHoldability(int holdability) throws SQLException {
+            public void releaseSavepoint(Savepoint savepoint) {
 
             }
 
             @Override
-            public int getHoldability() throws SQLException {
-                return 0;
-            }
-
-            @Override
-            public Savepoint setSavepoint() throws SQLException {
-                return null;
-            }
-
-            @Override
-            public Savepoint setSavepoint(String name) throws SQLException {
-                return null;
-            }
-
-            @Override
-            public void rollback(Savepoint savepoint) throws SQLException {
-
-            }
-
-            @Override
-            public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-
-            }
-
-            @Override
-            public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-                    throws SQLException {
+            public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
                 return null;
             }
 
             @Override
             public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-                                                      int resultSetHoldability) throws SQLException {
+                                                      int resultSetHoldability) {
                 return null;
             }
 
             @Override
             public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
-                                                 int resultSetHoldability) throws SQLException {
+                                                 int resultSetHoldability) {
                 return null;
             }
 
             @Override
-            public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+            public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) {
                 return null;
             }
 
             @Override
-            public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+            public PreparedStatement prepareStatement(String sql, int[] columnIndexes) {
                 return null;
             }
 
             @Override
-            public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+            public PreparedStatement prepareStatement(String sql, String[] columnNames) {
                 return null;
             }
 
             @Override
-            public Clob createClob() throws SQLException {
+            public Clob createClob() {
                 return null;
             }
 
             @Override
-            public Blob createBlob() throws SQLException {
+            public Blob createBlob() {
                 return null;
             }
 
             @Override
-            public NClob createNClob() throws SQLException {
+            public NClob createNClob() {
                 return null;
             }
 
             @Override
-            public SQLXML createSQLXML() throws SQLException {
+            public SQLXML createSQLXML() {
                 return null;
             }
 
             @Override
-            public boolean isValid(int timeout) throws SQLException {
+            public boolean isValid(int timeout) {
                 return false;
             }
 
             @Override
-            public void setClientInfo(String name, String value) throws SQLClientInfoException {
+            public void setClientInfo(String name, String value) {
 
             }
 
             @Override
-            public void setClientInfo(Properties properties) throws SQLClientInfoException {
+            public void setClientInfo(Properties properties) {
 
             }
 
             @Override
-            public String getClientInfo(String name) throws SQLException {
+            public String getClientInfo(String name) {
                 return null;
             }
 
             @Override
-            public Properties getClientInfo() throws SQLException {
+            public Properties getClientInfo() {
                 return null;
             }
 
             @Override
-            public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+            public Array createArrayOf(String typeName, Object[] elements) {
                 return null;
             }
 
             @Override
-            public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+            public Struct createStruct(String typeName, Object[] attributes) {
                 return new Struct() {
                     @Override
-                    public String getSQLTypeName() throws SQLException {
+                    public String getSQLTypeName() {
                         return typeName;
                     }
 
                     @Override
-                    public Object[] getAttributes() throws SQLException {
+                    public Object[] getAttributes() {
                         return attributes;
                     }
 
                     @Override
-                    public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+                    public Object[] getAttributes(Map<String, Class<?>> map) {
                         return new Object[0];
                     }
                 };
             }
 
             @Override
-            public void setSchema(String schema) throws SQLException {
+            public void setSchema(String schema) {
 
             }
 
             @Override
-            public String getSchema() throws SQLException {
+            public String getSchema() {
                 return null;
             }
 
             @Override
-            public void abort(Executor executor) throws SQLException {
+            public void abort(Executor executor) {
 
             }
 
             @Override
-            public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+            public void setNetworkTimeout(Executor executor, int milliseconds) {
 
             }
 
             @Override
-            public int getNetworkTimeout() throws SQLException {
+            public int getNetworkTimeout() {
                 return 0;
             }
 
             @Override
-            public <T> T unwrap(Class<T> iface) throws SQLException {
+            public <T> T unwrap(Class<T> iface) {
                 return null;
             }
 
             @Override
-            public boolean isWrapperFor(Class<?> iface) throws SQLException {
+            public boolean isWrapperFor(Class<?> iface) {
                 return false;
             }
         };
@@ -519,52 +514,52 @@ public class TestUtils {
     public static XAResource getMockXAResource() {
         return new XAResource() {
             @Override
-            public void commit(Xid xid, boolean onePhase) throws XAException {
+            public void commit(Xid xid, boolean onePhase) {
 
             }
 
             @Override
-            public void end(Xid xid, int flags) throws XAException {
+            public void end(Xid xid, int flags) {
 
             }
 
             @Override
-            public void forget(Xid xid) throws XAException {
+            public void forget(Xid xid) {
 
             }
 
             @Override
-            public int getTransactionTimeout() throws XAException {
+            public int getTransactionTimeout() {
                 return 0;
             }
 
             @Override
-            public boolean isSameRM(XAResource xares) throws XAException {
+            public boolean isSameRM(XAResource xares) {
                 return false;
             }
 
             @Override
-            public int prepare(Xid xid) throws XAException {
+            public int prepare(Xid xid) {
                 return 0;
             }
 
             @Override
-            public Xid[] recover(int flag) throws XAException {
+            public Xid[] recover(int flag) {
                 return new Xid[0];
             }
 
             @Override
-            public void rollback(Xid xid) throws XAException {
+            public void rollback(Xid xid) {
 
             }
 
             @Override
-            public boolean setTransactionTimeout(int seconds) throws XAException {
+            public boolean setTransactionTimeout(int seconds) {
                 return false;
             }
 
             @Override
-            public void start(Xid xid, int flags) throws XAException {
+            public void start(Xid xid, int flags) {
 
             }
         };
@@ -621,17 +616,17 @@ public class TestUtils {
     public static Struct getStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new String[]{"2", "2"};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
@@ -640,17 +635,17 @@ public class TestUtils {
     public static Struct getDecimalStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new BigDecimal[]{new BigDecimal(1), new BigDecimal(2)};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
@@ -659,17 +654,17 @@ public class TestUtils {
     public static Struct getFloatStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new Double[]{1.2, 2.3};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
@@ -678,17 +673,17 @@ public class TestUtils {
     public static Struct getIntStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new Integer[]{ 1, 2};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
@@ -697,17 +692,17 @@ public class TestUtils {
     public static Struct getBooleanStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new Integer[]{1, 0};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
@@ -716,66 +711,66 @@ public class TestUtils {
     public static Struct getRecordStruct() {
         return new Struct() {
             @Override
-            public String getSQLTypeName() throws SQLException {
+            public String getSQLTypeName() {
                 return null;
             }
 
             @Override
-            public Object[] getAttributes() throws SQLException {
+            public Object[] getAttributes() {
                 return new Struct[]{getBooleanStruct()};
             }
 
             @Override
-            public Object[] getAttributes(Map<String, Class<?>> map) throws SQLException {
+            public Object[] getAttributes(Map<String, Class<?>> map) {
                 return new Object[0];
             }
         };
     }
 
     public static RecordType getIntStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value1", new BField(PredefinedTypes.TYPE_INT, "value1", 256L));
         fields.put("value2", new BField(PredefinedTypes.TYPE_INT, "value2", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_INT));
     }
 
     public static RecordType getBooleanStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value1", new BField(PredefinedTypes.TYPE_BOOLEAN, "value1", 256L));
         fields.put("value2", new BField(PredefinedTypes.TYPE_BOOLEAN, "value2", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_BOOLEAN));
     }
 
     public static RecordType getFloatStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value1", new BField(PredefinedTypes.TYPE_FLOAT, "value1", 256L));
         fields.put("value2", new BField(PredefinedTypes.TYPE_FLOAT, "value2", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_FLOAT));
     }
 
     public static RecordType getStringStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value1", new BField(PredefinedTypes.TYPE_STRING, "value1", 256L));
         fields.put("value2", new BField(PredefinedTypes.TYPE_STRING, "value2", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_STRING));
     }
 
     public static RecordType getDecimalStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value1", new BField(PredefinedTypes.TYPE_DECIMAL, "value1", 256L));
         fields.put("value2", new BField(PredefinedTypes.TYPE_DECIMAL, "value2", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(PredefinedTypes.TYPE_DECIMAL));
     }
 
     public static RecordType getRecordStructRecord() {
-        Map<String, Field> fields = new HashMap();
+        Map<String, Field> fields = new HashMap<>();
         fields.put("value0", new BField(getBooleanStructRecord(), "value0", 256L));
-        return new BRecordType("$$returnType$$", (Module) null, 0L, fields, (Type) null, true,
+        return new BRecordType("$$returnType$$", null, 0L, fields, null, true,
                 IteratorUtils.getTypeFlags(getBooleanStructRecord()));
     }
 
@@ -864,11 +859,10 @@ public class TestUtils {
     }
 
     public static BTypedesc getBTypedesc(Type type) {
-        Type typedesc = type;
         return new BTypedesc() {
             @Override
             public Type getDescribingType() {
-                return typedesc;
+                return type;
             }
 
             @Override

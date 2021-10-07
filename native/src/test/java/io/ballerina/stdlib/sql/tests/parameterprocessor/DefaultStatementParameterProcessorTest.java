@@ -24,13 +24,13 @@ import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProce
 import io.ballerina.stdlib.sql.tests.TestUtils;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Struct;
 import java.util.ArrayList;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -40,20 +40,20 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class DefaultStatementParameterProcessorTest {
     static class NullAndErrorCheckClass extends DefaultStatementParameterProcessor {
-        int testGetCustomSQLType(String name) throws ApplicationError, SQLException {
-            return getCustomSQLType(TestUtils.getMockObject(name));
+        void testGetCustomSQLType() throws ApplicationError, SQLException {
+            getCustomSQLType(TestUtils.getMockObject("Object"));
         }
 
-        void testSetCustomSqlTypedParam(String name) throws SQLException, ApplicationError {
-            setCustomSqlTypedParam(null , null, 0, TestUtils.getMockObject(name));
+        void testSetCustomSqlTypedParam() throws SQLException, ApplicationError {
+            setCustomSqlTypedParam(null , null, 0, TestUtils.getMockObject("Object"));
         }
 
-        Object[] testGetCustomArrayData(Object value) throws ApplicationError, SQLException {
-            return getCustomArrayData(value);
+        void testGetCustomArrayData(Object value) throws ApplicationError, SQLException {
+            getCustomArrayData(value);
         }
 
-        Object[] testGetCustomStructData(Object value)throws SQLException, ApplicationError {
-            return getCustomStructData(TestUtils.getMockBValueJson());
+        void testGetCustomStructData()throws SQLException, ApplicationError {
+            getCustomStructData(TestUtils.getMockBValueJson());
         }
 
         void testSetBoolean() throws SQLException, ApplicationError {
@@ -64,11 +64,11 @@ public class DefaultStatementParameterProcessorTest {
             setDecimal(null, "Decimal", 0, TestUtils.getMockBValueJson());
         }
 
-        void testSetBinaryAndBlob() throws SQLException, ApplicationError, IOException {
+        void testSetBinaryAndBlob() throws SQLException, ApplicationError {
             setBlob(null, "Blob", 0, TestUtils.getMockBValueJson());
         }
 
-        void testSetClobAndNclob() throws SQLException, ApplicationError, IOException {
+        void testSetClobAndNclob() throws SQLException, ApplicationError {
             setClob(TestUtils.getMockConnection(false), null, "Clob", 0, TestUtils.getMockObject("Object"));
         }
 
@@ -162,7 +162,7 @@ public class DefaultStatementParameterProcessorTest {
             getBitValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
         }
 
-        void testGetBinaryValueArrayData() throws ApplicationError, IOException {
+        void testGetBinaryValueArrayData() throws ApplicationError {
             ArrayList<String> arrayList = new ArrayList<>();
             arrayList.add("new String");
             getBinaryValueArrayData(TestUtils.getBArray(arrayList, PredefinedTypes.TYPE_STRING));
@@ -203,7 +203,7 @@ public class DefaultStatementParameterProcessorTest {
     void getCustomSQLTypeTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            testClass.testGetCustomSQLType("Object");
+            testClass.testGetCustomSQLType();
         } catch (ApplicationError | SQLException e) {
             assertEquals(e.getMessage(), "Unsupported SQL type: Object");
         }
@@ -213,7 +213,7 @@ public class DefaultStatementParameterProcessorTest {
     void setCustomSqlTypedParamTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            testClass.testSetCustomSqlTypedParam("Object");
+            testClass.testSetCustomSqlTypedParam();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Unsupported SQL type: Object");
         }
@@ -233,7 +233,7 @@ public class DefaultStatementParameterProcessorTest {
     void getCustomStructDataTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
         try {
-            testClass.testGetCustomStructData(TestUtils.getMockBValueJson());
+            testClass.testGetCustomStructData();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "unsupported data type of JSON specified for struct parameter");
         }
@@ -532,7 +532,7 @@ public class DefaultStatementParameterProcessorTest {
         try {
             Object[] objects = testClass.testGetRecordStructDataNull();
             Struct struct = (Struct) objects[0];
-            assertEquals(struct.getSQLTypeName(), null);
+            assertNull(struct.getSQLTypeName());
         } catch (Exception e) {
             fail("Exception received");
         }
