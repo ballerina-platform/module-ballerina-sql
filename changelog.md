@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Introduce util function to concatenate queries](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 - [Introduce arrayFlattenQuery() function to add IN operator values by using concatenate queries function](https://github.com/ballerina-platform/ballerina-standard-library/issues/1886)
 - [Add support for retrieving time:Civil, time:Date and Time:TimeOfDay types as values using queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1939)
+- [Add functionality to map multiple fields in the return query result to a single typed record field](https://github.com/ballerina-platform/ballerina-standard-library/issues/1924)
 
 ### Changed
 
