@@ -429,7 +429,7 @@ function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordTypeTinyBlobByteParam() returns error? {
-    record {}|error? value = check queryMockClient(queryRowDb, `SELECT * from ComplexTypes where row_id = 1`);
+    record {}? value = check queryMockClient(queryRowDb, `SELECT * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE blob_type = ${typeVal}`;
@@ -489,7 +489,7 @@ function queryRecordDateString2Param() returns error? {
 function queryRecordDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
-    record{}|error result = trap queryRecordMockClient(queryRowDb, sqlQuery);
+    record{}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
@@ -543,7 +543,7 @@ function queryRecordTimeStringParam() returns error? {
 function queryRecordTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
-    record{}|error? result = trap queryRecordMockClient(queryRowDb, sqlQuery);
+    record{}|error? result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
@@ -697,13 +697,9 @@ function queryRecordNoCheck() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
-    record{}|error queryResult = dbClient->queryRow(sqlQuery);
+    record{} queryResult = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
-    if queryResult is record{} {
-        validateDataTableRecordResult(queryResult);
-    } else {
-        test:assertFail("Unexpected error");
-    }
+    validateDataTableRecordResult(queryResult);
 }
 
 @test:Config {

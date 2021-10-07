@@ -71,7 +71,7 @@ function batchInsertIntoDataTableFailure() {
     ParameterizedQuery[] sqlQueries = 
         from var row in data
         select `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (${row.intVal}, ${row.longVal}, ${row.floatVal})`;
-    ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
+    ExecutionResult[]|error result = batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is error);
 
     if result is BatchExecuteError {
@@ -92,7 +92,7 @@ function batchInsertIntoDataTableFailure3() {
         `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);`, 
         `UPDATE DataTable1 SET int_type=13 WHERE int_type=13;`
     ];
-    ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
+    ExecutionResult[]|error result = batchExecuteQueryMockClient(sqlQueries);
     test:assertTrue(result is ApplicationError);
 }
 
