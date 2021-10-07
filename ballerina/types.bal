@@ -1323,26 +1323,25 @@ public class ResultIterator {
     }
 
     public isolated function next() returns record {|record {} value;|}|Error? {
-        if (self.isClosed) {
+        if self.isClosed {
             return closedStreamInvocationError();
         }
         error? closeErrorIgnored = ();
-        if (self.err is Error) {
+        if self.err is Error {
             return self.err;
         } else {
             record {}|Error? result;
-            if (self.customResultIterator is CustomResultIterator) {
+            if self.customResultIterator is CustomResultIterator {
                 result = (<CustomResultIterator>self.customResultIterator).nextResult(self);
-            } 
-            else {
+            } else {
                 result = nextResult(self);
             }
-            if (result is record {}) {
+            if result is record {} {
                 record {|
                     record {} value;
                 |} streamRecord = {value: result};
                 return streamRecord;
-            } else if (result is Error) {
+            } else if result is Error {
                 self.err = result;
                 closeErrorIgnored = self.close();
                 return self.err;
@@ -1354,10 +1353,10 @@ public class ResultIterator {
     }
 
     public isolated function close() returns Error? {
-        if (!self.isClosed) {
-            if (self.err is ()) {
+        if !self.isClosed {
+            if self.err is () {
                 Error? e = closeResult(self);
-                if (e is ()) {
+                if e is () {
                     self.isClosed = true;
                 }
                 return e;
@@ -1387,7 +1386,7 @@ public class ProcedureCallResult {
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error {
-        if (self.customResultIterator is CustomResultIterator) {
+        if self.customResultIterator is CustomResultIterator {
             return (<CustomResultIterator>self.customResultIterator).getNextQueryResult(self);
         }
         return getNextQueryResult(self);

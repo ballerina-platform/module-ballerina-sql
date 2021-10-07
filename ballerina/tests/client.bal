@@ -54,7 +54,7 @@ isolated client class MockClient {
     } external;
 
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
-        if (sqlQueries.length() == 0) {
+        if sqlQueries.length() == 0 {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
         return nativeBatchExecute(self, sqlQueries);
