@@ -38,7 +38,7 @@ import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.exception.FieldMismatchError;
 import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
-import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.math.BigDecimal;
@@ -840,8 +840,9 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  ColumnDefinition columnDefinition) throws DataError, SQLException {
-        throw new UnsupportedTypeError(columnDefinition.getSqlName(), columnIndex);
+                                                  PrimitiveTypeColumnDefinition columnDefinition)
+            throws DataError, SQLException {
+        throw new UnsupportedTypeError(columnDefinition.getSqlTypeName(), columnIndex);
     }
 
     @Override

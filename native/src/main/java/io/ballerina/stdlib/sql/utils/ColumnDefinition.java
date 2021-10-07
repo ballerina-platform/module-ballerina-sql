@@ -25,48 +25,20 @@ import io.ballerina.runtime.api.types.Type;
  * @since 1.2.0
  */
 public class ColumnDefinition {
-    private final String columnName;
     private final String ballerinaFieldName;
-    private final int sqlType;
-    private final String sqlName;
     private final Type ballerinaType;
-    private final boolean isNullable;
 
-    protected ColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
-                     Type ballerinaType, boolean isNullable) {
-        this.columnName = columnName;
-        if (ballerinaFieldName != null && !ballerinaFieldName.isEmpty()) {
-            this.ballerinaFieldName = ballerinaFieldName;
-        } else {
-            this.ballerinaFieldName = this.columnName;
-        }
-        this.sqlType = sqlType;
+    protected ColumnDefinition(String ballerinaFieldName, Type ballerinaType) {
+        this.ballerinaFieldName = ballerinaFieldName;
         this.ballerinaType = ballerinaType;
-        this.isNullable = isNullable;
-        this.sqlName = sqlName;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public int getSqlType() {
-        return sqlType;
     }
 
     public Type getBallerinaType() {
         return ballerinaType;
     }
 
-    public boolean isNullable() {
-        return isNullable;
-    }
-
     public String getBallerinaFieldName() {
         return ballerinaFieldName;
     }
 
-    public String getSqlName() {
-        return sqlName;
-    }
 }

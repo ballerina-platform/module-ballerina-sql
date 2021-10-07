@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
 
 /**
@@ -58,11 +57,7 @@ public class RecordIteratorUtils {
                 BMap<BString, Object> bStruct = ValueCreator.createMapValue(streamConstraint);
                 List<ColumnDefinition> columnDefinitions = (List<ColumnDefinition>) recordIterator
                         .getNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD);
-                for (int i = 0; i < columnDefinitions.size(); i++) {
-                    ColumnDefinition columnDefinition = columnDefinitions.get(i);
-                    bStruct.put(fromString(columnDefinition.getBallerinaFieldName()),
-                            Utils.getResult(resultSet, i + 1, columnDefinition, resultParameterProcessor));
-                }
+                Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, bStruct, columnDefinitions);
                 return bStruct;
             } else {
                 return null;

@@ -41,7 +41,7 @@ import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.types.BField;
 import io.ballerina.runtime.internal.types.BRecordType;
 import io.ballerina.runtime.internal.values.BmpStringValue;
-import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -80,11 +80,12 @@ public class TestUtils {
     /**
      * ExtendedColumnDefinition Class for test utils.
      */
-    public static class ExtendedColumnDefinition extends ColumnDefinition {
+    public static class ExtendedColumnDefinition extends PrimitiveTypeColumnDefinition {
 
-        public ExtendedColumnDefinition(String columnName, String ballerinaFieldName, int sqlType, String sqlName,
-                                        Type ballerinaType, boolean isNullable) {
-            super(columnName, ballerinaFieldName, sqlType, sqlName, ballerinaType, isNullable);
+        public ExtendedColumnDefinition(String columnName, int sqlType, String sqlTypeName, boolean isNullable,
+                                        int resultSetColumnIndex, String ballerinaFieldName, Type ballerinaType) {
+            super(columnName, sqlType, sqlTypeName, isNullable, resultSetColumnIndex, ballerinaFieldName,
+                    ballerinaType);
         }
     }
 

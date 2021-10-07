@@ -27,7 +27,7 @@ import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.tests.TestUtils;
-import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 import org.junit.jupiter.api.Test;
 
@@ -97,11 +97,11 @@ public class UtilsTest {
 
     @Test
     void getDefaultRecordTypeTest() {
-        ColumnDefinition columnDefinition1 = new TestUtils.ExtendedColumnDefinition("int_type", null,
-                2, "INT", TypeUtils.getType(4), false);
-        ColumnDefinition columnDefinition2 = new TestUtils.ExtendedColumnDefinition("string_type", null,
-                2, "STRING", TypeUtils.getType(12), true);
-        List<ColumnDefinition> list = new ArrayList<>();
+        PrimitiveTypeColumnDefinition columnDefinition1 = new TestUtils.ExtendedColumnDefinition("int_type",
+                2, "INT", false, 1, null, TypeUtils.getType(4));
+        PrimitiveTypeColumnDefinition columnDefinition2 = new TestUtils.ExtendedColumnDefinition("string_type",
+                2, "STRING", false, 1, null, TypeUtils.getType(12));
+        List<PrimitiveTypeColumnDefinition> list = new ArrayList<>();
         list.add(columnDefinition1);
         list.add(columnDefinition2);
         StructureType structureType = Utils.getDefaultRecordType(list);
