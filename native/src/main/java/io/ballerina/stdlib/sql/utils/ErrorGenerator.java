@@ -99,12 +99,12 @@ public class ErrorGenerator {
 
     public static BError getNoRowsError(String message) {
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
-                StringUtils.fromString(message), null,  null);
+                StringUtils.fromString(message), null, null);
     }
 
     public static BError getTypeMismatchError(String message) {
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.TYPE_MISMATCH_ERROR,
-                StringUtils.fromString(message), null,  null);
+                StringUtils.fromString(message), null, null);
     }
 
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,

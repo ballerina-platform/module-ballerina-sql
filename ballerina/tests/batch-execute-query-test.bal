@@ -89,7 +89,7 @@ function batchInsertIntoDataTableFailure() {
 }
 function batchInsertIntoDataTableFailure3() {
     ParameterizedQuery[] sqlQueries = [
-        `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);`,
+        `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (13, 9223372036854774807, 123.34);`, 
         `UPDATE DataTable1 SET int_type=13 WHERE int_type=13;`
     ];
     ExecutionResult[]|error result = trap batchExecuteQueryMockClient(sqlQueries);
@@ -114,7 +114,7 @@ isolated function validateBatchExecutionResult(ExecutionResult[] results, int[] 
     }
 }
 
-function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries)
+function batchExecuteQueryMockClient(ParameterizedQuery[] sqlQueries) 
 returns ExecutionResult[]|error {
     MockClient dbClient = check new (url = batchExecuteDB, user = user, password = password);
     ExecutionResult[] result = check dbClient->batchExecute(sqlQueries);

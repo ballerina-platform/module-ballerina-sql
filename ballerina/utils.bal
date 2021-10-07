@@ -36,12 +36,12 @@ isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) return
     foreach ParameterizedQuery query in queries {
         int length = query.strings.length();
         previousString = previousString + query.strings[0];
-        if (length > 1) {
+        if length > 1 {
             newQueryStrings.push(previousString);
             foreach var i in 1 ... length - 2 {
                 newQueryStrings.push(query.strings[i]);
             }
-            previousString = query.strings[length -1];
+            previousString = query.strings[length - 1];
         }
         addValues(query.insertions, newQueryInsertions);
     }
@@ -70,7 +70,7 @@ public isolated function arrayFlattenQuery(Value[] values) returns Parameterized
         return ``;
     }
     ParameterizedQuery newParameterizedQuery = `${values[0]}`;
-    foreach var i in 1..<values.length() {
+    foreach var i in 1 ..< values.length() {
         newParameterizedQuery = queryConcat(newParameterizedQuery, `, ${values[i]}`);
     }
     return newParameterizedQuery;
@@ -80,7 +80,7 @@ public isolated function arrayFlattenQuery(Value[] values) returns Parameterized
 #
 # + message - Error message used to initialise an `sql:Error`
 # + return - A stream
-public isolated function generateApplicationErrorStream(string message) returns stream <record {}, Error?> {
+public isolated function generateApplicationErrorStream(string message) returns stream<record {}, Error?> {
     ApplicationError applicationErr = error ApplicationError(message);
     ResultIterator resultIterator = new (err = applicationErr);
     stream<record {}, Error?> errorStream = new (resultIterator);

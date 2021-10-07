@@ -39,23 +39,23 @@ type StringDataForCall record {
     string character_type;
     string nvarcharmax_type;
 };
- 
+
 type StringDataSingle record {
     string varchar_type;
 };
 
 @test:BeforeGroups {
-	value: ["procedures"]
-} 
+    value: ["procedures"]
+}
 function initproceduresContainer() returns error? {
-	check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
+    check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["procedures"]
-} 
+    value: ["procedures"]
+}
 function cleanproceduresContainer() returns error? {
-	check cleanDockerContainer("sql-procedures");
+    check cleanDockerContainer("sql-procedures");
 }
 
 @test:Config {
@@ -73,10 +73,9 @@ function testCallWithStringTypes() returns record {}|error? {
     error? e = queryData.forEach(function(StringDataForCall data) {
         returnData = data;
     });
-    if(e is error){
+    if e is error {
         test:assertFail("Call procedure insert did not work properly");
-    }
-    else{
+    } else {
         StringDataForCall expectedDataRow = {
             varchar_type: "test1",
             charmax_type: "test2     ",
@@ -105,10 +104,9 @@ function testCallWithStringTypesInParams() returns error? {
     error? e = queryData.forEach(function(StringDataForCall data) {
         returnData = data;
     });
-    if(e is error){
+    if e is error {
         test:assertFail("Call procedure insert did not work properly");
-    }
-    else{
+    } else {
         StringDataForCall expectedDataRow = {
             varchar_type: "test1",
             charmax_type: "test2     ",
@@ -124,10 +122,10 @@ function testCallWithStringTypesInParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesInParams,testCreateProcedures2]
+    dependsOn: [testCallWithStringTypesInParams, testCreateProcedures2]
 }
 function testCallWithStringTypesOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     VarcharOutParameter paraVarchar = new;
     CharOutParameter paraCharmax = new;
     CharOutParameter paraChar = new;
@@ -151,10 +149,10 @@ function testCallWithStringTypesOutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
+    dependsOn: [testCallWithStringTypesOutParams, testCreateProcedures3]
 }
 function testCallWithNumericTypesOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     IntegerOutParameter paraInt = new;
     BigIntOutParameter paraBigInt = new;
     SmallIntOutParameter paraSmallInt = new;
@@ -173,7 +171,7 @@ function testCallWithNumericTypesOutParams() returns error? {
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
-    decimal paraDecimalVal= 1234.56;
+    decimal paraDecimalVal = 1234.56;
 
     test:assertEquals(paraInt.get(int), 2147483647, "2nd out parameter of procedure did not match.");
     test:assertEquals(paraBigInt.get(int), 9223372036854774807, "3rd out parameter of procedure did not match.");
@@ -189,10 +187,10 @@ function testCallWithNumericTypesOutParams() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesOutParams,testCreateProcedures3]
+    dependsOn: [testCallWithStringTypesOutParams, testCreateProcedures3]
 }
 function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
-    IntegerValue paraID = new(2);
+    IntegerValue paraID = new (2);
     IntegerOutParameter paraInt = new;
     BigIntOutParameter paraBigInt = new;
     SmallIntOutParameter paraSmallInt = new;
@@ -225,16 +223,16 @@ function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithNumericTypesOutParams,testCreateProcedures4]
+    dependsOn: [testCallWithNumericTypesOutParams, testCreateProcedures4]
 }
 function testCallWithStringTypesInoutParams() returns error? {
-    IntegerValue paraID = new(1);
-    InOutParameter paraVarchar = new("test varchar");
-    InOutParameter paraCharmax = new("test char");
-    InOutParameter paraChar = new("T");
-    InOutParameter paraCharactermax = new("test c_max");
-    InOutParameter paraCharacter = new("C");
-    InOutParameter paraNvarcharmax = new("test_nchar");
+    IntegerValue paraID = new (1);
+    InOutParameter paraVarchar = new ("test varchar");
+    InOutParameter paraCharmax = new ("test char");
+    InOutParameter paraChar = new ("T");
+    InOutParameter paraCharactermax = new ("test c_max");
+    InOutParameter paraCharacter = new ("C");
+    InOutParameter paraNvarcharmax = new ("test_nchar");
 
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithInoutParams(${paraID}, ${paraVarchar},
                              ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
@@ -250,25 +248,24 @@ function testCallWithStringTypesInoutParams() returns error? {
     test:assertEquals(paraNvarcharmax.get(string), "test3", "7th out parameter of procedure did not match.");
 }
 
-
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
+    dependsOn: [testCallWithStringTypesInoutParams, testCreateProcedures5]
 }
 function testCallWithNumericTypesInoutParams() returns error? {
-    decimal paraInDecimalVal= -1234.56;
+    decimal paraInDecimalVal = -1234.56;
 
-    IntegerValue paraID = new(1);
-    InOutParameter paraInt = new(-2147483647);
-    InOutParameter paraBigInt = new(-9223372036854774807);
-    InOutParameter paraSmallInt = new(-32767);
-    InOutParameter paraTinyInt = new(-127);
-    InOutParameter paraBit = new(false);
-    InOutParameter paraDecimal = new(paraInDecimalVal);
-    InOutParameter paraNumeric = new(paraInDecimalVal);
-    InOutParameter paraFloat = new(-1234.56);
-    InOutParameter paraReal = new(-1234.56);
-    InOutParameter paraDouble = new(-1234.56);
+    IntegerValue paraID = new (1);
+    InOutParameter paraInt = new (-2147483647);
+    InOutParameter paraBigInt = new (-9223372036854774807);
+    InOutParameter paraSmallInt = new (-32767);
+    InOutParameter paraTinyInt = new (-127);
+    InOutParameter paraBit = new (false);
+    InOutParameter paraDecimal = new (paraInDecimalVal);
+    InOutParameter paraNumeric = new (paraInDecimalVal);
+    InOutParameter paraFloat = new (-1234.56);
+    InOutParameter paraReal = new (-1234.56);
+    InOutParameter paraDouble = new (-1234.56);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithInoutParams(${paraID}, ${paraInt}, ${paraBigInt},
                                 ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
@@ -277,7 +274,7 @@ function testCallWithNumericTypesInoutParams() returns error? {
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
-    decimal paraDecimalVal= 1234.56;
+    decimal paraDecimalVal = 1234.56;
 
     test:assertEquals(paraInt.get(int), 2147483647, "2nd out parameter of procedure did not match.");
     test:assertEquals(paraBigInt.get(int), 9223372036854774807, "3rd out parameter of procedure did not match.");
@@ -296,27 +293,27 @@ function testCallWithNumericTypesInoutParams() returns error? {
     dependsOn: [testCallWithStringTypesInoutParams, testCreateProcedures9]
 }
 function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
-    IntegerValue paraID = new(1);
-    VarcharValue varCharVal = new();
-    CharValue charVal = new();
-    NVarcharValue nVarCharVal = new();
-    BitValue bitVal = new();
-    BooleanValue booleanVal = new();
-    IntegerValue intVal = new();
-    SmallIntValue smallIntVal = new();
-    BigIntValue bigIntVal = new();
-    NumericValue numericVal = new();
-    DoubleValue doubleVal = new();
-    RealValue realVal = new();
-    FloatValue floatVal = new();
-    DecimalValue decimalVal = new();
-    VarBinaryValue varBinaryVal = new();
-    BinaryValue binaryVal = new();
-    ClobValue clobVal = new();
-    TimeValue timeVal = new();
-    DateValue dateVal = new();
-    TimestampValue timestampVal = new();
-    DateTimeValue datetimeVal = new();
+    IntegerValue paraID = new (1);
+    VarcharValue varCharVal = new ();
+    CharValue charVal = new ();
+    NVarcharValue nVarCharVal = new ();
+    BitValue bitVal = new ();
+    BooleanValue booleanVal = new ();
+    IntegerValue intVal = new ();
+    SmallIntValue smallIntVal = new ();
+    BigIntValue bigIntVal = new ();
+    NumericValue numericVal = new ();
+    DoubleValue doubleVal = new ();
+    RealValue realVal = new ();
+    FloatValue floatVal = new ();
+    DecimalValue decimalVal = new ();
+    VarBinaryValue varBinaryVal = new ();
+    BinaryValue binaryVal = new ();
+    ClobValue clobVal = new ();
+    TimeValue timeVal = new ();
+    DateValue dateVal = new ();
+    TimestampValue timestampVal = new ();
+    DateTimeValue datetimeVal = new ();
     int[] intArrayVal = [1, 2];
     string[] strArrayVal = ["Hello", "Ballerina"];
     boolean[] booArrayVal = [true, false, true];
@@ -325,33 +322,33 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     byte[][] byteArrayVal = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
     string[] emptyArrayVal = [];
 
-    InOutParameter paraVarChar = new(varCharVal);
-    InOutParameter paraChar = new(charVal);
-    InOutParameter paraNvarchar = new(nVarCharVal);
-    InOutParameter paraBit = new(bitVal);
-    InOutParameter paraBoolean = new(booleanVal);
-    InOutParameter paraInt = new(intVal);
-    InOutParameter paraBigInt = new(bigIntVal);
-    InOutParameter paraSmallInt = new(smallIntVal);
-    InOutParameter paraNumeric = new(numericVal);
-    InOutParameter paraFloat = new(floatVal);
-    InOutParameter paraReal = new(realVal);
-    InOutParameter paraDouble = new(doubleVal);
-    InOutParameter paraDecimal = new(decimalVal);
+    InOutParameter paraVarChar = new (varCharVal);
+    InOutParameter paraChar = new (charVal);
+    InOutParameter paraNvarchar = new (nVarCharVal);
+    InOutParameter paraBit = new (bitVal);
+    InOutParameter paraBoolean = new (booleanVal);
+    InOutParameter paraInt = new (intVal);
+    InOutParameter paraBigInt = new (bigIntVal);
+    InOutParameter paraSmallInt = new (smallIntVal);
+    InOutParameter paraNumeric = new (numericVal);
+    InOutParameter paraFloat = new (floatVal);
+    InOutParameter paraReal = new (realVal);
+    InOutParameter paraDouble = new (doubleVal);
+    InOutParameter paraDecimal = new (decimalVal);
     InOutParameter paraVarBinary = new (varBinaryVal);
     InOutParameter paraBinary = new (binaryVal);
-    InOutParameter paraClob = new(clobVal);
-    InOutParameter paraDateTime = new(datetimeVal);
-    InOutParameter paraDate = new(dateVal);
-    InOutParameter paraTime = new(timeVal);
-    InOutParameter paraTimestamp = new(timestampVal);
-    InOutParameter paraIntArray = new(intArrayVal);
-    InOutParameter paraStrArray = new(strArrayVal);
-    InOutParameter paraFloArray = new(floArrayVal);
-    InOutParameter paraDecArray = new(decArrayVal);
-    InOutParameter paraBooArray = new(booArrayVal);
-    InOutParameter paraByteArray = new(byteArrayVal);
-    InOutParameter paraEmptyArray = new(emptyArrayVal);
+    InOutParameter paraClob = new (clobVal);
+    InOutParameter paraDateTime = new (datetimeVal);
+    InOutParameter paraDate = new (dateVal);
+    InOutParameter paraTime = new (timeVal);
+    InOutParameter paraTimestamp = new (timestampVal);
+    InOutParameter paraIntArray = new (intArrayVal);
+    InOutParameter paraStrArray = new (strArrayVal);
+    InOutParameter paraFloArray = new (floArrayVal);
+    InOutParameter paraDecArray = new (decArrayVal);
+    InOutParameter paraBooArray = new (booArrayVal);
+    InOutParameter paraByteArray = new (byteArrayVal);
+    InOutParameter paraEmptyArray = new (emptyArrayVal);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
         ${paraNvarchar}, ${paraBit}, ${paraBoolean}, ${paraInt}, ${paraBigInt}, ${paraSmallInt}, ${paraNumeric}, ${paraFloat},
@@ -377,68 +374,68 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
 }
 function testCallWithInoutParams() returns error? {
 
-    IntegerValue paraID = new(1);
-    VarcharValue varCharVal = new();
-    CharValue charVal = new();
-    NVarcharValue nVarCharVal = new();
-    BitValue bitVal = new();
-    BooleanValue booleanVal = new();
-    IntegerValue intVal = new();
-    SmallIntValue smallIntVal = new();
-    BigIntValue bigIntVal = new();
-    NumericValue numericVal = new();
-    DoubleValue doubleVal = new();
-    RealValue realVal = new();
-    FloatValue floatVal = new();
-    DecimalValue decimalVal = new();
-    VarBinaryValue varBinaryVal = new();
-    BinaryValue binaryVal = new();
-    ClobValue clobVal = new();
-    TimeValue timeVal = new();
-    DateValue dateVal = new();
-    TimestampValue timestampVal = new();
-    DateTimeValue datetimeVal = new();
+    IntegerValue paraID = new (1);
+    VarcharValue varCharVal = new ();
+    CharValue charVal = new ();
+    NVarcharValue nVarCharVal = new ();
+    BitValue bitVal = new ();
+    BooleanValue booleanVal = new ();
+    IntegerValue intVal = new ();
+    SmallIntValue smallIntVal = new ();
+    BigIntValue bigIntVal = new ();
+    NumericValue numericVal = new ();
+    DoubleValue doubleVal = new ();
+    RealValue realVal = new ();
+    FloatValue floatVal = new ();
+    DecimalValue decimalVal = new ();
+    VarBinaryValue varBinaryVal = new ();
+    BinaryValue binaryVal = new ();
+    ClobValue clobVal = new ();
+    TimeValue timeVal = new ();
+    DateValue dateVal = new ();
+    TimestampValue timestampVal = new ();
+    DateTimeValue datetimeVal = new ();
     int[] intArr = [1, 2];
-    ArrayValue intArrayVal = new(intArr);
+    ArrayValue intArrayVal = new (intArr);
     string[] strArr = ["Hello", "Ballerina"];
-    ArrayValue strArrayVal = new(strArr);
+    ArrayValue strArrayVal = new (strArr);
     boolean[] booArr = [false, false, true];
-    ArrayValue booArrayVal = new(booArr);
+    ArrayValue booArrayVal = new (booArr);
     float[] floArr = [245.23, 5559.49, 8796.123];
-    ArrayValue floArrayVal = new(floArr);
+    ArrayValue floArrayVal = new (floArr);
     decimal[] decArr = [245.34, 5559.43, 8796.43];
-    ArrayValue decArrayVal = new(decArr);
+    ArrayValue decArrayVal = new (decArr);
     byte[][] byteArr = [<byte[]>[32], <byte[]>[96], <byte[]>[128]];
-    ArrayValue byteArrayVal = new(byteArr);
-    ArrayValue emptyArrayVal = new();
+    ArrayValue byteArrayVal = new (byteArr);
+    ArrayValue emptyArrayVal = new ();
 
-    InOutParameter paraVarChar = new(varCharVal);
-    InOutParameter paraChar = new(charVal);
-    InOutParameter paraNvarchar = new(nVarCharVal);
-    InOutParameter paraBit = new(bitVal);
-    InOutParameter paraBoolean = new(booleanVal);
-    InOutParameter paraInt = new(intVal);
-    InOutParameter paraBigInt = new(bigIntVal);
-    InOutParameter paraSmallInt = new(smallIntVal);
-    InOutParameter paraNumeric = new(numericVal);
-    InOutParameter paraFloat = new(floatVal);
-    InOutParameter paraReal = new(realVal);
-    InOutParameter paraDouble = new(doubleVal);
-    InOutParameter paraDecimal = new(decimalVal);
+    InOutParameter paraVarChar = new (varCharVal);
+    InOutParameter paraChar = new (charVal);
+    InOutParameter paraNvarchar = new (nVarCharVal);
+    InOutParameter paraBit = new (bitVal);
+    InOutParameter paraBoolean = new (booleanVal);
+    InOutParameter paraInt = new (intVal);
+    InOutParameter paraBigInt = new (bigIntVal);
+    InOutParameter paraSmallInt = new (smallIntVal);
+    InOutParameter paraNumeric = new (numericVal);
+    InOutParameter paraFloat = new (floatVal);
+    InOutParameter paraReal = new (realVal);
+    InOutParameter paraDouble = new (doubleVal);
+    InOutParameter paraDecimal = new (decimalVal);
     InOutParameter paraVarBinary = new (varBinaryVal);
     InOutParameter paraBinary = new (binaryVal);
-    InOutParameter paraClob = new(clobVal);
-    InOutParameter paraDateTime = new(datetimeVal);
-    InOutParameter paraDate = new(dateVal);
-    InOutParameter paraTime = new(timeVal);
-    InOutParameter paraTimestamp = new(timestampVal);
-    InOutParameter paraIntArray = new(intArrayVal);
-    InOutParameter paraStrArray = new(strArrayVal);
-    InOutParameter paraFloArray = new(floArrayVal);
-    InOutParameter paraDecArray = new(decArrayVal);
-    InOutParameter paraBooArray = new(booArrayVal);
-    InOutParameter paraByteArray = new(byteArrayVal);
-    InOutParameter paraEmptyArray = new(emptyArrayVal);
+    InOutParameter paraClob = new (clobVal);
+    InOutParameter paraDateTime = new (datetimeVal);
+    InOutParameter paraDate = new (dateVal);
+    InOutParameter paraTime = new (timeVal);
+    InOutParameter paraTimestamp = new (timestampVal);
+    InOutParameter paraIntArray = new (intArrayVal);
+    InOutParameter paraStrArray = new (strArrayVal);
+    InOutParameter paraFloArray = new (floArrayVal);
+    InOutParameter paraDecArray = new (decArrayVal);
+    InOutParameter paraBooArray = new (booArrayVal);
+    InOutParameter paraByteArray = new (byteArrayVal);
+    InOutParameter paraEmptyArray = new (emptyArrayVal);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataWithInoutParams(${paraID}, ${paraVarChar}, ${paraChar},
         ${paraNvarchar}, ${paraBit}, ${paraBoolean}, ${paraInt}, ${paraBigInt}, ${paraSmallInt}, ${paraNumeric}, ${paraFloat},
@@ -448,35 +445,35 @@ function testCallWithInoutParams() returns error? {
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
-    decimal[] decimalArray = [245,5559,8796];
-    byte[][] byteArray = [[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46]];
-    test:assertEquals(paraIntArray.get(IntArray), [1,2,3], "Int arra out parameter of procedure did not match.");
-    test:assertEquals(paraStrArray.get(StringArray), ["Hello","Ballerina"], "String array out parameter " +
+    decimal[] decimalArray = [245, 5559, 8796];
+    byte[][] byteArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]];
+    test:assertEquals(paraIntArray.get(IntArray), [1, 2, 3], "Int arra out parameter of procedure did not match.");
+    test:assertEquals(paraStrArray.get(StringArray), ["Hello", "Ballerina"], "String array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(paraFloArray.get(FloatArray), [245.23,5559.49,8796.123], "Float array out parameter of " +
+    test:assertEquals(paraFloArray.get(FloatArray), [245.23, 5559.49, 8796.123], "Float array out parameter of " + 
     "procedure did not match.");
-    test:assertEquals(paraDecArray.get(DecimalArray), decimalArray , "Decimal array out parameter " +
+    test:assertEquals(paraDecArray.get(DecimalArray), decimalArray, "Decimal array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(paraBooArray.get(BooleanArray), [true,false,true], "Boolean array out parameter " +
+    test:assertEquals(paraBooArray.get(BooleanArray), [true, false, true], "Boolean array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " +
+    test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " + 
     "procedure did not match.");
 }
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCallWithStringTypesInoutParams,testCreateProcedures5]
+    dependsOn: [testCallWithStringTypesInoutParams, testCreateProcedures5]
 }
 function testErroneousCallWithNumericTypesInoutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithInoutParams(${paraID})`;
     ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     test:assertTrue(ret is error);
 
     if ret is DatabaseError {
-        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
-        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
+        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " + 
+        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " + 
         "[call SelectNumericDataWithInoutParams( ? )]."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -488,7 +485,7 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     dependsOn: [testCreateProcedures6]
 }
 function testCallWithDateTimeTypesWithOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
     DateTimeOutParameter paraDateTime = new;
@@ -513,7 +510,7 @@ function testCallWithDateTimeTypesWithOutParams() returns error? {
     dependsOn: [testCreateProcedures6]
 }
 function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     DateOutParameter paraDate = new;
     TimeOutParameter paraTime = new;
     DateTimeOutParameter paraDateTime = new;
@@ -528,11 +525,19 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     check ret.close();
 
     time:Date dateRecord = {year: 2017, month: 5, day: 23};
-    time:TimeOfDay timeRecord = {hour: 14, minute: 15, second:23};
+    time:TimeOfDay timeRecord = {hour: 14, minute: 15, second: 23};
     time:Civil timestampRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
     time:TimeOfDay timeWithTzRecord = {utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"};
-    time:Civil timestampWithTzRecord = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
-                                        month:1, day:25, hour: 16, minute: 33, second:55};
+    time:Civil timestampWithTzRecord = {
+        utcOffset: {hours: -8, minutes: 0},
+        timeAbbrev: "-08:00",
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
 
     test:assertEquals(paraDate.get(time:Date), dateRecord, "Date out parameter of procedure did not match.");
     test:assertEquals(paraTime.get(time:TimeOfDay), timeRecord, "Time out parameter of procedure did not match.");
@@ -547,7 +552,7 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     dependsOn: [testCreateProcedures7]
 }
 function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectTimestamptzWithOutParams(${paraID}, ${paraTimestampWithTz})`;
@@ -556,8 +561,16 @@ function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
     check ret.close();
 
     string timestampWithTzRecordString = "2017-01-25T16:33:55-08:00";
-    time:Civil timestampWithTzRecordCivil = {utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017,
-                                        month:1, day:25, hour: 16, minute: 33, second:55};
+    time:Civil timestampWithTzRecordCivil = {
+        utcOffset: {hours: -8, minutes: 0},
+        timeAbbrev: "-08:00",
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
     time:Utc timestampWithTzRecordUtc = check time:utcFromCivil(timestampWithTzRecordCivil);
 
     test:assertEquals(paraTimestampWithTz.get(string), timestampWithTzRecordString, "Timestamp with Timezone out parameter of procedure did not match.");
@@ -570,7 +583,7 @@ function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
     dependsOn: [testCreateProcedures8]
 }
 function testCallWithOtherDataTypesWithOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
     VarBinaryOutParameter paraVarBinary = new;
@@ -612,7 +625,7 @@ distinct class RandomOutParameter {
     dependsOn: [testCreateProcedures8]
 }
 function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
-    IntegerValue paraID = new(1);
+    IntegerValue paraID = new (1);
     BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
     VarBinaryOutParameter paraVarBinary = new;
@@ -651,7 +664,7 @@ function testCreateProcedures1() returns error? {
               INSERT INTO StringTypes(id, varchar_type, charmax_type, char_type, charactermax_type, character_type, nvarcharmax_type)
               VALUES (p_id, p_varchar_type, p_charmax_type, p_char_type, p_charactermax_type, p_character_type, p_nvarcharmax_type);
     `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -673,7 +686,7 @@ function testCreateProcedures2() returns error? {
                 SELECT nvarcharmax_type INTO p_nvarcharmax_type FROM StringTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -699,7 +712,7 @@ function testCreateProcedures3() returns error? {
                 SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -721,7 +734,7 @@ function testCreateProcedures4() returns error? {
                 SELECT nvarcharmax_type INTO p_nvarcharmax_type FROM StringTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -747,7 +760,7 @@ function testCreateProcedures5() returns error? {
                 SELECT double_type INTO p_double_type FROM NumericTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -769,7 +782,7 @@ function testCreateProcedures6() returns error? {
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -784,9 +797,8 @@ function testCreateProcedures7() returns error? {
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
-
 
 @test:Config {
     groups: ["procedures"],
@@ -808,7 +820,7 @@ function testCreateProcedures8() returns error? {
                 SELECT string_array_type INTO p_string_array_type FROM OtherTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 @test:Config {
@@ -855,7 +867,7 @@ function testCreateProcedures9() returns error? {
                 SELECT string_array_type INTO p_empty_array_type FROM OtherTypes where id = p_id;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
 type Person record {
@@ -952,13 +964,13 @@ function testMultipleRecordsWithNoReturnType() returns error? {
 function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     float float1 = 19.21;
     float float2 = 492.98;
-    SmallIntArrayValue paraSmallint = new([1211, 478]);
-    IntegerArrayValue paraInt = new([121, 498]);
+    SmallIntArrayValue paraSmallint = new ([1211, 478]);
+    IntegerArrayValue paraInt = new ([121, 498]);
     BigIntArrayValue paraLong = new ([121, 498]);
     float[] paraFloat = [19.21, 492.98];
     DoubleArrayValue paraDouble = new ([float1, float2]);
     RealArrayValue paraReal = new ([float1, float2]);
-    DecimalArrayValue paraDecimal = new ([<decimal> 12.245, <decimal> 13.245]);
+    DecimalArrayValue paraDecimal = new ([<decimal>12.245, <decimal>13.245]);
     NumericArrayValue paraNumeric = new ([float1, float2]);
     CharArrayValue paraChar = new (["Char value", "Character"]);
     VarcharArrayValue paraVarchar = new (["Varchar value", "Varying Char"]);
@@ -982,25 +994,25 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     time:TimeOfDay timeWithTimezone = {hour: 20, minute: 8, second: 12, utcOffset: {hours: 5, minutes: 30, seconds: 0d}};
     time:TimeOfDay[] paraTimeWithTimezone = [timeWithTimezone, timeWithTimezone];
 
-    InOutParameter smallint_array = new(paraSmallint);
-    InOutParameter int_array = new(paraInt);
-    InOutParameter long_array = new(paraLong);
-    InOutParameter float_array = new(paraFloat);
-    InOutParameter double_array = new(paraDouble);
-    InOutParameter real_array = new(paraReal);
-    InOutParameter decimal_array = new(paraDecimal);
-    InOutParameter numeric_array = new(paraNumeric);
-    InOutParameter boolean_array = new(paraBool);
-    InOutParameter char_array = new(paraChar);
-    InOutParameter varchar_array = new(paraVarchar);
-    InOutParameter nvarchar_array = new(paraNVarchar);
+    InOutParameter smallint_array = new (paraSmallint);
+    InOutParameter int_array = new (paraInt);
+    InOutParameter long_array = new (paraLong);
+    InOutParameter float_array = new (paraFloat);
+    InOutParameter double_array = new (paraDouble);
+    InOutParameter real_array = new (paraReal);
+    InOutParameter decimal_array = new (paraDecimal);
+    InOutParameter numeric_array = new (paraNumeric);
+    InOutParameter boolean_array = new (paraBool);
+    InOutParameter char_array = new (paraChar);
+    InOutParameter varchar_array = new (paraVarchar);
+    InOutParameter nvarchar_array = new (paraNVarchar);
     InOutParameter string_array = new (paraString);
-    InOutParameter date_array = new(paraDate);
-    InOutParameter time_array = new(paraTime);
-    InOutParameter datetime_array = new(paraDateTime);
-    InOutParameter timestamp_array = new(paraTimestamp);
-    InOutParameter time_tz_array = new(paraTimeWithTimezone);
-    InOutParameter timestamp_tz_array = new(paraTimestampWithTimezone);
+    InOutParameter date_array = new (paraDate);
+    InOutParameter time_array = new (paraTime);
+    InOutParameter datetime_array = new (paraDateTime);
+    InOutParameter timestamp_array = new (paraTimestamp);
+    InOutParameter time_tz_array = new (paraTimeWithTimezone);
+    InOutParameter timestamp_tz_array = new (paraTimestampWithTimezone);
 
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectArrayDataWithInoutParams (IN rowId INT, INOUT p_small_int_array SMALLINT ARRAY,
@@ -1041,7 +1053,7 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
                 SELECT datetime_array INTO p_datetime_array FROM ProArrayTypes where row_id = rowId;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 
     ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithInoutParams(${rowId}, ${smallint_array},
                                     ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
@@ -1051,12 +1063,12 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
 
-    int[] smallIntArray = [12,232];
-    int[] intArray = [1,2,3];
-    float[] floatArray = [199.33,2399.1];
-    float[] numericArray = [11.109999656677246,23.229999542236328];
-    string[] nVarcharArray = ["Hello","Ballerina"];
-    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0}, {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
+    int[] smallIntArray = [12, 232];
+    int[] intArray = [1, 2, 3];
+    float[] floatArray = [199.33, 2399.1];
+    float[] numericArray = [11.109999656677246, 23.229999542236328];
+    string[] nVarcharArray = ["Hello", "Ballerina"];
+    time:Civil[] civilArray = [{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, {year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}];
     test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of procedure did not match.");
     test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
     test:assertEquals(real_array.get(FloatArray), floatArray, "Real array out parameter of procedure did not match.");
@@ -1140,7 +1152,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
                 SELECT binary_array INTO p_binary_array FROM ProArrayTypes where row_id = rowId;
             END
         `;
-    validateProcedureResult(check createSqlProcedure(createProcedure),0,());
+    validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 
     ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithOutParams(${rowId}, ${smallint_array},
                                     ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
@@ -1152,112 +1164,112 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     check ret.close();
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query(`SELECT * FROM ProArrayTypes WHERE row_id = 1`);
+    stream<record {}, error?> streamData = dbClient->query(`SELECT * FROM ProArrayTypes WHERE row_id = 1`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
     check dbClient.close();
-    int[] smallIntArray = [12,232];
-    int[] intArray = [1,2,3];
-    float[] realArray = [199.33,2399.1];
-    float[] realArrayInFloat = [199.3300018310547,2399.10009765625];
-    decimal[] realArrayInDecimal = [199.33,2399.1];
-    float[] floatArray = [245.23,5559.49,8796.123];
-    decimal[] numericArray = [11.11,23.23];
-    float[] numericArrayInFloat = [11.109999656677246,23.229999542236328];
-    decimal[] decimalArray = [245.12,5559.12,8796.92];
-    float[] decimalArrayInFloat = [245.1199951171875,5559.1201171875,8796.919921875];
-    float[] doubleArray = [245.22999572753906,5559.490234375,8796.123046875];
-    string[] nVarcharArray = ["Hello","Ballerina"];
-    string[] charArray = ["Hello          ","Ballerina      "];
-    string[] varcharArray = ["Hello","Ballerina"];
-    int[] longArray = [100000000,200000000,300000000];
-    boolean[] booleanArray = [true,false,true];
-    byte[][] byteArray = [[128],[128],[0]];
-    byte[][] binaryArray = [[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,105,110,97,114,121,32,116,101,115,116,139]];
-    time:Civil[] civilArray = [{year:2017,month:2,day:3,hour:11,minute:53,second:0},
-    {year:2019,month:4,day:5,hour:12,minute:33,second:10}];
-    string[] civilArrayInString = ["2017-02-03 11:53:00.0","2019-04-05 12:33:10.0"];
-    time:Date[] dateArray = [{"year":2017,"month":2,"day":3},{"year":2017,"month":2,"day":3}];
-    string[] dateArrayInString = ["2017-02-03","2017-02-03"];
-    time:TimeOfDay[] timeOfDayArray = [{"hour":11,"minute":22,"second":42}, {"hour":12,"minute":23,"second":45}];
-    string[] timeOfDayArrayInstring = ["11:22:42","12:23:45"];
-    time:TimeOfDay[] timetzArray = [{"utcOffset":{"hours":6,"minutes":30},"hour":16,"minute":33,"second":55,"timeAbbrev":"+06:30"},{"utcOffset":{"hours":4,"minutes":30},"hour":16,"minute":33,"second":55,"timeAbbrev":"+04:30"}];
-    time:Civil[] timestamptzArray = [{"utcOffset":{"hours":-8,"minutes":0},"timeAbbrev":"-08:00","year":2017,"month":1,"day":25,"hour":16,"minute":33,"second":55},{"utcOffset":{"hours":-5,"minutes":0},"timeAbbrev":"-05:00","year":2017,"month":1,"day":25,"hour":16,"minute":33,"second":55}];
-    string[] timestamptzArrayInString = ["2017-01-25T16:33:55-08:00","2017-01-25T16:33:55-05:00"];
-    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " +
+    int[] smallIntArray = [12, 232];
+    int[] intArray = [1, 2, 3];
+    float[] realArray = [199.33, 2399.1];
+    float[] realArrayInFloat = [199.3300018310547, 2399.10009765625];
+    decimal[] realArrayInDecimal = [199.33, 2399.1];
+    float[] floatArray = [245.23, 5559.49, 8796.123];
+    decimal[] numericArray = [11.11, 23.23];
+    float[] numericArrayInFloat = [11.109999656677246, 23.229999542236328];
+    decimal[] decimalArray = [245.12, 5559.12, 8796.92];
+    float[] decimalArrayInFloat = [245.1199951171875, 5559.1201171875, 8796.919921875];
+    float[] doubleArray = [245.22999572753906, 5559.490234375, 8796.123046875];
+    string[] nVarcharArray = ["Hello", "Ballerina"];
+    string[] charArray = ["Hello          ", "Ballerina      "];
+    string[] varcharArray = ["Hello", "Ballerina"];
+    int[] longArray = [100000000, 200000000, 300000000];
+    boolean[] booleanArray = [true, false, true];
+    byte[][] byteArray = [[128], [128], [0]];
+    byte[][] binaryArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 105, 110, 97, 114, 121, 32, 116, 101, 115, 116, 139]];
+    time:Civil[] civilArray = [{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, 
+    {year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}];
+    string[] civilArrayInString = ["2017-02-03 11:53:00.0", "2019-04-05 12:33:10.0"];
+    time:Date[] dateArray = [{"year": 2017, "month": 2, "day": 3}, {"year": 2017, "month": 2, "day": 3}];
+    string[] dateArrayInString = ["2017-02-03", "2017-02-03"];
+    time:TimeOfDay[] timeOfDayArray = [{"hour": 11, "minute": 22, "second": 42}, {"hour": 12, "minute": 23, "second": 45}];
+    string[] timeOfDayArrayInstring = ["11:22:42", "12:23:45"];
+    time:TimeOfDay[] timetzArray = [{"utcOffset": {"hours": 6, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+06:30"}, {"utcOffset": {"hours": 4, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+04:30"}];
+    time:Civil[] timestamptzArray = [{"utcOffset": {"hours": -8, "minutes": 0}, "timeAbbrev": "-08:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}, {"utcOffset": {"hours": -5, "minutes": 0}, "timeAbbrev": "-05:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}];
+    string[] timestamptzArrayInString = ["2017-01-25T16:33:55-08:00", "2017-01-25T16:33:55-05:00"];
+    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " + 
     "procedure did not match.");
-    test:assertEquals(smallint_array.get(StringArray), ["12","232"], "Small int array out parameter of " +
+    test:assertEquals(smallint_array.get(StringArray), ["12", "232"], "Small int array out parameter of " + 
     "procedure did not match.");
     test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
-    test:assertEquals(int_array.get(StringArray), ["1","2","3"], "Int array out parameter of procedure did not match.");
+    test:assertEquals(int_array.get(StringArray), ["1", "2", "3"], "Int array out parameter of procedure did not match.");
     test:assertEquals(real_array.get(FloatArray), realArrayInFloat, "Real array out parameter of procedure did not match.");
-    test:assertEquals(real_array.get(IntArray), [199,2399], "Real array out parameter of procedure did not match.");
-    test:assertEquals(real_array.get(StringArray), ["199.33","2399.1"], "Real array out parameter of procedure did not match.");
+    test:assertEquals(real_array.get(IntArray), [199, 2399], "Real array out parameter of procedure did not match.");
+    test:assertEquals(real_array.get(StringArray), ["199.33", "2399.1"], "Real array out parameter of procedure did not match.");
     test:assertEquals(real_array.get(DecimalArray), realArrayInDecimal, "Real array out parameter of procedure did not match.");
-    test:assertEquals(numeric_array.get(FloatArray), numericArrayInFloat, "Numeric array out parameter " +
+    test:assertEquals(numeric_array.get(FloatArray), numericArrayInFloat, "Numeric array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(StringArray), ["11.11","23.23"], "Numeric array out parameter " +
+    test:assertEquals(numeric_array.get(StringArray), ["11.11", "23.23"], "Numeric array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(IntArray), [11,23], "Numeric array out parameter " +
+    test:assertEquals(numeric_array.get(IntArray), [11, 23], "Numeric array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(DecimalArray), numericArray, "Numeric array out parameter " +
+    test:assertEquals(numeric_array.get(DecimalArray), numericArray, "Numeric array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter " +
+    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter " + 
     "of procedure did not match.");
     test:assertEquals(long_array.get(IntArray), longArray, "Long array out parameter of procedure did not match.");
-    test:assertEquals(long_array.get(StringArray), ["100000000","200000000","300000000"], "Long array out parameter of " +
+    test:assertEquals(long_array.get(StringArray), ["100000000", "200000000", "300000000"], "Long array out parameter of " + 
     "procedure did not match.");
-    test:assertEquals(float_array.get(IntArray), [245,5559,8796], "Float array out parameter " +
+    test:assertEquals(float_array.get(IntArray), [245, 5559, 8796], "Float array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(float_array.get(StringArray), ["245.23","5559.49","8796.123"], "Float array out parameter " +
+    test:assertEquals(float_array.get(StringArray), ["245.23", "5559.49", "8796.123"], "Float array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(double_array.get(FloatArray), doubleArray, "Double array out parameter " +
+    test:assertEquals(double_array.get(FloatArray), doubleArray, "Double array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(BooleanArray), booleanArray, "Boolean array out parameter " +
+    test:assertEquals(boolean_array.get(BooleanArray), booleanArray, "Boolean array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(IntArray), [1,0,1], "Boolean array out parameter " +
+    test:assertEquals(boolean_array.get(IntArray), [1, 0, 1], "Boolean array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(StringArray), ["true","false","true"], "Boolean array out parameter " +
+    test:assertEquals(boolean_array.get(StringArray), ["true", "false", "true"], "Boolean array out parameter " + 
         "of procedure did not match.");
-    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter " +
+    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(StringArray), ["245.12","5559.12","8796.92"], "Decimal array out parameter " +
+    test:assertEquals(decimal_array.get(StringArray), ["245.12", "5559.12", "8796.92"], "Decimal array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(IntArray), [245,5559,8796], "Decimal array out parameter " +
+    test:assertEquals(decimal_array.get(IntArray), [245, 5559, 8796], "Decimal array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(FloatArray), decimalArrayInFloat, "Decimal array out parameter " +
+    test:assertEquals(decimal_array.get(FloatArray), decimalArrayInFloat, "Decimal array out parameter " + 
     "of procedure did not match.");
     test:assertEquals(char_array.get(StringArray), charArray, "Char array out parameter of procedure did not match.");
-    test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " +
+    test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " +
+    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " +
+    test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " + 
         "of procedure did not match.");
     test:assertEquals(date_array.get(DateArray), dateArray, "Date array out parameter of procedure did not match.");
-    test:assertEquals(date_array.get(StringArray), dateArrayInString, "String date array out parameter of procedure " +
+    test:assertEquals(date_array.get(StringArray), dateArrayInString, "String date array out parameter of procedure " + 
     "did not match.");
-    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Date time array out parameter " +
+    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Date time array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(datetime_array.get(StringArray), civilArrayInString, "String date time array out parameter " +
+    test:assertEquals(datetime_array.get(StringArray), civilArrayInString, "String date time array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " +
+    test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(time_array.get(StringArray), timeOfDayArrayInstring, "String time array out parameter " +
+    test:assertEquals(time_array.get(StringArray), timeOfDayArrayInstring, "String time array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " +
+    test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " + 
     "of procedure did not match.");
     test:assertFalse((bit_array.get(StringArray) is Error));
-    test:assertEquals(time_tz_array.get(TimeOfDayArray), timetzArray, "Time with timezone array out parameter " +
+    test:assertEquals(time_tz_array.get(TimeOfDayArray), timetzArray, "Time with timezone array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30","16:33:55+04:30"], "Timestamp with timezone array out " +
+    test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30", "16:33:55+04:30"], "Timestamp with timezone array out " + 
     "parameter of procedure did not match.");
-    test:assertEquals(timestamp_tz_array.get(CivilArray), timestamptzArray, "Timestamp with timezone array out " +
+    test:assertEquals(timestamp_tz_array.get(CivilArray), timestamptzArray, "Timestamp with timezone array out " + 
     "parameter of procedure did not match.");
-    test:assertEquals(timestamp_tz_array.get(StringArray), timestamptzArrayInString, "Timestamp with timezone array out " +
+    test:assertEquals(timestamp_tz_array.get(StringArray), timestamptzArrayInString, "Timestamp with timezone array out " + 
     "parameter of procedure did not match.");
-    test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " +
+    test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " + 
     "procedure did not match.");
     test:assertFalse((binary_array.get(StringArray) is Error));
 }
@@ -1300,8 +1312,8 @@ function negativeOutParamsTest() returns error? {
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
     byte[][]|Error result = smallint_array.get(ByteArray);
-    if (result is TypeMismatchError) {
-        test:assertEquals(result.message(),
+    if result is TypeMismatchError {
+        test:assertEquals(result.message(), 
         "The ballerina type expected for 'SmallInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1309,152 +1321,152 @@ function negativeOutParamsTest() returns error? {
 
     result = int_array.get(ByteArray);
 
-    if (result is Error) {
-        test:assertEquals(result.message(),
+    if result is Error {
+        test:assertEquals(result.message(), 
         "The ballerina type expected for 'Integer Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = real_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-               "The ballerina type expected for 'Real Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                "The ballerina type expected for 'Real Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = numeric_array.get(ByteArray);
-    if (result is Error) {
-    test:assertEquals(result.message(),
-               "The ballerina type expected for 'Numeric Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                "The ballerina type expected for 'Numeric Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = nvarchar_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'NVarchar Array' type is 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'NVarchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = long_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'BigInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'BigInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = float_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Float Array' type are 'float[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Float Array' type are 'float[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = double_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Double Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Double Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = decimal_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Decimal Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Decimal Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = char_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Char Array' type is 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Char Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = varchar_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Varchar Array' type is 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Varchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = string_array.get(ByteArray);
-    if (result is Error) {
+    if result is Error {
         test:assertEquals(result.message(), "Unsupported SQL Custom Array InOut Parameter.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = date_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Date Array' type are 'time:Date[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Date Array' type are 'time:Date[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = time_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Time Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Time Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = timestamp_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Timestamp Array' type are 'time:Utc[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Timestamp Array' type are 'time:Utc[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = datetime_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'DateTime Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'DateTime Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = time_tz_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-             "The ballerina type expected for 'TimeWithTimezone Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+            "The ballerina type expected for 'TimeWithTimezone Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = timestamp_tz_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-         "The ballerina type expected for 'TimestampWithTimezone Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+        "The ballerina type expected for 'TimestampWithTimezone Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     result = boolean_array.get(ByteArray);
-    if (result is Error) {
-        test:assertEquals(result.message(),
-                   "The ballerina type expected for 'Boolean Array' type are 'boolean[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
+    if result is Error {
+        test:assertEquals(result.message(), 
+                    "The ballerina type expected for 'Boolean Array' type are 'boolean[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
     float[]|Error output = binary_array.get(FloatArray);
-    if (output is Error) {
-        test:assertEquals(output.message(),
-                   "The ballerina type expected for 'Binary Array' type are 'byte[][]', and 'string[]' but found type 'float[]'.");
+    if output is Error {
+        test:assertEquals(output.message(), 
+                    "The ballerina type expected for 'Binary Array' type are 'byte[][]', and 'string[]' but found type 'float[]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }

@@ -424,7 +424,7 @@ isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns 
                                                         values ('James', 'Clerk', 111, 5000.75, 'USA')`);
         var e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
                                                         values ('Anne', 'Clerk', 111, 5000.75, 'USA')`);
-        if (e2 is error) {
+        if e2 is error {
             check getError();
         }
         check commit;
@@ -598,7 +598,7 @@ isolated function getCount(MockClient dbClient, string id) returns int|error {
     record {|TransactionResultCount value;|}? data = check streamData.next();
     check streamData.close();
     TransactionResultCount? value = data?.value;
-    if (value is TransactionResultCount) {
+    if value is TransactionResultCount {
         return value["COUNTVAL"];
     }
     return 0;

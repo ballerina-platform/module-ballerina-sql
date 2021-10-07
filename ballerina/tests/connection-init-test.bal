@@ -18,17 +18,17 @@ import ballerina/test;
 string connectDB = urlPrefix + "9001/connection";
 
 @test:BeforeGroups {
-	value: ["connection"]	
-} 
+    value: ["connection"]
+}
 function initConnectionContainer() returns error? {
-	check initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
+    check initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["connection"]	
-} 
+    value: ["connection"]
+}
 function cleanConnectionContainer() returns error? {
-	check cleanDockerContainer("sql-connection");
+    check cleanDockerContainer("sql-connection");
 }
 
 @test:Config {
@@ -57,7 +57,7 @@ function testConnectionAfterClose() returns error? {
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
-        test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " +
+        test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " + 
             "allowed"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -65,25 +65,25 @@ function testConnectionAfterClose() returns error? {
 
     ExecutionResult|Error result = testDB->execute(`INSERT INTO Customers (firstName) VALUES ('Peter')`);
     if result is Error {
-        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " +
+        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " + 
                     "allowed"));
     }
 
     ExecutionResult[]|Error result2 = testDB->batchExecute([`INSERT INTO Customers (firstName) VALUES ('Peter')`]);
     if result2 is Error {
-        test:assertTrue(result2.message().startsWith("SQL Client is already closed, hence further operations are not " +
+        test:assertTrue(result2.message().startsWith("SQL Client is already closed, hence further operations are not " + 
                     "allowed"));
     }
 
     ProcedureCallResult|Error result3 = testDB->call(`call MockProcedure()`);
     if result3 is Error {
-            test:assertTrue(result3.message().startsWith("SQL Client is already closed, hence further operations are not " +
+        test:assertTrue(result3.message().startsWith("SQL Client is already closed, hence further operations are not " + 
                         "allowed"));
     }
 
     int|Error result4 = testDB->queryRow(`SELECT * FROM Customers`);
     if result is Error {
-        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " +
+        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " + 
                     "allowed"));
     }
 }
@@ -99,7 +99,7 @@ function testStreamNextAfterClose() returns error? {
     record {|record {} value;|}?|error data = iterator.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
-        test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " +
+        test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " + 
         "on the stream."));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -116,7 +116,7 @@ function testConnectionInvalidUrl() returns error? {
     if !(dbClient is Error) {
         check dbClient.close();
         test:assertFail("Invalid does not throw DatabaseError");
-    } 
+    }
 }
 
 @test:Config {
@@ -127,7 +127,7 @@ function testConnectionNoUserPassword() returns error? {
     if !(dbClient is Error) {
         check dbClient.close();
         test:assertFail("No username does not throw DatabaseError");
-    } 
+    }
 }
 
 @test:Config {
@@ -146,7 +146,7 @@ function testConnectionWithValidDriver() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithInvalidDriver() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password,
+    MockClient|Error dbClient = new (connectDB, user, password, 
         "org.hsqldb.jdbc.JDBCDataSourceInvalid");
     if !(dbClient is Error) {
         check dbClient.close();
@@ -158,7 +158,7 @@ function testConnectionWithInvalidDriver() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithDatasourceOptions() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
+    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
         {"loginTimeout": 5000});
     if dbClient is Error {
         test:assertFail("Datasource options throws DatabaseError");
@@ -171,7 +171,7 @@ function testConnectionWithDatasourceOptions() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithDatasourceInvalidProperty() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
+    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
         {"invalidProperty": 10});
     if dbClient is Error {
         test:assertEquals(dbClient.message(), 
@@ -189,13 +189,13 @@ function testWithConnectionPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = check new (url = connectDB, user = user,
+    MockClient dbClient = check new (url = connectDB, user = user, 
         password = password, connectionPool = connectionPool);
     error? err = dbClient.close();
     if err is error {
         test:assertFail("DB connection not created properly.");
     } else {
-        test:assertEquals(connectionPool.maxConnectionLifeTime, <decimal> 2000.5);
+        test:assertEquals(connectionPool.maxConnectionLifeTime, <decimal>2000.5);
         test:assertEquals(connectionPool.minIdleConnections, 5);
     }
 }
@@ -207,11 +207,11 @@ function testWithSharedConnPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient1 = check new (url = connectDB, user = user,
+    MockClient dbClient1 = check new (url = connectDB, user = user, 
         password = password, connectionPool = connectionPool);
-    MockClient dbClient2 = check new (url = connectDB, user = user,
+    MockClient dbClient2 = check new (url = connectDB, user = user, 
         password = password, connectionPool = connectionPool);
-    MockClient dbClient3 = check new (url = connectDB, user = user,
+    MockClient dbClient3 = check new (url = connectDB, user = user, 
         password = password, connectionPool = connectionPool);
 
     test:assertEquals(dbClient1.close(), (), "HSQLDB connection failure.");
@@ -226,7 +226,7 @@ function testWithAllParams() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = check new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
+    MockClient dbClient = check new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
         {"loginTimeout": 5000}, connectionPool);
     test:assertEquals(dbClient.close(), (), "HSQLDB connection failure.");
 }
@@ -235,7 +235,7 @@ function testWithAllParams() returns error? {
     groups: ["connection"]
 }
 isolated function testGenerateErrorStream() returns error? {
-    stream <record {}, Error?> errorStream = generateApplicationErrorStream("Test generate Error Stream");
+    stream<record {}, Error?> errorStream = generateApplicationErrorStream("Test generate Error Stream");
     record {}|Error? firstElement = errorStream.next();
     test:assertTrue(firstElement is Error);
 }

@@ -35,32 +35,32 @@ isolated client class MockClient {
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
 
-    remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
+    remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>) 
     returns stream<rowType, Error?> = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
         name: "nativeQuery"
     } external;
 
-    remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<any> returnType = <>)
+    remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<any> returnType = <>) 
     returns returnType|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
         name: "nativeQueryRow"
     } external;
 
-    remote isolated function execute(ParameterizedQuery sqlQuery)
+    remote isolated function execute(ParameterizedQuery sqlQuery) 
     returns ExecutionResult|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils",
         name: "nativeExecute"
     } external;
 
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error {
-        if (sqlQueries.length() == 0) {
+        if sqlQueries.length() == 0 {
             return error ApplicationError(" Parameter 'sqlQueries' cannot be empty array");
         }
         return nativeBatchExecute(self, sqlQueries);
     }
 
-    remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+    remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = []) 
     returns ProcedureCallResult|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.CallTestUtils",
         name: "nativeCall"
@@ -87,7 +87,7 @@ returns Error? = @java:Method {
     'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils"
 } external;
 
-isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
+isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries) 
 returns ExecutionResult[]|Error = @java:Method {
     'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils"
 } external;

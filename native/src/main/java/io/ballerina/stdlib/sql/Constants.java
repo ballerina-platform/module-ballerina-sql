@@ -28,7 +28,8 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
  * @since 1.2.0
  */
 public final class Constants {
-    private Constants() {}
+    private Constants() {
+    }
 
     public static final String CONNECTOR_NAME = "SQLClientConnector";
     public static final String DATABASE_CLIENT = "Client";
@@ -80,7 +81,9 @@ public final class Constants {
      * Constants related connection pool.
      */
     public static final class ConnectionPool {
-        private ConnectionPool() {}
+        private ConnectionPool() {
+        }
+
         public static final BString MAX_OPEN_CONNECTIONS = fromString("maxOpenConnections");
         public static final BString MAX_CONNECTION_LIFE_TIME = fromString(
                 "maxConnectionLifeTime");
@@ -91,7 +94,9 @@ public final class Constants {
      * Constants related to database options.
      */
     public static final class Options {
-        private Options() {}
+        private Options() {
+        }
+
         public static final BString URL = fromString("url");
     }
 
@@ -99,7 +104,9 @@ public final class Constants {
      * Constant related error fields.
      */
     public static final class ErrorRecordFields {
-        private ErrorRecordFields() {}
+        private ErrorRecordFields() {
+        }
+
         public static final String ERROR_CODE = "errorCode";
         public static final String SQL_STATE = "sqlState";
         public static final String EXECUTION_RESULTS = "executionResults";
@@ -110,7 +117,9 @@ public final class Constants {
      * Constants related to parameterized string fields.
      */
     public static final class ParameterizedQueryFields {
-        private ParameterizedQueryFields() {}
+        private ParameterizedQueryFields() {
+        }
+
         public static final BString STRINGS = fromString("strings");
         public static final BString INSERTIONS = fromString("insertions");
     }
@@ -119,7 +128,9 @@ public final class Constants {
      * Constants related to TypedValue fields.
      */
     public static final class TypedValueFields {
-        private TypedValueFields() {}
+        private TypedValueFields() {
+        }
+
         public static final BString VALUE = fromString("value");
     }
 
@@ -127,7 +138,9 @@ public final class Constants {
      * Constants related to SQL Types supported.
      */
     public static final class SqlTypes {
-        private SqlTypes() {}
+        private SqlTypes() {
+        }
+
         public static final String VARCHAR = "VarcharValue";
         public static final String VARCHAR_ARRAY = "VarcharArrayValue";
         public static final String CHAR = "CharValue";
@@ -199,7 +212,9 @@ public final class Constants {
      * Constants related to SQL Arrays supported.
      */
     public static final class SqlArrays {
-        private SqlArrays() {}
+        private SqlArrays() {
+        }
+
         public static final String VARCHAR = "VARCHAR";
         public static final String CHAR = "CHAR";
         public static final String NVARCHAR = "NVARCHAR";
@@ -227,7 +242,9 @@ public final class Constants {
      * Constants related to OutParameter supported.
      */
     public static final class OutParameterTypes {
-        private OutParameterTypes() {}
+        private OutParameterTypes() {
+        }
+
         public static final String CHAR = "CharOutParameter";
         public static final String CHAR_ARRAY = "CharArrayOutParameter";
         public static final String VARCHAR = "VarcharOutParameter";
@@ -286,7 +303,9 @@ public final class Constants {
      * Constants for SQL Params.
      */
     public static final class SQLParamsFields {
-        private SQLParamsFields() {}
+        private SQLParamsFields() {
+        }
+
         public static final BString URL = fromString("url");
         public static final BString USER = fromString("user");
         public static final BString PASSWORD = fromString("password");
@@ -300,7 +319,9 @@ public final class Constants {
      * Constants for Procedure call parameter objects.
      */
     public static final class ParameterObject {
-        private ParameterObject() {}
+        private ParameterObject() {
+        }
+
         public static final String INOUT_PARAMETER = "InOutParameter";
         public static final String OUT_PARAMETER = "OutParameter";
         public static final String SQL_TYPE_NATIVE_DATA = "sqlType";
@@ -313,7 +334,9 @@ public final class Constants {
      * Constants for array types.
      */
     public static final class ArrayTypes {
-        private ArrayTypes() {}
+        private ArrayTypes() {
+        }
+
         public static final String STRING = "string[]";
         public static final String INTEGER = "int[]";
         public static final String FLOAT = "float[]";
@@ -330,7 +353,9 @@ public final class Constants {
      * Constants for classes.
      */
     public static final class Classes {
-        private Classes() {}
+        private Classes() {
+        }
+
         public static final String STRING = "java.lang.String";
         public static final String BOOLEAN = "java.lang.Boolean";
         public static final String SHORT = "java.lang.Short";

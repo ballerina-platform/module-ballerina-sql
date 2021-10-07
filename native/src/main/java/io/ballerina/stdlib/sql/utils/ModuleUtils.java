@@ -30,7 +30,8 @@ public class ModuleUtils {
 
     private static Module sqlModule;
 
-    private ModuleUtils() {}
+    private ModuleUtils() {
+    }
 
     public static void setModule(Environment env) {
         sqlModule = env.getCurrentModule();

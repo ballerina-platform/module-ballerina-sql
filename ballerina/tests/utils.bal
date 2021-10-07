@@ -100,7 +100,7 @@ isolated function getClobColumnChannel() returns io:ReadableCharacterChannel|err
 }
 
 isolated function getUntaintedData(record {}|error? value, string fieldName) returns anydata {
-    if (value is record {}) {
+    if value is record {} {
         return value[fieldName];
     }
     return {};
@@ -111,7 +111,7 @@ function getMockClient(string url) returns MockClient|error {
     return dbClient;
 }
 
-function queryMockClient(string url, ParameterizedQuery sqlQuery)
+function queryMockClient(string url, ParameterizedQuery sqlQuery) 
 returns record {}|error? {
     MockClient dbClient = check getMockClient(url);
     stream<record {}, error?> streamData = dbClient->query(sqlQuery);
@@ -122,7 +122,7 @@ returns record {}|error? {
     return value;
 }
 
-function queryRecordMockClient(string url, ParameterizedQuery sqlQuery)
+function queryRecordMockClient(string url, ParameterizedQuery sqlQuery) 
 returns record {}|error {
     MockClient dbClient = check getMockClient(url);
     record {} resultRecord = check dbClient->queryRow(sqlQuery);

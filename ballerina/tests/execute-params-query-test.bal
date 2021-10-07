@@ -48,7 +48,7 @@ function insertIntoDataTable() returns error? {
     string stringType = "Hello";
     decimal decimalType = 23.45;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -78,7 +78,7 @@ function insertIntoDataTable3() returns error? {
     string stringType = "1";
     decimal decimalType = 23.45;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -99,7 +99,7 @@ function insertIntoDataTable4() returns error? {
     decimal decimalVal = 25.45;
     DecimalValue decimalType = new (decimalVal);
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -152,7 +152,7 @@ function deleteDataTable3() returns error? {
     decimal decimalVal = 25.45;
     DecimalValue decimalType = new (decimalVal);
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `DELETE FROM DataTable where row_id=${rowId} AND int_type=${intType} AND long_type=${longType}
               AND double_type=${doubleType} AND boolean_type=${boolType}
               AND string_type=${stringType} AND decimal_type=${decimalType}`;
@@ -172,7 +172,7 @@ function deleteDataTable4() returns error? {
     boolean boolType = true;
     string stringType = "Hello";
     decimal decimalType = 23.45;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
@@ -200,7 +200,7 @@ function deleteDataTable5() returns error? {
     boolean boolType = true;
     string stringType = "Hello";
     decimal decimalType = 23.45;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
@@ -228,7 +228,7 @@ function deleteDataTable6() returns error? {
     boolean boolType = true;
     string stringType = "Hello";
     decimal decimalType = 23.45;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
@@ -253,7 +253,7 @@ function insertIntoComplexTable() returns error? {
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
     string stringType = "very long text";
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${binaryData}, CONVERT(${stringType}, CLOB), ${binaryData}, ${binaryData})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -273,7 +273,7 @@ function insertIntoComplexTable2() returns error? {
     BlobValue binaryType = new (byteChannel);
     int rowId = 6;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${blobType}, CONVERT(${clobType}, CLOB), ${binaryType}, ${binaryType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -286,7 +286,7 @@ function insertIntoComplexTable2() returns error? {
 function insertIntoComplexTable3() returns error? {
     int rowId = 7;
     var nilType = ();
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
             ${rowId}, ${nilType}, CONVERT(${nilType}, CLOB), ${nilType}, ${nilType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -301,7 +301,7 @@ function deleteComplexTable() returns error? {
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
 
     int rowId = 2;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${binaryData}`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 }
@@ -317,7 +317,7 @@ function deleteComplexTable2() returns error? {
     VarBinaryValue varBinaryType = new ();
 
     int rowId = 4;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${blobType} AND clob_type=${clobType}`;
     validateResult(check executeQueryMockClient(sqlQuery), 0);
 }
@@ -348,7 +348,7 @@ function insertIntoNumericTable() returns error? {
 function insertIntoNumericTable2() returns error? {
     int rowId = 4;
     var nilType = ();
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
             numeric_type, float_type, real_type) VALUES(${nilType},${nilType},${nilType},${nilType},
             ${nilType},${nilType},${nilType},${nilType},${nilType})`;
@@ -372,7 +372,7 @@ function insertIntoNumericTable3() returns error? {
     FloatValue floatType = new (1234.567);
     RealValue realType = new (1234.567);
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
              numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
              ${bitType},${decimalType},${numbericType},${floatType},${realType})`;
@@ -390,10 +390,10 @@ function insertIntoNumericTable4() returns error? {
     int smallIntType = 32767;
     int tinyIntType = 127;
     decimal decimalType = 1234.567;
-    ParameterizedQuery query =
+    ParameterizedQuery query = 
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type,
              bit_type, decimal_type, numeric_type, float_type, real_type) VALUES`;
-    ParameterizedQuery query1 =
+    ParameterizedQuery query1 = 
             ` (${intType},${bigIntType},${smallIntType},${tinyIntType}, ${bitType},
               ${decimalType},${decimalType},${decimalType},${decimalType});`;
     ParameterizedQuery sqlQuery = queryConcat(query, query1);
@@ -410,7 +410,7 @@ function insertIntoDateTimeTable() returns error? {
     string dateTimeType = "2017-02-03 11:53:00";
     string timeStampType = "2017-02-03 11:53:00";
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
         VALUES(${rowId}, ${dateType}, ${timeType}, ${dateTimeType}, ${timeStampType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -427,7 +427,7 @@ function insertIntoDateTimeTable2() returns error? {
     TimestampValue timestampVal = new ("2017-02-03 11:53:00");
     int rowId = 3;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -444,7 +444,7 @@ function insertIntoDateTimeTable3() returns error? {
     TimestampValue timestampVal = new ();
     int rowId = 4;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
                 `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
                 VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -458,7 +458,7 @@ function insertIntoDateTimeTable4() returns error? {
     int rowId = 5;
     var nilType = ();
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${nilType}, ${nilType}, ${nilType}, ${nilType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -539,7 +539,7 @@ function insertIntoDateTimeTable6() returns error? {
     };
     time:Utc timeUtc = check time:utcFromCivil(timeCivil);
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
             `INSERT INTO DateTimeTypes (row_id, timestamp_tz_type) VALUES(${rowId}, ${timeUtc})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
 
@@ -569,7 +569,7 @@ function insertIntoArrayTable() returns error? {
 
     int rowId = 5;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraBlob})`;
@@ -612,7 +612,7 @@ function insertIntoArrayTable3() returns error? {
     byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
     int rowId = 7;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
@@ -645,7 +645,7 @@ function insertIntoArrayTable4() returns error? {
     byte[]?[] paraBlob = [];
     int rowId = 8;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
@@ -676,7 +676,7 @@ function insertIntoArrayTable5() returns error? {
     VarBinaryArrayValue paraVarBinary = new (<byte[]?[]>[null, null]);
     int rowId = 9;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array,
          smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
@@ -708,7 +708,7 @@ function insertIntoArrayTable6() returns error? {
     VarBinaryArrayValue paraVarBinary = new ([varbinaryChannel1, varbinaryChannel2]);
     int rowId = 10;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id,float_array, double_array, decimal_array,
          numeric_array, real_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraNumeric}, ${paraReal}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
@@ -727,7 +727,7 @@ function insertIntoArrayTable7() returns error? {
     NumericArrayValue paraDouble = new ([int1, int2]);
     int rowId = 11;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, double_array, decimal_array,
          numeric_array, real_array) VALUES(${rowId}, ${paraDouble}, ${paraDecimal},
          ${paraNumeric}, ${paraReal})`;
@@ -744,25 +744,25 @@ function insertIntoArrayTable8() returns error? {
     TimestampArrayValue paraTimestamp = new (["2008-08-08 20:08:08+8.00", "2008-08-08 20:08:09+8.00"]);
     int rowId = 12;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, date_array) VALUES(${rowId}, ${paraDate})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for date array");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
 
-    sqlQuery =
+    sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, time_array) VALUES(${rowId}, ${paraTime})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for time array");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
 
-    sqlQuery =
+    sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, datetime_array) VALUES(${rowId}, ${paraDatetime})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for datetime array");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
 
-    sqlQuery =
+    sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, timestamp_array) VALUES(${rowId}, ${paraTimestamp})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
@@ -784,7 +784,7 @@ function insertIntoArrayTable9() returns error? {
 
     int rowId = 13;
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, time_array, date_array, timestamp_array) VALUES(${rowId},
                 ${paraTime}, ${paraDate}, ${paraTimestamp})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
@@ -798,7 +798,7 @@ function insertIntoArrayTable10() returns error? {
     TimeArrayValue paraTimeWithTZ = new ([timeWithTzRecord]);
 
     int rowId = 14;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, time_tz_array) VALUES(${rowId},
                 ${paraTimeWithTZ})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
@@ -821,14 +821,14 @@ function insertIntoArrayTable11() returns error? {
     };
     DateTimeArrayValue paraDatetimeWithTZ = new ([timestampWithTzRecord]);
     int rowId = 14;
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, timestamp_tz_array) VALUES(${rowId},
                 ${paraDatetimeWithTZ})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
 }
 
-function executeQueryMockClient(ParameterizedQuery sqlQuery)
+function executeQueryMockClient(ParameterizedQuery sqlQuery) 
 returns ExecutionResult|error {
     MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
     ExecutionResult result = check dbClient->execute(sqlQuery);

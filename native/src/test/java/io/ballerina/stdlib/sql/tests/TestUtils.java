@@ -679,7 +679,7 @@ public class TestUtils {
 
             @Override
             public Object[] getAttributes() {
-                return new Integer[]{ 1, 2};
+                return new Integer[]{1, 2};
             }
 
             @Override

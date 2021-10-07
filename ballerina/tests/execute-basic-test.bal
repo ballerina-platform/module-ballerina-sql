@@ -176,7 +176,7 @@ function testInsertWithStringAndSelectTable() returns error? {
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
     StringData? insertedData = ();
-    ParameterizedQuery query =`SELECT * from StringTypes where id = ${intIDVal}`;
+    ParameterizedQuery query = `SELECT * from StringTypes where id = ${intIDVal}`;
     stream<StringData, Error?> streamData = dbClient->query(query);
     record {|StringData value;|}? data = check streamData.next();
     check streamData.close();
@@ -255,7 +255,7 @@ function testInsertWithNilStringAndSelectTable() returns error? {
     ExecutionResult result = check dbClient->execute(insertQuery);
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
-    ParameterizedQuery query =`SELECT * from StringTypes where id = ${intIDVal}`;
+    ParameterizedQuery query = `SELECT * from StringTypes where id = ${intIDVal}`;
     stream<StringNilData, Error?> streamData = dbClient->query(query);
     record {|StringNilData value;|}? data = check streamData.next();
     check streamData.close();

@@ -32,8 +32,8 @@ public class TypeMismatchError extends DataError {
     public TypeMismatchError(String sqlType, String typeFound, String[] typeExpected) {
         super(String.format("The ballerina type expected for '%s' type are '%s' but found type '%s'.",
                 sqlType, String.join("', and '",
-                String.join("', '", Arrays.copyOf(typeExpected, typeExpected.length - 1)),
-                typeExpected[typeExpected.length  - 1]), typeFound));
+                        String.join("', '", Arrays.copyOf(typeExpected, typeExpected.length - 1)),
+                        typeExpected[typeExpected.length - 1]), typeFound));
     }
 
     public TypeMismatchError(String sqlType, String typeFound) {

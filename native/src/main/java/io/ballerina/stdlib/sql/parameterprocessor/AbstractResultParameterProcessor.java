@@ -65,11 +65,11 @@ import static io.ballerina.stdlib.sql.utils.Utils.getString;
  */
 public abstract class AbstractResultParameterProcessor {
 
-    protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type,
-            Array array) throws DataError, SQLException;
+    protected abstract BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type, Array array)
+            throws DataError, SQLException;
 
-    protected abstract BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type,
-            Array array) throws DataError, SQLException;
+    protected abstract BArray createAndPopulateCustomBBRefValueArray(Object firstNonNullElement, Type type, Array array)
+            throws DataError, SQLException;
 
     protected abstract void createUserDefinedTypeSubtype(Field internalField, StructureType structType)
             throws DataError, SQLException;
@@ -481,9 +481,8 @@ public abstract class AbstractResultParameterProcessor {
         return resultIterator;
     }
 
-    public BMap<BString, Object> createRecord(
-            ResultSet resultSet,  List<ColumnDefinition> columnDefinitions, StructureType recordConstraint)
-            throws SQLException, DataError {
+    public BMap<BString, Object> createRecord(ResultSet resultSet, List<ColumnDefinition> columnDefinitions,
+                                              StructureType recordConstraint) throws SQLException, DataError {
         BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);

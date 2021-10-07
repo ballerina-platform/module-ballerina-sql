@@ -43,108 +43,158 @@ import java.sql.Types;
 public abstract class AbstractStatementParameterProcessor {
 
     public abstract int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException;
+
     protected abstract int getCustomSQLType(BObject typedValue) throws DataError, SQLException;
 
     protected abstract void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
-            int index, BObject typedValue) throws DataError, SQLException;
+                                                   int index, BObject typedValue) throws DataError, SQLException;
+
     protected abstract void setVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
                                             Object value) throws DataError, SQLException;
+
     protected abstract void setText(PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setChar(PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setCharArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                             Object value) throws DataError, SQLException;
+                                         Object value) throws DataError, SQLException;
+
     protected abstract void setNChar(PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setNVarchar(PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setNVarcharArray(Connection conn, PreparedStatement preparedStatement, int index,
                                              Object value) throws DataError, SQLException;
+
     protected abstract void setBit(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setBitArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                           Object value) throws DataError, SQLException;
+                                        Object value) throws DataError, SQLException;
+
     protected abstract void setBoolean(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setBooleanArray(Connection conn, PreparedStatement preparedStatement, int index,
                                             Object value) throws DataError, SQLException;
+
     protected abstract void setInteger(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setIntegerArray(Connection conn, PreparedStatement preparedStatement, int index,
                                             Object value) throws DataError, SQLException;
+
     protected abstract void setBigInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setBigIntArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                            Object value) throws DataError, SQLException;
+                                           Object value) throws DataError, SQLException;
+
     protected abstract void setSmallInt(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setSmallIntArray(Connection conn, PreparedStatement preparedStatement, int index,
                                              Object value) throws DataError, SQLException;
+
     protected abstract void setFloat(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setFloatArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws DataError, SQLException;
+                                          Object value) throws DataError, SQLException;
+
     protected abstract void setReal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setRealArray(Connection conn, PreparedStatement preparedStatement, int index,
                                          Object value) throws DataError, SQLException;
+
     protected abstract void setDouble(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setDoubleArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws DataError, SQLException;
+                                           Object value) throws DataError, SQLException;
+
     protected abstract void setNumeric(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setNumericArray(Connection conn, PreparedStatement preparedStatement, int index,
                                             Object value) throws DataError, SQLException;
+
     protected abstract void setDecimal(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setDecimalArray(Connection conn, PreparedStatement preparedStatement, int index,
                                             Object value) throws DataError, SQLException;
+
     protected abstract void setBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
                                            Object value) throws DataError, SQLException;
+
     protected abstract void setVarBinary(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setVarBinaryArray(Connection conn, PreparedStatement preparedStatement, int index,
                                               Object value) throws DataError, SQLException;
+
     protected abstract void setBlob(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
-            int index, Object value) throws DataError, SQLException;
+                                    int index, Object value) throws DataError, SQLException;
+
     protected abstract void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType,
-            int index, Object value) throws DataError, SQLException;
+                                     int index, Object value) throws DataError, SQLException;
+
     protected abstract void setRow(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setStruct(Connection connection, PreparedStatement preparedStatement, int index,
-            Object value) throws DataError, SQLException;
+                                      Object value) throws DataError, SQLException;
+
     protected abstract void setRef(Connection connection, PreparedStatement preparedStatement, int index, Object value)
             throws DataError, SQLException;
-    protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index, 
-            Object value) throws DataError, SQLException;
+
+    protected abstract void setArray(Connection connection, PreparedStatement preparedStatement, int index,
+                                     Object value) throws DataError, SQLException;
+
     protected abstract void setDateTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setDateTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws DataError, SQLException;
+                                             Object value) throws DataError, SQLException;
+
     protected abstract void setTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setTimestampArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                         Object value) throws DataError, SQLException;
+                                              Object value) throws DataError, SQLException;
+
     protected abstract void setDate(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setDateArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws DataError, SQLException;
+                                         Object value) throws DataError, SQLException;
+
     protected abstract void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws DataError, SQLException;
+
     protected abstract void setTimeArray(Connection conn, PreparedStatement preparedStatement, int index,
-                                              Object value) throws DataError, SQLException;
+                                         Object value) throws DataError, SQLException;
+
     protected abstract void setXml(Connection connection, PreparedStatement preparedStatement, int index, BXml value)
             throws DataError, SQLException;
+
     protected abstract int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
-                                         Object value, boolean returnType) throws DataError, SQLException;
+                                                Object value, boolean returnType) throws DataError, SQLException;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
             throws DataError, SQLException {
@@ -497,7 +547,7 @@ public abstract class AbstractStatementParameterProcessor {
     }
 
     private int setBMapParams(Connection connection, PreparedStatement preparedStatement, int index,
-                                               BMap value, boolean returnType) throws DataError, SQLException {
+                              BMap value, boolean returnType) throws DataError, SQLException {
         String sqlType = value.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
