@@ -76,6 +76,7 @@ import java.util.Set;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
+import static io.ballerina.stdlib.sql.Constants.ANNON_RECORD_TYPE_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
@@ -211,10 +212,10 @@ public class Utils {
         return null;
     }
 
-    public static StructureType getDefaultRecordType(List<ColumnDefinition> columnDefinitions) {
+    public static StructureType getDefaultRecordType(List<PrimitiveTypeColumnDefinition> columnDefinitions) {
         RecordType defaultRecord = getDefaultStreamConstraint();
         Map<String, Field> fieldMap = new HashMap<>();
-        for (ColumnDefinition column : columnDefinitions) {
+        for (PrimitiveTypeColumnDefinition column : columnDefinitions) {
             long flags = SymbolFlags.PUBLIC;
             if (column.isNullable()) {
                 flags += SymbolFlags.OPTIONAL;
@@ -303,7 +304,7 @@ public class Utils {
         return null;
     }
 
-    public static ColumnDefinition getColumnDefinition(ResultSet resultSet, int columnIndex, Type type)
+    public static PrimitiveTypeColumnDefinition getColumnDefinition(ResultSet resultSet, int columnIndex, Type type)
             throws SQLException, ApplicationError {
         ResultSetMetaData rsMetaData = resultSet.getMetaData();
         String columnName = rsMetaData.getColumnLabel(columnIndex);
@@ -311,60 +312,139 @@ public class Utils {
         String sqlTypeName = rsMetaData.getColumnTypeName(columnIndex);
         boolean isNullable = rsMetaData.isNullable(columnIndex) != ResultSetMetaData.columnNoNulls;
         Utils.validatedInvalidFieldAssignment(sqlType, type, "Retrieved SQL type");
-        return new ColumnDefinition(columnName, null, sqlType, sqlTypeName, type, isNullable);
+        return new PrimitiveTypeColumnDefinition(columnName, sqlType, sqlTypeName, isNullable, 1, columnName, type);
     }
 
     public static List<ColumnDefinition> getColumnDefinitions(ResultSet resultSet, StructureType streamConstraint)
             throws SQLException, ApplicationError {
+
         List<ColumnDefinition> columnDefs = new ArrayList<>();
+        List<SQLColumnMetadata> sqlColumnMetadata = new ArrayList<>();
+        Map<String, List<SQLColumnMetadata>> groupedSQLColumnDefs = new HashMap<>();
         Set<String> columnNames = new HashSet<>();
+        Set<String> groupedColumnNames = new HashSet<>();
         ResultSetMetaData rsMetaData = resultSet.getMetaData();
+
+        boolean isTypedRecord = !streamConstraint.getName().startsWith(ANNON_RECORD_TYPE_NAME);
+        if (isTypedRecord) {
+            streamConstraint.getFields().forEach((name, field) -> {
+                if (field.getFieldType().getTag() == TypeTags.RECORD_TYPE_TAG) {
+                    groupedSQLColumnDefs.put(name, new ArrayList<>());
+                    groupedColumnNames.add(name);
+                }
+            });
+        }
+
         int cols = rsMetaData.getColumnCount();
         for (int i = 1; i <= cols; i++) {
-            String colName = rsMetaData.getColumnLabel(i);
-            if (columnNames.contains(colName)) {
-                String tableName = rsMetaData.getTableName(i).toUpperCase(Locale.getDefault());
-                colName = tableName + "." + colName;
-            }
             int sqlType = rsMetaData.getColumnType(i);
             String sqlTypeName = rsMetaData.getColumnTypeName(i);
             boolean isNullable = rsMetaData.isNullable(i) != ResultSetMetaData.columnNoNulls;
-            columnDefs.add(generateColumnDefinition(colName, sqlType, sqlTypeName, streamConstraint, isNullable));
-            columnNames.add(colName);
+
+            String colName = rsMetaData.getColumnLabel(i);
+            String tablePrefix = "";
+            boolean isDuplicatedColumn = false;
+            if (colName.contains(".")) {
+                tablePrefix = colName.substring(0 , colName.indexOf("."));
+            } else if (columnNames.contains(colName)) {
+                tablePrefix = rsMetaData.getTableName(i).toUpperCase(Locale.getDefault());
+                isDuplicatedColumn = true;
+            }
+
+            String finalTablePrefix = tablePrefix;
+            String matchedRecordField = groupedColumnNames.stream()
+                    .filter(name -> name.equalsIgnoreCase(finalTablePrefix))
+                    .findFirst().orElse("");
+            if (isTypedRecord && !matchedRecordField.equals("")) {
+                List<SQLColumnMetadata> sqlColumnDefs = groupedSQLColumnDefs.get(matchedRecordField);
+                sqlColumnDefs.add(new SQLColumnMetadata(
+                        colName.substring(colName.indexOf(".") + 1), sqlType, sqlTypeName, isNullable, i));
+            } else {
+                if (isDuplicatedColumn) {
+                    colName = tablePrefix + "." + colName;
+                }
+                sqlColumnMetadata.add(new SQLColumnMetadata(colName, sqlType, sqlTypeName, isNullable, i));
+                columnNames.add(colName);
+            }
+        }
+        for (SQLColumnMetadata def : sqlColumnMetadata) {
+            columnDefs.add(generateColumnDefinition(def, streamConstraint, def.getColumnName()));
+        }
+
+        for (Map.Entry<String, List<SQLColumnMetadata>> groupedColDefs : groupedSQLColumnDefs.entrySet()) {
+            if (!groupedColDefs.getValue().isEmpty()) {
+                StructureType recordFieldType = ((StructureType) streamConstraint.getFields()
+                        .get(groupedColDefs.getKey()).getFieldType());
+                ArrayList<PrimitiveTypeColumnDefinition> innerRecordFields = new ArrayList<>();
+                for (SQLColumnMetadata columnMetadata : groupedColDefs.getValue()) {
+                    String loggedColumnName = groupedColDefs.getKey().toUpperCase(Locale.getDefault()) + "." +
+                            columnMetadata.getColumnName();
+                    innerRecordFields.add(
+                            generateColumnDefinition(columnMetadata, recordFieldType, loggedColumnName)
+                    );
+                }
+                columnDefs.add(new RecordColumnDefinition(groupedColDefs.getKey(), recordFieldType, innerRecordFields));
+            }
         }
         return columnDefs;
     }
 
-    private static ColumnDefinition generateColumnDefinition(String columnName, int sqlType, String sqlTypeName,
-                                                             StructureType streamConstraint, boolean isNullable)
+    private static PrimitiveTypeColumnDefinition generateColumnDefinition(SQLColumnMetadata metadata,
+                                                                          StructureType streamConstraint,
+                                                                          String logColumnName)
             throws ApplicationError {
         String ballerinaFieldName = null;
         Type ballerinaType = null;
         for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
-            if (field.getKey().equalsIgnoreCase(columnName)) {
+            if (field.getKey().equalsIgnoreCase(metadata.getColumnName())) {
                 ballerinaFieldName = field.getKey();
-                ballerinaType = validFieldConstraint(sqlType, field.getValue().getFieldType());
+                ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
                 if (ballerinaType == null) {
                     throw new ApplicationError("The field '" + field.getKey() + "' of type " +
                             field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
-                            columnName + "' of SQL type '" + sqlTypeName + "'");
+                            logColumnName + "' of SQL type '" + metadata.getSqlName() + "'");
                 }
                 break;
             }
         }
         if (ballerinaFieldName == null) {
             if (((RecordType) streamConstraint).isSealed()) {
-                throw new ApplicationError("No mapping field found for SQL table column '" + columnName + "'"
+                throw new ApplicationError("No mapping field found for SQL table column '" + logColumnName + "'"
                         + " in the record type '" + streamConstraint.getName() + "'");
             } else {
-                ballerinaType = getDefaultBallerinaType(sqlType);
-                ballerinaFieldName = columnName;
+                ballerinaType = getDefaultBallerinaType(metadata.getSqlType());
+                ballerinaFieldName = metadata.getColumnName();
             }
         }
-        return new ColumnDefinition(columnName, ballerinaFieldName, sqlType, sqlTypeName, ballerinaType, isNullable);
+        return new PrimitiveTypeColumnDefinition(metadata.getColumnName(), metadata.getSqlType(),
+                metadata.getSqlName(), metadata.isNullable(), metadata.getResultSetColIndex(), ballerinaFieldName,
+                ballerinaType);
     }
 
-    public static Object getResult(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition,
+    public static void updateBallerinaRecordFields(DefaultResultParameterProcessor resultParameterProcessor,
+                                                    ResultSet resultSet, BMap<BString, Object> bStruct,
+                                                    List<ColumnDefinition> columnDefinitions)
+            throws SQLException, DataError {
+        for (ColumnDefinition columnDefinition : columnDefinitions) {
+            if (columnDefinition instanceof RecordColumnDefinition) {
+                RecordColumnDefinition recordColumnDef = (RecordColumnDefinition) columnDefinition;
+                BMap<BString, Object> innerRecord = ValueCreator.createMapValue(recordColumnDef.getBallerinaType());
+                for (PrimitiveTypeColumnDefinition innerField : recordColumnDef.getInnerFields()) {
+                    innerRecord.put(fromString(innerField.getBallerinaFieldName()),
+                            Utils.getResult(resultSet, innerField.getResultSetColumnIndex(), innerField,
+                                    resultParameterProcessor));
+                }
+                bStruct.put(fromString(recordColumnDef.getBallerinaFieldName()), innerRecord);
+            } else if (columnDefinition instanceof PrimitiveTypeColumnDefinition) {
+                PrimitiveTypeColumnDefinition definition = (PrimitiveTypeColumnDefinition) columnDefinition;
+                bStruct.put(fromString(columnDefinition.getBallerinaFieldName()), Utils.getResult(resultSet,
+                        definition.getResultSetColumnIndex(), definition, resultParameterProcessor));
+            }
+            // Not possible to reach the final else since there is only two types of Column Definition
+        }
+    }
+
+    public static Object getResult(ResultSet resultSet, int columnIndex, PrimitiveTypeColumnDefinition columnDefinition,
                                     DefaultResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
         int sqlType = columnDefinition.getSqlType();
@@ -388,10 +468,10 @@ public class Utils {
             case Types.LONGVARBINARY:
                 if (ballerinaType.getTag() == TypeTags.STRING_TAG) {
                     return resultParameterProcessor.processCharResult(
-                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
+                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlTypeName());
                 } else {
                     return resultParameterProcessor.processByteArrayResult(
-                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlName());
+                            resultSet, columnIndex, sqlType, ballerinaType, columnDefinition.getSqlTypeName());
                 }
             case Types.BLOB:
                 return resultParameterProcessor.processBlobResult(resultSet, columnIndex, sqlType, ballerinaType);
@@ -449,7 +529,7 @@ public class Utils {
                 } else if (ballerinaType.getTag() == TypeTags.ARRAY_TAG &&
                         ((ArrayType) ballerinaType).getElementType().getTag() == TypeTags.BYTE_TAG) {
                     return resultParameterProcessor.processByteArrayResult(resultSet, columnIndex, sqlType,
-                            ballerinaType, columnDefinition.getSqlName());
+                            ballerinaType, columnDefinition.getSqlTypeName());
                 } else if (ballerinaType.getTag() == TypeTags.FLOAT_TAG) {
                     return resultParameterProcessor.processDoubleResult(resultSet, columnIndex, sqlType,
                             ballerinaType);

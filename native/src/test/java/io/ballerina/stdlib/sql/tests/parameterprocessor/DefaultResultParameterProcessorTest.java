@@ -29,7 +29,7 @@ import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.tests.TestUtils;
-import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -97,8 +97,8 @@ public class DefaultResultParameterProcessorTest {
     @Test
     void getCustomResultTest() {
         NullAndErrorCheckClass testClass = new NullAndErrorCheckClass();
-        ColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type", null,
-                2, "INT", TypeUtils.getType(1), false);
+        PrimitiveTypeColumnDefinition columnDefinition = new TestUtils.ExtendedColumnDefinition("int_type",
+                2, "INT", false, 2, null, TypeUtils.getType(1));
         try {
             testClass.processCustomTypeFromResultSet(null, 1, columnDefinition);
         } catch (ApplicationError | SQLException e) {

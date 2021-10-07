@@ -74,6 +74,8 @@ public final class Constants {
     public static final String USERNAME = "user";
     public static final String PASSWORD = "password";
 
+    public static final String ANNON_RECORD_TYPE_NAME = "record {";
+
     /**
      * Constants related connection pool.
      */

@@ -32,6 +32,7 @@ import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.io.Reader;
@@ -54,7 +55,6 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.List;
 
-import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.utils.Utils.getString;
 
 /**
@@ -228,7 +228,7 @@ public abstract class AbstractResultParameterProcessor {
             throws DataError, SQLException;
 
     public abstract Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                          ColumnDefinition columnDefinition)
+                                                          PrimitiveTypeColumnDefinition columnDefinition)
             throws DataError, SQLException;
 
     public Object processArrayResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
@@ -486,15 +486,11 @@ public abstract class AbstractResultParameterProcessor {
             throws SQLException, DataError {
         BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
-        for (int i = 0; i < columnDefinitions.size(); i++) {
-            ColumnDefinition columnDefinition = columnDefinitions.get(i);
-            record.put(fromString(columnDefinition.getBallerinaFieldName()),
-                    Utils.getResult(resultSet, i + 1, columnDefinition, resultParameterProcessor));
-        }
+        Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
         return record;
     }
 
-    public Object createValue(ResultSet resultSet, int columnIndex, ColumnDefinition columnDefinition)
+    public Object createValue(ResultSet resultSet, int columnIndex, PrimitiveTypeColumnDefinition columnDefinition)
             throws SQLException, DataError {
         DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
         return Utils.getResult(resultSet, columnIndex, columnDefinition, resultParameterProcessor);

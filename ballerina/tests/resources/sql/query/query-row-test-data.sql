@@ -196,3 +196,21 @@ INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_arra
 
 INSERT INTO ArrayTypes2 (row_id, int_array, long_array, float_array, double_array, decimal_array, boolean_array, bit_array, string_array, blob_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, time_tz_array, timestamp_tz_array)
   VALUES (4, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null);
+
+CREATE TABLE Teachers (
+  id INT IDENTITY,
+  name VARCHAR(45),
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE Students (
+  id INT IDENTITY,
+  name VARCHAR(45),
+  age INTEGER,
+  supervisorId INTEGER,
+  PRIMARY KEY(id),
+  FOREIGN KEY (supervisorId) REFERENCES Teachers(id)
+);
+
+INSERT INTO Teachers (id, name) VALUES (1, 'James');
+INSERT INTO Students (id, name, age, supervisorId) VALUES (1, 'Alice', 25, 1);

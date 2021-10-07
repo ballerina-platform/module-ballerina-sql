@@ -39,6 +39,7 @@ import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProc
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
+import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.sql.Connection;
@@ -202,8 +203,8 @@ public class QueryProcessor {
                         return ErrorGenerator.getTypeMismatchError(
                                 String.format("Expected type to be '%s' but found 'record{}'.", describingType));
                     }
-                    ColumnDefinition columnDefinition = Utils.getColumnDefinition(resultSet, 1, describingType);
-                    return resultParameterProcessor.createValue(resultSet, 1, columnDefinition);
+                    PrimitiveTypeColumnDefinition definition = Utils.getColumnDefinition(resultSet, 1, describingType);
+                    return resultParameterProcessor.createValue(resultSet, 1, definition);
                 }
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
