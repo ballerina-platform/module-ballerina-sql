@@ -71,7 +71,7 @@ public class PoolKey {
             int valueHashCode;
             Objects.requireNonNull(value, "type null shouldn't have occurred");
             if (value instanceof BValue || value instanceof Number
-                     || value instanceof String || value instanceof Boolean) {
+                    || value instanceof String || value instanceof Boolean) {
                 Type type = TypeUtils.getType(value);
                 int typeTag = type.getTag();
                 switch (typeTag) {

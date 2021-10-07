@@ -45,14 +45,14 @@ public class DefaultStatementParameterProcessorTest {
         }
 
         void testSetCustomSqlTypedParam() throws SQLException, ApplicationError {
-            setCustomSqlTypedParam(null , null, 0, TestUtils.getMockObject("Object"));
+            setCustomSqlTypedParam(null, null, 0, TestUtils.getMockObject("Object"));
         }
 
         void testGetCustomArrayData(Object value) throws ApplicationError, SQLException {
             getCustomArrayData(value);
         }
 
-        void testGetCustomStructData()throws SQLException, ApplicationError {
+        void testGetCustomStructData() throws SQLException, ApplicationError {
             getCustomStructData(TestUtils.getMockBValueJson());
         }
 

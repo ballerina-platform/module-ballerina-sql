@@ -65,8 +65,9 @@ public class ExecuteProcessor {
 
     /**
      * Execute an SQL statement.
-     * @param client client object
-     * @param paramSQLString array of SQL string for the execute statement
+     *
+     * @param client                      client object
+     * @param paramSQLString              array of SQL string for the execute statement
      * @param statementParameterProcessor pre-processor of the statement
      * @return execution result or error
      */
@@ -75,7 +76,7 @@ public class ExecuteProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
             Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
+            SQL_EXECUTOR_SERVICE.execute(() -> {
                 Object resultStream =
                         nativeExecuteExecutable(client, paramSQLString, statementParameterProcessor, false, null);
                 balFuture.complete(resultStream);
@@ -88,9 +89,9 @@ public class ExecuteProcessor {
     }
 
     private static Object nativeExecuteExecutable(BObject client, BObject paramSQLString,
-                                                 AbstractStatementParameterProcessor statementParameterProcessor,
-                                                 boolean isWithInTrxBlock,
-                                                 TransactionResourceManager trxResourceManager) {
+                                                  AbstractStatementParameterProcessor statementParameterProcessor,
+                                                  boolean isWithInTrxBlock,
+                                                  TransactionResourceManager trxResourceManager) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -144,8 +145,9 @@ public class ExecuteProcessor {
 
     /**
      * Execute a batch of SQL statements.
-     * @param client client object
-     * @param paramSQLStrings array of SQL string for the execute statement
+     *
+     * @param client                      client object
+     * @param paramSQLStrings             array of SQL string for the execute statement
      * @param statementParameterProcessor pre-processor of the statement
      * @return execution result or error
      */
@@ -154,7 +156,7 @@ public class ExecuteProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
             Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
+            SQL_EXECUTOR_SERVICE.execute(() -> {
                 Object resultStream =
                         nativeBatchExecuteExecutable(client, paramSQLStrings, statementParameterProcessor,
                                 false, null);
@@ -168,8 +170,9 @@ public class ExecuteProcessor {
     }
 
     private static Object nativeBatchExecuteExecutable(BObject client, BArray paramSQLStrings,
-                                            AbstractStatementParameterProcessor statementParameterProcessor,
-                                            boolean isWithinTrxBlock, TransactionResourceManager trxResourceManager) {
+                                                       AbstractStatementParameterProcessor statementParameterProcessor,
+                                                       boolean isWithinTrxBlock,
+                                                       TransactionResourceManager trxResourceManager) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;

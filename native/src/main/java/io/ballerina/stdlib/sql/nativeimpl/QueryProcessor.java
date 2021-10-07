@@ -52,7 +52,7 @@ import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTO
 
 /**
  * This class provides the query processing implementation which executes sql queries.
- * 
+ *
  * @since 0.5.6
  */
 public class QueryProcessor {
@@ -62,11 +62,12 @@ public class QueryProcessor {
 
     /**
      * Query the database and return results.
-     * @param client client object
-     * @param paramSQLString SQL string of the query
-     * @param recordType type description of the result record       
+     *
+     * @param client                      client object
+     * @param paramSQLString              SQL string of the query
+     * @param recordType                  type description of the result record
      * @param statementParameterProcessor pre-processor of the statement
-     * @param resultParameterProcessor post-processor of the result
+     * @param resultParameterProcessor    post-processor of the result
      * @return result stream or error
      */
     public static BStream nativeQuery(
@@ -76,7 +77,7 @@ public class QueryProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
             Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
+            SQL_EXECUTOR_SERVICE.execute(() -> {
                 BStream resultStream =
                         nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
                                 resultParameterProcessor, false, null);
@@ -142,20 +143,20 @@ public class QueryProcessor {
         }
     }
 
-    public static Object nativeQueryRow(Environment env, BObject client, BObject paramSQLString,
-            BTypedesc ballerinaType, AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
+    public static Object nativeQueryRow(Environment env, BObject client, BObject paramSQLString, BTypedesc bTypedesc,
+                                        AbstractStatementParameterProcessor statementParameterProcessor,
+                                        AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
             Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
+            SQL_EXECUTOR_SERVICE.execute(() -> {
                 Object resultStream =
-                        nativeQueryRowExecutable(client, paramSQLString, ballerinaType, statementParameterProcessor,
+                        nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
                                 resultParameterProcessor, false, null);
                 balFuture.complete(resultStream);
             });
         } else {
-            return nativeQueryRowExecutable(client, paramSQLString, ballerinaType, statementParameterProcessor,
+            return nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
                     resultParameterProcessor, true, trxResourceManager);
         }
         return null;
@@ -176,8 +177,8 @@ public class QueryProcessor {
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
             if (!((Boolean) client.getNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS))) {
-               return ErrorGenerator.getSQLApplicationError(
-                       "SQL Client is already closed, hence further operations are not allowed");
+                return ErrorGenerator.getSQLApplicationError(
+                        "SQL Client is already closed, hence further operations are not allowed");
             }
             Connection connection = null;
             PreparedStatement statement = null;

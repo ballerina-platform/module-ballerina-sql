@@ -67,7 +67,7 @@ public class SQLDatasource {
 
         Connection connection = null;
         try {
-            if (sqlDatasourceParams.datasourceName != null  && !sqlDatasourceParams.datasourceName.isEmpty() &&
+            if (sqlDatasourceParams.datasourceName != null && !sqlDatasourceParams.datasourceName.isEmpty() &&
                     TransactionResourceManager.getInstance().getTransactionManagerEnabled()) {
                 Class<?> dataSourceClass =
                         ClassLoader.getSystemClassLoader().loadClass(sqlDatasourceParams.datasourceName);
@@ -201,7 +201,7 @@ public class SQLDatasource {
     }
 
     public static SQLDatasourceParams createSQLDatasourceParams(BMap<BString, Object> sqlDatasourceParams,
-            BMap<BString, Object> globalConnectionPool) {
+                                                                BMap<BString, Object> globalConnectionPool) {
         BMap<BString, Object> connPoolProps = (BMap<BString, Object>) sqlDatasourceParams
                 .getMapValue(Constants.SQLParamsFields.CONNECTION_POOL_OPTIONS);
         Properties poolProperties = null;
@@ -235,10 +235,10 @@ public class SQLDatasource {
     }
 
     private Connection getConnection() throws SQLException {
-      if (atomikosDataSourceBean != null) {
-          return atomikosDataSourceBean.getConnection();
-      }
-      return hikariDataSource.getConnection();
+        if (atomikosDataSourceBean != null) {
+            return atomikosDataSourceBean.getConnection();
+        }
+        return hikariDataSource.getConnection();
     }
 
     private XAConnection getXAConnection() throws SQLException {
@@ -342,7 +342,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry ->
-                    config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
+                        config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
                 );
             }
             hikariDataSource = new HikariDataSource(config);
@@ -388,7 +388,7 @@ public class SQLDatasource {
             if (sqlDatasourceParams.options != null) {
                 BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
                 optionMap.entrySet().forEach(entry ->
-                    xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString())
+                        xaProperties.setProperty(entry.getKey().getValue(), entry.getValue().toString())
                 );
             }
 
@@ -402,7 +402,7 @@ public class SQLDatasource {
         }
     }
 
-    private String buildErrorMessage (Throwable t) {
+    private String buildErrorMessage(Throwable t) {
         if (t.getCause() instanceof ClassNotFoundException) {
             return "Error while loading database driver. This may be because the database driver path is " +
                     "not configured correctly in the `Ballerina.toml` file or provided database driver " +

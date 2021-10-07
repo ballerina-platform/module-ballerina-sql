@@ -133,7 +133,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, dataType);
             }
-        }        
+        }
         return new Object[]{arrayData, type};
     }
 
@@ -154,11 +154,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = ((BDecimal) innerValue).decimalValue();
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Decimal Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.DECIMAL};
     }
-    
+
     protected Object[] getRealValueArrayData(Object value) throws DataError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
@@ -176,8 +176,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = ((BDecimal) innerValue).decimalValue().doubleValue();
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Real Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.REAL};
     }
 
@@ -198,11 +198,11 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = ((BDecimal) innerValue).decimalValue();
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Numeric Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.NUMERIC};
     }
-    
+
     protected Object[] getDoubleValueArrayData(Object value) throws DataError {
         int arrayLength = ((BArray) value).size();
         Object innerValue;
@@ -220,8 +220,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = ((BDecimal) innerValue).decimalValue().doubleValue();
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Double Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.DOUBLE};
     }
 
@@ -242,8 +242,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = ((BDecimal) innerValue).decimalValue().doubleValue();
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Float Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.FLOAT};
     }
 
@@ -297,8 +297,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = Date.valueOf(year + "-" + month + "-" + day);
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Date Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, Constants.SqlArrays.DATE};
     }
 
@@ -367,8 +367,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 }
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Time Array");
-            }            
-        }        
+            }
+        }
         if (containsTimeZone) {
             return new Object[]{arrayData, Constants.SqlArrays.TIME_WITH_TIMEZONE};
         } else {
@@ -411,8 +411,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = innerValue;
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, type + " Array");
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, type};
     }
 
@@ -426,18 +426,18 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             innerValue = array.get(i);
             if (innerValue == null) {
                 arrayData[i] = null;
-            } else if (innerValue instanceof BArray) {                
+            } else if (innerValue instanceof BArray) {
                 BArray arrayValue = (BArray) innerValue;
                 if (arrayValue.getElementType().getTag() == org.wso2.ballerinalang.compiler.util.TypeTags.BYTE) {
                     arrayData[i] = arrayValue.getBytes();
                 } else {
                     throw Utils.throwInvalidParameterError(innerValue, type);
                 }
-            } else if (innerValue instanceof BObject) {                
+            } else if (innerValue instanceof BObject) {
                 objectValue = (BObject) innerValue;
                 if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
                         objectValue.getType().getPackage().toString()
-                            .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
+                                .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     try {
                         Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
                         arrayData[i] = toByteArray(byteChannel.getInputStream());
@@ -449,8 +449,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 }
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, type);
-            }            
-        }        
+            }
+        }
         return new Object[]{arrayData, type};
     }
 
@@ -476,8 +476,8 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 arrayData[i] = null;
             } else if (innerValue instanceof BString) {
                 try {
-                    java.time.format.DateTimeFormatter formatter = 
-                    java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    java.time.format.DateTimeFormatter formatter =
+                            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     arrayData[i] = LocalDateTime.parse(innerValue.toString(), formatter);
                 } catch (java.time.format.DateTimeParseException ex) {
                     throw new DataError("Unsupported String Value " + innerValue + " for DateTime Array");
@@ -538,14 +538,14 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                             .intValue();
                     OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime,
                             ZoneOffset.ofHoursMinutesSeconds(zoneHours, zoneMinutes, intZoneSecond));
-                    arrayData[i] =  offsetDateTime;
+                    arrayData[i] = offsetDateTime;
                 } else {
                     arrayData[i] = Timestamp.valueOf(localDateTime);
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, "TIMESTAMP ARRAY");
-            }            
-        }        
+            }
+        }
         if (containsTimeZone) {
             return new Object[]{arrayData, Constants.SqlArrays.TIMESTAMP_WITH_TIMEZONE};
         } else {
@@ -566,7 +566,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             } else {
                 throw Utils.throwInvalidParameterError(value, type + " Array");
             }
-        }        
+        }
         return new Object[]{arrayData, type};
     }
 
@@ -614,7 +614,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     @Override
     protected int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
-                                      Object value, boolean returnType) throws DataError, SQLException {
+                                       Object value, boolean returnType) throws DataError, SQLException {
         throw new DataError("Unsupported type passed in column index: " + index);
     }
 
@@ -689,12 +689,12 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             BObject objectValue = (BObject) value;
             if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
                     objectValue.getType().getPackage().toString()
-                        .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
+                            .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                 try {
                     Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
                     preparedStatement.setBinaryStream(index, byteChannel.getInputStream());
                 } catch (IOException e) {
-                    throw new DataError("Error when processing binary stream." , e);
+                    throw new DataError("Error when processing binary stream.", e);
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, sqlType);
@@ -705,7 +705,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     private void setClobAndNclob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index,
-            Object value) throws SQLException, DataError {
+                                 Object value) throws SQLException, DataError {
         Clob clob;
         if (value == null) {
             preparedStatement.setNull(index, Types.CLOB);
@@ -753,7 +753,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         } else {
             if (value instanceof BString) {
                 preparedStatement.setString(index, value.toString());
-            }  else if (value instanceof BArray) {
+            } else if (value instanceof BArray) {
                 //this is mapped to time:Utc
                 BArray dateTimeStruct = (BArray) value;
                 ZonedDateTime zonedDt = TimeValueHandler.createZonedDateTimeFromUtc(dateTimeStruct);
@@ -1061,14 +1061,14 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         setBinaryAndBlob(preparedStatement, sqlType, index, value);
     }
 
-    protected void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index, 
-            Object value)
+    protected void setClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index,
+                           Object value)
             throws SQLException, DataError {
         setClobAndNclob(connection, preparedStatement, sqlType, index, value);
     }
 
-    protected void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index, 
-            Object value)
+    protected void setNClob(Connection connection, PreparedStatement preparedStatement, String sqlType, int index,
+                            Object value)
             throws SQLException, DataError {
         setClobAndNclob(connection, preparedStatement, sqlType, index, value);
     }

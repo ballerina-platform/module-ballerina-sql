@@ -48,20 +48,21 @@ public class ClientProcessor {
         }
         return null;
     }
-    
+
     /**
      * Create the client used to connect with the database.
-     * @param client client object
+     *
+     * @param client              client object
      * @param sqlDatasourceParams datasource parameters required to retrieve the JDBC URL for datasource lookup and
      *                            initialization of the newly created datasource if it doesn't exists
-     * @return null if client is successfully created else error         
+     * @return null if client is successfully created else error
      */
     public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams,
                                       boolean executeGKFlag, boolean batchExecuteGKFlag) {
         try {
             LogManager.getLogManager().reset();
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams, executeGKFlag,
-                                                                           batchExecuteGKFlag);
+                    batchExecuteGKFlag);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
             client.addNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID, UUID.randomUUID().toString());
             client.addNativeData(Constants.DATABASE_CLIENT_ACTIVE_STATUS, Boolean.TRUE);

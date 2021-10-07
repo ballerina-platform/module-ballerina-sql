@@ -75,11 +75,12 @@ public class CallProcessor {
 
     /**
      * Execute a call query and return the results.
-     * @param client client object
-     * @param paramSQLString SQL string for the call statement
-     * @param recordTypes type description of the result record                
+     *
+     * @param client                      client object
+     * @param paramSQLString              SQL string for the call statement
+     * @param recordTypes                 type description of the result record
      * @param statementParameterProcessor pre-processor of the statement
-     * @param resultParameterProcessor post-processor of the result
+     * @param resultParameterProcessor    post-processor of the result
      * @return procedure call result or error
      */
     public static Object nativeCall(Environment env, BObject client, BObject paramSQLString, BArray recordTypes,
@@ -88,7 +89,7 @@ public class CallProcessor {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         if (!Utils.isWithinTrxBlock(trxResourceManager)) {
             Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(()-> {
+            SQL_EXECUTOR_SERVICE.execute(() -> {
                 Object resultStream =
                         nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
                                 resultParameterProcessor, false, null);
@@ -103,9 +104,10 @@ public class CallProcessor {
     }
 
     private static Object nativeCallExecutable(BObject client, BObject paramSQLString, BArray recordTypes,
-                                    AbstractStatementParameterProcessor statementParameterProcessor,
-                                    AbstractResultParameterProcessor resultParameterProcessor, boolean isWithinTrxBlock,
-                                    TransactionResourceManager trxResourceManager) {
+                                               AbstractStatementParameterProcessor statementParameterProcessor,
+                                               AbstractResultParameterProcessor resultParameterProcessor,
+                                               boolean isWithinTrxBlock,
+                                               TransactionResourceManager trxResourceManager) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -124,7 +126,7 @@ public class CallProcessor {
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
                 setCallParameters(connection, statement, paramSQLString, outputParamTypes,
-                            statementParameterProcessor);
+                        statementParameterProcessor);
 
                 boolean resultType = statement.execute();
 
@@ -147,8 +149,8 @@ public class CallProcessor {
                     }
                     BStream streamValue = ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                             PredefinedTypes.TYPE_NULL),
-                        resultParameterProcessor.createRecordIterator(resultSet, null, null, columnDefinitions,
-                                                     streamConstraint));
+                            resultParameterProcessor.createRecordIterator(resultSet, null, null, columnDefinitions,
+                                    streamConstraint));
                     procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 } else {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
@@ -177,8 +179,8 @@ public class CallProcessor {
     }
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
-                                  BObject paramString, HashMap<Integer, Integer> outputParamTypes,
-                                  AbstractStatementParameterProcessor statementParameterProcessor)
+                                          BObject paramString, HashMap<Integer, Integer> outputParamTypes,
+                                          AbstractStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError {
         BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < arrayValue.size(); i++) {
@@ -200,8 +202,8 @@ public class CallProcessor {
                 switch (parameterType) {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
-                        sqlType = statementParameterProcessor.setSQLValueParam(connection, statement, 
-                                            index, innerObject, true);
+                        sqlType = statementParameterProcessor.setSQLValueParam(connection, statement,
+                                index, innerObject, true);
                         outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
@@ -220,8 +222,8 @@ public class CallProcessor {
     }
 
     private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
-                                      HashMap<Integer, Integer> outputParamTypes,
-                                      AbstractResultParameterProcessor resultParameterProcessor)
+                                              HashMap<Integer, Integer> outputParamTypes,
+                                              AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;
@@ -349,124 +351,124 @@ public class CallProcessor {
         String sqlType = typedValue.getType().getName();
         int sqlTypeValue;
         switch (sqlType) {
-        case Constants.OutParameterTypes.VARCHAR:
-        case Constants.OutParameterTypes.TEXT:
-            sqlTypeValue = Types.VARCHAR;
-            break;
-        case Constants.OutParameterTypes.CHAR:
-            sqlTypeValue = Types.CHAR;
-            break;
-        case Constants.OutParameterTypes.NCHAR:
-            sqlTypeValue = Types.NCHAR;
-            break;
-        case Constants.OutParameterTypes.NVARCHAR:
-            sqlTypeValue = Types.NVARCHAR;
-            break;
-        case Constants.OutParameterTypes.BIT:
-            sqlTypeValue = Types.BIT;
-            break;
-        case Constants.OutParameterTypes.BOOLEAN:
-            sqlTypeValue = Types.BOOLEAN;
-            break;
-        case Constants.OutParameterTypes.INTEGER:
-            sqlTypeValue = Types.INTEGER;
-            break;
-        case Constants.OutParameterTypes.BIGINT:
-            sqlTypeValue = Types.BIGINT;
-            break;
-        case Constants.OutParameterTypes.SMALLINT:
-            sqlTypeValue = Types.SMALLINT;
-            break;
-        case Constants.OutParameterTypes.FLOAT:
-            sqlTypeValue = Types.FLOAT;
-            break;
-        case Constants.OutParameterTypes.REAL:
-            sqlTypeValue = Types.REAL;
-            break;
-        case Constants.OutParameterTypes.DOUBLE:
-            sqlTypeValue = Types.DOUBLE;
-            break;
-        case Constants.OutParameterTypes.NUMERIC:
-            sqlTypeValue = Types.NUMERIC;
-            break;
-        case Constants.OutParameterTypes.DECIMAL:
-            sqlTypeValue = Types.DECIMAL;
-            break;
-        case Constants.OutParameterTypes.BINARY:
-            sqlTypeValue = Types.BINARY;
-            break;
-        case Constants.OutParameterTypes.VARBINARY:
-            sqlTypeValue = Types.VARBINARY;
-            break;
-        case Constants.OutParameterTypes.BLOB:
-            if (typedValue instanceof BArray) {
+            case Constants.OutParameterTypes.VARCHAR:
+            case Constants.OutParameterTypes.TEXT:
+                sqlTypeValue = Types.VARCHAR;
+                break;
+            case Constants.OutParameterTypes.CHAR:
+                sqlTypeValue = Types.CHAR;
+                break;
+            case Constants.OutParameterTypes.NCHAR:
+                sqlTypeValue = Types.NCHAR;
+                break;
+            case Constants.OutParameterTypes.NVARCHAR:
+                sqlTypeValue = Types.NVARCHAR;
+                break;
+            case Constants.OutParameterTypes.BIT:
+                sqlTypeValue = Types.BIT;
+                break;
+            case Constants.OutParameterTypes.BOOLEAN:
+                sqlTypeValue = Types.BOOLEAN;
+                break;
+            case Constants.OutParameterTypes.INTEGER:
+                sqlTypeValue = Types.INTEGER;
+                break;
+            case Constants.OutParameterTypes.BIGINT:
+                sqlTypeValue = Types.BIGINT;
+                break;
+            case Constants.OutParameterTypes.SMALLINT:
+                sqlTypeValue = Types.SMALLINT;
+                break;
+            case Constants.OutParameterTypes.FLOAT:
+                sqlTypeValue = Types.FLOAT;
+                break;
+            case Constants.OutParameterTypes.REAL:
+                sqlTypeValue = Types.REAL;
+                break;
+            case Constants.OutParameterTypes.DOUBLE:
+                sqlTypeValue = Types.DOUBLE;
+                break;
+            case Constants.OutParameterTypes.NUMERIC:
+                sqlTypeValue = Types.NUMERIC;
+                break;
+            case Constants.OutParameterTypes.DECIMAL:
+                sqlTypeValue = Types.DECIMAL;
+                break;
+            case Constants.OutParameterTypes.BINARY:
+                sqlTypeValue = Types.BINARY;
+                break;
+            case Constants.OutParameterTypes.VARBINARY:
                 sqlTypeValue = Types.VARBINARY;
-            } else {
-                sqlTypeValue = Types.LONGVARBINARY;
-            }
-            break;
-        case Constants.OutParameterTypes.CLOB:
-        case Constants.OutParameterTypes.NCLOB:
-            if (typedValue instanceof BString) {
-                sqlTypeValue = Types.CLOB;
-            } else {
-                sqlTypeValue = Types.LONGVARCHAR;
-            }
-            break;
-        case Constants.OutParameterTypes.DATE:
-            sqlTypeValue = Types.DATE;
-            break;
-        case Constants.OutParameterTypes.TIME:
-            sqlTypeValue = Types.TIME;
-            break;
-        case Constants.OutParameterTypes.TIME_WITH_TIMEZONE:
-            sqlTypeValue = Types.TIME_WITH_TIMEZONE;
-            break;
-        case Constants.OutParameterTypes.TIMESTAMP:
-        case Constants.OutParameterTypes.DATE_TIME:
-            sqlTypeValue = Types.TIMESTAMP;
-            break;
-        case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE:
-            sqlTypeValue = Types.TIMESTAMP_WITH_TIMEZONE;
-            break;
-        case Constants.OutParameterTypes.ARRAY:
-        case Constants.OutParameterTypes.SMALL_INT_ARRAY:
-        case Constants.OutParameterTypes.BIGINT_ARRAY:
-        case Constants.OutParameterTypes.BINARY_ARRAY:
-        case Constants.OutParameterTypes.BIT_ARRAY:
-        case Constants.OutParameterTypes.BOOLEAN_ARRAY:
-        case Constants.OutParameterTypes.CHAR_ARRAY:
-        case Constants.OutParameterTypes.DATE_ARRAY:
-        case Constants.OutParameterTypes.DATE_TIME_ARRAY:
-        case Constants.OutParameterTypes.DECIMAL_ARRAY:
-        case Constants.OutParameterTypes.DOUBLE_ARRAY:
-        case Constants.OutParameterTypes.FLOAT_ARRAY:
-        case Constants.OutParameterTypes.INTEGER_ARRAY:
-        case Constants.OutParameterTypes.NUMERIC_ARRAY:
-        case Constants.OutParameterTypes.NVARCHAR_ARRAY:
-        case Constants.OutParameterTypes.TIME_WITH_TIMEZONE_ARRAY:
-        case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE_ARRAY:
-        case Constants.OutParameterTypes.TIMESTAMP_ARRAY:
-        case Constants.OutParameterTypes.REAL_ARRAY:
-        case Constants.OutParameterTypes.VARBINARY_ARRAY:
-        case Constants.OutParameterTypes.VARCHAR_ARRAY:
-        case Constants.OutParameterTypes.TIME_ARRAY:
-            sqlTypeValue = Types.ARRAY;
-            break;
-        case Constants.OutParameterTypes.REF:
-            sqlTypeValue = Types.REF;
-            break;
-        case Constants.OutParameterTypes.STRUCT:
-            sqlTypeValue = Types.STRUCT;
-            break;
-        case Constants.OutParameterTypes.ROW:
-            sqlTypeValue = Types.ROWID;
-            break;
-        case Constants.OutParameterTypes.XML:
-            sqlTypeValue = Types.SQLXML;
-            break;
-        default:
-            sqlTypeValue = statementParameterProcessor.getCustomOutParameterType(typedValue);
+                break;
+            case Constants.OutParameterTypes.BLOB:
+                if (typedValue instanceof BArray) {
+                    sqlTypeValue = Types.VARBINARY;
+                } else {
+                    sqlTypeValue = Types.LONGVARBINARY;
+                }
+                break;
+            case Constants.OutParameterTypes.CLOB:
+            case Constants.OutParameterTypes.NCLOB:
+                if (typedValue instanceof BString) {
+                    sqlTypeValue = Types.CLOB;
+                } else {
+                    sqlTypeValue = Types.LONGVARCHAR;
+                }
+                break;
+            case Constants.OutParameterTypes.DATE:
+                sqlTypeValue = Types.DATE;
+                break;
+            case Constants.OutParameterTypes.TIME:
+                sqlTypeValue = Types.TIME;
+                break;
+            case Constants.OutParameterTypes.TIME_WITH_TIMEZONE:
+                sqlTypeValue = Types.TIME_WITH_TIMEZONE;
+                break;
+            case Constants.OutParameterTypes.TIMESTAMP:
+            case Constants.OutParameterTypes.DATE_TIME:
+                sqlTypeValue = Types.TIMESTAMP;
+                break;
+            case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE:
+                sqlTypeValue = Types.TIMESTAMP_WITH_TIMEZONE;
+                break;
+            case Constants.OutParameterTypes.ARRAY:
+            case Constants.OutParameterTypes.SMALL_INT_ARRAY:
+            case Constants.OutParameterTypes.BIGINT_ARRAY:
+            case Constants.OutParameterTypes.BINARY_ARRAY:
+            case Constants.OutParameterTypes.BIT_ARRAY:
+            case Constants.OutParameterTypes.BOOLEAN_ARRAY:
+            case Constants.OutParameterTypes.CHAR_ARRAY:
+            case Constants.OutParameterTypes.DATE_ARRAY:
+            case Constants.OutParameterTypes.DATE_TIME_ARRAY:
+            case Constants.OutParameterTypes.DECIMAL_ARRAY:
+            case Constants.OutParameterTypes.DOUBLE_ARRAY:
+            case Constants.OutParameterTypes.FLOAT_ARRAY:
+            case Constants.OutParameterTypes.INTEGER_ARRAY:
+            case Constants.OutParameterTypes.NUMERIC_ARRAY:
+            case Constants.OutParameterTypes.NVARCHAR_ARRAY:
+            case Constants.OutParameterTypes.TIME_WITH_TIMEZONE_ARRAY:
+            case Constants.OutParameterTypes.TIMESTAMP_WITH_TIMEZONE_ARRAY:
+            case Constants.OutParameterTypes.TIMESTAMP_ARRAY:
+            case Constants.OutParameterTypes.REAL_ARRAY:
+            case Constants.OutParameterTypes.VARBINARY_ARRAY:
+            case Constants.OutParameterTypes.VARCHAR_ARRAY:
+            case Constants.OutParameterTypes.TIME_ARRAY:
+                sqlTypeValue = Types.ARRAY;
+                break;
+            case Constants.OutParameterTypes.REF:
+                sqlTypeValue = Types.REF;
+                break;
+            case Constants.OutParameterTypes.STRUCT:
+                sqlTypeValue = Types.STRUCT;
+                break;
+            case Constants.OutParameterTypes.ROW:
+                sqlTypeValue = Types.ROWID;
+                break;
+            case Constants.OutParameterTypes.XML:
+                sqlTypeValue = Types.SQLXML;
+                break;
+            default:
+                sqlTypeValue = statementParameterProcessor.getCustomOutParameterType(typedValue);
         }
         return sqlTypeValue;
     }

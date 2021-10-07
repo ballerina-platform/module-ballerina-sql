@@ -122,7 +122,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
         } else if (firstNonNullElement instanceof java.util.Date) {
             if (firstNonNullElement instanceof Date) {
                 refValueArray = createEmptyBBRefValueArray(Utils.DATE_RECORD_TYPE);
-                for (int i = 0; i < length; i++) {                    
+                for (int i = 0; i < length; i++) {
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
                     } else {
@@ -133,7 +133,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 return refValueArray;
             } else if (firstNonNullElement instanceof Time) {
                 refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
-                for (int i = 0; i < length; i++) {                    
+                for (int i = 0; i < length; i++) {
                     if (dataArray[i] == null) {
                         refValueArray.add(i, dataArray[i]);
                     } else {
@@ -155,40 +155,40 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                 return refValueArray;
             } else {
                 throw new UnsupportedTypeError(firstNonNullElement.getClass().getName(), 0);
-            } 
+            }
         } else if (firstNonNullElement instanceof java.time.OffsetTime) {
             refValueArray = createEmptyBBRefValueArray(Utils.TIME_RECORD_TYPE);
-            for (int i = 0; i < length; i++) {                
+            for (int i = 0; i < length; i++) {
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
                 } else {
-                    BMap<BString, Object> timeMap = 
-                        Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
+                    BMap<BString, Object> timeMap =
+                            Utils.createTimeWithTimezoneRecord((java.time.OffsetTime) dataArray[i]);
                     refValueArray.add(i, timeMap);
                 }
             }
             return refValueArray;
         } else if (firstNonNullElement instanceof java.time.OffsetDateTime) {
             refValueArray = createEmptyBBRefValueArray(Utils.CIVIL_RECORD_TYPE);
-            for (int i = 0; i < length; i++) {                
+            for (int i = 0; i < length; i++) {
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
                 } else {
-                    BMap<BString, Object> civilMap = 
-                        Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
+                    BMap<BString, Object> civilMap =
+                            Utils.createTimestampWithTimezoneRecord((java.time.OffsetDateTime) dataArray[i]);
                     refValueArray.add(i, civilMap);
                 }
             }
             return refValueArray;
-        } else if (firstNonNullElement instanceof byte[]) {            
+        } else if (firstNonNullElement instanceof byte[]) {
             refValueArray = createEmptyBBRefValueArray(TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE));
-            for (int i = 0; i < dataArray.length; i++) {                
+            for (int i = 0; i < dataArray.length; i++) {
                 if (dataArray[i] == null) {
                     refValueArray.add(i, dataArray[i]);
                 } else {
                     refValueArray.add(i, ValueCreator.createArrayValue((byte[]) dataArray[i]));
                 }
-            }            
+            }
             return refValueArray;
         } else if (firstNonNullElement == null) {
             refValueArray = createEmptyBBRefValueArray(type);
@@ -259,7 +259,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     protected BArray createAndPopulateCustomValueArray(Object firstNonNullElement, Type type, Array array)
-         throws DataError, SQLException {
+            throws DataError, SQLException {
         return null;
     }
 
@@ -535,12 +535,12 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return fromString(timestamp.toString());
                 case TypeTags.OBJECT_TYPE_TAG:
                 case TypeTags.RECORD_TYPE_TAG:
-                if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)
-                        && timestamp instanceof Timestamp) {
-                    return Utils.createTimestampRecord((Timestamp) timestamp);
-                } else {
-                    throw new TypeMismatchError("SQL Timestamp", type.getName(), "time:Civil");
-                }
+                    if (type.getName().equalsIgnoreCase(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD)
+                            && timestamp instanceof Timestamp) {
+                        return Utils.createTimestampRecord((Timestamp) timestamp);
+                    } else {
+                        throw new TypeMismatchError("SQL Timestamp", type.getName(), "time:Civil");
+                    }
                 case TypeTags.INT_TAG:
                     return timestamp.getTime();
                 case TypeTags.INTERSECTION_TAG:
@@ -840,7 +840,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
 
     @Override
     public Object processCustomTypeFromResultSet(ResultSet resultSet, int columnIndex,
-                                                  PrimitiveTypeColumnDefinition columnDefinition)
+                                                 PrimitiveTypeColumnDefinition columnDefinition)
             throws DataError, SQLException {
         throw new UnsupportedTypeError(columnDefinition.getSqlTypeName(), columnIndex);
     }
