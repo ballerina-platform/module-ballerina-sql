@@ -32,14 +32,14 @@ function queryWithoutRecordField() returns error? {
     StudentsWithoutTeachersField student = check dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
-    StudentsWithoutTeachersField  expectedStudent = {
+    StudentsWithoutTeachersField expectedStudent = {
         id: 1,
-        name:"Alice",
-        age:25,
-        supervisorId:1,
-        "TEACHERS.ID":1,
-        "TEACHERS.NAME":"James"
-     };
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
+        "TEACHERS.ID": 1,
+        "TEACHERS.NAME": "James"
+    };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }
@@ -57,7 +57,7 @@ public type StudentsWithoutTeachersFieldClosed record {|
 function queryWithoutRecordFieldSealed() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    StudentsWithoutTeachersFieldClosed|error failure =
+    StudentsWithoutTeachersFieldClosed|error failure = 
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -75,7 +75,7 @@ public type Student record {|
     string name;
     int age;
     int supervisorId;
-    record{} teachers;
+    record {} teachers;
 |};
 
 @test:Config {
@@ -84,20 +84,20 @@ public type Student record {|
 function queryAnnonRecord() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student student = check
+    Student student = check 
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     Student expectedStudent = {
         id: 1,
-        name:"Alice",
-        age:25,
-        supervisorId:1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
         teachers: {
             "ID": 1,
             "NAME": "James"
         }
-     };
+    };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }
@@ -121,24 +121,23 @@ public type Teachers1 record {
 function queryTypedRecordWithFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student1 student = check
+    Student1 student = check 
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     Student1 expectedStudent = {
         id: 1,
-        name:"Alice",
-        age:25,
-        supervisorId:1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
         teachers: {
             "ID": 1,
             "NAME": "James"
         }
-     };
+    };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }
-
 
 @test:Config {
     groups: ["query", "query-row"]
@@ -147,7 +146,7 @@ function queryTypedRecordWithFieldsStream() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
     stream<Student1, Error?> studentStream = 
-                dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);    
+                dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
     error? e = studentStream.forEach(function(Student1 data) {
         returnData = data;
@@ -157,14 +156,14 @@ function queryTypedRecordWithFieldsStream() returns error? {
 
     Student1 expectedStudent = {
         id: 1,
-        name:"Alice",
-        age:25,
-        supervisorId:1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
         teachers: {
             "ID": 1,
             "NAME": "James"
         }
-     };
+    };
 
     test:assertEquals(returnData, expectedStudent, "Expected student record did not match");
 }
@@ -187,24 +186,23 @@ public type Teachers2 record {
 function queryTypedRecordWithoutFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student2 student = check
+    Student2 student = check 
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     Student2 expectedStudent = {
         id: 1,
-        name:"Alice",
-        age:25,
-        supervisorId:1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
         teachers: {
             "ID": 1,
             "NAME": "James"
         }
-     };
+    };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }
-
 
 public type Student3 record {|
     int id;
