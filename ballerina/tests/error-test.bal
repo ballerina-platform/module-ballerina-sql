@@ -18,17 +18,17 @@ import ballerina/test;
 string errorDB = urlPrefix + "9013/error";
 
 @test:BeforeGroups {
-	value: ["error"]
+    value: ["error"]
 }
 function initErrorContainer() returns error? {
-	check initializeDockerContainer("sql-error", "error", "9013", "error", "error-database-init.sql");
+    check initializeDockerContainer("sql-error", "error", "9013", "error", "error-database-init.sql");
 }
 
 @test:AfterGroups {
-	value: ["error"]
+    value: ["error"]
 }
 function cleanErrorContainer() returns error? {
-	check cleanDockerContainer("sql-error");
+    check cleanDockerContainer("sql-error");
 }
 
 @test:Config {

@@ -421,43 +421,43 @@ function testDateTime3() returns error? {
     queryResult = dbClient->query(`SELECT date_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Date type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT time_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT timestamp_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT datetime_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Datetime type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT time_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT timestamp_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
-    test:assertEquals((<error>result).message(),
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
@@ -468,14 +468,14 @@ function testDateTime3() returns error? {
 }
 function testDateTime4() returns error? {
     time:Civil timestampWithTimezone = {
-            utcOffset: {hours: -8, minutes: 0},
-            timeAbbrev: "-08:00",
-            year: 2017,
-            month: 1,
-            day: 25,
-            hour: 16,
-            minute: 33,
-            second: 55
+        utcOffset: {hours: -8, minutes: 0},
+        timeAbbrev: "-08:00",
+        year: 2017,
+        month: 1,
+        day: 25,
+        hour: 16,
+        minute: 33,
+        second: 55
     };
     time:Utc timeUtc = check time:utcFromCivil(timestampWithTimezone);
 

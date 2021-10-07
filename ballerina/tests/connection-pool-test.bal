@@ -357,7 +357,7 @@ function testShutDownUnsharedLocalConnectionPool() returns error? {
     // Pool should be shutdown as the only client using it is stopped.
     check dbClient.close();
     // This should result in an error return.
-    var resultAfterPoolShutDown = dbClient->query(`select count(*) as val from Customers where registrationID = 1`,
+    var resultAfterPoolShutDown = dbClient->query(`select count(*) as val from Customers where registrationID = 1`, 
         Result);
     int|error retVal2 = getReturnValue(resultAfterPoolShutDown);
 
@@ -510,8 +510,8 @@ function testGlobalConnectionPoolConcurrentHelper2(string url) returns (int|erro
     return returnArray;
 }
 
-isolated function getCombinedReturnValue([stream<record{}, error?>, stream<record{}, error?>]|error queryResult) returns
- (int|error)[]|error {
+isolated function getCombinedReturnValue([stream<record {}, error?>, stream<record {}, error?>]|error queryResult)
+    returns (int|error)[]|error {
     if queryResult is error {
         return queryResult;
     } else {

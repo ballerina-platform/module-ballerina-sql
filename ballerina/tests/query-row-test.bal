@@ -21,17 +21,17 @@ import ballerina/time;
 string queryRowDb = urlPrefix + "9011/queryrow";
 
 @test:BeforeGroups {
-	value: ["query-row"]
+    value: ["query-row"]
 }
 function initQueryRowContainer() returns error? {
-	check initializeDockerContainer("sql-query-row", "queryrow", "9011", "query", "query-row-test-data.sql");
+    check initializeDockerContainer("sql-query-row", "queryrow", "9011", "query", "query-row-test-data.sql");
 }
 
 @test:AfterGroups {
-	value: ["query-row"]
+    value: ["query-row"]
 }
 function cleanQueryRowContainer() returns error? {
-	check cleanDockerContainer("sql-query-row");
+    check cleanDockerContainer("sql-query-row");
 }
 
 @test:Config {
@@ -49,7 +49,7 @@ function queryRecordSingleIntParam() returns error? {
 function queryRecordDoubleIntParam() returns error? {
     int rowId = 1;
     int intType = 1;
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
                                     ` WHERE row_id = ${rowId} AND int_type =  ${intType}`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -104,7 +104,7 @@ function queryRecordFloatParam() returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordDoubleAndFloatParam()  returns error? {
+function queryRecordDoubleAndFloatParam() returns error? {
     float floatType = 123.34;
     float doubleType = 2139095039.0;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE float_type = ${floatType}
@@ -115,7 +115,7 @@ function queryRecordDoubleAndFloatParam()  returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordDecimalParam()  returns error? {
+function queryRecordDecimalParam() returns error? {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE decimal_type = ${decimalValue}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -124,9 +124,9 @@ function queryRecordDecimalParam()  returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordDecimalAnFloatParam()  returns error? {
+function queryRecordDecimalAnFloatParam() returns error? {
     decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
                                     ` WHERE decimal_type = ${decimalValue} and double_type = 2139095039.0`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -134,7 +134,7 @@ function queryRecordDecimalAnFloatParam()  returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordVarcharStringParam()  returns error? {
+function queryRecordVarcharStringParam() returns error? {
     VarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -143,7 +143,7 @@ function queryRecordVarcharStringParam()  returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordTypeCharStringParam()  returns error? {
+function queryRecordTypeCharStringParam() returns error? {
     CharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -170,7 +170,7 @@ function queryRecordTypeNVarCharStringParam() returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordTypeVarCharIntegerParam()  returns error? {
+function queryRecordTypeVarCharIntegerParam() returns error? {
     int intVal = 1;
     NCharValue typeVal = new (intVal.toString());
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
@@ -183,7 +183,7 @@ function queryRecordTypeVarCharIntegerParam()  returns error? {
         decimal decimalVal = 25.45;
         test:assertEquals(returnData["INT_TYPE"], 1);
         test:assertEquals(returnData["LONG_TYPE"], 9372036854774807);
-        test:assertEquals(returnData["DOUBLE_TYPE"], <float> 29095039);
+        test:assertEquals(returnData["DOUBLE_TYPE"], <float>29095039);
         test:assertEquals(returnData["BOOLEAN_TYPE"], false);
         test:assertEquals(returnData["DECIMAL_TYPE"], decimalVal);
         test:assertEquals(returnData["STRING_TYPE"], "1");
@@ -216,9 +216,9 @@ function queryRecordTypeBitIntParam() returns error? {
 function queryRecordTypeBitInvalidIntParam() returns error? {
     BitValue typeVal = new (12);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
-    record{}|error returnVal = queryRecordMockClient(queryRowDb, sqlQuery);
+    record {}|error returnVal = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(returnVal is error);
-    error dbError = <error> returnVal;
+    error dbError = <error>returnVal;
     test:assertTrue(dbError.message().endsWith("Only 1 or 0 can be passed for BitValue SQL Type, but found :12"));
 }
 
@@ -242,7 +242,7 @@ function queryRecordIntTypeInvalidParam() returns error? {
     check dbClient.close();
     test:assertTrue(queryResult is error);
     if queryResult is ApplicationError {
-        test:assertTrue(queryResult.message().endsWith("The field 'int_type' of type float cannot be mapped to the column " +
+        test:assertTrue(queryResult.message().endsWith("The field 'int_type' of type float cannot be mapped to the column " + 
         "'INT_TYPE' of SQL type 'INTEGER'"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -493,7 +493,7 @@ function queryRecordDateStringInvalidParam() {
     test:assertTrue(result is error);
 
     if result is ApplicationError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM " + 
                 "DateTimeTypes WHERE date_type =  ? . java.lang.IllegalArgumentException"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -504,7 +504,7 @@ function queryRecordDateStringInvalidParam() {
     groups: ["query", "query-row"]
 }
 function queryRecordDateTimeRecordParam() returns error? {
-    time:Date date = {year: 2017, month:2, day: 3};
+    time:Date date = {year: 2017, month: 2, day: 3};
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -514,8 +514,15 @@ function queryRecordDateTimeRecordParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
-    time:Civil dateTime = {utcOffset: {hours: +8, minutes: 0}, year:2008, month:8, day:8, hour: 20, minute: 8,
-                            second:8};
+    time:Civil dateTime = {
+        utcOffset: {hours: +8, minutes: 0},
+        year: 2008,
+        month: 8,
+        day: 8,
+        hour: 20,
+        minute: 8,
+        second: 8
+    };
     DateTimeValue typeVal = new (dateTime);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -540,7 +547,7 @@ function queryRecordTimeStringInvalidParam() {
     test:assertTrue(result is error);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " + 
         "WHERE time_type =  ? . data exception: invalid datetime format."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -551,7 +558,7 @@ function queryRecordTimeStringInvalidParam() {
     groups: ["query", "query-row"]
 }
 function queryRecordTimeTimeRecordParam() returns error? {
-    time:TimeOfDay date = {hour: 11, minute: 35, second:45};
+    time:TimeOfDay date = {hour: 11, minute: 35, second: 45};
     TimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -586,7 +593,7 @@ function queryRecordTimestampStringInvalidParam() {
     test:assertTrue(result is error);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " +
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM DateTimeTypes " + 
         "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -617,7 +624,7 @@ function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
-    time:Civil date = {year: 2017, month:2, day: 3, hour: 11, minute: 53, second:0};
+    time:Civil date = {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0};
     DateTimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE datetime_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -645,7 +652,7 @@ function queryRecordArrayBasicParams() returns error? {
     string[] paraString = ["Hello", "Ballerina"];
     boolean[] paraBool = [true, false, true];
 
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
     `SELECT * FROM ArrayTypes WHERE int_array = ${paraInt}
                                 AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
@@ -667,7 +674,7 @@ function queryRecordArrayBasicParams() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordArrayBasicNullParams() returns error? {
-    ParameterizedQuery sqlQuery =
+    ParameterizedQuery sqlQuery = 
         `SELECT * FROM ArrayTypes WHERE int_array is null AND long_array is null AND float_array
          is null AND double_array is null AND decimal_array is null AND string_array is null
          AND boolean_array is null`;
@@ -739,7 +746,7 @@ function queryRecordNoCheckNegative() returns error? {
     record{}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."),
+        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."), 
                         "Incorrect error message");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
@@ -784,7 +791,7 @@ function queryValueNegative2() returns error? {
     int|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertEquals(queryResult.message(),
+        test:assertEquals(queryResult.message(), 
                         "SQL Type 'Retrieved SQL type' cannot be converted to ballerina type 'int'.");
     } else {
         test:assertFail("Expected error when query returns unexpected result type.");
@@ -958,8 +965,16 @@ function queryValueTypeCivilWithTimezone() returns error? {
     time:Civil retrievedValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
 
-    time:Civil timestampWithTimezone = {utcOffset: {hours: 8, minutes: 0}, timeAbbrev: "+08:00", year:2008,
-                                        month:8, day:8, hour: 20, minute: 8, second:8};
+    time:Civil timestampWithTimezone = {
+        utcOffset: {hours: 8, minutes: 0},
+        timeAbbrev: "+08:00",
+        year: 2008,
+        month: 8,
+        day: 8,
+        hour: 20,
+        minute: 8,
+        second: 8
+    };
     test:assertEquals(retrievedValue, timestampWithTimezone);
 }
 
@@ -985,7 +1000,7 @@ function queryValueTypeTime() returns error? {
     time:TimeOfDay retrievedValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
 
-    time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second:45};
+    time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second: 45};
     test:assertEquals(retrievedValue, timeTypeRecord);
 }
 
@@ -1071,7 +1086,7 @@ function testArrayRetrievalRecord() returns error? {
     var mixTypesExpected = {
         INT_TYPE: 1,
         INT_ARRAY: [1, 2, 3],
-        LONG_TYPE:9223372036854774807,
+        LONG_TYPE: 9223372036854774807,
         LONG_ARRAY: [100000000, 200000000, 300000000],
         BOOLEAN_TYPE: true,
         STRING_TYPE: "Hello",
@@ -1093,7 +1108,7 @@ function testComplexWithStructDefRecord() returns error? {
         int_type: 1,
         int_array: [1, 2, 3],
         long_type: 9223372036854774807,
-        long_array:[100000000, 200000000, 300000000],
+        long_array: [100000000, 200000000, 300000000],
         boolean_type: true,
         string_type: "Hello",
         boolean_array: [true, false, true],
@@ -1139,11 +1154,19 @@ function testDateTimeRecord2() returns error? {
     check dbClient.close();
 
     time:Date dateTypeRecord = {year: 2017, month: 2, day: 3};
-    time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second:45};
+    time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second: 45};
     time:Civil timestampTypeRecord = {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0};
     time:TimeOfDay timeWithTimezone = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8, "timeAbbrev": "-08:00"};
-    time:Civil timestampWithTimezone = {utcOffset: {hours: 8, minutes: 0}, timeAbbrev: "+08:00", year:2008,
-                                        month:8, day:8, hour: 20, minute: 8, second:8};
+    time:Civil timestampWithTimezone = {
+        utcOffset: {hours: 8, minutes: 0},
+        timeAbbrev: "+08:00",
+        year: 2008,
+        month: 8,
+        day: 8,
+        hour: 20,
+        minute: 8,
+        second: 8
+    };
 
     ResultDates2 expected = {
         date_type: dateTypeRecord,
@@ -1165,38 +1188,38 @@ function testDateTimeRecord3() returns error? {
 
     result = dbClient->queryRow(`SELECT date_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Date type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Datetime type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
-    test:assertEquals((<error>result).message(),
-        "The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.",
+    test:assertEquals((<error>result).message(), 
+        "The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.", 
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
@@ -1214,15 +1237,15 @@ function testGetArrayTypesRecord() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 1,
-        blob_array: [<byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46],
-                    <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46]],
+        blob_array: [<byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
+                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
         smallint_array: [12, 232],
         int_array: [1, 2, 3],
         long_array: [100000000, 200000000, 300000000],
         float_array: [245.23, 5559.49, 8796.123],
         double_array: [245.23, 5559.49, 8796.123],
         decimal_array: [245.12, 5559.12, 8796.92],
-        real_array: [199.33,2399.1],
+        real_array: [199.33, 2399.1],
         numeric_array: [11.11, 23.23],
         varchar_array: ["Hello", "Ballerina"],
         char_array: ["Hello          ", "Ballerina      "],
@@ -1234,11 +1257,10 @@ function testGetArrayTypesRecord() returns error? {
         datetime_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
         timestamp_array: [<time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
         time_tz_array: [<time:TimeOfDay>{utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"}, <time:TimeOfDay>{utcOffset: {hours: 4, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+04:30"}],
-        timestamp_tz_array: [<time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}]
+        timestamp_tz_array: [<time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
-
 
 @test:Config {
     groups: ["query", "query-row"]
@@ -1261,7 +1283,7 @@ function testGetArrayTypesRecord2() returns error? {
         decimal_array: [null, null],
         real_array: [null, null],
         numeric_array: [null, null],
-        varchar_array:[null, null],
+        varchar_array: [null, null],
         char_array: [null, null],
         nvarchar_array: [null, null],
         boolean_array: [null, null],
@@ -1288,15 +1310,15 @@ function testGetArrayTypesRecord3() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 3,
-        blob_array: [null, <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46],
-                    <byte[]>[119,115,111,50,32,98,97,108,108,101,114,105,110,97,32,98,108,111,98,32,116,101,115,116,46]],
+        blob_array: [null, <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
+                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
         smallint_array: [null, 12, 232],
         int_array: [null, 1, 2, 3],
         long_array: [null, 100000000, 200000000, 300000000],
         float_array: [null, 245.23, 5559.49, 8796.123],
         double_array: [null, 245.23, 5559.49, 8796.123],
         decimal_array: [null, 245.12, 5559.12, 8796.92],
-        real_array: [null, 199.33,2399.1],
+        real_array: [null, 199.33, 2399.1],
         numeric_array: [null, 11.11, 23.23],
         varchar_array: [null, "Hello", "Ballerina"],
         char_array: [null, "Hello          ", "Ballerina      "],
@@ -1308,7 +1330,7 @@ function testGetArrayTypesRecord3() returns error? {
         datetime_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
         timestamp_array: [null, <time:Civil>{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, <time:Civil>{year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}],
         time_tz_array: [null, <time:TimeOfDay>{utcOffset: {hours: 6, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+06:30"}, <time:TimeOfDay>{utcOffset: {hours: 4, minutes: 30}, hour: 16, minute: 33, second: 55, "timeAbbrev": "+04:30"}],
-        timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year:2017, month:1, day:25, hour: 16, minute: 33, second:55}]
+        timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
@@ -1334,7 +1356,7 @@ function testGetArrayTypesRecord4() returns error? {
         decimal_array: (),
         real_array: (),
         numeric_array: (),
-        varchar_array:(),
+        varchar_array: (),
         char_array: (),
         nvarchar_array: (),
         boolean_array: (),
@@ -1349,7 +1371,7 @@ function testGetArrayTypesRecord4() returns error? {
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
-isolated function validateDataTableRecordResult(record{}? returnData) {
+isolated function validateDataTableRecordResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {
         test:assertFail("Empty row returned.");
@@ -1357,15 +1379,15 @@ isolated function validateDataTableRecordResult(record{}? returnData) {
         test:assertEquals(returnData["ROW_ID"], 1);
         test:assertEquals(returnData["INT_TYPE"], 1);
         test:assertEquals(returnData["LONG_TYPE"], 9223372036854774807);
-        test:assertEquals(returnData["DOUBLE_TYPE"], <float> 2139095039);
+        test:assertEquals(returnData["DOUBLE_TYPE"], <float>2139095039);
         test:assertEquals(returnData["BOOLEAN_TYPE"], true);
         test:assertEquals(returnData["DECIMAL_TYPE"], decimalVal);
         test:assertEquals(returnData["STRING_TYPE"], "Hello");
-        test:assertTrue(returnData["FLOAT_TYPE"] is float);   
-    } 
+        test:assertTrue(returnData["FLOAT_TYPE"] is float);
+    }
 }
 
-isolated function validateNumericTableRecordResult(record{}? returnData) {
+isolated function validateNumericTableRecordResult(record {}? returnData) {
     if returnData is () {
         test:assertFail("Empty row returned.");
     } else {
@@ -1382,7 +1404,7 @@ isolated function validateNumericTableRecordResult(record{}? returnData) {
     }
 }
 
-isolated function validateComplexTableRecordResult(record{}? returnData) {
+isolated function validateComplexTableRecordResult(record {}? returnData) {
     if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
@@ -1392,7 +1414,7 @@ isolated function validateComplexTableRecordResult(record{}? returnData) {
     }
 }
 
-isolated function validateDateTimeTypesTableRecordResult(record{}? returnData) {
+isolated function validateDateTimeTypesTableRecordResult(record {}? returnData) {
     if returnData is () {
         test:assertFail("Returned data is nil");
     } else {
