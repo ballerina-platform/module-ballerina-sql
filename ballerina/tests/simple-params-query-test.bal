@@ -226,7 +226,7 @@ function queryTypeBitStringParam() returns error? {
 function queryTypeBitInvalidIntParam() {
     BitValue typeVal = new (12);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
-    record {}|error? returnVal = trap queryMockClient(simpleParamsDb, sqlQuery);
+    record {}|error? returnVal = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(returnVal is error);
     error dbError = <error>returnVal;
     test:assertEquals(dbError.message(), "Only 1 or 0 can be passed for BitValue SQL Type, but found :12");
@@ -405,7 +405,7 @@ function queryTypeDecimalDecimalParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryByteArrayParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
+    record {}? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
@@ -415,7 +415,7 @@ function queryByteArrayParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeBinaryByteParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
+    record {}? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
@@ -446,7 +446,7 @@ function queryTypeVarBinaryReadableByteChannelParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryTypeTinyBlobByteParam() returns error? {
-    record {}|error? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
+    record {}? value = check queryMockClient(simpleParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
@@ -516,7 +516,7 @@ function queryDateString2Param() returns error? {
 function queryDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
-    record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
@@ -570,7 +570,7 @@ function queryTimeStringParam() returns error? {
 function queryTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
-    record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {
@@ -591,7 +591,7 @@ type InvalidRecord record {
 function queryInvalidRecordParam() {
     InvalidRecord recordValue = {id: 1};
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${recordValue}`;
-    record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
     if result is ApplicationError {
         test:assertTrue(result.message().startsWith("Unsupported type passed in column index: 1"));
@@ -635,7 +635,7 @@ function queryTimestampStringParam() returns error? {
 function queryTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    record {}|error? result = trap queryMockClient(simpleParamsDb, sqlQuery);
+    record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DatabaseError {

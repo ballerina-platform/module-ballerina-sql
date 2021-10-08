@@ -40,13 +40,12 @@ isolated function afterSuite() {
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, 
         string scriptName) returns error? {
     int exitCode = 1;
-    Process|error execResult = exec("docker", {}, scriptPath, "run", "--rm", 
+    Process result = check exec("docker", {}, scriptPath, "run", "--rm",
         "-d", "--name", containerName, 
         "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias, 
         "-e", "HSQLDB_USER=test", 
         "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts", 
         "-p", port + ":9001", "kaneeldias/hsqldb");
-    Process result = check execResult;
     int waitForExit = check result.waitForExit();
     exitCode = check result.exitCode();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
@@ -57,14 +56,13 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     exitCode = 1;
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5);
-        execResult = exec(
+        result = check exec(
             "docker", {}, scriptPath, "exec", containerName, 
             "java", "-jar", "/opt/hsqldb/sqltool.jar", 
             "--autoCommit", 
             "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=", 
             "/scripts/" + scriptName
         );
-        result = check execResult;
         waitForExit = check result.waitForExit();
         exitCode = check result.exitCode();
         counter = counter + 1;
@@ -74,8 +72,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
 }
 
 function cleanDockerContainer(string containerName) returns error? {
-    Process|error execResult = exec("docker", {}, scriptPath, "stop", containerName);
-    Process result = check execResult;
+    Process result = check exec("docker", {}, scriptPath, "stop", containerName);
     int waitForExit = check result.waitForExit();
 
     int exitCode = check result.exitCode();
@@ -99,7 +96,7 @@ isolated function getClobColumnChannel() returns io:ReadableCharacterChannel|err
     return sourceChannel;
 }
 
-isolated function getUntaintedData(record {}|error? value, string fieldName) returns anydata {
+isolated function getUntaintedData(record {}? value, string fieldName) returns anydata {
     if value is record {} {
         return value[fieldName];
     }
