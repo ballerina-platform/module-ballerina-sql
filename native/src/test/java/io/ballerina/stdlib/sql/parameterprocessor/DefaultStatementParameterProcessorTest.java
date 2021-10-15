@@ -15,13 +15,12 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package io.ballerina.stdlib.sql.tests.parameterprocessor;
+package io.ballerina.stdlib.sql.parameterprocessor;
 
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.sql.TestUtils;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
-import io.ballerina.stdlib.sql.tests.TestUtils;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;

@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests;
+package io.ballerina.stdlib.sql;
 
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;

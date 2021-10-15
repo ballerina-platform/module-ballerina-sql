@@ -16,10 +16,9 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests.transaction;
+package io.ballerina.stdlib.sql.transaction;
 
-import io.ballerina.stdlib.sql.tests.TestUtils;
-import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
+import io.ballerina.stdlib.sql.TestUtils;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;

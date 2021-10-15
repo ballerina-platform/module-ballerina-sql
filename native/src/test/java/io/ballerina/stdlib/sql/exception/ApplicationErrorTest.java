@@ -16,13 +16,8 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests.exception;
+package io.ballerina.stdlib.sql.exception;
 
-import io.ballerina.stdlib.sql.exception.ApplicationError;
-import io.ballerina.stdlib.sql.exception.ConversionError;
-import io.ballerina.stdlib.sql.exception.FieldMismatchError;
-import io.ballerina.stdlib.sql.exception.TypeMismatchError;
-import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;

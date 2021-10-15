@@ -16,14 +16,13 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests.datasource;
+package io.ballerina.stdlib.sql.datasource;
 
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.internal.values.MapValueImpl;
-import io.ballerina.stdlib.sql.datasource.PoolKey;
-import io.ballerina.stdlib.sql.tests.TestUtils;
+import io.ballerina.stdlib.sql.TestUtils;
 import org.testng.annotations.Test;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;

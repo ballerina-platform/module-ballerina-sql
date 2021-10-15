@@ -23,13 +23,13 @@
 
     <test name="SQL Tests" parallel="false">
         <classes>
-            <class name="io.ballerina.stdlib.sql.tests.datasource.PoolKeyTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.exception.ApplicationErrorTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.nativeimpl.OutParameterProcessorTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.parameterprocessor.DefaultResultParameterProcessorTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.parameterprocessor.DefaultStatementParameterProcessorTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.transaction.SQLTransactionContextTest"/>
-            <class name="io.ballerina.stdlib.sql.tests.utils.UtilsTest"/>
+            <class name="io.ballerina.stdlib.sql.datasource.PoolKeyTest"/>
+            <class name="io.ballerina.stdlib.sql.exception.ApplicationErrorTest"/>
+            <class name="io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessorTest"/>
+            <class name="io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessorTest"/>
+            <class name="io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessorTest"/>
+            <class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContextTest"/>
+            <class name="io.ballerina.stdlib.sql.utils.UtilsTest"/>
         </classes>
     </test>
 </suite>
