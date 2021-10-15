@@ -30,7 +30,7 @@ import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.tests.TestUtils;
 import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -40,10 +40,10 @@ import java.time.OffsetTime;
 import java.util.Date;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 /**
  * DefaultResultParameterProcessor class test.
@@ -271,8 +271,8 @@ public class DefaultResultParameterProcessorTest {
                     Types.STRUCT, TestUtils.getRecordStructRecord());
             BMap<BString, Object> map = (BMap<BString, Object>) object;
             MapValueImpl mapValue = (MapValueImpl) map.get(fromString("value0"));
-            assertEquals(mapValue.getBooleanValue(fromString("value2")), true);
-            assertEquals(mapValue.getBooleanValue(fromString("value1")), false);
+            assertEquals(mapValue.getBooleanValue(fromString("value2")), Boolean.TRUE);
+            assertEquals(mapValue.getBooleanValue(fromString("value1")), Boolean.FALSE);
         } catch (Exception ignored) {
             fail("Exception received");
         }

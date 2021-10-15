@@ -22,16 +22,16 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor;
 import io.ballerina.stdlib.sql.tests.TestUtils;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 import java.sql.Struct;
 import java.util.ArrayList;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 /**
  * DefaultStatementParameterProcessor class test.
@@ -496,7 +496,7 @@ public class DefaultStatementParameterProcessorTest {
         try {
             Object[] objects = testClass.testGetBitValueArrayDataBString();
             Boolean[] array = (Boolean[]) objects[0];
-            assertEquals(array[0], true);
+            assertEquals(array[0], Boolean.TRUE);
         } catch (Exception e) {
             fail("Exception received");
         }
@@ -508,7 +508,7 @@ public class DefaultStatementParameterProcessorTest {
         try {
             Object[] objects = testClass.testGetBitValueArrayDataInteger(1);
             Boolean[] array = (Boolean[]) objects[0];
-            assertEquals(array[0], true);
+            assertEquals(array[0], Boolean.TRUE);
         } catch (Exception e) {
             fail("Exception received");
         }
@@ -520,7 +520,7 @@ public class DefaultStatementParameterProcessorTest {
         try {
             Object[] objects = testClass.testGetBitValueArrayDataInteger(12);
             Boolean[] array = (Boolean[]) objects[0];
-            assertEquals(array[0], true);
+            assertEquals(array[0], Boolean.TRUE);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Only 1 or 0 can be passed for BIT SQL Type, but found :12");
         }

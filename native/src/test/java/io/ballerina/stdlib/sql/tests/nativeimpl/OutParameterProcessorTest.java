@@ -26,11 +26,11 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.sql.tests.TestUtils;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * QueryProcessor class test.

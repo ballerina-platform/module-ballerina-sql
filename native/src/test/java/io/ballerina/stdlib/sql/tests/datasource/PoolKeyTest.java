@@ -24,12 +24,12 @@ import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.internal.values.MapValueImpl;
 import io.ballerina.stdlib.sql.datasource.PoolKey;
 import io.ballerina.stdlib.sql.tests.TestUtils;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * PoolKey class test.
