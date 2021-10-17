@@ -76,7 +76,7 @@ public final class Constants {
     public static final String PASSWORD = "password";
 
     public static final String ANNON_RECORD_TYPE_NAME = "record {";
-
+    public static final String BACKTICK = "`";
     /**
      * Constants related connection pool.
      */
