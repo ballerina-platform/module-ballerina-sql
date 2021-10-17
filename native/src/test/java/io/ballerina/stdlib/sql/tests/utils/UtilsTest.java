@@ -18,8 +18,13 @@
 
 package io.ballerina.stdlib.sql.tests.utils;
 
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.utils.TypeUtils;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.tests.TestUtils;
 import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
@@ -28,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -57,5 +63,24 @@ public class UtilsTest {
         list.add(columnDefinition2);
         StructureType structureType = Utils.getDefaultRecordType(list);
         assertEquals(structureType.getFlags(), 0);
+    }
+
+    @Test
+    void backTickEscapeTest() {
+        // HSQLDB does not support backtick quotes
+        BObject bParameterizedQuery = TestUtils.getMockObject("parameterizedQuery");
+
+        BString[] bStrings = {fromString("x"), fromString("y"), fromString("z"), fromString("")};
+
+        BString[] insertions = {fromString("`"), fromString("abc"), fromString("`") };
+
+
+        bParameterizedQuery.addNativeData(Constants.ParameterizedQueryFields.STRINGS.getValue(),
+                ValueCreator.createArrayValue(bStrings));
+        bParameterizedQuery.addNativeData(Constants.ParameterizedQueryFields.INSERTIONS.getValue(),
+                ValueCreator.createArrayValue(insertions));
+
+        ParameterizedQuery parameterizedSQLQuery = Utils.getParameterizedSQLQuery(bParameterizedQuery);
+        assertEquals(parameterizedSQLQuery.getSqlQuery(), "x`y ? z`");
     }
 }
