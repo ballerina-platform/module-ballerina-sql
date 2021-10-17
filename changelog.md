@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+- [Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
+
+## [1.0.0] - 2021-10-09
+
+### Added
+
 - [Add support for queryRow](https://github.com/ballerina-platform/ballerina-standard-library/issues/1604)
 - [Add support for async operation](https://github.com/ballerina-platform/ballerina-standard-library/issues/120)
 - [Implement array types for call procedure](https://github.com/ballerina-platform/ballerina-standard-library/issues/1516)
