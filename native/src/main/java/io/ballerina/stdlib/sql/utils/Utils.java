@@ -152,11 +152,11 @@ public class Utils {
         BArray bStringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
         BArray bInsertions = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
         for (int i = 0; i < bInsertions.size(); i++) {
-            if (!((bInsertions.get(i) instanceof BString) && (bInsertions.getBString(i).getValue().equals(BACKTICK)))) {
+            if (bInsertions.get(i) instanceof BString && bInsertions.getBString(i).getValue().equals(BACKTICK)) {
+                sqlQuery.append(bStringsArray.getBString(i).getValue()).append(BACKTICK);
+            } else {
                 insertions.add(bInsertions.get(i));
                 sqlQuery.append(bStringsArray.getBString(i).getValue()).append(" ? ");
-            } else {
-                sqlQuery.append(bStringsArray.getBString(i).getValue()).append(BACKTICK);
             }
         }
         sqlQuery.append(bStringsArray.getBString(bInsertions.size()));
