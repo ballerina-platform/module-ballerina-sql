@@ -39,8 +39,8 @@ dependencies {
     implementation group: 'io.ballerina.stdlib', name: 'time-native', version: "${stdlibTimeVersion}"
     implementation group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
     implementation group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+    implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
 tasks.withType(JavaCompile) {
@@ -54,11 +54,12 @@ jacoco {
 }
 
 test {
+    useTestNG() {
+        suites 'src/test/resources/testng.xml'
+    }
+    testLogging.showStandardStreams = true
     testLogging {
-        showStackTraces = true
-        showStandardStreams = true
         events "PASSED", "FAILED", "SKIPPED"
-        exceptionFormat "full"
         afterSuite { desc, result ->
             if (!desc.parent) { // will match the outermost suite
                 def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
@@ -67,12 +68,6 @@ test {
                 println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
             }
         }
-    }
-    jacoco {
-        enabled = true
-        includeNoLocationClasses = false
-        excludes = ['jdk.internal.*']
-        useJUnitPlatform()
     }
     finalizedBy jacocoTestReport
 }

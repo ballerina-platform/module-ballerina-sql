@@ -16,17 +16,16 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests.transaction;
+package io.ballerina.stdlib.sql.transaction;
 
-import io.ballerina.stdlib.sql.tests.TestUtils;
-import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
-import org.junit.jupiter.api.Test;
+import io.ballerina.stdlib.sql.TestUtils;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 
 import javax.transaction.xa.XAResource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * SQLTransactionContext class test.

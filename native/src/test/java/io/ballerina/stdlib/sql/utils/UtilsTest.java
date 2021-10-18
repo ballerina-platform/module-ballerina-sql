@@ -16,19 +16,17 @@
  *  under the License.
  */
 
-package io.ballerina.stdlib.sql.tests.utils;
+package io.ballerina.stdlib.sql.utils;
 
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.utils.TypeUtils;
-import io.ballerina.stdlib.sql.tests.TestUtils;
-import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
-import io.ballerina.stdlib.sql.utils.Utils;
-import org.junit.jupiter.api.Test;
+import io.ballerina.stdlib.sql.TestUtils;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Utils class test.
