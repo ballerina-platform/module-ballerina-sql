@@ -28,6 +28,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
@@ -51,7 +52,6 @@ import java.util.Map;
 import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.closeResources;
 import static io.ballerina.stdlib.sql.utils.Utils.getGeneratedKeys;
-import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 
 
 /**
@@ -104,7 +104,8 @@ public class ExecuteProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                sqlQuery = getSqlQuery(paramSQLString);
+                ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(paramSQLString);
+                sqlQuery = parameterizedQuery.getSqlQuery();
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
 
                 if (sqlDatasource.getExecuteGKFlag()) {
@@ -113,7 +114,7 @@ public class ExecuteProcessor {
                     statement = connection.prepareStatement(sqlQuery);
                 }
 
-                statementParameterProcessor.setParams(connection, statement, paramSQLString);
+                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
 
                 int count = statement.executeUpdate();
                 Object lastInsertedId = null;
@@ -184,19 +185,17 @@ public class ExecuteProcessor {
             PreparedStatement statement = null;
             ResultSet resultSet = null;
             String sqlQuery = null;
-            List<BObject> parameters = new ArrayList<>();
+            List<Object[]> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
             try {
                 Object[] paramSQLObjects = paramSQLStrings.getValues();
-                BObject parameterizedQuery = (BObject) paramSQLObjects[0];
-                sqlQuery = getSqlQuery(parameterizedQuery);
-                parameters.add(parameterizedQuery);
+                ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[0]));
+                sqlQuery = parameterizedQuery.getSqlQuery();
+                parameters.add(parameterizedQuery.getInsertions());
                 for (int i = 1; i < paramSQLStrings.size(); i++) {
-                    parameterizedQuery = (BObject) paramSQLObjects[i];
-                    String paramSQLQuery = getSqlQuery(parameterizedQuery);
-
-                    if (sqlQuery.equals(paramSQLQuery)) {
-                        parameters.add(parameterizedQuery);
+                    parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[i]));
+                    if (sqlQuery.equals(parameterizedQuery.getSqlQuery())) {
+                        parameters.add(parameterizedQuery.getInsertions());
                     } else {
                         return ErrorGenerator.getSQLApplicationError("Batch Execute cannot contain different SQL " +
                                 "commands. These has to be executed in different function calls");
@@ -210,7 +209,7 @@ public class ExecuteProcessor {
                     statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
                 }
 
-                for (BObject param : parameters) {
+                for (Object[] param : parameters) {
                     statementParameterProcessor.setParams(connection, statement, param);
                     statement.addBatch();
                 }

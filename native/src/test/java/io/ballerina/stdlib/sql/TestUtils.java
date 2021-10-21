@@ -145,7 +145,7 @@ public class TestUtils {
 
             @Override
             public BArray getArrayValue(BString bString) {
-                return null;
+                return ((BArray) nativeData.get(bString.getValue()));
             }
 
             @Override
