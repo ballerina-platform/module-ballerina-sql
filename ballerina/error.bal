@@ -41,10 +41,10 @@ public type Error distinct error;
 //Level 2
 # Represents an error caused by an issue related to database accessibility, erroneous queries, constraint violations,
 # database resource clean-up, and other similar scenarios.
-public type DatabaseError distinct Error & error<DatabaseErrorDetail>;
+public type DatabaseError distinct (Error & error<DatabaseErrorDetail>);
 
 # Represents an error occurred when a batch execution is running.
-public type BatchExecuteError distinct Error & error<BatchExecuteErrorDetail>;
+public type BatchExecuteError distinct (Error & error<BatchExecuteErrorDetail>);
 
 # Represents an error that occurs when a query retrieves no rows when at least one row was expected.
 public type NoRowsError distinct Error;
