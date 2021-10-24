@@ -35,6 +35,7 @@ map<anydata> connectionPoolOptions = {
 function initPoolContainer() returns error? {
     check initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
     check initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
+    return ();
 }
 
 @test:AfterGroups {
@@ -43,6 +44,7 @@ function initPoolContainer() returns error? {
 function cleanPoolContainer() returns error? {
     check cleanDockerContainer("sql-pool1");
     check cleanDockerContainer("sql-pool2");
+    return ();
 }
 
 @test:Config {
@@ -50,6 +52,7 @@ function cleanPoolContainer() returns error? {
 }
 function testGlobalConnectionPoolSingleDestination() returns error? {
     check drainGlobalPool(poolDB_1);
+    return ();
 }
 
 @test:Config {
@@ -58,6 +61,7 @@ function testGlobalConnectionPoolSingleDestination() returns error? {
 function testGlobalConnectionPoolsMultipleDestinations() returns error? {
     check drainGlobalPool(poolDB_1);
     check drainGlobalPool(poolDB_2);
+    return ();
 }
 
 @test:Config {
@@ -115,6 +119,8 @@ function testGlobalConnectionPoolSingleDestinationConcurrent() returns error? {
         i = i + 1;
     }
     validateConnectionTimeoutError(result2[2]);
+
+    return ();
 }
 
 @test:Config {
@@ -159,6 +165,8 @@ function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
         i = i + 1;
     }
     validateConnectionTimeoutError(returnArray[5]);
+
+    return ();
 }
 
 @test:Config {
@@ -221,6 +229,8 @@ function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? 
     validateConnectionTimeoutError(returnArray[3]);
     validateConnectionTimeoutError(returnArray[7]);
 
+    return ();
+
 }
 
 @test:Config {
@@ -270,6 +280,8 @@ function testLocalSharedConnectionPoolConfigMultipleDestinations() returns error
     }
     validateConnectionTimeoutError(returnArray[3]);
     validateConnectionTimeoutError(returnArray[7]);
+
+    return ();
 }
 
 @test:Config {
@@ -306,6 +318,8 @@ function testLocalSharedConnectionPoolCreateClientAfterShutdown() returns error?
     test:assertEquals(result2, 1);
     validateApplicationError(result3);
     test:assertEquals(result4, 1);
+
+    return ();
 }
 
 ConnectionPool pool1 = {maxOpenConnections: 2};
@@ -316,6 +330,7 @@ ConnectionPool pool1 = {maxOpenConnections: 2};
 function testLocalSharedConnectionPoolStopInitInterleave() returns error? {
     worker w1 returns error? {
         check testLocalSharedConnectionPoolStopInitInterleaveHelper1(poolDB_1);
+        return ();
     }
     worker w2 returns int|error {
         return testLocalSharedConnectionPoolStopInitInterleaveHelper2(poolDB_1);
@@ -324,6 +339,8 @@ function testLocalSharedConnectionPoolStopInitInterleave() returns error? {
     check wait w1;
     int|error result = wait w2;
     test:assertEquals(result, 1);
+
+    return ();
 }
 
 function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url) 
@@ -332,6 +349,7 @@ returns error? {
         connectionPoolOptions = connectionPoolOptions);
     runtime:sleep(1);
     check dbClient.close();
+    return ();
 }
 
 function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url) 
@@ -363,6 +381,8 @@ function testShutDownUnsharedLocalConnectionPool() returns error? {
 
     test:assertEquals(retVal1, 1);
     validateApplicationError(retVal2);
+
+    return ();
 }
 
 @test:Config {
@@ -402,6 +422,8 @@ function testShutDownSharedConnectionPool() returns error? {
     test:assertEquals(retVal3, 1);
     validateApplicationError(retVal4);
     validateApplicationError(retVal5);
+
+    return ();
 }
 
 @test:Config {
@@ -435,6 +457,8 @@ function testShutDownPoolCorrespondingToASharedPoolConfig() returns error? {
     test:assertEquals(retVal2, 1);
     test:assertEquals(retVal3, 1);
     validateApplicationError(retVal4);
+
+    return ();
 }
 
 @test:Config {
@@ -456,6 +480,8 @@ function testStopClientUsingGlobalPool() returns error? {
 
     test:assertEquals(retVal1, 1);
     validateApplicationError(retVal2);
+
+    return ();
 }
 
 @test:Config {
@@ -581,6 +607,8 @@ function drainGlobalPool(string url) returns error? {
         i = i + 1;
     }
     validateConnectionTimeoutError(returnArray[10]);
+
+    return ();
 }
 
 isolated function getReturnValue(stream<record {}, error?> queryResult) returns int|error {

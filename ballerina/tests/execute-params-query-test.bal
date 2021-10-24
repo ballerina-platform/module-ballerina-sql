@@ -26,6 +26,7 @@ string executeParamsDb = urlPrefix + "9007/executeparams";
 }
 function initExecuteParamsContainer() returns error? {
     check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+    return ();
 }
 
 @test:AfterGroups {
@@ -33,6 +34,7 @@ function initExecuteParamsContainer() returns error? {
 }
 function cleanExecuteParamsContainer() returns error? {
     check cleanDockerContainer("sql-execute-params");
+    return ();
 }
 
 @test:Config {
@@ -52,6 +54,8 @@ function insertIntoDataTable() returns error? {
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -62,6 +66,7 @@ function insertIntoDataTable2() returns error? {
     int rowId = 5;
     ParameterizedQuery sqlQuery = `INSERT INTO DataTable (row_id) VALUES(${rowId})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+    return ();
 }
 
 @test:Config {
@@ -82,6 +87,8 @@ function insertIntoDataTable3() returns error? {
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -103,6 +110,8 @@ function insertIntoDataTable4() returns error? {
         `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, decimal_type)
         VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType}, ${stringType}, ${decimalType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -125,6 +134,8 @@ function deleteDataTable1() returns error? {
     ParameterizedQuery query5 = ` AND decimal_type=${decimalType}`;
     ParameterizedQuery sqlQuery = queryConcat(query1, query2, query3, query4, query5);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -135,6 +146,7 @@ function deleteDataTable2() returns error? {
     int rowId = 2;
     ParameterizedQuery sqlQuery = `DELETE FROM DataTable where row_id = ${rowId}`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+    return ();
 }
 
 @test:Config {
@@ -157,6 +169,8 @@ function deleteDataTable3() returns error? {
               AND double_type=${doubleType} AND boolean_type=${boolType}
               AND string_type=${stringType} AND decimal_type=${decimalType}`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -185,6 +199,8 @@ function deleteDataTable4() returns error? {
     ParameterizedQuery query6 = ` AND decimal_type=${decimalType}`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -213,6 +229,8 @@ function deleteDataTable5() returns error? {
     ParameterizedQuery query6 = ` decimal_type=23.45`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -241,6 +259,8 @@ function deleteDataTable6() returns error? {
     ParameterizedQuery query6 = ` decimal_type=23.45`;
     sqlQuery = queryConcat(query1, query2, query3, query4, query5, query6);
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -257,6 +277,8 @@ function insertIntoComplexTable() returns error? {
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${binaryData}, CONVERT(${stringType}, CLOB), ${binaryData}, ${binaryData})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -277,6 +299,8 @@ function insertIntoComplexTable2() returns error? {
         `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
         ${rowId}, ${blobType}, CONVERT(${clobType}, CLOB), ${binaryType}, ${binaryType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -290,6 +314,8 @@ function insertIntoComplexTable3() returns error? {
             `INSERT INTO ComplexTypes (row_id, blob_type, clob_type, binary_type, var_binary_type) VALUES (
             ${rowId}, ${nilType}, CONVERT(${nilType}, CLOB), ${nilType}, ${nilType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -304,6 +330,8 @@ function deleteComplexTable() returns error? {
     ParameterizedQuery sqlQuery = 
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${binaryData}`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -320,6 +348,8 @@ function deleteComplexTable2() returns error? {
     ParameterizedQuery sqlQuery = 
             `DELETE FROM ComplexTypes where row_id = ${rowId} AND blob_type= ${blobType} AND clob_type=${clobType}`;
     validateResult(check executeQueryMockClient(sqlQuery), 0);
+
+    return ();
 }
 
 @test:Config {
@@ -339,6 +369,8 @@ function insertIntoNumericTable() returns error? {
     ${decimalType},${decimalType},${decimalType},${decimalType})`;
     ParameterizedQuery sqlQuery = queryConcat(query, query1);
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
+
+    return ();
 }
 
 @test:Config {
@@ -353,6 +385,8 @@ function insertIntoNumericTable2() returns error? {
             numeric_type, float_type, real_type) VALUES(${nilType},${nilType},${nilType},${nilType},
             ${nilType},${nilType},${nilType},${nilType},${nilType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
+
+    return ();
 }
 
 @test:Config {
@@ -377,6 +411,8 @@ function insertIntoNumericTable3() returns error? {
              numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
              ${bitType},${decimalType},${numbericType},${floatType},${realType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
+
+    return ();
 }
 
 @test:Config {
@@ -398,6 +434,8 @@ function insertIntoNumericTable4() returns error? {
               ${decimalType},${decimalType},${decimalType},${decimalType});`;
     ParameterizedQuery sqlQuery = queryConcat(query, query1);
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
+
+    return ();
 }
 
 @test:Config {
@@ -414,6 +452,8 @@ function insertIntoDateTimeTable() returns error? {
         `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
         VALUES(${rowId}, ${dateType}, ${timeType}, ${dateTimeType}, ${timeStampType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -431,6 +471,8 @@ function insertIntoDateTimeTable2() returns error? {
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -448,6 +490,8 @@ function insertIntoDateTimeTable3() returns error? {
                 `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
                 VALUES(${rowId}, ${dateVal}, ${timeVal}, ${dateTimeVal}, ${timestampVal})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -462,6 +506,8 @@ function insertIntoDateTimeTable4() returns error? {
             `INSERT INTO DateTimeTypes (row_id, date_type, time_type, datetime_type, timestamp_type)
             VALUES(${rowId}, ${nilType}, ${nilType}, ${nilType}, ${nilType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 type DateTimeResultRecord record {
@@ -520,6 +566,8 @@ function insertIntoDateTimeTable5() returns error? {
     };
 
     test:assertEquals(value, expected, "Inserted data did not match retrieved data.");
+
+    return ();
 }
 
 @test:Config {
@@ -550,6 +598,8 @@ function insertIntoDateTimeTable6() returns error? {
     check dbClient.close();
 
     test:assertEquals(retrievedTimeUtc, timeUtc, "Inserted data did not match retrieved data.");
+
+    return ();
 }
 
 @test:Config {
@@ -574,6 +624,8 @@ function insertIntoArrayTable() returns error? {
          string_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraBlob})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -617,6 +669,8 @@ function insertIntoArrayTable3() returns error? {
          string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -650,6 +704,8 @@ function insertIntoArrayTable4() returns error? {
          string_array, smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array, blob_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraString}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary}, ${paraBlob})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -681,6 +737,8 @@ function insertIntoArrayTable5() returns error? {
          smallint_array, numeric_array, real_array, char_array, varchar_array, nvarchar_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraInt}, ${paraLong}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraBool}, ${paraSmallint}, ${paraNumeric}, ${paraReal}, ${paraChar}, ${paraVarchar}, ${paraNVarchar}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -713,6 +771,8 @@ function insertIntoArrayTable6() returns error? {
          numeric_array, real_array, date_array, time_array, datetime_array, timestamp_array, binary_array, varbinary_array) VALUES(${rowId}, ${paraFloat}, ${paraDouble}, ${paraDecimal},
          ${paraNumeric}, ${paraReal}, ${paraDate}, ${paraTime}, ${paraDatetime}, ${paraTimestamp}, ${paraBinary}, ${paraVarBinary})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -732,6 +792,8 @@ function insertIntoArrayTable7() returns error? {
          numeric_array, real_array) VALUES(${rowId}, ${paraDouble}, ${paraDecimal},
          ${paraNumeric}, ${paraReal})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -767,6 +829,8 @@ function insertIntoArrayTable8() returns error? {
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
     test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+
+    return ();
 }
 
 @test:Config {
@@ -788,6 +852,8 @@ function insertIntoArrayTable9() returns error? {
         `INSERT INTO ArrayTypes2 (row_id, time_array, date_array, timestamp_array) VALUES(${rowId},
                 ${paraTime}, ${paraDate}, ${paraTimestamp})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    return ();
 }
 
 @test:Config {
@@ -803,6 +869,8 @@ function insertIntoArrayTable10() returns error? {
                 ${paraTimeWithTZ})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
+
+    return ();
 }
 
 @test:Config {
@@ -826,6 +894,8 @@ function insertIntoArrayTable11() returns error? {
                 ${paraDatetimeWithTZ})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
+
+    return ();
 }
 
 function executeQueryMockClient(ParameterizedQuery sqlQuery) 
