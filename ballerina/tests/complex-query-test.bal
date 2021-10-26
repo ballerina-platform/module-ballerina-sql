@@ -23,7 +23,7 @@ string complexQueryDb = urlPrefix + "9008/querycomplexparams";
 }
 function initQueryComplexContainer() returns error? {
     check initializeDockerContainer("sql-query-complex", "querycomplexparams", "9008", "query", "complex-test-data.sql");
-    return ();
+    return;
 }
 
 @test:AfterGroups {
@@ -31,7 +31,7 @@ function initQueryComplexContainer() returns error? {
 }
 function cleanQueryComplexContainer() returns error? {
     check cleanDockerContainer("sql-query-complex");
-    return ();
+    return;
 }
 
 type SelectTestAlias record {
@@ -63,7 +63,7 @@ function testGetPrimitiveTypes() returns error? {
         string_type: "Hello"
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -87,7 +87,7 @@ function testGetPrimitiveTypes2() returns error? {
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
     test:assertTrue(value is SelectTestAlias, "Received value type is different.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -111,7 +111,7 @@ function testGetPrimitiveTypes3() returns error? {
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
     test:assertTrue(value is SelectTestAlias, "Received value type is different.");
-    return ();
+    return;
 }
 
 type SelectTestAlias2 record {
@@ -141,7 +141,7 @@ function testGetPrimitiveTypesLessFields() returns error? {
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
     test:assertTrue(value is SelectTestAlias2, "Received value type is different.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -166,7 +166,7 @@ function testToJson() returns error? {
     test:assertEquals(retVal, expectedDataJson, "Expected JSON did not match.");
 
     check dbClient.close();
-    return ();
+    return;
 }
 
 @test:Config {
@@ -188,7 +188,7 @@ function testToJsonComplexTypes() returns error? {
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
     test:assertTrue(data is record {|record {} value;|}, "Received value type is different.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -210,7 +210,7 @@ function testComplexTypesNil() returns error? {
         uuid_type: ()
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -238,7 +238,7 @@ function testArrayRetrieval() returns error? {
         BOOLEAN_ARRAY: [true, false, true]
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
-    return ();
+    return;
 }
 
 type TestTypeData record {
@@ -277,7 +277,7 @@ function testComplexWithStructDef() returns error? {
         json_type: [1, 2, 3]
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
-    return ();
+    return;
 }
 
 type ResultMap record {
@@ -316,7 +316,7 @@ function testMultipleRecordRetrieval() returns error? {
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
     test:assertEquals(counter, 4);
     check dbClient.close();
-    return ();
+    return;
 
 }
 
@@ -356,7 +356,7 @@ function testDateTime() returns error? {
         timestamp_tz_type: timestampWithTimezone
     };
     test:assertEquals(value, expected, "Expected record did not match.");
-    return ();
+    return;
 }
 
 type ResultDates2 record {
@@ -404,7 +404,7 @@ function testDateTime2() returns error? {
         timestamp_tz_type: timestampWithTimezone
     };
     test:assertEquals(value, expected, "Expected record did not match.");
-    return ();
+    return;
 }
 
 type RandomType record {|
@@ -471,7 +471,7 @@ function testDateTime3() returns error? {
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
-    return ();
+    return;
 }
 
 @test:Config {
@@ -498,7 +498,7 @@ function testDateTime4() returns error? {
 
     test:assertEquals(retrievedTimeUtc, timeUtc, "Expected UTC timestamp did not match.");
 
-    return ();
+    return;
 }
 
 type ResultSetTestAlias record {
@@ -544,7 +544,7 @@ function testColumnAlias() returns error? {
     }
     test:assertEquals(counter, 1, "Expected only one data row.");
     check dbClient.close();
-    return ();
+    return;
 }
 
 @test:Config {
@@ -578,7 +578,7 @@ function testQueryRowId() returns error? {
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
     test:assertEquals(counter, 4);
     check dbClient.close();
-    return ();
+    return;
 }
 
 type ArrayRecord record {
@@ -645,7 +645,7 @@ function testGetArrayTypes() returns error? {
         timestamp_tz_array: [<time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -687,7 +687,7 @@ function testGetArrayTypes2() returns error? {
         timestamp_tz_array: [null, null]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -726,7 +726,7 @@ function testGetArrayTypes3() returns error? {
         timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return ();
+    return;
 }
 
 @test:Config {
@@ -764,5 +764,5 @@ function testGetArrayTypes4() returns error? {
         timestamp_tz_array: ()
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return ();
+    return;
 }
