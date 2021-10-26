@@ -27,6 +27,7 @@ boolean cleanSimpleParams = false;
 }
 function initQueryParamsContainer() returns error? {
     check initializeDockerContainer("sql-query-params", "querysimpleparams", "9010", "query", "simple-params-test-data.sql");
+    return ();
 }
 
 @test:AfterGroups {
@@ -34,6 +35,7 @@ function initQueryParamsContainer() returns error? {
 }
 function cleanQueryParamsContainer() returns error? {
     check cleanDockerContainer("sql-query-params");
+    return ();
 }
 
 @test:Config {
@@ -43,6 +45,7 @@ function querySingleIntParam() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -53,6 +56,7 @@ function queryDoubleIntParam() returns error? {
     int intType = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND int_type =  ${intType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -63,6 +67,7 @@ function queryIntAndLongParam() returns error? {
     int longType = 9223372036854774807;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -72,6 +77,7 @@ function queryStringParam() returns error? {
     string stringType = "Hello";
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -82,6 +88,7 @@ function queryIntAndStringParam() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -91,6 +98,7 @@ function queryDoubleParam() returns error? {
     float doubleType = 2139095039.0;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE double_type = ${doubleType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -100,6 +108,7 @@ function queryFloatParam() returns error? {
     float floatType = 123.34;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -111,6 +120,7 @@ function queryDoubleAndFloatParam() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE float_type = ${floatType}
                                                                     and double_type = ${doubleType}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -120,6 +130,7 @@ function queryDecimalParam() returns error? {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -130,6 +141,7 @@ function queryDecimalAnFloatParam() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE decimal_type = ${decimalValue}
                                                                     and double_type = 2139095039.0`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -139,6 +151,7 @@ function queryTypeVarcharStringParam() returns error? {
     VarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -148,6 +161,7 @@ function queryTypeCharStringParam() returns error? {
     CharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -157,6 +171,7 @@ function queryTypeNCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -166,6 +181,7 @@ function queryTypeNVarCharStringParam() returns error? {
     NVarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE string_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -191,6 +207,7 @@ function queryTypeVarCharIntegerParam() returns error? {
         test:assertTrue(returnData["FLOAT_TYPE"] is float);
         test:assertEquals(returnData["ROW_ID"], 3);
     }
+    return ();
 }
 
 @test:Config {
@@ -200,6 +217,7 @@ function queryTypeBooleanBooleanParam() returns error? {
     BooleanValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -209,6 +227,7 @@ function queryTypeBitIntParam() returns error? {
     BitValue typeVal = new (1);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -218,6 +237,7 @@ function queryTypeBitStringParam() returns error? {
     BitValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -254,6 +274,7 @@ function queryIntTypeInvalidParam() returns error? {
     } else {
         test:assertFail("ApplicationError Error expected.");
     }
+    return ();
 }
 
 @test:Config {
@@ -263,6 +284,7 @@ function queryTypeIntIntParam() returns error? {
     IntegerValue typeVal = new (2147483647);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE int_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -272,6 +294,7 @@ function queryTypeTinyIntIntParam() returns error? {
     SmallIntValue typeVal = new (127);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE tinyint_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -281,6 +304,7 @@ function queryTypeSmallIntIntParam() returns error? {
     SmallIntValue typeVal = new (32767);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE smallint_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -290,6 +314,7 @@ function queryTypeBigIntIntParam() returns error? {
     BigIntValue typeVal = new (9223372036854774807);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE bigint_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -299,6 +324,7 @@ function queryTypeDoubleDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -316,6 +342,7 @@ function queryTypeDoubleIntParam() returns error? {
         test:assertEquals(returnData["ID"], 2);
         test:assertEquals(returnData["REAL_TYPE"], 1234.0);
     }
+    return ();
 }
 
 @test:Config {
@@ -326,6 +353,7 @@ function queryTypeDoubleDecimalParam() returns error? {
     DoubleValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -335,6 +363,7 @@ function queryTypeFloatDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -344,6 +373,7 @@ function queryTypeRealDoubleParam() returns error? {
     RealValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE real_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -353,6 +383,7 @@ function queryTypeNumericDoubleParam() returns error? {
     NumericValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -370,6 +401,7 @@ function queryTypeNumericIntParam() returns error? {
         test:assertEquals(returnData["ID"], 2);
         test:assertEquals(returnData["REAL_TYPE"], 1234.0);
     }
+    return ();
 }
 
 @test:Config {
@@ -380,6 +412,7 @@ function queryTypeNumericDecimalParam() returns error? {
     NumericValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -389,6 +422,7 @@ function queryTypeDecimalDoubleParam() returns error? {
     DecimalValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -399,6 +433,7 @@ function queryTypeDecimalDecimalParam() returns error? {
     DecimalValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * from NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -409,6 +444,7 @@ function queryByteArrayParam() returns error? {
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -420,6 +456,7 @@ function queryTypeBinaryByteParam() returns error? {
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -430,6 +467,7 @@ function queryTypeBinaryReadableByteChannelParam() returns error? {
     BinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -440,6 +478,7 @@ function queryTypeVarBinaryReadableByteChannelParam() returns error? {
     VarBinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE var_binary_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -451,6 +490,7 @@ function queryTypeTinyBlobByteParam() returns error? {
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -461,6 +501,7 @@ function queryTypeBlobReadableByteChannelParam() returns error? {
     BlobValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE blob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -470,6 +511,7 @@ function queryTypeClobStringParam() returns error? {
     ClobValue typeVal = new ("very long text");
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -480,6 +522,7 @@ function queryTypeClobReadableCharChannelParam() returns error? {
     ClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -490,6 +533,7 @@ function queryTypeNClobReadableCharChannelParam() returns error? {
     NClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * from ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -499,6 +543,7 @@ function queryDateStringParam() returns error? {
     DateValue typeVal = new ("2017-02-03");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -508,6 +553,7 @@ function queryDateString2Param() returns error? {
     DateValue typeVal = new ("2017-2-3");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -535,6 +581,7 @@ function queryDateTimeRecordParam() returns error? {
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -553,6 +600,7 @@ function queryTimestampWithTimeZoneRecordParam() returns error? {
     DateTimeValue typeVal = new (dateTime);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -562,6 +610,7 @@ function queryTimeStringParam() returns error? {
     TimeValue typeVal = new ("11:35:45");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -608,6 +657,7 @@ function queryTimeTimeRecordParam() returns error? {
     TimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -618,6 +668,7 @@ function queryTimeTimeRecordWithTimeZoneParam() returns error? {
     TimeValue typeVal = new (time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -627,6 +678,7 @@ function queryTimestampStringParam() returns error? {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -654,6 +706,7 @@ function queryTimestampTimeRecordParam() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -664,6 +717,7 @@ function queryTimestampTimeRecordWithTimeZoneParam() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -674,6 +728,7 @@ function queryDateTimeTimeRecordWithTimeZoneParam() returns error? {
     DateTimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE datetime_type = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 @test:Config {
@@ -684,6 +739,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE timestamp_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));
+    return ();
 }
 
 //Can not test the SQL type TEXT with hsqldb
@@ -693,6 +749,7 @@ function queryTimestampTimeRecordWithTimeZone2Param() returns error? {
 isolated function testCreatingTextValue() returns error? {
     TextValue textValue = new ("Text Value Field");
     test:assertTrue(textValue.value is string);
+    return ();
 }
 
 //Can not test SQL type STRUCT with hsqldb
@@ -702,6 +759,7 @@ isolated function testCreatingTextValue() returns error? {
 isolated function testCreatingStuctValue() returns error? {
     StructValue structValue = new ({"key": "value"});
     test:assertTrue(structValue.value is record {});
+    return ();
 }
 
 //Can not test SQL type REF with hsqldb
@@ -711,6 +769,7 @@ isolated function testCreatingStuctValue() returns error? {
 isolated function testCreatingRefValue() returns error? {
     RefValue refValue = new ({"key": "value"});
     test:assertTrue(refValue.value is record {});
+    return ();
 }
 
 //Can not test SQL type ROW with hsqldb
@@ -720,6 +779,7 @@ isolated function testCreatingRefValue() returns error? {
 isolated function testCreatingRowValue() returns error? {
     RowValue rowValue = new ([1, 2]);
     test:assertTrue(rowValue.value is byte[]);
+    return ();
 }
 
 @test:Config {
@@ -754,6 +814,7 @@ function queryArrayBasicParams() returns error? {
     } else {
         test:assertFail("Empty row returned.");
     }
+    return ();
 }
 
 @test:Config {
@@ -778,6 +839,7 @@ function queryArrayBasicNullParams() returns error? {
     } else {
         test:assertFail("Empty row returned.");
     }
+    return ();
 }
 
 @test:Config {
@@ -789,6 +851,7 @@ function testInOperator1() returns error? {
                                             ` WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -798,6 +861,7 @@ function testInOperator2() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable`, ` WHERE row_id in (1, 2, 3)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -808,6 +872,7 @@ function testInOperator3() returns error? {
     ParameterizedQuery sqlQuery = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -818,6 +883,7 @@ function testInOperator4() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id IN (`, arrayFlattenQuery(ids), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -828,6 +894,7 @@ function testInOperator5() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -838,6 +905,7 @@ function testInOperator6() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE boolean_type IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -848,6 +916,7 @@ function testInOperator7() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE long_type IN (`, arrayFlattenQuery(longValue), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -860,6 +929,7 @@ function testInOperator8() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE string_type IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -872,6 +942,7 @@ function testInOperator9() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE double_type IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -884,6 +955,7 @@ function testInOperator10() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE int_array IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -896,6 +968,7 @@ function testInOperator11() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM ArrayTypes WHERE string_array IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 2, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -908,6 +981,7 @@ function testInOperator12() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DateTimeTypes WHERE timestamp_type2 IN (`, arrayFlattenQuery(values), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 1, "Total count is different.");
+    return ();
 }
 
 @test:Config {
@@ -919,6 +993,7 @@ function testInOperator13() returns error? {
     `${ids[0]}, ${ids[1]}, ${ids[2]})`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+    return ();
 }
 
 isolated function validateDataTableResult(record {}? returnData) {

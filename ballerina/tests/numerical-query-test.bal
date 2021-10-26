@@ -22,6 +22,7 @@ string jdbcURL = urlPrefix + "9009/querynumericparams";
 }
 function inißtQueryNumericContainer() returns error? {
     check initializeDockerContainer("sql-query-numeric", "querynumericparams", "9009", "query", "numerical-test-data.sql");
+    return ();
 }
 
 @test:AfterGroups {
@@ -29,6 +30,7 @@ function inißtQueryNumericContainer() returns error? {
 }
 function cleanQueryNumericContainer() returns error? {
     check cleanDockerContainer("sql-query-numeric");
+    return ();
 }
 
 type NumericTypeForQuery record {
@@ -71,6 +73,7 @@ function testQuery() returns error? {
         test:assertFail("Return data is nil.");
     }
 
+    return ();
 }
 
 @test:Config {
@@ -95,6 +98,8 @@ function testQueryNumericTypeRecord() returns error? {
     test:assertTrue(returnData?.decimal_type is decimal);
     test:assertTrue(returnData?.numeric_type is decimal);
     test:assertTrue(returnData?.float_type is float);
+
+    return ();
 }
 
 type NumericInvalidColumn record {|
@@ -122,6 +127,8 @@ function testQueryNumericInvalidColumnRecord() returns error? {
     test:assertTrue(data is error);
     error dbError = <error>data;
     test:assertEquals(dbError.message(), "No mapping field found for SQL table column 'ID' in the record type 'NumericInvalidColumn'", "Error message differs");
+
+    return ();
 }
 
 type NumericOptionalType record {
@@ -158,6 +165,8 @@ function testQueryNumericOptionalTypeRecord() returns error? {
     test:assertTrue(returnData?.decimal_type is decimal);
     test:assertTrue(returnData?.numeric_type is decimal);
     test:assertTrue(returnData?.float_type is float);
+
+    return ();
 }
 
 type NumericUnionType record {
@@ -195,6 +204,7 @@ function testQueryNumericUnionTypeRecord() returns error? {
     test:assertTrue(returnData?.numeric_type is decimal);
     test:assertTrue(returnData?.float_type is float);
 
+    return ();
 }
 
 type NumericStringType record {
@@ -230,6 +240,8 @@ function testQueryNumericStringTypeRecord() returns error? {
     test:assertFalse(returnData?.decimal_type is ());
     test:assertFalse(returnData?.numeric_type is ());
     test:assertFalse(returnData?.float_type is ());
+
+    return ();
 }
 
 public type CustomType int|decimal|float;
@@ -269,6 +281,7 @@ function testQueryNumericCustomTypeRecord() returns error? {
     test:assertTrue(returnData?.numeric_type is decimal);
     test:assertTrue(returnData?.float_type is float);
 
+    return ();
 }
 
 @test:Config {
@@ -294,6 +307,8 @@ function testQueryFromNullTable() returns error? {
     test:assertEquals(returnData["DECIMAL_TYPE"], ());
     test:assertEquals(returnData["NUMERIC_TYPE"], ());
     test:assertEquals(returnData["REAL_TYPE"], ());
+
+    return ();
 }
 
 type DataTable record {
@@ -313,4 +328,6 @@ function testQueryDatabaseError() returns error? {
     });
     check dbClient.close();
     test:assertTrue(e is Error);
+
+    return ();
 }
