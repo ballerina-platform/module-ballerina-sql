@@ -23,7 +23,7 @@ string batchExecuteDB = urlPrefix + "9005/batchexecute";
 }
 function initBatchExecuteContainer() returns error? {
     check initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
-    return;
+    return ();
 }
 
 @test:AfterGroups {
@@ -31,7 +31,7 @@ function initBatchExecuteContainer() returns error? {
 }
 function cleanBatchExecuteContainer() returns error? {
     check cleanDockerContainer("sql-batch-execute");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -47,7 +47,7 @@ function batchInsertIntoDataTable() returns error? {
         from var row in data
         select `INSERT INTO DataTable (int_type, long_type, float_type) VALUES (${row.intVal}, ${row.longVal}, ${row.floatVal})`;
     validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1, 1, 1], [2,3,4]);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -59,7 +59,7 @@ function batchInsertIntoDataTable2() returns error? {
     ParameterizedQuery sqlQuery = `INSERT INTO DataTable (int_type) VALUES(${intType})`;
     ParameterizedQuery[] sqlQueries = [sqlQuery];
     validateBatchExecutionResult(check batchExecuteQueryMockClient(sqlQueries), [1], [5]);
-    return;
+    return ();
 }
 
 @test:Config {

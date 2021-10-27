@@ -22,7 +22,7 @@ string connectDB = urlPrefix + "9001/connection";
 }
 function initConnectionContainer() returns error? {
     check initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
-    return;
+    return ();
 }
 
 @test:AfterGroups {
@@ -30,7 +30,7 @@ function initConnectionContainer() returns error? {
 }
 function cleanConnectionContainer() returns error? {
     check cleanDockerContainer("sql-connection");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -39,7 +39,7 @@ function cleanConnectionContainer() returns error? {
 function testConnection1() returns error? {
     MockClient testDB = check new (url = connectDB, user = user, password = password);
     test:assertExactEquals(testDB.close(), (), "Initialising connection failure.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -48,7 +48,7 @@ function testConnection1() returns error? {
 function testConnection2() returns error? {
     MockClient testDB = check new (connectDB, user, password);
     test:assertExactEquals(testDB.close(), (), "Initialising connection failure.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -91,7 +91,7 @@ function testConnectionAfterClose() returns error? {
                     "allowed"));
     }
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -111,7 +111,7 @@ function testStreamNextAfterClose() returns error? {
         test:assertFail("ApplicationError Error expected.");
     }
     check testDB.close();
-    return;
+    return ();
 }
 
 @test:Config {
@@ -124,7 +124,7 @@ function testConnectionInvalidUrl() returns error? {
         check dbClient.close();
         test:assertFail("Invalid does not throw DatabaseError");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -136,7 +136,7 @@ function testConnectionNoUserPassword() returns error? {
         check dbClient.close();
         test:assertFail("No username does not throw DatabaseError");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -149,7 +149,7 @@ function testConnectionWithValidDriver() returns error? {
     } else {
         check dbClient.close();
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -162,7 +162,7 @@ function testConnectionWithInvalidDriver() returns error? {
         check dbClient.close();
         test:assertFail("Invalid driver does not throw DatabaseError");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -176,7 +176,7 @@ function testConnectionWithDatasourceOptions() returns error? {
     } else {
         check dbClient.close();
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -192,7 +192,7 @@ function testConnectionWithDatasourceInvalidProperty() returns error? {
         check dbClient.close();
         test:assertFail("Invalid driver does not throw DatabaseError");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -211,7 +211,7 @@ function testWithConnectionPool() returns error? {
         test:assertEquals(connectionPool.maxConnectionLifeTime, <decimal>2000.5);
         test:assertEquals(connectionPool.minIdleConnections, 5);
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -232,7 +232,7 @@ function testWithSharedConnPool() returns error? {
     test:assertEquals(dbClient2.close(), (), "HSQLDB connection failure.");
     test:assertEquals(dbClient3.close(), (), "HSQLDB connection failure.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -246,7 +246,7 @@ function testWithAllParams() returns error? {
         {"loginTimeout": 5000}, connectionPool);
     test:assertEquals(dbClient.close(), (), "HSQLDB connection failure.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -256,5 +256,5 @@ isolated function testGenerateErrorStream() returns error? {
     stream<record {}, Error?> errorStream = generateApplicationErrorStream("Test generate Error Stream");
     record {}|Error? firstElement = errorStream.next();
     test:assertTrue(firstElement is Error);
-    return;
+    return ();
 }

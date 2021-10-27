@@ -25,7 +25,7 @@ string queryRowDb = urlPrefix + "9011/queryrow";
 }
 function initQueryRowContainer() returns error? {
     check initializeDockerContainer("sql-query-row", "queryrow", "9011", "query", "query-row-test-data.sql");
-    return;
+    return ();
 }
 
 @test:AfterGroups {
@@ -33,7 +33,7 @@ function initQueryRowContainer() returns error? {
 }
 function cleanQueryRowContainer() returns error? {
     check cleanDockerContainer("sql-query-row");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -43,7 +43,7 @@ function queryRecordSingleIntParam() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * from DataTable WHERE row_id = ${rowId}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -55,7 +55,7 @@ function queryRecordDoubleIntParam() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
                                     ` WHERE row_id = ${rowId} AND int_type =  ${intType}`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -66,7 +66,7 @@ function queryRecordIntAndLongParam() returns error? {
     int longType = 9223372036854774807;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId} AND long_type = ${longType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -76,7 +76,7 @@ function queryRecordStringParam() returns error? {
     string stringType = "Hello";
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${stringType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -87,7 +87,7 @@ function queryRecordIntAndStringParam() returns error? {
     int rowId = 1;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${stringType} AND row_id = ${rowId}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -97,7 +97,7 @@ function queryRecordDoubleParam() returns error? {
     float doubleType = 2139095039.0;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE double_type = ${doubleType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -107,7 +107,7 @@ function queryRecordFloatParam() returns error? {
     float floatType = 123.34;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE float_type = ${floatType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -119,7 +119,7 @@ function queryRecordDoubleAndFloatParam() returns error? {
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE float_type = ${floatType}
                                                                     and double_type = ${doubleType}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -129,7 +129,7 @@ function queryRecordDecimalParam() returns error? {
     decimal decimalValue = 23.45;
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE decimal_type = ${decimalValue}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -140,7 +140,7 @@ function queryRecordDecimalAnFloatParam() returns error? {
     ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
                                     ` WHERE decimal_type = ${decimalValue} and double_type = 2139095039.0`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -150,7 +150,7 @@ function queryRecordVarcharStringParam() returns error? {
     VarcharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -160,7 +160,7 @@ function queryRecordTypeCharStringParam() returns error? {
     CharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -170,7 +170,7 @@ function queryRecordTypeNCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -180,7 +180,7 @@ function queryRecordTypeNVarCharStringParam() returns error? {
     NCharValue typeVal = new ("Hello");
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE string_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -206,7 +206,7 @@ function queryRecordTypeVarCharIntegerParam() returns error? {
         test:assertTrue(returnData["FLOAT_TYPE"] is float);
         test:assertEquals(returnData["ROW_ID"], 3);
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -216,7 +216,7 @@ function queryRecordTypeBooleanBooleanParam() returns error? {
     BooleanValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -226,7 +226,7 @@ function queryRecordTypeBitIntParam() returns error? {
     BitValue typeVal = new (1);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -239,7 +239,7 @@ function queryRecordTypeBitInvalidIntParam() returns error? {
     test:assertTrue(returnVal is error);
     error dbError = <error>returnVal;
     test:assertTrue(dbError.message().endsWith("Only 1 or 0 can be passed for BitValue SQL Type, but found :12"));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -249,7 +249,7 @@ function queryRecordTypeBitStringParam() returns error? {
     BitValue typeVal = new (true);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE boolean_type = ${typeVal}`;
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -268,7 +268,7 @@ function queryRecordIntTypeInvalidParam() returns error? {
     } else {
         test:assertFail("ApplicationError Error expected.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -278,7 +278,7 @@ function queryRecordTypeIntIntParam() returns error? {
     IntegerValue typeVal = new (2147483647);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE int_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -288,7 +288,7 @@ function queryRecordTypeTinyIntIntParam() returns error? {
     SmallIntValue typeVal = new (127);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE tinyint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -298,7 +298,7 @@ function queryRecordTypeSmallIntIntParam() returns error? {
     SmallIntValue typeVal = new (32767);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE smallint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -308,7 +308,7 @@ function queryRecordTypeBigIntIntParam() returns error? {
     BigIntValue typeVal = new (9223372036854774807);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE bigint_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -318,7 +318,7 @@ function queryRecordTypeDoubleDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -331,7 +331,7 @@ function queryRecordTypeDoubleIntParam() returns error? {
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
     test:assertEquals(returnData["REAL_TYPE"], 1234.0);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -342,7 +342,7 @@ function queryRecordTypeDoubleDecimalParam() returns error? {
     DoubleValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -352,7 +352,7 @@ function queryRecordTypeFloatDoubleParam() returns error? {
     DoubleValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -362,7 +362,7 @@ function queryRecordTypeRealDoubleParam() returns error? {
     RealValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE real_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -372,7 +372,7 @@ function queryRecordTypeNumericDoubleParam() returns error? {
     NumericValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -385,7 +385,7 @@ function queryRecordTypeNumericIntParam() returns error? {
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
     test:assertEquals(returnData["REAL_TYPE"], 1234.0);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -396,7 +396,7 @@ function queryRecordTypeNumericDecimalParam() returns error? {
     NumericValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -406,7 +406,7 @@ function queryRecordTypeDecimalDoubleParam() returns error? {
     DecimalValue typeVal = new (1234.567);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -417,7 +417,7 @@ function queryRecordTypeDecimalDecimalParam() returns error? {
     DecimalValue typeVal = new (decimalVal);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE decimal_type = ${typeVal}`;
     validateNumericTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -428,7 +428,7 @@ function queryRecordByteArrayParam() returns error? {
     byte[] binaryData = <byte[]>getUntaintedData(value, "BINARY_TYPE");
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${binaryData}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -440,7 +440,7 @@ function queryRecordTypeBinaryByteParam() returns error? {
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -451,7 +451,7 @@ function queryRecordTypeBinaryReadableByteChannelParam() returns error? {
     BinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -462,7 +462,7 @@ function queryRecordTypeVarBinaryReadableByteChannelParam() returns error? {
     VarBinaryValue typeVal = new (byteChannel);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE var_binary_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -474,7 +474,7 @@ function queryRecordTypeTinyBlobByteParam() returns error? {
     BinaryValue typeVal = new (binaryData);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE blob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -484,7 +484,7 @@ function queryRecordTypeClobStringParam() returns error? {
     ClobValue typeVal = new ("very long text");
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -495,7 +495,7 @@ function queryRecordTypeClobReadableCharChannelParam() returns error? {
     ClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -506,7 +506,7 @@ function queryRecordTypeNClobReadableCharChannelParam() returns error? {
     NClobValue typeVal = new (clobChannel);
     ParameterizedQuery sqlQuery = `SELECT * FROM ComplexTypes WHERE clob_type = ${typeVal}`;
     validateComplexTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -516,7 +516,7 @@ function queryRecordDateStringParam() returns error? {
     DateValue typeVal = new ("2017-02-03");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -526,7 +526,7 @@ function queryRecordDateString2Param() returns error? {
     DateValue typeVal = new ("2017-2-3");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -554,7 +554,7 @@ function queryRecordDateTimeRecordParam() returns error? {
     DateValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -573,7 +573,7 @@ function queryRecordTimestampWithTimeZoneRecordParam() returns error? {
     DateTimeValue typeVal = new (dateTime);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -583,7 +583,7 @@ function queryRecordTimeStringParam() returns error? {
     TimeValue typeVal = new ("11:35:45");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -611,7 +611,7 @@ function queryRecordTimeTimeRecordParam() returns error? {
     TimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -622,7 +622,7 @@ function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
     TimeValue typeVal = new (time);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -632,7 +632,7 @@ function queryRecordTimestampStringParam() returns error? {
     TimestampValue typeVal = new ("2017-02-03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -660,7 +660,7 @@ function queryRecordTimestampTimeRecordParam() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -671,7 +671,7 @@ function queryRecordTimestampTimeRecordWithTimeZoneParam() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -682,7 +682,7 @@ function queryRecordDateTimeTimeRecordWithTimeZoneParam() returns error? {
     DateTimeValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE datetime_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -693,7 +693,7 @@ function queryRecordTimestampTimeRecordWithTimeZone2Param() returns error? {
     TimestampValue typeVal = new (date);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
-    return;
+    return ();
 }
 
 @test:Config {
@@ -724,7 +724,7 @@ function queryRecordArrayBasicParams() returns error? {
     test:assertNotEquals(returnData["FLOAT_ARRAY"], ());
     test:assertNotEquals(returnData["DECIMAL_ARRAY"], ());
     test:assertNotEquals(returnData["DOUBLE_ARRAY"], ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -745,7 +745,7 @@ function queryRecordArrayBasicNullParams() returns error? {
     test:assertEquals(returnData["BOOLEAN_ARRAY"], ());
     test:assertEquals(returnData["STRING_ARRAY"], ());
     test:assertEquals(returnData["BLOB_ARRAY"], ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -758,7 +758,7 @@ function queryRecordNoCheck() returns error? {
     record{} queryResult = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     validateDataTableRecordResult(queryResult);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -774,7 +774,7 @@ function queryRecordNegative1() returns error? {
     } else {
         test:assertFail("Expected no rows error when querying empty table.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -790,7 +790,7 @@ function queryRecordNegative2() returns error? {
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -808,7 +808,7 @@ function queryRecordNoCheckNegative() returns error? {
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -820,7 +820,7 @@ function queryValue() returns error? {
     int count = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(count, 3);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -838,7 +838,7 @@ function queryValueNegative1() returns error? {
     } else {
         test:assertFail("Expected error when query result contains multiple columns.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -856,7 +856,7 @@ function queryValueNegative2() returns error? {
     } else {
         test:assertFail("Expected error when query returns unexpected result type.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -868,7 +868,7 @@ function queryValueTypeInt() returns error? {
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 2147483647);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -880,7 +880,7 @@ function queryValueTypeFloat() returns error? {
     float returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1234.567);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -893,7 +893,7 @@ function queryValueTypeDecimal() returns error? {
     check dbClient.close();
     decimal decimalValue = 1234.567;
     test:assertEquals(returnValue, decimalValue);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -905,7 +905,7 @@ function queryValueTypeBigInt() returns error? {
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 9223372036854774807);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -917,7 +917,7 @@ function queryValueTypeSmallInt() returns error? {
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 32767);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -929,7 +929,7 @@ function queryValueTypeTinyInt() returns error? {
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 127);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -941,7 +941,7 @@ function queryValueTypeBit() returns error? {
     int returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, 1);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -954,7 +954,7 @@ function queryValueTypeNumeric() returns error? {
     check dbClient.close();
     decimal decimalValue = 1234.567;
     test:assertEquals(returnValue, decimalValue);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -966,7 +966,7 @@ function queryValueTypeString() returns error? {
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "Hello");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -978,7 +978,7 @@ function queryValueTypeBoolean() returns error? {
     boolean returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, true);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -990,7 +990,7 @@ function queryValueTypeBlob() returns error? {
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina blob test.".toBytes());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1002,7 +1002,7 @@ function queryValueTypeClob() returns error? {
     string returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "very long text");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1014,7 +1014,7 @@ function queryValueTypeBinary() returns error? {
     byte[] returnValue = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     test:assertEquals(returnValue, "wso2 ballerina binary test.".toBytes());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1028,7 +1028,7 @@ function queryValueTypeCivil() returns error? {
 
     time:Civil timestampTypeRecord = {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0};
     test:assertEquals(retrievedValue, timestampTypeRecord);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1051,7 +1051,7 @@ function queryValueTypeCivilWithTimezone() returns error? {
         second: 8
     };
     test:assertEquals(retrievedValue, timestampWithTimezone);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1065,7 +1065,7 @@ function queryValueTypeDate() returns error? {
 
     time:Date dateTypeRecord = {year: 2017, month: 2, day: 3};
     test:assertEquals(retrievedValue, dateTypeRecord);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1079,7 +1079,7 @@ function queryValueTypeTime() returns error? {
 
     time:TimeOfDay timeTypeRecord = {hour: 11, minute: 35, second: 45};
     test:assertEquals(retrievedValue, timeTypeRecord);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1093,7 +1093,7 @@ function queryValueTypeTimeWithTimezone() returns error? {
 
     time:TimeOfDay timeWithTimezone = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8, "timeAbbrev": "-08:00"};
     test:assertEquals(retrievedValue, timeWithTimezone);
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1113,7 +1113,7 @@ function testGetPrimitiveTypesRecord() returns error? {
         string_type: "Hello"
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1133,7 +1133,7 @@ function testGetPrimitiveTypesLessFieldsRecord() returns error? {
         STRING_TYPE: "Hello"
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1152,7 +1152,7 @@ function testComplexTypesNilRecord() returns error? {
         uuid_type: ()
     };
     test:assertEquals(value, complexStringType, "Expected record did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1176,7 +1176,7 @@ function testArrayRetrievalRecord() returns error? {
         BOOLEAN_ARRAY: [true, false, true]
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1199,7 +1199,7 @@ function testComplexWithStructDefRecord() returns error? {
         json_type: [1, 2, 3]
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1226,7 +1226,7 @@ function testDateTimeRecord() returns error? {
         timestamp_tz_type: timestampWithTimezone
     };
     test:assertEquals(value, expected, "Expected record did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1262,7 +1262,7 @@ function testDateTimeRecord2() returns error? {
         timestamp_tz_type: timestampWithTimezone
     };
     test:assertEquals(value, expected, "Expected record did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1309,7 +1309,7 @@ function testDateTimeRecord3() returns error? {
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1347,7 +1347,7 @@ function testGetArrayTypesRecord() returns error? {
         timestamp_tz_array: [<time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1384,7 +1384,7 @@ function testGetArrayTypesRecord2() returns error? {
         timestamp_tz_array: [null, null]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1422,7 +1422,7 @@ function testGetArrayTypesRecord3() returns error? {
         timestamp_tz_array: [null, <time:Civil>{utcOffset: {hours: -8, minutes: 0}, timeAbbrev: "-08:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}, <time:Civil>{utcOffset: {hours: -5, minutes: 0}, timeAbbrev: "-05:00", year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55}]
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1460,7 +1460,7 @@ function testGetArrayTypesRecord4() returns error? {
     };
     test:assertEquals(value, expectedData, "Expected data did not match.");
 
-    return;
+    return ();
 }
 
 isolated function validateDataTableRecordResult(record {}? returnData) {

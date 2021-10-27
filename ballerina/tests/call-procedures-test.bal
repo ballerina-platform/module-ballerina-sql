@@ -49,7 +49,7 @@ type StringDataSingle record {
 }
 function initproceduresContainer() returns error? {
     check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
-    return;
+    return ();
 }
 
 @test:AfterGroups {
@@ -57,7 +57,7 @@ function initproceduresContainer() returns error? {
 }
 function cleanproceduresContainer() returns error? {
     check cleanDockerContainer("sql-procedures");
-    return;
+    return ();
 }
 
 @test:Config {
@@ -89,7 +89,7 @@ function testCallWithStringTypes() returns error? {
         test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     }
     check dbClient.close();
-    return;
+    return ();
 }
 
 @test:Config {
@@ -121,7 +121,7 @@ function testCallWithStringTypesInParams() returns error? {
         test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     }
     check dbClient.close();
-    return;
+    return ();
 }
 
 @test:Config {
@@ -150,7 +150,7 @@ function testCallWithStringTypesOutParams() returns error? {
     test:assertEquals(paraCharacter.get(string), "b", "6th out parameter of procedure did not match.");
     test:assertEquals(paraNvarcharmax.get(string), "test3", "7th out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -190,7 +190,7 @@ function testCallWithNumericTypesOutParams() returns error? {
     test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -228,7 +228,7 @@ function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
     test:assertTrue((check paraReal.get(float)) >= 0.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 0.0, "11th out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -257,7 +257,7 @@ function testCallWithStringTypesInoutParams() returns error? {
     test:assertEquals(paraCharacter.get(string), "b", "6th out parameter of procedure did not match.");
     test:assertEquals(paraNvarcharmax.get(string), "test3", "7th out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -299,7 +299,7 @@ function testCallWithNumericTypesInoutParams() returns error? {
     test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -381,7 +381,7 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
     test:assertEquals(paraDateTime.get(time:Civil), dateTimeRecord, "DateTime out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -475,7 +475,7 @@ function testCallWithInoutParams() returns error? {
     test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " + 
     "procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -496,7 +496,7 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     } else {
         test:assertFail("DatabaseError Error expected.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -523,7 +523,7 @@ function testCallWithDateTimeTypesWithOutParams() returns error? {
     test:assertEquals(paraTimestamp.get(string), "2017-01-25 16:33:55.0", "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(string), "2017-01-25T16:33:55-08:00", "Date Time out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -567,7 +567,7 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -600,7 +600,7 @@ function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecordCivil, "Timestamp with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Utc), timestampWithTzRecordUtc, "Timestamp with Timezone out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -637,7 +637,7 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
     test:assertEquals(paraIntArray.get(IntArray), int_array, "Int array out parameter of procedure did not match.");
     test:assertEquals(paraStringArray.get(StringArray), string_array, "String array out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 distinct class RandomOutParameter {
@@ -674,7 +674,7 @@ function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
     test:assertTrue(ret is error);
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -695,7 +695,7 @@ function testCreateProcedures1() returns error? {
     `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -718,7 +718,7 @@ function testCreateProcedures2() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -745,7 +745,7 @@ function testCreateProcedures3() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -768,7 +768,7 @@ function testCreateProcedures4() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -795,7 +795,7 @@ function testCreateProcedures5() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -818,7 +818,7 @@ function testCreateProcedures6() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -834,7 +834,7 @@ function testCreateProcedures7() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -858,7 +858,7 @@ function testCreateProcedures8() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 @test:Config {
@@ -906,7 +906,7 @@ function testCreateProcedures9() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-    return;
+    return ();
 }
 
 type Person record {
@@ -960,7 +960,7 @@ function testMultipleRecords() returns error? {
     } else {
         test:assertFail("Return data is not of type 'Person'.");
     }
-    return;
+    return ();
 }
 
 @test:Config {
@@ -996,7 +996,7 @@ function testMultipleRecordsWithNoReturnType() returns error? {
         test:assertFail("Return data is not a record.");
     }
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1117,7 +1117,7 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
     test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1316,7 +1316,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     "procedure did not match.");
     test:assertFalse((binary_array.get(StringArray) is Error));
 
-    return;
+    return ();
 }
 
 @test:Config {
@@ -1516,7 +1516,7 @@ function negativeOutParamsTest() returns error? {
         test:assertFail("Result is not mismatch");
     }
 
-    return;
+    return ();
 }
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
