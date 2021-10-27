@@ -44,7 +44,6 @@ public class SQLDefaultRetryManager {
 }
 function initTransactionContainer() returns error? {
     check initializeDockerContainer("sql-transaction", "transaction", "9004", "transaction", "local-transaction-test-data.sql");
-    return ();
 }
 
 @test:AfterGroups {
@@ -52,7 +51,6 @@ function initTransactionContainer() returns error? {
 }
 function cleanTransactionContainer() returns error? {
     check cleanDockerContainer("sql-transaction");
-    return ();
 }
 
 @test:Config {
@@ -82,8 +80,6 @@ function testLocalTransaction() returns error? {
     test:assertEquals(retryVal, 0);
     test:assertEquals(count, 2);
     test:assertEquals(committedBlockExecuted, true);
-
-    return ();
 }
 
 boolean stmtAfterFailureExecutedRWC = false;
@@ -102,8 +98,6 @@ function testTransactionRollbackWithCheck() returns error? {
     test:assertEquals(retryValRWC, 1);
     test:assertEquals(count, 0);
     test:assertEquals(stmtAfterFailureExecutedRWC, false);
-
-    return ();
 }
 
 function testTransactionRollbackWithCheckHelper(MockClient dbClient) returns error? {
@@ -118,8 +112,6 @@ function testTransactionRollbackWithCheckHelper(MockClient dbClient) returns err
         stmtAfterFailureExecutedRWC = true;
         check commit;
     }
-
-    return ();
 }
 
 @test:Config {
@@ -156,7 +148,6 @@ function testTransactionRollbackWithRollback() returns error? {
     test:assertEquals(count, 0);
     test:assertEquals(stmtAfterFailureExecuted, true);
 
-    return ();
 }
 
 @test:Config {
@@ -182,8 +173,6 @@ function testLocalTransactionUpdateWithGeneratedKeys() returns error? {
 
     test:assertEquals(returnVal, 0);
     test:assertEquals(count, 2);
-
-    return ();
 }
 
 int returnValRGK = 0;
@@ -200,7 +189,6 @@ function testLocalTransactionRollbackWithGeneratedKeys() returns error? {
     check dbClient.close();
     test:assertEquals(returnValRGK, 1);
     test:assertEquals(count, 2);
-    return ();
 }
 
 function testLocalTransactionRollbackWithGeneratedKeysHelper(MockClient dbClient) returns error? {
@@ -214,7 +202,6 @@ function testLocalTransactionRollbackWithGeneratedKeysHelper(MockClient dbClient
                                                         values ('James', 'Clerk', 615, 5000.75, 'USA')`);
         check commit;
     }
-    return ();
 }
 
 isolated int abortVal = 0;
@@ -257,8 +244,6 @@ function testTransactionAbort() returns error? {
         test:assertEquals(abortVal, -1);
     }
     test:assertEquals(count, 0);
-
-    return ();
 }
 
 int testTransactionErrorPanicRetVal = 0;
@@ -282,8 +267,6 @@ function testTransactionErrorPanic() returns error? {
     test:assertEquals(testTransactionErrorPanicRetVal, 1);
     test:assertEquals(catchValue, -1);
     test:assertEquals(count, 0);
-
-    return ();
 }
 
 function testTransactionErrorPanicHelper(MockClient dbClient) returns error? {
@@ -303,8 +286,6 @@ function testTransactionErrorPanicHelper(MockClient dbClient) returns error? {
     }
     io:println("exec");
     testTransactionErrorPanicRetVal = transInfo.retryNumber;
-
-    return ();
 }
 
 @test:Config {
@@ -333,8 +314,6 @@ function testTransactionErrorPanicAndTrap() returns error? {
     test:assertEquals(returnVal, 0);
     test:assertEquals(catchValue, -1);
     test:assertEquals(count, 1);
-
-    return ();
 }
 
 isolated function testTransactionErrorPanicAndTrapHelper(int i) {
@@ -379,8 +358,6 @@ function testTwoTransactions() returns error? {
     test:assertEquals(returnVal1, 0);
     test:assertEquals(returnVal2, 0);
     test:assertEquals(count, 4);
-
-    return ();
 }
 
 @test:Config {
@@ -400,8 +377,6 @@ function testTransactionWithoutHandlers() returns error? {
     int count = check getCount(dbClient, "350");
     check dbClient.close();
     test:assertEquals(count, 2);
-
-    return ();
 }
 
 isolated string rollbackOut = "";
@@ -427,8 +402,6 @@ function testLocalTransactionFailed() returns error? {
     check dbClient.close();
     test:assertEquals(a, "beforetx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
     test:assertEquals(count, 0);
-
-    return ();
 }
 
 isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
@@ -461,7 +434,7 @@ isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns 
     }
 }
 
-isolated function getError() returns error {
+isolated function getError() returns error? {
     lock {
         return error(rollbackOut);
     }
@@ -486,8 +459,6 @@ function testLocalTransactionSuccessWithFailed() returns error? {
     check dbClient.close();
     test:assertEquals(a, "beforetx inTrx inTrx inTrx committed afterTrx");
     test:assertEquals(count, 2);
-
-    return ();
 }
 
 isolated function testLocalTransactionSuccessWithFailedHelper(string status, MockClient dbClient) returns string|error {
@@ -545,8 +516,6 @@ function testLocalTransactionWithBatchExecute() returns error? {
     test:assertEquals(retryVal, 0);
     test:assertEquals(count, 2);
     test:assertEquals(committedBlockExecuted, true);
-
-    return ();
 }
 
 @test:Config {
@@ -584,8 +553,6 @@ function testLocalTransactionWithQuery() returns error? {
     test:assertEquals(retryVal, 0);
     test:assertEquals(count, 2);
     test:assertEquals(committedBlockExecuted, true);
-
-    return ();
 }
 
 @test:Config {
@@ -623,8 +590,6 @@ function testLocalTransactionWithQueryRow() returns error? {
     test:assertEquals(retryVal, 0);
     test:assertEquals(count, 2);
     test:assertEquals(committedBlockExecuted, true);
-
-    return ();
 }
 
 isolated function getCount(MockClient dbClient, string id) returns int|error {
