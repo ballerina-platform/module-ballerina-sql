@@ -22,7 +22,6 @@ string errorDB = urlPrefix + "9013/error";
 }
 function initErrorContainer() returns error? {
     check initializeDockerContainer("sql-error", "error", "9013", "error", "error-database-init.sql");
-    return;
 }
 
 @test:AfterGroups {
@@ -30,7 +29,6 @@ function initErrorContainer() returns error? {
 }
 function cleanErrorContainer() returns error? {
     check cleanDockerContainer("sql-error");
-    return;
 }
 
 @test:Config {
@@ -41,5 +39,4 @@ function queryCorruptedJson() returns error? {
     MockClient mockClient = check getMockClient(errorDB);
     json|Error jsonVal = mockClient->queryRow(sqlQuery);
     test:assertTrue(jsonVal is ConversionError);
-    return;
 }

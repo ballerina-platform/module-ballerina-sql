@@ -1362,7 +1362,6 @@ public class ResultIterator {
                 return e;
             }
         }
-        return;
     }
 }
 

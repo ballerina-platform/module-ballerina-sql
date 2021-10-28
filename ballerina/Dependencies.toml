@@ -358,7 +358,9 @@ scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "cache"},
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.runtime"},
 	{org = "ballerina", name = "lang.transaction"},
 	{org = "ballerina", name = "lang.value"},
 	{org = "ballerina", name = "log"},

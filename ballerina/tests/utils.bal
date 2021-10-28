@@ -69,7 +69,6 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     }
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
     io:println("Docker container for Database '" + dbAlias + "' initialised with the script.");
-    return;
 }
 
 function cleanDockerContainer(string containerName) returns error? {
@@ -79,7 +78,6 @@ function cleanDockerContainer(string containerName) returns error? {
     int exitCode = check result.exitCode();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
     io:println("Cleaned docker container '" + containerName + "'.");
-    return;
 }
 
 isolated function getByteColumnChannel() returns io:ReadableByteChannel|error {
