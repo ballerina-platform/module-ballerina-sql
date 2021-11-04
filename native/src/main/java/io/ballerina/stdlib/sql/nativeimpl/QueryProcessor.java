@@ -219,6 +219,8 @@ public class QueryProcessor {
         return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
     }
 
+    // This method iterates through each type in the union type and checks whether it is compatible with the result
+    // from the query.
     private static Object getUnionTypeBValue(
             UnionType describingType, ResultSet resultSet, AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, TypeMismatchError {
@@ -228,9 +230,13 @@ public class QueryProcessor {
                 if (type.getTag() == TypeTags.UNION_TAG) {
                     return getUnionTypeBValue(describingType, resultSet, resultParameterProcessor);
                 }
+
+                // Attempt to convert the query result to the current type
                 return getRecordOrPrimitiveTypeBValue(type, resultSet, resultParameterProcessor);
             } catch (ApplicationError e) {
                 // Ignored
+                // If an ApplicationError is thrown, the type is not compatible with the query result. Hence, it is
+                // ignored and the next type conversion is attempted.
             }
         }
 
