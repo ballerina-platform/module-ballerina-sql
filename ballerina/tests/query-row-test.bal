@@ -720,26 +720,11 @@ function queryRecordNegative1() returns error? {
 @test:Config {
     groups: ["query", "query-row"]
 }
-function queryRecordNegative2() returns error? {
-    int rowId = 1;
-    MockClient dbClient = check getMockClient(queryRowDb);
-    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
-    record{}|int|error queryResult = dbClient->queryRow(sqlQuery);
-    if queryResult is error {
-        test:assertEquals(queryResult.message(), "Return type cannot be a union of multiple types.");
-    } else {
-        test:assertFail("Expected error when querying with invalid column name.");
-    }
-}
-
-@test:Config {
-    groups: ["query", "query-row"]
-}
 function queryRecordNoCheckNegative() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
     ParameterizedQuery sqlQuery = `SELECT row_id, invalid_column_name FROM DataTable WHERE row_id = ${rowId}`;
-    record{}|error queryResult = dbClient->queryRow(sqlQuery);
+    record {}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
         test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."), 
@@ -1011,6 +996,165 @@ function queryValueTypeTimeWithTimezone() returns error? {
 
     time:TimeOfDay timeWithTimezone = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8, "timeAbbrev": "-08:00"};
     test:assertEquals(retrievedValue, timeWithTimezone);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnion() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) FROM DataTable`;
+    int|record {} count = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(count, 3);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnion2() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) FROM DataTable`;
+    record {}|int count = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    record {} expectedRecord = {
+        "C1": 3
+    };
+    test:assertEquals(count, expectedRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnion3() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) FROM DataTable`;
+    time:Civil|int count = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    test:assertEquals(count, 3);
+}
+
+type DataTableRow record {|
+      int row_id;
+      int int_type;
+      int long_type;
+      float float_type;
+      float double_type;
+      boolean boolean_type;
+      string string_type;
+      decimal decimal_type;
+|};
+
+type InvalidDataTableRow record {|
+      int row_id;
+      int int_type;
+      int long_type;
+      float float_type;
+      int double_type;
+      boolean boolean_type;
+      string string_type;
+      decimal decimal_type;
+|};
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnion4() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = 1`;
+    DataTableRow|InvalidDataTableRow queryResult = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    DataTableRow expectedRecord = {
+        row_id: 1,
+        int_type: 1,
+        long_type: 9223372036854774807,
+        float_type: 123.34,
+        double_type: 2139095039,
+        boolean_type: true,
+        string_type: "Hello",
+        decimal_type: 23.45
+    };
+    test:assertEquals(queryResult, expectedRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnion5() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = 1`;
+    InvalidDataTableRow|DataTableRow queryResult = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    DataTableRow expectedRecord = {
+        row_id: 1,
+        int_type: 1,
+        long_type: 9223372036854774807,
+        float_type: 123.34,
+        double_type: 2139095039,
+        boolean_type: true,
+        string_type: "Hello",
+        decimal_type: 23.45
+    };
+    test:assertEquals(queryResult, expectedRecord);
+}
+
+type DataTableRowUnion DataTableRow|InvalidDataTableRow;
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnionRecursive() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = 1`;
+    int|DataTableRowUnion queryResult = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    DataTableRow expectedRecord = {
+        row_id: 1,
+        int_type: 1,
+        long_type: 9223372036854774807,
+        float_type: 123.34,
+        double_type: 2139095039,
+        boolean_type: true,
+        string_type: "Hello",
+        decimal_type: 23.45
+    };
+    test:assertEquals(queryResult, expectedRecord);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnionNegative() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT COUNT(*) FROM DataTable`;
+    time:Civil|int[]|error queryResult = dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    if queryResult is error {
+        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
+        test:assertEquals(queryResult.message(),
+                        "The result generated from the query cannot be mapped to type (time:Civil|int[]).");
+    } else {
+        test:assertFail("Expected TypeMismatchError");
+    }
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowUnionNegative2() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = 1`;
+    int|InvalidDataTableRow|error queryResult = dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+    if queryResult is error {
+        test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
+        test:assertEquals(queryResult.message(),
+                          "The result generated from the query cannot be mapped to type (int|sql:InvalidDataTableRow).");
+    } else {
+        test:assertFail("Expected TypeMismatchError");
+    }
 }
 
 @test:Config {
