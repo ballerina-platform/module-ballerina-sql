@@ -195,11 +195,11 @@ public class QueryProcessor {
                 }
 
                 if (describingType.getTag() == TypeTags.UNION_TAG) {
-                    return getUnionType((UnionType) describingType, resultSet, resultParameterProcessor);
+                    return getUnionTypeBValue((UnionType) describingType, resultSet, resultParameterProcessor);
                 }
 
                 // Return-type is either a record or a primitive
-                return getRecordOrPrimitiveType(describingType, resultSet, resultParameterProcessor);
+                return getRecordOrPrimitiveTypeBValue(describingType, resultSet, resultParameterProcessor);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
@@ -219,16 +219,16 @@ public class QueryProcessor {
         return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
     }
 
-    private static Object getUnionType(
+    private static Object getUnionTypeBValue(
             UnionType describingType, ResultSet resultSet, AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, TypeMismatchError {
         for (Type type: describingType.getMemberTypes()) {
             try {
                 // If one of the types inside the union is a union, recursively check
                 if (type.getTag() == TypeTags.UNION_TAG) {
-                    return getUnionType(describingType, resultSet, resultParameterProcessor);
+                    return getUnionTypeBValue(describingType, resultSet, resultParameterProcessor);
                 }
-                return getRecordOrPrimitiveType(type, resultSet, resultParameterProcessor);
+                return getRecordOrPrimitiveTypeBValue(type, resultSet, resultParameterProcessor);
             } catch (ApplicationError e) {
                 // Ignored
             }
@@ -239,7 +239,7 @@ public class QueryProcessor {
                 "The result generated from the query cannot be mapped to type %s.", describingType));
     }
 
-    private static Object getRecordOrPrimitiveType(
+    private static Object getRecordOrPrimitiveTypeBValue(
             Type type, ResultSet resultSet, AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !Utils.isSupportedRecordType(type)) {
