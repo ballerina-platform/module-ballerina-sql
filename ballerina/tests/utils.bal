@@ -46,7 +46,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
         "-e", "HSQLDB_USER=test", 
         "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts", 
         "-p", port + ":9001", "kaneeldias/hsqldb");
-    int waitForExit = check result.waitForExit();
+    _ = check result.waitForExit();
     exitCode = check result.exitCode();
     test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
     io:println("Docker container for Database '" + dbAlias + "' created.");
@@ -63,7 +63,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
             "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=", 
             "/scripts/" + scriptName
         );
-        waitForExit = check result.waitForExit();
+        _ = check result.waitForExit();
         exitCode = check result.exitCode();
         counter = counter + 1;
     }
@@ -73,7 +73,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
 
 function cleanDockerContainer(string containerName) returns error? {
     Process result = check exec("docker", {}, scriptPath, "stop", containerName);
-    int waitForExit = check result.waitForExit();
+    _ = check result.waitForExit();
 
     int exitCode = check result.exitCode();
     test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");

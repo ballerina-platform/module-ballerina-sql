@@ -395,7 +395,7 @@ function testShutDownSharedConnectionPool() returns error? {
 
     // This should fail because this client is stopped.
     var result5 = dbClient2->query(`select count(*) as val from Customers where registrationID = 2`, Result);
-    int|error retVal5 = getReturnValue(result4);
+    int|error retVal5 = getReturnValue(result5);
 
     test:assertEquals(retVal1, 1);
     test:assertEquals(retVal2, 1);

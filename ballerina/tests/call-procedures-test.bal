@@ -65,7 +65,7 @@ function cleanproceduresContainer() returns error? {
 function testCallWithStringTypes() returns error? {
     int id = 2;
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
+    _ = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
@@ -96,7 +96,7 @@ function testCallWithStringTypes() returns error? {
 function testCallWithStringTypesInParams() returns error? {
     int id = 3;
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult ret = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
+    _ = check dbClient->call(`call InsertStringData(${id},'test1', 'test2     ', 'c', 'test3', 'd', 'test4');`);
     ParameterizedQuery sqlQuery = `SELECT varchar_type,charmax_type, char_type, charactermax_type, character_type,
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
@@ -584,14 +584,12 @@ function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
 }
 function testCallWithOtherDataTypesWithOutParams() returns error? {
     IntegerValue paraID = new (1);
-    BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
     VarBinaryOutParameter paraVarBinary = new;
     ArrayOutParameter paraIntArray = new;
     ArrayOutParameter paraStringArray = new;
     BooleanOutParameter paraBoolean = new;
     BinaryOutParameter paraBinary = new;
-    TextOutParameter paraText = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
                                     ${paraVarBinary}, ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
@@ -626,20 +624,12 @@ distinct class RandomOutParameter {
 }
 function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     IntegerValue paraID = new (1);
-    BlobOutParameter paraBlob = new;
     ClobOutParameter paraClob = new;
     VarBinaryOutParameter paraVarBinary = new;
     ArrayOutParameter paraIntArray = new;
     RandomOutParameter paraStringArray = new;
     BooleanOutParameter paraBoolean = new;
     BinaryOutParameter paraBinary = new;
-    TextOutParameter paraText = new;
-    NCharOutParameter paraNChar = new;
-    NClobOutParameter paraNClob = new;
-    RowOutParameter paraRowOut = new;
-    RefOutParameter paraRefOut = new;
-    StructOutParameter paraStruct = new;
-    XMLOutParameter paraXml = new;
 
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
                                     ${paraVarBinary} , ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
@@ -905,7 +895,7 @@ function testMultipleRecords() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        error? e = streamData.forEach(function(record {} data) {
+        check streamData.forEach(function(record {} data) {
             returnData = data;
         });
     } else {
@@ -940,7 +930,7 @@ function testMultipleRecordsWithNoReturnType() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        error? e = streamData.forEach(function(record {} data) {
+        check streamData.forEach(function(record {} data) {
             returnData = data;
         });
     } else {
@@ -984,15 +974,8 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     DateTimeArrayValue paraDateTime = new ([datetime, datetime]);
     time:Utc timestampUtc = [12345600, 12];
     TimestampArrayValue paraTimestamp = new ([timestampUtc, timestampUtc]);
-    byte[] byteArray1 = [1, 2, 3];
-    byte[] byteArray2 = [4, 5, 6];
-    BinaryArrayValue paraBinary = new ([byteArray1, byteArray2]);
-    VarBinaryArrayValue paraVarBinary = new ([byteArray1, byteArray2]);
     int rowId = 1;
     datetime = {year: 2021, month: 12, day: 18, hour: 20, minute: 8, second: 12, utcOffset: {hours: 5, minutes: 30, seconds: 0d}};
-    time:Civil[] paraTimestampWithTimezone = [datetime, datetime];
-    time:TimeOfDay timeWithTimezone = {hour: 20, minute: 8, second: 12, utcOffset: {hours: 5, minutes: 30, seconds: 0d}};
-    time:TimeOfDay[] paraTimeWithTimezone = [timeWithTimezone, timeWithTimezone];
 
     InOutParameter smallint_array = new (paraSmallint);
     InOutParameter int_array = new (paraInt);
@@ -1011,8 +994,6 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     InOutParameter time_array = new (paraTime);
     InOutParameter datetime_array = new (paraDateTime);
     InOutParameter timestamp_array = new (paraTimestamp);
-    InOutParameter time_tz_array = new (paraTimeWithTimezone);
-    InOutParameter timestamp_tz_array = new (paraTimestampWithTimezone);
 
     ParameterizedQuery createProcedure = `
         CREATE PROCEDURE SelectArrayDataWithInoutParams (IN rowId INT, INOUT p_small_int_array SMALLINT ARRAY,
@@ -1093,7 +1074,6 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     VarcharArrayOutParameter varchar_array = new;
     NVarcharArrayOutParameter nvarchar_array = new;
     BinaryArrayOutParameter binary_array = new;
-    VarBinaryArrayOutParameter varbinaryArray = new;
     BooleanArrayOutParameter boolean_array = new;
     DateArrayOutParameter date_array = new;
     TimeArrayOutParameter time_array = new;
@@ -1165,16 +1145,14 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
 
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     stream<record {}, error?> streamData = dbClient->query(`SELECT * FROM ProArrayTypes WHERE row_id = 1`);
-    record {|record {} value;|}? data = check streamData.next();
+    _ = check streamData.next();
     check streamData.close();
-    record {}? value = data?.value;
     check dbClient.close();
+
     int[] smallIntArray = [12, 232];
     int[] intArray = [1, 2, 3];
-    float[] realArray = [199.33, 2399.1];
     float[] realArrayInFloat = [199.3300018310547, 2399.10009765625];
     decimal[] realArrayInDecimal = [199.33, 2399.1];
-    float[] floatArray = [245.23, 5559.49, 8796.123];
     decimal[] numericArray = [11.11, 23.23];
     float[] numericArrayInFloat = [11.109999656677246, 23.229999542236328];
     decimal[] decimalArray = [245.12, 5559.12, 8796.92];
@@ -1290,8 +1268,6 @@ function negativeOutParamsTest() returns error? {
     CharArrayOutParameter char_array = new;
     VarcharArrayOutParameter varchar_array = new;
     NVarcharArrayOutParameter nvarchar_array = new;
-    BinaryArrayOutParameter binaryArray = new;
-    VarBinaryArrayOutParameter varbinaryArray = new;
     BooleanArrayOutParameter boolean_array = new;
     DateArrayOutParameter date_array = new;
     TimeArrayOutParameter time_array = new;

@@ -160,4 +160,5 @@ function testParameterizedQueryArrayLength() returns error? {
         noOfQuery += 1;
     }
     test:assertTrue(noOfQuery is 762);
+    test:assertTrue(insertQueries.length() is 762);
 }
