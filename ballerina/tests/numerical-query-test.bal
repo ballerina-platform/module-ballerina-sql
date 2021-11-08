@@ -51,7 +51,7 @@ function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {}? returnData = ();
-    error? e = streamData.forEach(function(record {} data) {
+    check streamData.forEach(function(record {} data) {
         returnData = data;
     });
     check dbClient.close();
@@ -80,7 +80,7 @@ function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<NumericTypeForQuery, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     NumericTypeForQuery? returnData = ();
-    error? e = streamData.forEach(function(NumericTypeForQuery data) {
+    check streamData.forEach(function(NumericTypeForQuery data) {
         returnData = data;
     });
     check dbClient.close();
@@ -279,7 +279,7 @@ function testQueryFromNullTable() returns error? {
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericNullTypes`);
     record {} returnData = {};
     int count = 0;
-    error? e = streamData.forEach(function(record {} data) {
+    check streamData.forEach(function(record {} data) {
         returnData = data;
         count += 1;
     });

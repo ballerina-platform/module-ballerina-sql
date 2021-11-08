@@ -82,8 +82,8 @@ function testConnectionAfterClose() returns error? {
     }
 
     int|Error result4 = testDB->queryRow(`SELECT * FROM Customers`);
-    if result is Error {
-        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " + 
+    if result4 is Error {
+        test:assertTrue(result4.message().startsWith("SQL Client is already closed, hence further operations are not " +
                     "allowed"));
     }
 }

@@ -217,7 +217,6 @@ function testArrayRetrieval() returns error? {
     record {}? value = data?.value;
     check dbClient.close();
 
-    float[] doubleTypeArray = [245.23, 5559.49, 8796.123];
     var mixTypesExpected = {
         INT_TYPE: 1,
         INT_ARRAY: [1, 2, 3],
@@ -534,7 +533,7 @@ function testColumnAlias() returns error? {
 }
 function testQueryRowId() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    ExecutionResult result = check dbClient->execute(`SET DATABASE SQL SYNTAX ORA TRUE`);
+    _ = check dbClient->execute(`SET DATABASE SQL SYNTAX ORA TRUE`);
     stream<record {}, error?> streamData = dbClient->query(`SELECT rownum, int_array, long_array, boolean_array,
                                                             string_array from ArrayTypes`);
 

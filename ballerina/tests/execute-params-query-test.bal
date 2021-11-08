@@ -145,7 +145,6 @@ function deleteDataTable3() returns error? {
     IntegerValue rowId = new (3);
     IntegerValue intType = new (1);
     BigIntValue longType = new (9372036854774807);
-    FloatValue floatType = new (124.34);
     DoubleValue doubleType = new (29095039);
     BooleanValue boolType = new (false);
     VarcharValue stringType = new ("1");
@@ -176,7 +175,7 @@ function deleteDataTable4() returns error? {
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
-    ExecutionResult result = check executeQueryMockClient(sqlQuery);
+    _ = check executeQueryMockClient(sqlQuery);
     ParameterizedQuery query1 = `DELETE FROM DataTable`;
     ParameterizedQuery query2 = ` where row_id=${rowId} AND`;
     ParameterizedQuery query3 = ` int_type=${intType} AND long_type=${longType} AND`;
@@ -204,7 +203,7 @@ function deleteDataTable5() returns error? {
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
-    ExecutionResult result = check executeQueryMockClient(sqlQuery);
+    _ = check executeQueryMockClient(sqlQuery);
     ParameterizedQuery query1 = `DELETE FROM DataTable`;
     ParameterizedQuery query2 = ` where row_id=${rowId} AND`;
     ParameterizedQuery query3 = ` int_type=${intType} AND long_type=${longType} AND`;
@@ -232,7 +231,7 @@ function deleteDataTable6() returns error? {
             `INSERT INTO DataTable (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type,
              decimal_type) VALUES(${rowId}, ${intType}, ${longType}, ${floatType}, ${doubleType}, ${boolType},
              ${stringType}, ${decimalType})`;
-    ExecutionResult result = check executeQueryMockClient(sqlQuery);
+    _ = check executeQueryMockClient(sqlQuery);
     ParameterizedQuery query1 = `DELETE FROM DataTable where row_id=${rowId}`;
     ParameterizedQuery query2 = ` AND`;
     ParameterizedQuery query3 = ` int_type=${intType} AND long_type=${longType} AND`;
@@ -313,8 +312,6 @@ function deleteComplexTable() returns error? {
 function deleteComplexTable2() returns error? {
     BlobValue blobType = new ();
     ClobValue clobType = new ();
-    BinaryValue binaryType = new ();
-    VarBinaryValue varBinaryType = new ();
 
     int rowId = 4;
     ParameterizedQuery sqlQuery = 
@@ -327,7 +324,6 @@ function deleteComplexTable2() returns error? {
 }
 function insertIntoNumericTable() returns error? {
     BitValue bitType = new (1);
-    int rowId = 3;
     int intType = 2147483647;
     int bigIntType = 9223372036854774807;
     int smallIntType = 32767;
@@ -346,7 +342,6 @@ function insertIntoNumericTable() returns error? {
     dependsOn: [insertIntoNumericTable]
 }
 function insertIntoNumericTable2() returns error? {
-    int rowId = 4;
     var nilType = ();
     ParameterizedQuery sqlQuery = 
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
@@ -360,7 +355,6 @@ function insertIntoNumericTable2() returns error? {
     dependsOn: [insertIntoNumericTable2]
 }
 function insertIntoNumericTable3() returns error? {
-    IntegerValue id = new (5);
     IntegerValue intType = new (2147483647);
     BigIntValue bigIntType = new (9223372036854774807);
     SmallIntValue smallIntType = new (32767);
@@ -384,7 +378,6 @@ function insertIntoNumericTable3() returns error? {
 }
 function insertIntoNumericTable4() returns error? {
     BitValue bitType = new (1);
-    int rowId = 10;
     int intType = 2147483647;
     int bigIntType = 9223372036854774807;
     int smallIntType = 32767;
@@ -595,7 +588,6 @@ function insertIntoArrayTable3() returns error? {
     NVarcharArrayValue paraNVarchar = new (["NVarchar value", "Varying NChar"]);
     string[] paraString = ["Hello", "Ballerina"];
     BooleanArrayValue paraBool = new ([true, false]);
-    BitArrayValue paraBit = new ([true, false]);
     DateArrayValue paraDate = new (["2021-12-18", "2021-12-19"]);
     time:TimeOfDay time = {hour: 20, minute: 8, second: 12};
     TimeArrayValue paraTime = new ([time, time]);
@@ -607,7 +599,6 @@ function insertIntoArrayTable3() returns error? {
     byte[] byteArray2 = [4, 5, 6];
     BinaryArrayValue paraBinary = new ([byteArray1, byteArray2]);
     VarBinaryArrayValue paraVarBinary = new ([byteArray1, byteArray2]);
-    io:ReadableByteChannel byteChannel = check getBlobColumnChannel();
     record {}? value = check queryMockClient(executeParamsDb, `Select * from ComplexTypes where row_id = 1`);
     byte[][] paraBlob = [<byte[]>getUntaintedData(value, "BLOB_TYPE")];
     int rowId = 7;

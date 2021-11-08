@@ -1222,7 +1222,6 @@ function testArrayRetrievalRecord() returns error? {
         string_type, string_array, boolean_array FROM MixTypes WHERE row_id = 1`);
     check dbClient.close();
 
-    float[] doubleTypeArray = [245.23, 5559.49, 8796.123];
     var mixTypesExpected = {
         INT_TYPE: 1,
         INT_ARRAY: [1, 2, 3],
