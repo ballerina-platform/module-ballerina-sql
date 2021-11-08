@@ -1326,7 +1326,6 @@ public class ResultIterator {
         if self.isClosed {
             return closedStreamInvocationError();
         }
-        error? closeErrorIgnored = ();
         if self.err is Error {
             return self.err;
         } else {
@@ -1343,10 +1342,10 @@ public class ResultIterator {
                 return streamRecord;
             } else if result is Error {
                 self.err = result;
-                closeErrorIgnored = self.close();
+                self.isClosed = true;
                 return self.err;
             } else {
-                closeErrorIgnored = self.close();
+                self.isClosed = true;
                 return result;
             }
         }
