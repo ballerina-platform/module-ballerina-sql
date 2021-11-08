@@ -59,15 +59,31 @@ public class RecordIteratorUtils {
                         .getNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD);
                 Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, bStruct, columnDefinitions);
                 return bStruct;
-            } else {
-                return null;
             }
+            // Stream has reached the end, we clean up the resources
+            closeResult(recordIterator);
+            return null;
         } catch (SQLException e) {
+            try {
+                closeResult(recordIterator);
+            } catch (Exception ignore) {
+                // When an exception occurs resources cleanup error is ignored
+            }
             return ErrorGenerator.getSQLDatabaseError(e, "Error when iterating the SQL result");
         } catch (ApplicationError e) {
+            try {
+                closeResult(recordIterator);
+            } catch (Exception ignore) {
+                // When an exception occurs resources cleanup error is ignored
+            }
             return ErrorGenerator.getSQLApplicationError("Error when iterating the SQL result. "
                     + e.getMessage());
         } catch (Throwable throwable) {
+            try {
+                closeResult(recordIterator);
+            } catch (Exception ignore) {
+                // When an exception occurs resources cleanup error is ignored
+            }
             return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
                     "SQL result. " + throwable.getMessage());
         }
