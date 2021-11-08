@@ -43,6 +43,10 @@ import java.util.Map;
  * @since 1.2.0
  */
 public class ErrorGenerator {
+
+    // This regex matches all strings in the pattern a.b.c.d:
+    public static final String JAVA_CLASS_NAME_REGEX = "([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)+[\\p{L}_$][\\p{L}\\p{N}_$]*: ";
+
     private ErrorGenerator() {
     }
 
@@ -67,6 +71,7 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLApplicationError(String errorMessage) {
+        errorMessage = removeJavaClassNames(errorMessage);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.APPLICATION_ERROR,
                 StringUtils.fromString(errorMessage), null, null);
     }
@@ -87,22 +92,27 @@ public class ErrorGenerator {
         } else {
             errorName = Constants.APPLICATION_ERROR;
         }
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), errorName,
                 StringUtils.fromString(message), null, null);
     }
 
     public static BError getSQLError(Throwable th, String thMessage) {
         String message = th.getMessage() != null ? th.getMessage() : th.getClass().getSimpleName();
+        thMessage = removeJavaClassNames(thMessage);
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.SQL_ERROR,
                 StringUtils.fromString(thMessage + message), null, null);
     }
 
     public static BError getNoRowsError(String message) {
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
                 StringUtils.fromString(message), null, null);
     }
 
     public static BError getTypeMismatchError(String message) {
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.TYPE_MISMATCH_ERROR,
                 StringUtils.fromString(message), null, null);
     }
@@ -120,6 +130,7 @@ public class ErrorGenerator {
 
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(ModuleUtils.getModule(), Constants.BATCH_EXECUTE_ERROR_DETAIL, valueMap);
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.BATCH_EXECUTE_ERROR,
                 StringUtils.fromString(message), null, sqlClientErrorDetailRecord);
     }
@@ -130,7 +141,12 @@ public class ErrorGenerator {
         valueMap.put(Constants.ErrorRecordFields.SQL_STATE, sqlState);
         BMap<BString, Object> sqlClientErrorDetailRecord = ValueCreator.
                 createRecordValue(ModuleUtils.getModule(), Constants.DATABASE_ERROR_DETAILS, valueMap);
+        message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.DATABASE_ERROR,
                 StringUtils.fromString(message), null, sqlClientErrorDetailRecord);
+    }
+
+    private static String removeJavaClassNames(String message) {
+        return message.replaceAll(JAVA_CLASS_NAME_REGEX, "");
     }
 }

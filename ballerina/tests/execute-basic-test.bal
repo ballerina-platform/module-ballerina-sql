@@ -22,7 +22,6 @@ string executeDb = urlPrefix + "9006/execute";
 }
 function initExecuteContainer() returns error? {
     check initializeDockerContainer("sql-execute", "execute", "9006", "execute", "execute-test-data.sql");
-    return;
 }
 
 @test:AfterGroups {
@@ -30,7 +29,6 @@ function initExecuteContainer() returns error? {
 }
 function cleanExecuteContainer() returns error? {
     check cleanDockerContainer("sql-execute");
-    return;
 }
 
 @test:Config {
@@ -42,7 +40,6 @@ function testCreateTable() returns error? {
     check dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 0, "Affected row count is different.");
     test:assertExactEquals(result.lastInsertId, (), "Last Insert Id is not nil.");
-    return;
 }
 
 @test:Config {
@@ -61,7 +58,6 @@ function testInsertTable() returns error? {
     } else {
         test:assertFail("Insert Id should be an integer.");
     }
-    return;
 }
 
 @test:Config {
@@ -74,7 +70,6 @@ function testInsertTableWithoutGeneratedKeys() returns error? {
     check dbClient.close();
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
     test:assertEquals(result.lastInsertId, (), "Last Insert Id is nil.");
-    return;
 }
 
 @test:Config {
@@ -92,7 +87,6 @@ function testInsertTableWithGeneratedKeys() returns error? {
     } else {
         test:assertFail("Insert Id should be an integer.");
     }
-    return;
 }
 
 type NumericType record {
@@ -129,7 +123,6 @@ function testInsertAndSelectTableWithGeneratedKeys() returns error? {
         test:assertFail("Insert Id should be an integer.");
     }
     check dbClient.close();
-    return;
 }
 
 @test:Config {
@@ -154,7 +147,6 @@ function testInsertWithAllNilAndSelectTableWithGeneratedKeys() returns error? {
     } else {
         test:assertFail("Insert Id should be an integer.");
     }
-    return;
 }
 
 type StringData record {
@@ -183,7 +175,6 @@ function testInsertWithStringAndSelectTable() returns error? {
 
     test:assertExactEquals(result.affectedRowCount, 1, "Affected row count is different.");
 
-    StringData? insertedData = ();
     ParameterizedQuery query = `SELECT * from StringTypes where id = ${intIDVal}`;
     stream<StringData, Error?> streamData = dbClient->query(query);
     record {|StringData value;|}? data = check streamData.next();
@@ -203,7 +194,6 @@ function testInsertWithStringAndSelectTable() returns error? {
     test:assertEquals(data?.value, expectedInsertRow, "Incorrect InsetId returned.");
 
     check dbClient.close();
-    return;
 }
 
 @test:Config {
@@ -237,7 +227,6 @@ function testInsertWithEmptyStringAndSelectTable() returns error? {
     test:assertEquals(data?.value, expectedInsertRow, "Incorrect InsetId returned.");
 
     check dbClient.close();
-    return;
 }
 
 type StringNilData record {
@@ -259,7 +248,6 @@ type StringNilData record {
 function testInsertWithNilStringAndSelectTable() returns error? {
     MockClient dbClient = check new (url = executeDb, user = user, password = password);
     string intIDVal = "45";
-    string test = "Insert" + intIDVal;
     ParameterizedQuery insertQuery = `Insert into StringTypes (id, varchar_type, charmax_type, char_type, charactermax_type,
         character_type, nvarcharmax_type, longvarchar_type, clob_type) values (${intIDVal},null,null,null,null,null,null,null,null)`;
     ExecutionResult result = check dbClient->execute(insertQuery);
@@ -283,7 +271,6 @@ function testInsertWithNilStringAndSelectTable() returns error? {
     };
     test:assertEquals(data?.value, expectedInsertRow, "Incorrect InsetId returned.");
     check dbClient.close();
-    return;
 }
 
 @test:Config {
@@ -306,7 +293,6 @@ function testInsertTableWithDatabaseError() returns error? {
     }
 
     check dbClient.close();
-    return;
 }
 
 @test:Config {
@@ -329,7 +315,6 @@ function testInsertTableWithDataTypeError() returns error? {
     }
 
     check dbClient.close();
-    return;
 }
 
 type ResultCount record {
@@ -352,7 +337,6 @@ function testUpdateData() returns error? {
     test:assertEquals(data?.value?.countVal, 1, "Update command was not successful.");
 
     check dbClient.close();
-    return;
 }
 
 @test:Config {
@@ -371,5 +355,4 @@ function testErroneousExcuteWithParams() returns error? {
         test:assertFail("DatabaseError Error expected.");
     }
     check dbClient.close();
-    return;
 }

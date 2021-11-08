@@ -42,7 +42,6 @@ function queryWithoutRecordField() returns error? {
     };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
-    return;
 }
 
 public type StudentsWithoutTeachersFieldClosed record {|
@@ -69,7 +68,6 @@ function queryWithoutRecordFieldSealed() returns error? {
     } else {
         test:assertFail("Error expected");
     }
-    return;
 }
 
 public type Student record {|
@@ -102,7 +100,6 @@ function queryAnnonRecord() returns error? {
     };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
-    return;
 }
 
 public type Student1 record {|
@@ -140,7 +137,6 @@ function queryTypedRecordWithFields() returns error? {
     };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
-    return;
 }
 
 @test:Config {
@@ -152,7 +148,7 @@ function queryTypedRecordWithFieldsStream() returns error? {
     stream<Student1, Error?> studentStream = 
                 dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
-    error? e = studentStream.forEach(function(Student1 data) {
+    check studentStream.forEach(function(Student1 data) {
         returnData = data;
     });
 
@@ -170,7 +166,6 @@ function queryTypedRecordWithFieldsStream() returns error? {
     };
 
     test:assertEquals(returnData, expectedStudent, "Expected student record did not match");
-    return;
 }
 
 public type Student2 record {|
@@ -207,7 +202,6 @@ function queryTypedRecordWithoutFields() returns error? {
     };
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
-    return;
 }
 
 public type Student3 record {|
@@ -239,5 +233,4 @@ function queryTypedRecordWithoutFieldsClosed() returns error? {
     } else {
         test:assertFail("Error expected");
     }
-    return;
 }

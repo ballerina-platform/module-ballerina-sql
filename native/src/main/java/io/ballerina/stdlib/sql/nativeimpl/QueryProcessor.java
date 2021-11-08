@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
@@ -35,6 +36,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
@@ -170,10 +172,6 @@ public class QueryProcessor {
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
             TransactionResourceManager trxResourceManager) {
         Type describingType = ballerinaType.getDescribingType();
-        if (describingType.getTag() == TypeTags.UNION_TAG) {
-            return ErrorGenerator.getSQLApplicationError("Return type cannot be a union of multiple types.");
-        }
-
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -196,19 +194,12 @@ public class QueryProcessor {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
 
-                if (describingType.getTag() == TypeTags.RECORD_TYPE_TAG &&
-                        !Utils.isSupportedRecordType(describingType)) {
-                    RecordType recordConstraint = (RecordType) describingType;
-                    List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
-                    return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
-                } else {
-                    if (resultSet.getMetaData().getColumnCount() > 1) {
-                        return ErrorGenerator.getTypeMismatchError(
-                                String.format("Expected type to be '%s' but found 'record{}'.", describingType));
-                    }
-                    PrimitiveTypeColumnDefinition definition = Utils.getColumnDefinition(resultSet, 1, describingType);
-                    return resultParameterProcessor.createValue(resultSet, 1, definition);
+                if (describingType.getTag() == TypeTags.UNION_TAG) {
+                    return getUnionTypeBValue((UnionType) describingType, resultSet, resultParameterProcessor);
                 }
+
+                // Return-type is either a record or a primitive
+                return getRecordOrPrimitiveTypeBValue(describingType, resultSet, resultParameterProcessor);
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
@@ -226,6 +217,49 @@ public class QueryProcessor {
             }
         }
         return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
+    }
+
+    // This method iterates through each type in the union type and checks whether it is compatible with the result
+    // from the query.
+    private static Object getUnionTypeBValue(
+            UnionType describingType, ResultSet resultSet, AbstractResultParameterProcessor resultParameterProcessor)
+            throws SQLException, TypeMismatchError {
+        for (Type type: describingType.getMemberTypes()) {
+            try {
+                // If one of the types inside the union is a union, recursively check
+                if (type.getTag() == TypeTags.UNION_TAG) {
+                    return getUnionTypeBValue(describingType, resultSet, resultParameterProcessor);
+                }
+
+                // Attempt to convert the query result to the current type
+                return getRecordOrPrimitiveTypeBValue(type, resultSet, resultParameterProcessor);
+            } catch (ApplicationError e) {
+                // Ignored
+                // If an ApplicationError is thrown, the type is not compatible with the query result. Hence, it is
+                // ignored and the next type conversion is attempted.
+            }
+        }
+
+        // No valid mapping was found in the union-type
+        throw new TypeMismatchError(String.format(
+                "The result generated from the query cannot be mapped to type %s.", describingType));
+    }
+
+    private static Object getRecordOrPrimitiveTypeBValue(
+            Type type, ResultSet resultSet, AbstractResultParameterProcessor resultParameterProcessor)
+            throws SQLException, ApplicationError {
+        if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !Utils.isSupportedRecordType(type)) {
+            RecordType recordConstraint = (RecordType) type;
+            List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
+            return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+        }
+
+        if (resultSet.getMetaData().getColumnCount() > 1) {
+            throw new TypeMismatchError(String.format("Expected type to be '%s' but found 'record{}'.", type));
+        }
+
+        PrimitiveTypeColumnDefinition definition = Utils.getColumnDefinition(resultSet, 1, type);
+        return resultParameterProcessor.createValue(resultSet, 1, definition);
     }
 
     private static BStream getErrorStream(Object recordType, BError errorValue) {
