@@ -60,17 +60,20 @@ public class RecordIteratorUtils {
                 Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, bStruct, columnDefinitions);
                 return bStruct;
             }
-            // Stream has reached the end, we clean up the resources
+            // Stream has reached the end, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
             return null;
         } catch (SQLException e) {
+            // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
             return ErrorGenerator.getSQLDatabaseError(e, "Error when iterating the SQL result");
         } catch (ApplicationError e) {
+            // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
             return ErrorGenerator.getSQLApplicationError("Error when iterating the SQL result. "
                     + e.getMessage());
         } catch (Throwable throwable) {
+            // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
             return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
                     "SQL result. " + throwable.getMessage());
