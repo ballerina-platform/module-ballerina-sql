@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -135,7 +136,11 @@ public class ExecuteProcessor {
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable th) {
-                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
+                if (th instanceof BError) {
+                    return th;
+                }
+                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ",
+                        sqlQuery));
             } finally {
                 closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }

@@ -739,25 +739,25 @@ function insertIntoArrayTable8() returns error? {
         `INSERT INTO ArrayTypes2 (row_id, date_array) VALUES(${rowId}, ${paraDate})`;
     ExecutionResult|error result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for date array");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported string value"));
 
     sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, time_array) VALUES(${rowId}, ${paraTime})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for time array");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported string value"));
 
     sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, datetime_array) VALUES(${rowId}, ${paraDatetime})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for datetime array");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported string value"));
 
     sqlQuery = 
         `INSERT INTO ArrayTypes2 (row_id, timestamp_array) VALUES(${rowId}, ${paraTimestamp})`;
     result = executeQueryMockClient(sqlQuery);
     test:assertTrue(result is error, "Error Expected for timestamp array");
-    test:assertTrue(strings:includes((<error>result).message(), "Unsupported String Value"));
+    test:assertTrue(strings:includes((<error>result).message(), "Unsupported string value"));
 }
 
 @test:Config {
