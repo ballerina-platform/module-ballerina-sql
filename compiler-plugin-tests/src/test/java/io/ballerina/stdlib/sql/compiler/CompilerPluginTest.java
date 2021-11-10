@@ -25,17 +25,25 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
+import io.ballerina.tools.diagnostics.Diagnostic;
+import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Tests the custom SQL compiler plugin.
  */
 public class CompilerPluginTest {
+
+    private static final String SQL_101 = "SQL_101";
+    private static final String SQL_102 = "SQL_102";
+    private static final String SQL_103 = "SQL_103";
 
     private static final Path RESOURCE_DIRECTORY = Paths.get("src", "test", "resources", "diagnostics")
             .toAbsolutePath();
@@ -58,9 +66,32 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("sample1");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        long availableErrors = diagnosticResult.diagnostics().stream()
-                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR)).count();
-        Assert.assertEquals(availableErrors, 0);
+        List<Diagnostic> errorDiagnosticsList = diagnosticResult.diagnostics().stream()
+                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR))
+                .collect(Collectors.toList());
+        long availableErrors = errorDiagnosticsList.size();
+
+        Assert.assertEquals(availableErrors, 4);
+
+        DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
+        Assert.assertEquals(maxOpenConnectionZero.code(), SQL_101);
+        Assert.assertEquals(maxOpenConnectionZero.messageFormat(),
+                "invalid value: expected value is greater than one");
+
+        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
+        Assert.assertEquals(maxConnectionLifeTime.code(), SQL_103);
+        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
+                "invalid value: expected value is greater than 30");
+
+        DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
+        Assert.assertEquals(minIdleConnections.code(), SQL_102);
+        Assert.assertEquals(minIdleConnections.messageFormat(),
+                "invalid value: expected value is greater than zero");
+
+        DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
+        Assert.assertEquals(maxOpenConnectionNegative.code(), SQL_101);
+        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
+                "invalid value: expected value is greater than one");
     }
 
 }
