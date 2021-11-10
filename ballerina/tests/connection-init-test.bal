@@ -249,7 +249,7 @@ function testWithConnectionPoolNegative() returns error? {
     };
     MockClient|Error err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
     if err is error {
-        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxOpenConnections' cannot be negative.");
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxOpenConnections' cannot be less than one.");
     } else {
         test:assertFail("Connection should fail with negative value");
     }
@@ -259,7 +259,7 @@ function testWithConnectionPoolNegative() returns error? {
     };
     err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
     if err is error {
-        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxConnectionLifeTime' cannot be negative.");
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
     } else {
         test:assertFail("Connection should fail with negative value");
     }
