@@ -239,3 +239,39 @@ isolated function testGenerateErrorStream() returns error? {
     record {}|Error? firstElement = errorStream.next();
     test:assertTrue(firstElement is Error);
 }
+
+@test:Config {
+    groups: ["connection"]
+}
+function testWithConnectionPoolNegative() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: -25
+    };
+    MockClient|Error err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxOpenConnections' cannot be negative.");
+    } else {
+        test:assertFail("Connection should fail with negative value");
+    }
+
+    connectionPool = {
+        maxConnectionLifeTime: -1
+    };
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxConnectionLifeTime' cannot be negative.");
+    } else {
+        test:assertFail("Connection should fail with negative value");
+    }
+
+    connectionPool = {
+        minIdleConnections: -1
+    };
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'minIdleConnections' cannot be negative.");
+    } else {
+        test:assertFail("Connection should fail with negative value");
+    }
+
+}

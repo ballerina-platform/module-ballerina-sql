@@ -28,6 +28,7 @@ import io.ballerina.runtime.transactions.BallerinaTransactionContext;
 import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 
@@ -320,23 +321,30 @@ public class SQLDatasource {
             if (sqlDatasourceParams.connectionPool != null) {
                 int maxOpenConn = sqlDatasourceParams.connectionPool.
                         getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS).intValue();
-                if (maxOpenConn > 0) {
+                if (maxOpenConn >= 1) {
                     config.setMaximumPoolSize(maxOpenConn);
+                } else {
+                    throw new ApplicationError("ConnectionPool field 'maxOpenConnections' cannot be less than one.");
                 }
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec instanceof BDecimal) {
                     BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
-                    if (connLifeTime.floatValue() > 0) {
+                    if (connLifeTime.floatValue() >= 30) {
                         long connLifeTimeMS = Double.valueOf(connLifeTime.floatValue() * 1000).longValue();
                         config.setMaxLifetime(connLifeTimeMS);
+                    } else {
+                        // Here if the connection life time is minimum 30s, the default value will be used
+                        throw new ApplicationError("ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
                     }
                 }
                 int minIdleConnections = sqlDatasourceParams.connectionPool
                         .getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS).intValue();
                 if (minIdleConnections > 0) {
                     config.setMinimumIdle(minIdleConnections);
+                } else {
+                    throw new ApplicationError("ConnectionPool field 'minIdleConnections' cannot be negative.");
                 }
             }
             if (sqlDatasourceParams.options != null) {
