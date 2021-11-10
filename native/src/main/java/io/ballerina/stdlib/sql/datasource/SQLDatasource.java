@@ -336,7 +336,8 @@ public class SQLDatasource {
                         config.setMaxLifetime(connLifeTimeMS);
                     } else {
                         // Here if the connection life time is minimum 30s, the default value will be used
-                        throw new ApplicationError("ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
+                        throw new ApplicationError(
+                                "ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
                     }
                 }
                 int minIdleConnections = sqlDatasourceParams.connectionPool
