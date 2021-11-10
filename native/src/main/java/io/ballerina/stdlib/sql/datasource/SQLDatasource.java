@@ -328,16 +328,15 @@ public class SQLDatasource {
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
-                if (connLifeTimeSec instanceof BDecimal) {
-                    BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
-                    if (connLifeTime.floatValue() < 30) {
-                        // Here if the connection life time is minimum 30s, the default value will be used
-                        throw new ApplicationError(
-                                "ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
-                    }
-                    long connLifeTimeMS = Double.valueOf(connLifeTime.floatValue() * 1000).longValue();
-                    config.setMaxLifetime(connLifeTimeMS);
+                BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
+                if (connLifeTime.floatValue() < 30) {
+                    // Here if the connection life time is minimum 30s, the default value will be used
+                    throw new ApplicationError(
+                            "ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
                 }
+                long connLifeTimeMS = Double.valueOf(connLifeTime.floatValue() * 1000).longValue();
+                config.setMaxLifetime(connLifeTimeMS);
+
                 int minIdleConnections = sqlDatasourceParams.connectionPool
                         .getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS).intValue();
                 if (minIdleConnections < 0) {
