@@ -111,8 +111,11 @@ updateTomlFiles.dependsOn copyStdlibs
 build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-test-utils:build"
+build.finalizedBy ":sql-compiler-plugin-tests:build"
+
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-test-utils:build"
+test.finalizedBy ":sql-compiler-plugin-tests:build"
 
 publishToMavenLocal.dependsOn build
 publish.dependsOn build

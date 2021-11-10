@@ -17,11 +17,13 @@ include ':checkstyle'
 include ':sql-native'
 include ':sql-test-utils'
 include ':sql-ballerina'
+include ':sql-compiler-plugin-tests'
 
 project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
 project(':sql-native').projectDir = file('native')
 project(':sql-test-utils').projectDir = file('test-utils')
 project(':sql-ballerina').projectDir = file('ballerina')
+project(':sql-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
 
 gradleEnterprise {
     buildScan {

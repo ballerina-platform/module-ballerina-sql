@@ -1,0 +1,4 @@
+[package]
+org = "sql_test"
+name = "sample1"
+version = "0.1.0"
