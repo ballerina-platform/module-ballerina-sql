@@ -117,12 +117,6 @@ public class ErrorGenerator {
                 StringUtils.fromString(message), null, null);
     }
 
-    public static BError getConversionError(String message) {
-        message = removeJavaClassNames(message);
-        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.CONVERSION_ERROR,
-                StringUtils.fromString(message), null, null);
-    }
-
     private static BError getSQLBatchExecuteError(String message, int vendorCode, String sqlState,
                                                   List<BMap<BString, Object>> executionResults) {
         Map<String, Object> valueMap = new HashMap<>();

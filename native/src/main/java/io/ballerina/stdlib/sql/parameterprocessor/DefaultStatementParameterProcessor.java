@@ -37,8 +37,8 @@ import io.ballerina.stdlib.io.readers.CharacterChannelReader;
 import io.ballerina.stdlib.io.utils.IOConstants;
 import io.ballerina.stdlib.io.utils.IOUtils;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
-import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.Utils;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
@@ -285,7 +285,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 try {
                     arrayData[i] = Date.valueOf(innerValue.toString());
                 } catch (java.lang.IllegalArgumentException ex) {
-                    throw ErrorGenerator.getConversionError("Unsupported string value: " + innerValue +
+                    throw new ConversionError("Unsupported string value: " + innerValue +
                             " for Date Array");
                 }
             } else if (innerValue instanceof BMap) {
@@ -300,7 +300,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     arrayData[i] = Date.valueOf(year + "-" + month + "-" + day);
 
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + value + " for Date Array");
+                    throw new ConversionError("Unsupported value: " + value + " for Date Array");
                 }
             } else {
                 throw Utils.throwInvalidParameterError(innerValue, "Date Array");
@@ -323,8 +323,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 try {
                     arrayData[i] = Time.valueOf(innerValue.toString());
                 } catch (java.lang.NumberFormatException ex) {
-                    throw ErrorGenerator.getConversionError("Unsupported string value " + innerValue +
-                            " for Time Array");
+                    throw new ConversionError("Unsupported string value " + innerValue + " for Time Array");
                 }
                 // arrayData[i] = innerValue.toString();
             } else if (innerValue instanceof BMap) {
@@ -375,7 +374,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                         arrayData[i] = Time.valueOf(localTime);
                     }
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + innerValue +
+                    throw new ConversionError("Unsupported value: " + innerValue +
                             " for Time Array");
                 }
             } else {
@@ -493,8 +492,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                             java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     arrayData[i] = LocalDateTime.parse(innerValue.toString(), formatter);
                 } catch (java.time.format.DateTimeParseException ex) {
-                    throw ErrorGenerator.getConversionError("Unsupported string value " + innerValue +
-                            " for DateTime Array");
+                    throw new ConversionError("Unsupported string value " + innerValue + " for DateTime Array");
                 }
             } else if (innerValue instanceof BArray) {
                 //this is mapped to time:Utc
@@ -558,7 +556,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                         arrayData[i] = Timestamp.valueOf(localDateTime);
                     }
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + innerValue + " for DateTime Array");
+                    throw new ConversionError("Unsupported value: " + innerValue + " for DateTime Array");
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, "TIMESTAMP ARRAY");
@@ -833,8 +831,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                         preparedStatement.setTimestamp(index, Timestamp.valueOf(localDateTime));
                     }
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + value +
-                            " for " + sqlType);
+                    throw new ConversionError("Unsupported value: " + value + " for " + sqlType);
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, sqlType);
@@ -1168,7 +1165,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 try {
                     date = Date.valueOf(value.toString());
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + value + " for Date Value");
+                    throw new ConversionError("Unsupported value: " + value + " for Date Value");
                 }
             } else if (value instanceof BMap) {
                 try {
@@ -1181,7 +1178,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                             fromString(io.ballerina.stdlib.time.util.Constants.DATE_RECORD_DAY)));
                     date = Date.valueOf(year + "-" + month + "-" + day);
                 } catch (Throwable e) {
-                    throw ErrorGenerator.getConversionError("Unsupported value: " + value + " for Date Value");
+                    throw new ConversionError("Unsupported value: " + value + " for Date Value");
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, sqlType);

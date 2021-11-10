@@ -493,8 +493,7 @@ function queryRecordDateStringInvalidParam() {
     test:assertTrue(result is error);
 
     if result is ApplicationError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * FROM " +
-                "DateTimeTypes WHERE date_type =  ? . Unsupported value: 2017/2/3 for Date Value"));
+        test:assertEquals(result.message(), "Unsupported value: 2017/2/3 for Date Value");
     } else {
         test:assertFail("ApplicationError Error expected.");
     }
