@@ -17,8 +17,6 @@ import ballerina/lang.'string as strings;
 import ballerina/test;
 
 string errorDB = urlPrefix + "9013/error";
-string user = "test";
-string password = "";
 
 @test:BeforeGroups {
     value: ["error"]
