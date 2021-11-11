@@ -135,8 +135,7 @@ public class ExecuteProcessor {
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable th) {
-                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ",
-                        sqlQuery));
+                return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
             } finally {
                 closeResources(isWithInTrxBlock, resultSet, statement, connection);
             }

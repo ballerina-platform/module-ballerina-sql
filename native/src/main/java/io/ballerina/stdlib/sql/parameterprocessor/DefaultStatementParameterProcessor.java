@@ -298,7 +298,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     throw Utils.throwInvalidParameterError(innerValue, "Date Array");
                 }
             } catch (ArithmeticException | IllegalArgumentException ex) {
-                throw new ConversionError("Unsupported string value " + innerValue + " for Time Array");
+                throw new ConversionError("Unsupported value: " + innerValue + " for Date Array");
             }
         }
         return new Object[]{arrayData, Constants.SqlArrays.DATE};
@@ -368,7 +368,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     throw Utils.throwInvalidParameterError(innerValue, "Time Array");
                 }
             } catch (ArithmeticException | IllegalArgumentException ex) {
-                throw new ConversionError("Unsupported string value " + innerValue + " for Time Array");
+                throw new ConversionError("Unsupported value " + innerValue + " for Time Array");
             }
         }
         if (containsTimeZone) {
@@ -1228,7 +1228,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                         preparedStatement.setTime(index, Time.valueOf(localTime));
                     }
                 } catch (Throwable e) {
-                    throw new ConversionError("Unsupported value: " + value + " for Date Value");
+                    throw new ConversionError("Unsupported value: " + value + " for Time Value");
                 }
             } else {
                 throw Utils.throwInvalidParameterError(value, sqlType);
