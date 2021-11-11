@@ -407,7 +407,7 @@ public class Utils {
                 ballerinaFieldName = field.getKey();
                 ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
                 if (ballerinaType == null) {
-                    throw new ApplicationError("The field '" + field.getKey() + "' of type " +
+                    throw new TypeMismatchError("The field '" + field.getKey() + "' of type " +
                             field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
                             logColumnName + "' of SQL type '" + metadata.getSqlName() + "'");
                 }
