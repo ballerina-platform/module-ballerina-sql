@@ -17,6 +17,8 @@ import ballerina/lang.'string as strings;
 import ballerina/test;
 
 string errorDB = urlPrefix + "9013/error";
+string user = "test";
+string password = "";
 
 @test:BeforeGroups {
     value: ["error"]
@@ -301,4 +303,50 @@ function TestDeleteRowNotFound() returns error? {
     test:assertTrue(strings:includes(sqlError.message(), "Error while executing SQL query: DELETE FROM DataTable" +
              " where id=5. user lacks privilege or object not found: ID in statement [DELETE FROM DataTable " +
              "where id=5]"), sqlError.message());
+}
+
+@test:Config {
+    groups: ["error"]
+}
+function testCreateProcedures1() returns error? {
+    MockClient mockClient = check getMockClient(errorDB);
+    _ = check mockClient->execute(`CREATE PROCEDURE InsertStudent (IN pName VARCHAR(255),
+                                 IN pAge INT) MODIFIES SQL DATA INSERT INTO DataTable(row_id,
+                                 string_type) VALUES (pAge, pName);`);
+    ProcedureCallResult|error result = mockClient->call(`call InsertStudent(1);`);
+    check mockClient.close();
+    DatabaseError sqlError = <DatabaseError> result;
+    test:assertEquals(sqlError.message(), "Error while executing SQL query: call InsertStudent(1);. " +
+                "user lacks privilege or object not found in statement [call InsertStudent(1);].",
+                sqlError.message());
+}
+
+@test:Config {
+    groups: ["error"],
+    dependsOn: [testCreateProcedures1]
+}
+function testCreateProcedures2() returns error? {
+    MockClient mockClient = check getMockClient(errorDB);
+    ProcedureCallResult|error result = mockClient->call(`call InsertStudent(1, 1);`);
+    check mockClient.close();
+    DatabaseError sqlError = <DatabaseError> result;
+    test:assertEquals(sqlError.message(), "Error while executing SQL query: call InsertStudent(1, 1);. " +
+                "incompatible data type in conversion in statement [call InsertStudent(1, 1);].",
+                sqlError.message());
+}
+
+@test:Config {
+    groups: ["error"]
+}
+function testCreateProceduresWithInvalidArgument() returns error? {
+    MockClient mockClient = check getMockClient(errorDB);
+    ExecutionResult|error result = mockClient->execute(
+            `CREATE PROCEDURE InsertData (IN_OUT pName VARCHAR(255) MODIFIES SQL DATA INSERT INTO DataTable(row_id) VALUES (pAge);`);
+    check mockClient.close();
+    DatabaseError sqlError = <DatabaseError> result;
+    test:assertEquals(sqlError.message(), "Error while executing SQL query: CREATE PROCEDURE InsertData " +
+                "(IN_OUT pName VARCHAR(255) MODIFIES SQL DATA INSERT INTO DataTable(row_id) VALUES (pAge);. type " +
+                "not found or user lacks privilege: PNAME in statement [CREATE PROCEDURE InsertData (IN_OUT pName " +
+                "VARCHAR(255) MODIFIES SQL DATA INSERT INTO DataTable(row_id) VALUES (pAge);].",
+                sqlError.message());
 }
