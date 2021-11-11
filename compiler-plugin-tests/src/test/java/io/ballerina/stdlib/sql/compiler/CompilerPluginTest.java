@@ -81,7 +81,7 @@ public class CompilerPluginTest {
         DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
         Assert.assertEquals(maxConnectionLifeTime.code(), SQL_103);
         Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
-                "invalid value: expected value is greater than 30");
+                "invalid value: expected value is greater than or equal to 30");
 
         DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
         Assert.assertEquals(minIdleConnections.code(), SQL_102);
