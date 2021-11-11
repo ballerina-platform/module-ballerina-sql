@@ -306,7 +306,7 @@ function TestDeleteRowNotFound() returns error? {
 @test:Config {
     groups: ["error"]
 }
-function testCreateProcedures1() returns error? {
+function testCreateProceduresWithMissingParams() returns error? {
     MockClient mockClient = check getMockClient(errorDB);
     _ = check mockClient->execute(`CREATE PROCEDURE InsertStudent (IN pName VARCHAR(255),
                                  IN pAge INT) MODIFIES SQL DATA INSERT INTO DataTable(row_id,
@@ -323,7 +323,7 @@ function testCreateProcedures1() returns error? {
     groups: ["error"],
     dependsOn: [testCreateProcedures1]
 }
-function testCreateProcedures2() returns error? {
+function testCreateProceduresWithParameterTypeMismatch() returns error? {
     MockClient mockClient = check getMockClient(errorDB);
     ProcedureCallResult|error result = mockClient->call(`call InsertStudent(1, 1);`);
     check mockClient.close();
