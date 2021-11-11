@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
 - [Add support for handling union types in queryRow()](https://github.com/ballerina-platform/ballerina-standard-library/issues/2333)
-
+- [Validate connection pool configurations](https://github.com/ballerina-platform/ballerina-standard-library/issues/2355)
 
 ## [1.0.0] - 2021-10-09
 
