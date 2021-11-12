@@ -120,3 +120,4 @@ compileJava {
 }
 
 test.dependsOn ":sql-ballerina:build"
+build.dependsOn ":sql-ballerina:build"
