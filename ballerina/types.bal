@@ -659,7 +659,8 @@ public distinct class CharOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -671,7 +672,8 @@ public distinct class CharArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -683,7 +685,8 @@ public distinct class VarcharOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -695,7 +698,8 @@ public distinct class VarcharArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -707,7 +711,8 @@ public distinct class NCharOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -719,7 +724,8 @@ public distinct class NVarcharOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -731,7 +737,8 @@ public distinct class NVarcharArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -743,7 +750,8 @@ public distinct class BinaryOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -755,7 +763,8 @@ public distinct class BinaryArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -767,7 +776,8 @@ public distinct class VarBinaryOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -779,7 +789,8 @@ public distinct class VarBinaryArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -791,7 +802,8 @@ public distinct class TextOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -803,7 +815,8 @@ public distinct class BlobOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -815,7 +828,8 @@ public distinct class ClobOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -827,7 +841,8 @@ public distinct class NClobOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -839,7 +854,8 @@ public distinct class DateOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -851,7 +867,8 @@ public distinct class DateArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -863,7 +880,8 @@ public distinct class TimeOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -875,7 +893,8 @@ public distinct class TimeArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -887,7 +906,8 @@ public distinct class TimeWithTimezoneOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -899,7 +919,8 @@ public distinct class TimeWithTimezoneArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -911,7 +932,8 @@ public distinct class DateTimeOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -923,7 +945,8 @@ public distinct class DateTimeArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -935,7 +958,8 @@ public distinct class TimestampOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -947,7 +971,8 @@ public distinct class TimestampArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -959,7 +984,8 @@ public distinct class TimestampWithTimezoneOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -971,7 +997,8 @@ public distinct class TimestampWithTimezoneArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -983,7 +1010,8 @@ public distinct class ArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -995,7 +1023,8 @@ public distinct class RowOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1007,7 +1036,8 @@ public distinct class SmallIntOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1019,7 +1049,8 @@ public distinct class SmallIntArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1031,7 +1062,8 @@ public distinct class IntegerOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1043,7 +1075,8 @@ public distinct class BigIntOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1055,7 +1088,8 @@ public distinct class IntegerArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1067,7 +1101,8 @@ public distinct class BigIntArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1079,7 +1114,8 @@ public distinct class RealOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1091,7 +1127,8 @@ public distinct class RealArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1103,7 +1140,8 @@ public distinct class FloatOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1115,7 +1153,8 @@ public distinct class FloatArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1127,7 +1166,8 @@ public distinct class DoubleOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1139,7 +1179,8 @@ public distinct class DoubleArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1151,7 +1192,8 @@ public distinct class NumericOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1163,7 +1205,8 @@ public distinct class NumericArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1175,7 +1218,8 @@ public distinct class DecimalOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1187,7 +1231,8 @@ public distinct class DecimalArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1199,7 +1244,8 @@ public distinct class BitOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1211,7 +1257,8 @@ public distinct class BitArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1223,7 +1270,8 @@ public distinct class BooleanOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1235,7 +1283,8 @@ public distinct class BooleanArrayOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1247,7 +1296,8 @@ public distinct class RefOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1259,7 +1309,8 @@ public distinct class StructOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1271,7 +1322,8 @@ public distinct class XMLOutParameter {
     # + typeDesc - Type description of the data that need to be converted
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1289,7 +1341,7 @@ public class InOutParameter {
     # + return - The converted ballerina value or Error
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
-        name: "getInOutParameter"
+        name: "getInOutParameterValue"
     } external;
 }
 

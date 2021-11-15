@@ -614,7 +614,8 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
 distinct class RandomOutParameter {
     *OutParameter;
     public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 

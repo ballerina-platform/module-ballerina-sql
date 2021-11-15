@@ -56,27 +56,22 @@ public class OutParameterProcessor {
     private OutParameterProcessor() {
     }
 
-    public static Object get(BObject result, BTypedesc typeDesc) {
-        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), true);
+    public static Object getOutParameterValue(BObject result, BTypedesc typeDesc) {
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "OutParameter");
     }
 
-    public static Object getInOutParameter(BObject result, BTypedesc typeDesc) {
-        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), false);
+    public static Object getInOutParameterValue(BObject result, BTypedesc typeDesc) {
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "InOutParameter");
     }
 
-    public static Object get(
-            BObject result, BTypedesc typeDesc, AbstractResultParameterProcessor resultParameterProcessor,
-            boolean isOutParameter) {
+    public static Object get(BObject result, BTypedesc typeDesc,
+                              AbstractResultParameterProcessor resultParameterProcessor, String parameterType) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
         Type ballerinaType = typeDesc.getDescribingType();
         try {
             if (ballerinaType.getTag() == TypeTags.UNION_TAG) {
-                String paramType = "InOutParameter";
-                if (isOutParameter) {
-                    paramType = "OutParameter";
-                }
-                throw new ApplicationError(paramType + " 'get' function does not support union return type.");
+                throw new ApplicationError(parameterType + " 'get' function does not support union return type.");
             }
             switch (sqlType) {
                 case Types.CHAR:
