@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
@@ -56,15 +57,27 @@ public class OutParameterProcessor {
     }
 
     public static Object get(BObject result, BTypedesc typeDesc) {
-        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), true);
+    }
+
+    public static Object getInOutParameter(BObject result, BTypedesc typeDesc) {
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), false);
     }
 
     public static Object get(
-            BObject result, BTypedesc typeDesc, AbstractResultParameterProcessor resultParameterProcessor) {
+            BObject result, BTypedesc typeDesc, AbstractResultParameterProcessor resultParameterProcessor,
+            boolean isOutParameter) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
         Type ballerinaType = typeDesc.getDescribingType();
         try {
+            if (ballerinaType.getTag() == TypeTags.UNION_TAG) {
+                String paramType = "InOutParameter";
+                if (isOutParameter) {
+                    paramType = "OutParameter";
+                }
+                throw new ApplicationError(paramType + " 'get' function does not support union return type.");
+            }
             switch (sqlType) {
                 case Types.CHAR:
                 case Types.VARCHAR:
