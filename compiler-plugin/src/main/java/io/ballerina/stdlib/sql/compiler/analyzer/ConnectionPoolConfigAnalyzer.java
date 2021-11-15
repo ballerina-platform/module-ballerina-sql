@@ -28,6 +28,7 @@ import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingFieldNode;
+import io.ballerina.compiler.syntax.tree.ModuleVariableDeclarationNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.SpecificFieldNode;
@@ -58,15 +59,15 @@ import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_103;
 public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
 
     @Override
-    public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
-        List<Diagnostic> diagnostics = syntaxNodeAnalysisContext.semanticModel().diagnostics();
+    public void perform(SyntaxNodeAnalysisContext ctx) {
+        List<Diagnostic> diagnostics = ctx.semanticModel().diagnostics();
         for (Diagnostic diagnostic : diagnostics) {
             if (diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR) {
                 return;
             }
         }
-        VariableDeclarationNode varDeclarationNode = (VariableDeclarationNode) syntaxNodeAnalysisContext.node();
-        Optional<Symbol> varSymOptional = syntaxNodeAnalysisContext.semanticModel().symbol(varDeclarationNode);
+        Optional<Symbol> varSymOptional = ctx.semanticModel()
+                .symbol(ctx.node());
         if (varSymOptional.isPresent()) {
             TypeSymbol typeSymbol = ((VariableSymbol) varSymOptional.get()).typeDescriptor();
             if (!isConnectionPoolVariable(typeSymbol)) {
@@ -74,8 +75,15 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
             }
 
             // Initiated with a record
-            Optional<ExpressionNode> optionalInitializer = varDeclarationNode.initializer();
-            if (!optionalInitializer.isPresent()) {
+            Optional<ExpressionNode> optionalInitializer;
+            if ((ctx.node() instanceof VariableDeclarationNode)) {
+                // Function level variables
+                optionalInitializer = ((VariableDeclarationNode) ctx.node()).initializer();
+            } else {
+                // Module level variables
+                optionalInitializer = ((ModuleVariableDeclarationNode) ctx.node()).initializer();
+            }
+            if (optionalInitializer.isEmpty()) {
                 return;
             }
             ExpressionNode initializer = optionalInitializer.get();
@@ -96,7 +104,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_101.getCode(), SQL_101.getMessage(),
                                     SQL_101.getSeverity());
 
-                            syntaxNodeAnalysisContext.reportDiagnostic(
+                            ctx.reportDiagnostic(
                                     DiagnosticFactory.createDiagnostic(diagnosticInfo, valueNode.location()));
 
                         }
@@ -106,7 +114,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         if (minIdleConnection < 0) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_102.getCode(), SQL_102.getMessage(),
                                     SQL_102.getSeverity());
-                            syntaxNodeAnalysisContext.reportDiagnostic(
+                            ctx.reportDiagnostic(
                                     DiagnosticFactory.createDiagnostic(diagnosticInfo, valueNode.location()));
 
                         }
@@ -116,7 +124,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         if (maxConnectionTime < 30) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_103.getCode(), SQL_103.getMessage(),
                                     SQL_103.getSeverity());
-                            syntaxNodeAnalysisContext.reportDiagnostic(
+                            ctx.reportDiagnostic(
                                     DiagnosticFactory.createDiagnostic(diagnosticInfo, valueNode.location()));
 
                         }

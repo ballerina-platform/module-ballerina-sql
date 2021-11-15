@@ -34,7 +34,7 @@ Ballerina.lock
 # generated files
 target
 .ballerina
-compiler-plugin-tests/bin
+/compiler-plugin-tests/bin/
 
 # gradle
 .gradle
