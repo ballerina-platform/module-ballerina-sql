@@ -43,6 +43,7 @@ import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.FieldMismatchError;
 import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
@@ -406,7 +407,7 @@ public class Utils {
                 ballerinaFieldName = field.getKey();
                 ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
                 if (ballerinaType == null) {
-                    throw new ApplicationError("The field '" + field.getKey() + "' of type " +
+                    throw new TypeMismatchError("The field '" + field.getKey() + "' of type " +
                             field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
                             logColumnName + "' of SQL type '" + metadata.getSqlName() + "'");
                 }
@@ -415,7 +416,7 @@ public class Utils {
         }
         if (ballerinaFieldName == null) {
             if (((RecordType) streamConstraint).isSealed()) {
-                throw new ApplicationError("No mapping field found for SQL table column '" + logColumnName + "'"
+                throw new FieldMismatchError("No mapping field found for SQL table column '" + logColumnName + "'"
                         + " in the record type '" + streamConstraint.getName() + "'");
             } else {
                 ballerinaType = getDefaultBallerinaType(metadata.getSqlType());
