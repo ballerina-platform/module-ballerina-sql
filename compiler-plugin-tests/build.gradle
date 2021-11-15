@@ -28,7 +28,7 @@ dependencies {
     checkstyle project(':checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
 
-    // implementation project(':sql-compiler-plugin')
+    implementation project(':sql-compiler-plugin')
 
     testImplementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     testImplementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
@@ -120,3 +120,4 @@ compileJava {
 }
 
 test.dependsOn ":sql-ballerina:build"
+build.dependsOn ":sql-ballerina:build"
