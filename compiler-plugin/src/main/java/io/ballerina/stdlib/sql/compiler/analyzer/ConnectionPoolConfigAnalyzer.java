@@ -28,6 +28,7 @@ import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingFieldNode;
+import io.ballerina.compiler.syntax.tree.ModuleVariableDeclarationNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.SpecificFieldNode;
@@ -65,8 +66,8 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                 return;
             }
         }
-        VariableDeclarationNode varDeclarationNode = (VariableDeclarationNode) syntaxNodeAnalysisContext.node();
-        Optional<Symbol> varSymOptional = syntaxNodeAnalysisContext.semanticModel().symbol(varDeclarationNode);
+        Optional<Symbol> varSymOptional = syntaxNodeAnalysisContext.semanticModel()
+                .symbol(syntaxNodeAnalysisContext.node());
         if (varSymOptional.isPresent()) {
             TypeSymbol typeSymbol = ((VariableSymbol) varSymOptional.get()).typeDescriptor();
             if (!isConnectionPoolVariable(typeSymbol)) {
@@ -74,7 +75,14 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
             }
 
             // Initiated with a record
-            Optional<ExpressionNode> optionalInitializer = varDeclarationNode.initializer();
+            Optional<ExpressionNode> optionalInitializer;
+            if ((syntaxNodeAnalysisContext.node() instanceof VariableDeclarationNode)) {
+                // Function level variables
+                optionalInitializer = ((VariableDeclarationNode) syntaxNodeAnalysisContext.node()).initializer();
+            } else {
+                // Module level variables
+                optionalInitializer = ((ModuleVariableDeclarationNode) syntaxNodeAnalysisContext.node()).initializer();
+            }
             if (!optionalInitializer.isPresent()) {
                 return;
             }
