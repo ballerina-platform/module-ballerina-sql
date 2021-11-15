@@ -20,4 +20,5 @@ module io.ballerina.stdlib.sql.compiler {
     requires io.ballerina.lang;
     requires io.ballerina.tools.api;
     requires io.ballerina.parser;
+    requires java.sql;
 }

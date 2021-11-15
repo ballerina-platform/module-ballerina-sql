@@ -22,6 +22,7 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.projects.plugins.CodeAnalysisContext;
 import io.ballerina.projects.plugins.CodeAnalyzer;
 import io.ballerina.stdlib.sql.compiler.analyzer.ConnectionPoolConfigAnalyzer;
+import io.ballerina.stdlib.sql.compiler.analyzer.MethodAnalyzer;
 
 import java.util.List;
 
@@ -34,5 +35,6 @@ public class SQLCodeAnalyzer extends CodeAnalyzer {
     public void init(CodeAnalysisContext codeAnalysisContext) {
         codeAnalysisContext.addSyntaxNodeAnalysisTask(new ConnectionPoolConfigAnalyzer(),
                 List.of(SyntaxKind.LOCAL_VAR_DECL, SyntaxKind.MODULE_VAR_DECL));
+        codeAnalysisContext.addSyntaxNodeAnalysisTask(new MethodAnalyzer(), SyntaxKind.METHOD_CALL);
     }
 }

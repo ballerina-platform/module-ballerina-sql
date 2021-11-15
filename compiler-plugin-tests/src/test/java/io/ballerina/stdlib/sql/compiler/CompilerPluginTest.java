@@ -44,6 +44,8 @@ public class CompilerPluginTest {
     private static final String SQL_101 = "SQL_101";
     private static final String SQL_102 = "SQL_102";
     private static final String SQL_103 = "SQL_103";
+    private static final String SQL_211 = "SQL_211";
+    private static final String SQL_223 = "SQL_223";
 
     private static final Path RESOURCE_DIRECTORY = Paths.get("src", "test", "resources", "diagnostics")
             .toAbsolutePath();
@@ -92,6 +94,29 @@ public class CompilerPluginTest {
         Assert.assertEquals(maxOpenConnectionNegative.code(), SQL_101);
         Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
                 "invalid value: expected value is greater than one");
+    }
+
+    @Test
+    public void testOutParameterValidations() {
+        Package currentPackage = loadPackage("sample2");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        List<Diagnostic> errorDiagnosticsList = diagnosticResult.diagnostics().stream()
+                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR))
+                .collect(Collectors.toList());
+        long availableErrors = errorDiagnosticsList.size();
+
+        Assert.assertEquals(availableErrors, 2);
+
+        DiagnosticInfo charOutParameter = errorDiagnosticsList.get(0).diagnosticInfo();
+        Assert.assertEquals(charOutParameter.code(), SQL_211);
+        Assert.assertEquals(charOutParameter.messageFormat(),
+                "invalid value: expected value is either string or json");
+
+        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
+        Assert.assertEquals(maxConnectionLifeTime.code(), SQL_223);
+        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
+                "invalid value: expected value is any one of time:TimeOfDay, int or string");
     }
 
 }

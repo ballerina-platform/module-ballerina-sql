@@ -112,5 +112,8 @@ release {
 }
 
 task build {
-    dependsOn('sql-ballerina:build')
+    dependsOn(':sql-native:build')
+    dependsOn(':sql-compiler-plugin:build')
+    dependsOn(':sql-ballerina:build')
+    dependsOn(':sql-compiler-plugin-tests:build')
 }
