@@ -43,7 +43,7 @@ public class OutParameterProcessorTest {
         BObject object = TestUtils.getMockObject("SMALLINT");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 5);
         assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(PredefinedTypes.TYPE_INT),
-                DefaultResultParameterProcessor.getInstance()));
+                DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OutParameterProcessorTest {
         BObject object = TestUtils.getMockObject("INTEGER");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 4);
         assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(PredefinedTypes.TYPE_INT),
-                DefaultResultParameterProcessor.getInstance()));
+                DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class OutParameterProcessorTest {
         BObject object = TestUtils.getMockObject("FLOAT");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 6);
         assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(PredefinedTypes.TYPE_FLOAT),
-                DefaultResultParameterProcessor.getInstance()));
+                DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class OutParameterProcessorTest {
         BObject object = TestUtils.getMockObject("DOUBLE");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 8);
         assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(PredefinedTypes.TYPE_FLOAT),
-                DefaultResultParameterProcessor.getInstance()));
+                DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class OutParameterProcessorTest {
         BObject object = TestUtils.getMockObject("BOOLEAN");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 16);
         assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(PredefinedTypes.TYPE_BOOLEAN),
-                DefaultResultParameterProcessor.getInstance()));
+                DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class OutParameterProcessorTest {
         object.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, TestUtils.getBooleanStruct());
         Object obj = OutParameterProcessor.get(object,
                 TestUtils.getBTypedesc(TestUtils.getBooleanStructRecord()),
-                DefaultResultParameterProcessor.getInstance());
+                DefaultResultParameterProcessor.getInstance(), "OutParameter");
         BMap<BString, Object> map = (BMap<BString, Object>) obj;
         assertEquals(map.get(fromString("value1")), false);
     }

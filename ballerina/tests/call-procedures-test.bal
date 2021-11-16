@@ -614,7 +614,8 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
 distinct class RandomOutParameter {
     *OutParameter;
     public isolated function get(typedesc<anydata> typeDesc) returns typeDesc|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor"
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutParameterValue"
     } external;
 }
 
@@ -1447,6 +1448,50 @@ function negativeOutParamsTest() returns error? {
         test:assertFail("Result is not mismatch");
     }
 
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [negativeOutParamsTest]
+}
+function unionTypeOutParamsTest() returns error? {
+    SmallIntArrayOutParameter smallint_array = new;
+    IntegerArrayOutParameter int_array = new;
+    BigIntArrayOutParameter long_array = new;
+    DoubleArrayOutParameter double_array = new;
+    RealArrayOutParameter real_array = new;
+    FloatArrayOutParameter float_array = new;
+    DecimalArrayOutParameter decimal_array = new;
+    NumericArrayOutParameter numeric_array = new;
+    CharArrayOutParameter char_array = new;
+    VarcharArrayOutParameter varchar_array = new;
+    NVarcharArrayOutParameter nvarchar_array = new;
+    BooleanArrayOutParameter boolean_array = new;
+    DateArrayOutParameter date_array = new;
+    TimeArrayOutParameter time_array = new;
+    DateTimeArrayOutParameter datetime_array = new;
+    TimestampArrayOutParameter timestamp_array = new;
+    ArrayOutParameter string_array = new;
+    BitArrayOutParameter bit_array = new;
+    TimeWithTimezoneArrayOutParameter time_tz_array = new;
+    TimestampWithTimezoneArrayOutParameter timestamp_tz_array = new;
+    BinaryArrayOutParameter binary_array = new;
+    int rowId = 1;
+    ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithOutParams(${rowId}, ${smallint_array},
+                                        ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
+                                        ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
+                                        ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
+                                        ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
+                                        ${timestamp_tz_array}, ${binary_array})`;
+    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
+    check ret.close();
+    byte[][]|string|Error result = smallint_array.get();
+    if result is ApplicationError {
+        test:assertEquals(result.message(), "OutParameter 'get' function does not support union return type.",
+                            result.message());
+    } else {
+        test:assertFail("Result is not ApplicationError");
+    }
 }
 
 function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
