@@ -41,12 +41,6 @@ import java.util.stream.Collectors;
  */
 public class CompilerPluginTest {
 
-    private static final String SQL_101 = "SQL_101";
-    private static final String SQL_102 = "SQL_102";
-    private static final String SQL_103 = "SQL_103";
-    private static final String SQL_211 = "SQL_211";
-    private static final String SQL_223 = "SQL_223";
-
     private static final Path RESOURCE_DIRECTORY = Paths.get("src", "test", "resources", "diagnostics")
             .toAbsolutePath();
     private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-runtime")
@@ -76,22 +70,22 @@ public class CompilerPluginTest {
         Assert.assertEquals(availableErrors, 4);
 
         DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionZero.code(), SQL_101);
+        Assert.assertEquals(maxOpenConnectionZero.code(), SQLDiagnosticsCodes.SQL_101.getCode());
         Assert.assertEquals(maxOpenConnectionZero.messageFormat(),
                 "invalid value: expected value is greater than one");
 
         DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQL_103);
+        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_103.getCode());
         Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
                 "invalid value: expected value is greater than or equal to 30");
 
         DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
-        Assert.assertEquals(minIdleConnections.code(), SQL_102);
+        Assert.assertEquals(minIdleConnections.code(), SQLDiagnosticsCodes.SQL_102.getCode());
         Assert.assertEquals(minIdleConnections.messageFormat(),
                 "invalid value: expected value is greater than zero");
 
         DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionNegative.code(), SQL_101);
+        Assert.assertEquals(maxOpenConnectionNegative.code(), SQLDiagnosticsCodes.SQL_101.getCode());
         Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
                 "invalid value: expected value is greater than one");
     }
@@ -109,12 +103,12 @@ public class CompilerPluginTest {
         Assert.assertEquals(availableErrors, 2);
 
         DiagnosticInfo charOutParameter = errorDiagnosticsList.get(0).diagnosticInfo();
-        Assert.assertEquals(charOutParameter.code(), SQL_211);
+        Assert.assertEquals(charOutParameter.code(), SQLDiagnosticsCodes.SQL_211.getCode());
         Assert.assertEquals(charOutParameter.messageFormat(),
                 "invalid value: expected value is either string or json");
 
         DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQL_223);
+        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_223.getCode());
         Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
                 "invalid value: expected value is any one of time:TimeOfDay, int or string");
     }
