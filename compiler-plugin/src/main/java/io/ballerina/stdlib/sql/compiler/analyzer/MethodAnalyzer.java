@@ -53,6 +53,22 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         }
 
         MethodCallExpressionNode methodCallExpNode = (MethodCallExpressionNode) ctx.node();
+        // Get the object type to validate arguments
+        ExpressionNode methodExpression = methodCallExpNode.expression();
+        Optional<TypeSymbol> methodExpReferenceType = ctx.semanticModel().typeOf(methodExpression);
+        if (methodExpReferenceType.isEmpty()) {
+            return;
+        }
+        TypeReferenceTypeSymbol methodExpTypeSymbol = (TypeReferenceTypeSymbol) methodExpReferenceType.get();
+        Optional<ModuleSymbol> optionalModuleSymbol = methodExpTypeSymbol.getModule();
+        if (optionalModuleSymbol.isEmpty()) {
+            return;
+        }
+        ModuleSymbol module = optionalModuleSymbol.get();
+        if (!(module.id().orgName().equals(Constants.BALLERINA) && module.id().moduleName().equals(Constants.SQL))) {
+            return;
+        }
+        String objectName = ((TypeReferenceTypeSymbol) methodExpReferenceType.get()).definition().getName().get();
 
         // Filter by method name, only OutParameter objects have get method
         Optional<Symbol> methodSymbol = ctx.semanticModel().symbol(methodCallExpNode.methodName());
@@ -66,23 +82,6 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         if (!methodName.get().equals(Constants.OutParameter.METHOD_NAME)) {
             return;
         }
-
-        // Get the object type to validate arguments
-        ExpressionNode methodExpression = methodCallExpNode.expression();
-        Optional<TypeSymbol> methodExpReferenceType = ctx.semanticModel().typeOf(methodExpression);
-        if (methodExpReferenceType.isEmpty()) {
-            return;
-        }
-        TypeReferenceTypeSymbol methodExpTypeSymbol = (TypeReferenceTypeSymbol) methodExpReferenceType.get();
-        Optional<ModuleSymbol> optionalModuleSymbol = methodExpTypeSymbol.getModule();
-        if (optionalModuleSymbol.isEmpty()) {
-            return;
-        }
-        ModuleSymbol module = optionalModuleSymbol.get();
-        if (!module.id().orgName().equals(Constants.BALLERINA) || !module.id().moduleName().equals(Constants.SQL)) {
-            return;
-        }
-        String objectName = ((TypeReferenceTypeSymbol) methodExpReferenceType.get()).definition().getName().get();
 
         // Filter by parameters length
         SeparatedNodeList<FunctionArgumentNode> arguments = methodCallExpNode.arguments();
