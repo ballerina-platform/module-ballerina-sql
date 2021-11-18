@@ -59,6 +59,9 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         if (methodExpReferenceType.isEmpty()) {
             return;
         }
+        if (methodExpReferenceType.get().typeKind() != TypeDescKind.TYPE_REFERENCE) {
+            return;
+        }
         TypeReferenceTypeSymbol methodExpTypeSymbol = (TypeReferenceTypeSymbol) methodExpReferenceType.get();
         Optional<ModuleSymbol> optionalModuleSymbol = methodExpTypeSymbol.getModule();
         if (optionalModuleSymbol.isEmpty()) {
