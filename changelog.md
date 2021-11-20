@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-## [1.0.0] - 2021-11-20
+## [1.1.0] - 2021-11-20
 
 ### Added
 - [Tooling support for SQL client](https://github.com/ballerina-platform/ballerina-standard-library/issues/2058)
