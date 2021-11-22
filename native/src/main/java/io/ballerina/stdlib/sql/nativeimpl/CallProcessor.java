@@ -127,7 +127,7 @@ public class CallProcessor {
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
                 setCallParameters(connection, statement, parameterizedQuery.getInsertions(), outputParamTypes,
-                        statementParameterProcessor);
+                        statementParameterProcessor, sqlQuery);
 
                 boolean resultType = statement.execute();
 
@@ -181,7 +181,7 @@ public class CallProcessor {
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                           Object[] insertions, HashMap<Integer, Integer> outputParamTypes,
-                                          AbstractStatementParameterProcessor statementParameterProcessor)
+                                          AbstractStatementParameterProcessor statementParameterProcessor, String query)
             throws SQLException, ApplicationError {
         for (int i = 0; i < insertions.length; i++) {
             Object object = insertions[i];
@@ -203,7 +203,7 @@ public class CallProcessor {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
                         sqlType = statementParameterProcessor.setSQLValueParam(connection, statement,
-                                index, innerObject, true);
+                                index, innerObject, true, query);
                         outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
@@ -213,10 +213,12 @@ public class CallProcessor {
                         statement.registerOutParameter(index, sqlType);
                         break;
                     default:
-                        statementParameterProcessor.setSQLValueParam(connection, statement, index, object, false);
+                        statementParameterProcessor.setSQLValueParam(connection, statement, index,
+                                object, false, query);
                 }
             } else {
-                statementParameterProcessor.setSQLValueParam(connection, statement, index, object, false);
+                statementParameterProcessor.setSQLValueParam(connection, statement, index, object,
+                        false, query);
             }
         }
     }
