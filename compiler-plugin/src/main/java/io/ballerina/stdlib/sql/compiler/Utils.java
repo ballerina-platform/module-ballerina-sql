@@ -80,16 +80,8 @@ public class Utils {
         return objectName.equals(Constants.INOUT_PARAMETER) || objectName.endsWith(Constants.OUT_PARAMETER_POSTFIX);
     }
 
-    public static DiagnosticInfo addDiagnosticsForInvalidTypes(String objectName, TypeDescKind requestedReturnType) {
-        // todo: Have to validate for InOutParameter as well
-        if (!objectName.endsWith("OutParameter")) {
-            return null;
-        }
-        return addDiagnosticsForInvalidOutParamReturnType(objectName, requestedReturnType);
-    }
-
-    public static DiagnosticInfo addDiagnosticsForInvalidOutParamReturnType(String outParameterName,
-                                                                            TypeDescKind requestedReturnType) {
+    public static DiagnosticInfo addDiagnosticsForInvalidTypes(String outParameterName,
+                                                               TypeDescKind requestedReturnType) {
         int sqlTypeValue;
         switch (outParameterName) {
             case Constants.OutParameter.VARCHAR:

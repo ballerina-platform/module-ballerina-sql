@@ -23,7 +23,7 @@ public function main() returns error? {
     check charOut.get();
 
     sql:InOutParameter charInOut = new("test");
-     string value3 = check charInOut.get();
-     string value4 = check charInOut.get(string);
-     check charInOut.get();
+    string value3 = check charInOut.get();
+    string value4 = check charInOut.get(string);
+    check charInOut.get();
 }
