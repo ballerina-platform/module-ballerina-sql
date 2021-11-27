@@ -92,7 +92,11 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         if (arguments.size() != 1) {
             return;
         }
-        TypeSymbol argumentTypeSymbol = ((TypeSymbol) ctx.semanticModel().symbol(node.arguments().get(0)).get());
+        Optional<Symbol> typeDescriptionArgument = ctx.semanticModel().symbol(node.arguments().get(0));
+        if (typeDescriptionArgument.isEmpty()) {
+            return;
+        }
+        TypeSymbol argumentTypeSymbol = ((TypeSymbol) typeDescriptionArgument.get());
         TypeDescKind argTypeKind = argumentTypeSymbol.typeKind();
         DiagnosticInfo diagnosticsForInvalidTypes = Utils.addDiagnosticsForInvalidTypes(objectName, argTypeKind);
         if (diagnosticsForInvalidTypes != null) {
