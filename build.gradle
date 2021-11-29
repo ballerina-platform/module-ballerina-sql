@@ -117,3 +117,6 @@ task build {
     dependsOn(':sql-ballerina:build')
     dependsOn(':sql-compiler-plugin-tests:build')
 }
+
+publishToMavenLocal.dependsOn build
+publish.dependsOn build
