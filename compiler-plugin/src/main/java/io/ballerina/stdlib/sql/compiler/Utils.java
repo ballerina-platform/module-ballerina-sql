@@ -19,10 +19,17 @@
 package io.ballerina.stdlib.sql.compiler;
 
 
+import io.ballerina.compiler.api.symbols.ModuleSymbol;
 import io.ballerina.compiler.api.symbols.TypeDescKind;
+import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
+import io.ballerina.compiler.api.symbols.TypeSymbol;
+import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
+import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 
 import java.sql.Types;
+import java.util.Optional;
 
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_201;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_202;
@@ -43,16 +50,38 @@ import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_231;
  */
 public class Utils {
 
-    public static DiagnosticInfo addDiagnosticsForInvalidTypes(String objectName, TypeDescKind requestedReturnType) {
-        // todo: Have to validate for InOutParameter as well
-        if (!objectName.endsWith("OutParameter")) {
-            return null;
+    public static boolean isSQLOutParameter(SyntaxNodeAnalysisContext ctx, ExpressionNode node) {
+        Optional<TypeSymbol> objectType = ctx.semanticModel().typeOf(node);
+        if (objectType.isEmpty()) {
+            return false;
         }
-        return addDiagnosticsForInvalidOutParamReturnType(objectName, requestedReturnType);
+        if (objectType.get().typeKind() == TypeDescKind.UNION) {
+            return ((UnionTypeSymbol) objectType.get()).memberTypeDescriptors().stream()
+                    .filter(typeDescriptor -> typeDescriptor instanceof TypeReferenceTypeSymbol)
+                    .map(typeReferenceTypeSymbol -> (TypeReferenceTypeSymbol) typeReferenceTypeSymbol)
+                    .anyMatch(Utils::isSQLOutParameter);
+        }
+        if (objectType.get() instanceof TypeReferenceTypeSymbol) {
+            return isSQLOutParameter(((TypeReferenceTypeSymbol) objectType.get()));
+        }
+        return false;
     }
 
-    public static DiagnosticInfo addDiagnosticsForInvalidOutParamReturnType(String outParameterName,
-                                                                            TypeDescKind requestedReturnType) {
+    public static boolean isSQLOutParameter(TypeReferenceTypeSymbol typeReference) {
+        Optional<ModuleSymbol> optionalModuleSymbol = typeReference.getModule();
+        if (optionalModuleSymbol.isEmpty()) {
+            return false;
+        }
+        ModuleSymbol module = optionalModuleSymbol.get();
+        if (!(module.id().orgName().equals(Constants.BALLERINA) && module.id().moduleName().equals(Constants.SQL))) {
+            return false;
+        }
+        String objectName = typeReference.definition().getName().get();
+        return objectName.equals(Constants.INOUT_PARAMETER) || objectName.endsWith(Constants.OUT_PARAMETER_POSTFIX);
+    }
+
+    public static DiagnosticInfo addDiagnosticsForInvalidTypes(String outParameterName,
+                                                               TypeDescKind requestedReturnType) {
         int sqlTypeValue;
         switch (outParameterName) {
             case Constants.OutParameter.VARCHAR:

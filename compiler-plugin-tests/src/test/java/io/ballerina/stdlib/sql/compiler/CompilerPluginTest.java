@@ -36,6 +36,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_901;
+
 /**
  * Tests the custom SQL compiler plugin.
  */
@@ -113,4 +115,29 @@ public class CompilerPluginTest {
                 "invalid value: expected value is any one of time:TimeOfDay, int or string");
     }
 
+    @Test
+    public void testOutParameterHint() {
+        Package currentPackage = loadPackage("sample3");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        List<Diagnostic> errorDiagnosticsList = diagnosticResult.diagnostics().stream()
+                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR))
+                .collect(Collectors.toList());
+        long availableErrors = errorDiagnosticsList.size();
+
+        Assert.assertEquals(availableErrors, 2);
+
+        List<Diagnostic> hintDiagnosticsList = diagnosticResult.diagnostics().stream()
+                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.HINT))
+                .collect(Collectors.toList());
+        long availableHints = hintDiagnosticsList.size();
+
+        Assert.assertEquals(availableHints, 2);
+
+        hintDiagnosticsList.forEach(diagnostic -> {
+            Assert.assertEquals(diagnostic.diagnosticInfo().code(), SQL_901.getCode());
+            Assert.assertEquals(diagnostic.diagnosticInfo().messageFormat(), SQL_901.getMessage());
+        });
+
+    }
 }
