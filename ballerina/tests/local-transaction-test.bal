@@ -91,7 +91,7 @@ int retryValRWC = -1;
 }
 function testTransactionRollbackWithCheck() returns error? {
     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    _ = check testTransactionRollbackWithCheckHelper(dbClient);
+    error? ignore = testTransactionRollbackWithCheckHelper(dbClient);
     int count = check getCount(dbClient, "210");
     check dbClient.close();
 
@@ -183,7 +183,7 @@ int returnValRGK = 0;
 }
 function testLocalTransactionRollbackWithGeneratedKeys() returns error? {
     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    _ = check testLocalTransactionRollbackWithGeneratedKeysHelper(dbClient);
+    error? ignore = testLocalTransactionRollbackWithGeneratedKeysHelper(dbClient);
     //check whether update action is performed
     int count = check getCount(dbClient, "615");
     check dbClient.close();

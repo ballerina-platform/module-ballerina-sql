@@ -277,8 +277,12 @@ public abstract class AbstractStatementParameterProcessor {
                 throw new UnsupportedTypeError(object.getClass().getName(), index);
             }
         } catch (SQLException e) {
-            throw new DataError(String.format("Error while constructing SQL query: %s. %s: %s", query,
-                    e.getMessage(), object));
+            String msg = e.getMessage();
+            if (msg.contains("data exception") || msg.contains("incompatible data type")) {
+                throw new DataError(String.format("Error while constructing SQL query: %s. %s: %s", query,
+                        e.getMessage(), object));
+            }
+            throw new SQLException(e);
         }
     }
 
