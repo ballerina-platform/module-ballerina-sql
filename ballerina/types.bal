@@ -640,8 +640,8 @@ public type OutParameter object {
 
     # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error;
 };
 
@@ -650,8 +650,8 @@ public distinct class CharOutParameter {
     *OutParameter;
     # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -663,8 +663,8 @@ public distinct class CharArrayOutParameter {
     *OutParameter;
     # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -676,8 +676,8 @@ public distinct class VarcharOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -689,8 +689,8 @@ public distinct class VarcharArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -702,8 +702,8 @@ public distinct class NCharOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -715,8 +715,8 @@ public distinct class NVarcharOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -728,8 +728,8 @@ public distinct class NVarcharArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -741,8 +741,8 @@ public distinct class BinaryOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -754,8 +754,8 @@ public distinct class BinaryArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -767,8 +767,8 @@ public distinct class VarBinaryOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -780,8 +780,8 @@ public distinct class VarBinaryArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -793,8 +793,8 @@ public distinct class TextOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -806,8 +806,8 @@ public distinct class BlobOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -819,8 +819,8 @@ public distinct class ClobOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -832,8 +832,8 @@ public distinct class NClobOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -845,8 +845,8 @@ public distinct class DateOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -858,8 +858,8 @@ public distinct class DateArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -871,8 +871,8 @@ public distinct class TimeOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -884,8 +884,8 @@ public distinct class TimeArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -897,8 +897,8 @@ public distinct class TimeWithTimezoneOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -910,8 +910,8 @@ public distinct class TimeWithTimezoneArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -923,8 +923,8 @@ public distinct class DateTimeOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -936,8 +936,8 @@ public distinct class DateTimeArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -949,8 +949,8 @@ public distinct class TimestampOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -962,8 +962,8 @@ public distinct class TimestampArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -975,8 +975,8 @@ public distinct class TimestampWithTimezoneOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -988,8 +988,8 @@ public distinct class TimestampWithTimezoneArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1001,8 +1001,8 @@ public distinct class ArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1014,8 +1014,8 @@ public distinct class RowOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1027,8 +1027,8 @@ public distinct class SmallIntOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1040,8 +1040,8 @@ public distinct class SmallIntArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1053,8 +1053,8 @@ public distinct class IntegerOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1066,8 +1066,8 @@ public distinct class BigIntOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1079,8 +1079,8 @@ public distinct class IntegerArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1092,8 +1092,8 @@ public distinct class BigIntArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1105,8 +1105,8 @@ public distinct class RealOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1118,8 +1118,8 @@ public distinct class RealArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1131,8 +1131,8 @@ public distinct class FloatOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1144,8 +1144,8 @@ public distinct class FloatArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1157,8 +1157,8 @@ public distinct class DoubleOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1170,8 +1170,8 @@ public distinct class DoubleArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1183,8 +1183,8 @@ public distinct class NumericOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1196,8 +1196,8 @@ public distinct class NumericArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1209,8 +1209,8 @@ public distinct class DecimalOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1222,8 +1222,8 @@ public distinct class DecimalArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1235,8 +1235,8 @@ public distinct class BitOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1248,8 +1248,8 @@ public distinct class BitArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1261,8 +1261,8 @@ public distinct class BooleanOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1274,8 +1274,8 @@ public distinct class BooleanArrayOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1287,8 +1287,8 @@ public distinct class RefOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1300,8 +1300,8 @@ public distinct class StructOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1313,8 +1313,8 @@ public distinct class XMLOutParameter {
     *OutParameter;
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
@@ -1331,8 +1331,8 @@ public class InOutParameter {
 
     # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - The type description of the type to which to cast the result
-    # + return - Result cast to the type described by `typeDesc`, or an `sql:Error`
+    # + typeDesc - The `typedesc` of the type to which the result needs to be casted
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getInOutParameterValue"

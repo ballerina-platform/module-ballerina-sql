@@ -24,7 +24,7 @@ public type Client client object {
     #
     # + sqlQuery - The SQL query such as `SELECT`
     # + rowType - The `typedesc` of the record to which the result needs to be casted
-    # + return - Stream of records in the type of the `rowType` parameter
+    # + return - Stream of records in the `rowType` type
     remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error?>;
 
@@ -34,7 +34,7 @@ public type Client client object {
     # + sqlQuery - The SQL query such as `SELECT`
     # + returnType - The `typedesc` of the record to which the result needs to be casted.
     #                If the query contains only one column, it can be casted straightaway to the basic type.
-    # + return - Result in the `returnType` or an `sql:Error`
+    # + return - Result in the `returnType` type or an `sql:Error`
     remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
     returns returnType|Error;
 
