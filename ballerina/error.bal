@@ -63,7 +63,7 @@ public type TypeMismatchError distinct DataError;
 # Represents an error that occurs when a query retrieves a result that is corrupted and cannot be converted to the expected type.
 public type ConversionError distinct DataError;
 
-# Represents an error that occurs when a query retrieves a result that cannot be cast to the expected record type.
+# Represents an error that occurs when a query retrieves a result that cannot be casted to the expected record type.
 public type FieldMismatchError distinct DataError;
 
 # Represents an error that occurs when an unsupported parameter type is added to the query.
