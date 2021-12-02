@@ -1,6 +1,6 @@
 ## Overview
 
-This module provides the common interface and functionality to interact with a database. The corresponding database
+This module provides the generic interface and functionality to interact with a SQL database. The corresponding database
 clients can be created by using specific database modules such as `mysql` or using the Java Database Connectivity 
 module `jdbc`.
 
@@ -77,7 +77,7 @@ check dbClient.close();
 ### Database Operations
 
 Once the client is created, database operations can be executed through that client. This module defines the interface 
-and common properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
+and generic properties that are shared among multiple database clients.  It also supports querying, inserting, deleting, 
 updating, and batch updating data.  
 
 #### Parameterized Query

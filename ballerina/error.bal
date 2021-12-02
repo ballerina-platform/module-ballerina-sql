@@ -18,7 +18,7 @@
 #
 # + errorCode - SQL error code
 # + sqlState - SQL state
-# + executionResults - Result of execution of commands
+# + executionResults - Metadata of the query executions
 public type BatchExecuteErrorDetail record {
     int errorCode;
     string? sqlState;
@@ -35,7 +35,7 @@ public type DatabaseErrorDetail record {
 };
 
 //Level 1
-# Defines the common error type for the module.
+# Defines the generic error type for the `sql` module.
 public type Error distinct error;
 
 //Level 2
@@ -43,27 +43,27 @@ public type Error distinct error;
 # database resource clean-up, and other similar scenarios.
 public type DatabaseError distinct (Error & error<DatabaseErrorDetail>);
 
-# Represents an error occurred when a batch execution is running.
+# Represents an error occurred during execution of batch queries.
 public type BatchExecuteError distinct (Error & error<BatchExecuteErrorDetail>);
 
-# Represents an error that occurs when a query retrieves no rows when at least one row was expected.
+# Represents an error that occurs when a query retrieves no rows when at most one row is expected.
 public type NoRowsError distinct Error;
 
-# Represents an error originating from application-level causes.
+# Represents an error originating from application-level configurations.
 public type ApplicationError distinct Error;
 
 //Level 3
-# Represents an error during the processing of the returned data or parameters.
+# Represents an error during the processing of the parameters or returned results.
 public type DataError distinct ApplicationError;
 
 // Level 4
-# Represents an error that occurs when a query retrieves a result that differs from the expected result type.
+# Represents an error that occurs when a query retrieves a result that differs from the supported result type.
 public type TypeMismatchError distinct DataError;
 
-# Represents an error that occurs when a query retrieves a result that is corrupted and cannot be converted to expected type.
+# Represents an error that occurs when a query retrieves a result that is corrupted and cannot be converted to the expected type.
 public type ConversionError distinct DataError;
 
-# Represents an error that occurs when a query retrieves a result that cannot be matched to the expected record type.
+# Represents an error that occurs when a query retrieves a result that cannot be cast to the expected record type.
 public type FieldMismatchError distinct DataError;
 
 # Represents an error that occurs when an unsupported parameter type is added to the query.

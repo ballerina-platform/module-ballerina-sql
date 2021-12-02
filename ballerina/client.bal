@@ -20,54 +20,47 @@ import ballerina/jballerina.java;
 #
 public type Client client object {
 
-    # Queries the database with the query provided by the user, and returns the result as a stream.
+    # Executes the query which may return multiple results.
     #
-    # + sqlQuery - The query, which needs to be executed as an `sql:ParameterizedQuery`
-    # + rowType - The `typedesc` of the record that should be returned as a result. If this is not provided, the default
-    #             column names of the query result set will be used for the record attributes
-    # + return - Stream of records in the type of `rowType`
+    # + sqlQuery - The SQL query such as `SELECT`
+    # + rowType - The `typedesc` of the record to which the result needs to be cast
+    # + return - Stream of records in the type of `rowType` parameter
     remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream <rowType, Error?>;
 
-    # Queries the database with the provided query and returns the first row as a record if the expected return type is
-    # a record. If the expected return type is not a record, then a single value is returned.
+    # Executes the query which is expected to return at most one row of result.
+    # If the query does not return any results, `sql:NoRowsError` is returned
     #
-    # + sqlQuery - The query to be executed as an `sql:ParameterizedQuery`, which returns only one result row
-    # + returnType - The `typedesc` of the record/type that should be returned as a result. If this is not provided, the
-    #                default column names/type of the query result set will be used
-    # + return - Result in the `returnType` type
+    # + sqlQuery - The SQL query such as `SELECT`.
+    # + returnType - The `typedesc` of the record to which the result needs to be cast.
+    #                If the query contains only one coloumn, it can be straightaway cast to basic type.
+    # + return - Result in the `returnType`, or an `sql:Error`
     remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
     returns returnType|Error;
 
-    # Executes the provided DDL or DML SQL query and returns a summary of the execution.
+    # Executes the SQL query. Only the metadata of the execution is returned, not results from the query.
     #
-    # + sqlQuery - The DDL or DML query such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`
-    # + return - Summary of the SQL update query as an `sql:ExecutionResult` or an `sql:Error`
-    #            if any error occurred when executing the query
+    # + sqlQuery - The SQL query such as `INSERT`, `DELETE`, `UPDATE`, etc.
+    # + return - Metadata of the query execution as an `sql:ExecutionResult` or an `sql:Error`
     remote isolated function execute(ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
 
-    # Executes a provided batch of parameterized DDL or DML SQL queries
-    # and returns the summary of the execution.
+    # Executes the SQL query with multiple set of paramters in a batch. Only the metadata of the execution is returned, not results from the query.
+    # If one of the commands in the batch fails, this will return an `sql:BatchExecuteError`. However, the driver may 
+    # or may not continue to process the remaining commands in the batch after a failure.
     #
-    # + sqlQueries - The DDL or DML queries such as `INSERT`, `DELETE`, `UPDATE`, etc. as an `sql:ParameterizedQuery`
-    #                with an array of values passed in
-    # + return - Summary of the executed SQL queries as an `sql:ExecutionResult[]`, which includes details such as
-    #            `affectedRowCount` and `lastInsertId`. If one of the commands in the batch fails, this function
-    #            will return an `sql:BatchExecuteError`. However, the driver may or may not continue to process the
-    #            remaining commands in the batch after a failure. The summary of the executed queries in case of an error
-    #            can be accessed as `(<sql:BatchExecuteError> result).detail()?.executionResults`
+    # + sqlQueries - The SQL query such as `INSERT`, `DELETE`, `UPDATE`, etc. with multiple set of paramters
+    # + return - Metadata of the query execution as an `sql:ExecutionResult[]` or an `sql:Error`
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
-    # Executes a SQL stored procedure and returns the result as stream and execution summary.
+    # Executes a SQL query which calls a stored procedure. This can return results or not.
     #
-    # + sqlQuery - The query to execute the SQL stored procedure as an `sql:ParameterizedQuery`
-    # + rowTypes - The array of `typedesc` of the records that should be returned as a result. If this is not provided,
-    #               the default column names of the query result set will be used for the record attributes
-    # + return - Summary of the execution is returned in an `sql:ProcedureCallResult`, or an `sql:Error`
+    # + sqlQuery - The SQL query such as `CALL`
+    # + rowTypes - The array `typedesc` of the records to which the results needs to be cast.
+    # + return - Summary of the execution and results are returned in an `sql:ProcedureCallResult`, or an `sql:Error`
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
-    # Closes the SQL client.
+    # Closes the SQL client and shuts down the connection pool.
     #
     # + return - Possible error when closing the client
     public isolated function close() returns Error?;

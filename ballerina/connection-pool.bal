@@ -24,22 +24,22 @@ configurable int minIdleConnections = 15;
 # Default values of the fields can be set through the configuration API.
 #
 # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have including
-#                        both idle and in-use connections. The default value is 15 and it can be changed through the
-#                        configuration API with the `b7a.sql.pool.maxOpenConnections` key
+#                        both idle and in-use connections. The default value is 15. This can be changed through the
+#                        configuration API with the `ballerina.sql.maxOpenConnections` key
 # + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. The default value is 1800
-#                                  seconds (30 minutes) and it can be changed through the configuration API with the
-#                                  `b7a.sql.pool.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
-#                                  lifetime (infinite lifetime)
+#                           seconds (30 minutes). This can be changed through the configuration API with the
+#                           `ballerina.sql.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
+#                           lifetime (infinite lifetime)
 # + minIdleConnections - The minimum number of idle connections that the pool tries to maintain in it. The default value
 #                        is the same as `maxOpenConnections` and it can be changed through the configuration
-#                        API with the `b7a.sql.pool.minIdleConnections` key
+#                        API with the `ballerina.sql.minIdleConnections` key
 public type ConnectionPool record {|
     int maxOpenConnections = maxOpenConnections;
     decimal maxConnectionLifeTime = maxConnectionLifeTime;
     int minIdleConnections = minIdleConnections;
 |};
 
-// This is a container object that holds the global pool config and initializes the internal map of connection pools
+// A container object that holds the global pool config and initializes the internal map of connection pools
 readonly class GlobalConnectionPoolContainer {
     private ConnectionPool connectionPool = {};
 
