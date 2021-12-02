@@ -26,7 +26,7 @@ public type TypedValue object {
     public anydata|object {}|anydata[]|object {}[]? value;
 };
 
-# Represents a union type of ballerina/time records to be used as parameter types in `sql:ParameterizedQuery`.
+# Represents a union type of the ballerina/time records to be used as parameter types in `sql:ParameterizedQuery`.
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay|time:Civil[]|time:TimeOfDay[];
 
 # Represents a ballerina typed array to be used as parameter types in `sql:ParameterizedQuery`.

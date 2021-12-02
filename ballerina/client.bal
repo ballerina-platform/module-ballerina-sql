@@ -32,7 +32,7 @@ public type Client client object {
     # If the query does not return any results, `sql:NoRowsError` is returned
     #
     # + sqlQuery - The SQL query such as `SELECT`
-    # + returnType - The `typedesc` of the record to which the result needs to be casted
+    # + returnType - The `typedesc` of the record to which the result needs to be casted.
     #                If the query contains only one column, it can be casted straightaway to the basic type.
     # + return - Result in the `returnType` or an `sql:Error`
     remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
@@ -55,8 +55,8 @@ public type Client client object {
     # Executes a SQL query, which calls a stored procedure. This can return results or not.
     #
     # + sqlQuery - The SQL query such as `CALL`
-    # + rowTypes - The array `typedesc` of the records to which the results needs to be casted.
-    # + return - Summary of the execution and results are returned in an `sql:ProcedureCallResult` or an `sql:Error`
+    # + rowTypes - The array `typedesc` of the records to which the results needs to be casted
+    # + return - Summary of the execution and results are returned in an `sql:ProcedureCallResult`, or an `sql:Error`
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 

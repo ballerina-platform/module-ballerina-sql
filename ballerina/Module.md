@@ -163,7 +163,7 @@ sql:ExecutionResult result = check dbClient->execute(`INSERT INTO student(age, n
 ```
 
 In this sample, the parameter values, which are in local variables are used to parameterize the SQL query in 
-the `execute` remote function. This type of a parameterized SQL query can be used with any primitive Ballerina type 
+the `execute` remote function. This parameterization can be performed with any primitive Ballerina type 
 like `string`, `int`, `float`, or `boolean` and in that case, the corresponding SQL type of the parameter is derived 
 from the type of the Ballerina variable that is passed in. 
 
