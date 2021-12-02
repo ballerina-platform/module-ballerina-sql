@@ -24,6 +24,8 @@ public class Constants {
     public static final String BALLERINA = "ballerina";
     public static final String SQL = "sql";
     public static final String CONNECTION_POOL = "ConnectionPool";
+    public static final String INOUT_PARAMETER = "InOutParameter";
+    public static final String OUT_PARAMETER_POSTFIX = "OutParameter";
 
     /**
      * Constants for fields in sql:ConnectionPool.
