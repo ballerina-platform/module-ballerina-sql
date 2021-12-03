@@ -127,7 +127,7 @@ public class CallProcessor {
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
                 setCallParameters(connection, statement, parameterizedQuery.getInsertions(), outputParamTypes,
-                        statementParameterProcessor, sqlQuery);
+                        statementParameterProcessor);
 
                 boolean resultType = statement.execute();
 
@@ -181,7 +181,7 @@ public class CallProcessor {
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
                                           Object[] insertions, HashMap<Integer, Integer> outputParamTypes,
-                                          AbstractStatementParameterProcessor statementParameterProcessor, String query)
+                                          AbstractStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError {
         for (int i = 0; i < insertions.length; i++) {
             Object object = insertions[i];

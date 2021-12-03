@@ -282,7 +282,7 @@ public abstract class AbstractStatementParameterProcessor {
                 throw new DataError(String.format("Error while constructing SQL query. %s: %s",
                         e.getMessage(), object));
             }
-            throw new SQLException(e);
+            throw e;
         }
     }
 

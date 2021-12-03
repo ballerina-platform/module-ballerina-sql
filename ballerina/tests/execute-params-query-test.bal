@@ -247,7 +247,7 @@ function deleteDataTable6() returns error? {
 }
 function insertIntoComplexTable() returns error? {
     int id = 1;
-    ParameterizedQuery queries = queryConcat(`Select * from ComplexTypes`, ` where row_id = ${id}`);
+    ParameterizedQuery queries = queryConcat(`Select * from ComplexTypes`, ` where row_id = 1`);
     record {}? value = check queryMockClient(executeParamsDb, queries);
     byte[] binaryData = <byte[]>getUntaintedData(value, "BLOB_TYPE");
     int rowId = 5;
