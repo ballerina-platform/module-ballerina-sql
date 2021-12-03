@@ -207,71 +207,82 @@ public abstract class AbstractStatementParameterProcessor {
 
     public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement, int index, Object object,
                                 boolean returnType) throws DataError, SQLException {
-        if (object == null) {
-            preparedStatement.setNull(index, Types.NULL);
-            return Types.NULL;
-        } else if (object instanceof BString) {
-            preparedStatement.setString(index, object.toString());
-            return Types.VARCHAR;
-        } else if (object instanceof Long) {
-            preparedStatement.setLong(index, (Long) object);
-            return Types.BIGINT;
-        } else if (object instanceof Double) {
-            preparedStatement.setDouble(index, (Double) object);
-            return Types.DOUBLE;
-        } else if (object instanceof BDecimal) {
-            preparedStatement.setBigDecimal(index, ((BDecimal) object).decimalValue());
-            return Types.NUMERIC;
-        } else if (object instanceof Boolean) {
-            preparedStatement.setBoolean(index, (Boolean) object);
-            return Types.BOOLEAN;
-        } else if (object instanceof BArray) {
-            BArray objectArray = (BArray) object;
+        try {
+            if (object == null) {
+                preparedStatement.setNull(index, Types.NULL);
+                return Types.NULL;
+            } else if (object instanceof BString) {
+                preparedStatement.setString(index, object.toString());
+                return Types.VARCHAR;
+            } else if (object instanceof Long) {
+                preparedStatement.setLong(index, (Long) object);
+                return Types.BIGINT;
+            } else if (object instanceof Double) {
+                preparedStatement.setDouble(index, (Double) object);
+                return Types.DOUBLE;
+            } else if (object instanceof BDecimal) {
+                preparedStatement.setBigDecimal(index, ((BDecimal) object).decimalValue());
+                return Types.NUMERIC;
+            } else if (object instanceof Boolean) {
+                preparedStatement.setBoolean(index, (Boolean) object);
+                return Types.BOOLEAN;
+            } else if (object instanceof BArray) {
+                BArray objectArray = (BArray) object;
 
-            // If the type passed is time:Utc
-            if (objectArray.getType().toString().equals(Constants.SqlTypes.UTC)) {
-                setTimestamp(preparedStatement, objectArray.getType().getName(), index, objectArray);
-                return Types.TIMESTAMP;
-            }
+                // If the type passed is time:Utc
+                if (objectArray.getType().toString().equals(Constants.SqlTypes.UTC)) {
+                    setTimestamp(preparedStatement, objectArray.getType().getName(), index, objectArray);
+                    return Types.TIMESTAMP;
+                }
 
-            String type = objectArray.getElementType().toString();
-            if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
-                preparedStatement.setBytes(index, objectArray.getBytes());
-            } else if (objectArray.getElementType().getTag() == TypeTags.ARRAY_TAG ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_BYTE) || type.equals(Constants.SqlTypes.BYTE_ARRAY_TYPE)) {
-                setBinaryArray(connection, preparedStatement, index, objectArray);
-            } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
-                setVarcharArray(connection, preparedStatement, index, objectArray);
-            } else if (type.equals(Constants.SqlTypes.INT) || type.equals(Constants.SqlTypes.OPTIONAL_INT)) {
-                setIntegerArray(connection, preparedStatement, index, objectArray);
-            } else if (type.equals(Constants.SqlTypes.BOOLEAN_TYPE) ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_BOOLEAN)) {
-                setBooleanArray(connection, preparedStatement, index, objectArray);
-            } else if (type.equals(Constants.SqlTypes.FLOAT_TYPE) || type.equals(Constants.SqlTypes.OPTIONAL_FLOAT)) {
-                setFloatArray(connection, preparedStatement, index, objectArray);
-            } else if (type.equals(Constants.SqlTypes.DECIMAL_TYPE) ||
-                    type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
-                setDecimalArray(connection, preparedStatement, index, objectArray);
+                String type = objectArray.getElementType().toString();
+                if (objectArray.getElementType().getTag() == TypeTags.BYTE_TAG) {
+                    preparedStatement.setBytes(index, objectArray.getBytes());
+                } else if (objectArray.getElementType().getTag() == TypeTags.ARRAY_TAG ||
+                        type.equals(Constants.SqlTypes.OPTIONAL_BYTE) ||
+                        type.equals(Constants.SqlTypes.BYTE_ARRAY_TYPE)) {
+                    setBinaryArray(connection, preparedStatement, index, objectArray);
+                } else if (type.equals(Constants.SqlTypes.STRING) || type.equals(Constants.SqlTypes.OPTIONAL_STRING)) {
+                    setVarcharArray(connection, preparedStatement, index, objectArray);
+                } else if (type.equals(Constants.SqlTypes.INT) || type.equals(Constants.SqlTypes.OPTIONAL_INT)) {
+                    setIntegerArray(connection, preparedStatement, index, objectArray);
+                } else if (type.equals(Constants.SqlTypes.BOOLEAN_TYPE) ||
+                        type.equals(Constants.SqlTypes.OPTIONAL_BOOLEAN)) {
+                    setBooleanArray(connection, preparedStatement, index, objectArray);
+                } else if (type.equals(Constants.SqlTypes.FLOAT_TYPE) ||
+                        type.equals(Constants.SqlTypes.OPTIONAL_FLOAT)) {
+                    setFloatArray(connection, preparedStatement, index, objectArray);
+                } else if (type.equals(Constants.SqlTypes.DECIMAL_TYPE) ||
+                        type.equals(Constants.SqlTypes.OPTIONAL_DECIMAL)) {
+                    setDecimalArray(connection, preparedStatement, index, objectArray);
+                } else {
+                    // Cannot be reached as this is validated with `ArrayValueType` in ballerina
+                    throw new UnsupportedTypeError(type + "array type", index);
+                }
+                return Types.ARRAY;
+            } else if (object instanceof BObject) {
+                BObject objectValue = (BObject) object;
+                setSqlTypedParam(connection, preparedStatement, index, objectValue);
+                if (returnType) {
+                    return getSQLType(objectValue);
+                }
+                return 0;
+            } else if (object instanceof BXml) {
+                setXml(connection, preparedStatement, index, (BXml) object);
+                return Types.SQLXML;
+            } else if (object instanceof BMap) {
+                return setBMapParams(connection, preparedStatement, index, (BMap) object, returnType);
             } else {
-                // Cannot be reached as this is validated with `ArrayValueType` in ballerina
-                throw new UnsupportedTypeError(type + "array type", index);
+                // Cannot be achieved since this is validated at compiler for `Value`
+                throw new UnsupportedTypeError(object.getClass().getName(), index);
             }
-            return Types.ARRAY;
-        } else if (object instanceof BObject) {
-            BObject objectValue = (BObject) object;
-            setSqlTypedParam(connection, preparedStatement, index, objectValue);
-            if (returnType) {
-                return getSQLType(objectValue);
+        } catch (SQLException e) {
+            String msg = e.getMessage();
+            if (msg.contains("data exception") || msg.contains("incompatible data type")) {
+                throw new DataError(String.format("Error while constructing SQL query. %s: %s",
+                        e.getMessage(), object));
             }
-            return 0;
-        } else if (object instanceof BXml) {
-            setXml(connection, preparedStatement, index, (BXml) object);
-            return Types.SQLXML;
-        } else if (object instanceof BMap) {
-            return setBMapParams(connection, preparedStatement, index, (BMap) object, returnType);
-        } else {
-            // Cannot be achieved since this is validated at compiler for `Value`
-            throw new UnsupportedTypeError(object.getClass().getName(), index);
+            throw e;
         }
     }
 

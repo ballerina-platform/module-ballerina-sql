@@ -572,9 +572,9 @@ function queryTimeStringInvalidParam() {
     record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " + 
-        "WHERE time_type =  ? . data exception: invalid datetime format."));
+    if result is DataError {
+        test:assertTrue(result.message().startsWith("Error while constructing SQL query. data exception: " +
+                    "invalid datetime format: {value:11-35-45}"), result.message());
     } else {
         test:assertFail("DatabaseError Error expected.");
     }
@@ -637,9 +637,9 @@ function queryTimestampStringInvalidParam() {
     record {}|error? result = queryMockClient(simpleParamsDb, sqlQuery);
     test:assertTrue(result is error);
 
-    if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: SELECT * from DateTimeTypes " + 
-        "WHERE timestamp_type =  ? . data exception: invalid datetime format."));
+    if result is DataError {
+        test:assertTrue(result.message().startsWith("Error while constructing SQL query. data exception: " +
+                    "invalid datetime format: {value:2017/02/03 11:53:00}"), result.message());
     } else {
         test:assertFail("DatabaseError Error expected.");
     }
