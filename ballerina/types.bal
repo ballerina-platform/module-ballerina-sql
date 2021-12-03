@@ -19,26 +19,25 @@ import ballerina/time;
 import ballerina/jballerina.java;
 import ballerina/lang.'object as obj;
 
-# Represents a parameter for the SQL Client remote functions when a variable needs to be passed.
-# to the remote function.
+# Generic type that can be passed to `sql:ParameterizedQuery` to represent parameters in the SQL query.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public type TypedValue object {
     public anydata|object {}|anydata[]|object {}[]? value;
 };
 
-# Represents a union type of ballerina/time records.
+# Represents a union type of the ballerina/time records to be used as parameter types in `sql:ParameterizedQuery`.
 type DateTimeType time:Utc|time:Civil|time:Date|time:TimeOfDay|time:Civil[]|time:TimeOfDay[];
 
-# Represents ballerina typed array.
+# Represents a ballerina typed array to be used as parameter types in `sql:ParameterizedQuery`.
 type ArrayValueType string?[]|int?[]|boolean?[]|float?[]|decimal?[]|byte[]?[];
 
-# Possible type of parameters that can be passed into the SQL query.
+# Generic type of ballerina basic types that can be passed to `sql:ParameterizedQuery` to represent parameters in the SQL query.
 public type Value string|int|boolean|float|decimal|byte[]|xml|record {}|DateTimeType|ArrayValueType|TypedValue?;
 
-# Represents Varchar SQL field.
+# Represents SQL Varchar type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class VarcharValue {
     *TypedValue;
     public string? value;
@@ -48,9 +47,9 @@ public distinct class VarcharValue {
     }
 }
 
-# Represents Varchar array  SQL field.
+# Represents SQL Varchar array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class VarcharArrayValue {
     *TypedValue;
     public string?[] value;
@@ -60,9 +59,9 @@ public distinct class VarcharArrayValue {
     }
 }
 
-# Represents NVarchar SQL field.
+# Represents SQL NVarchar type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NVarcharValue {
     *TypedValue;
     public string? value;
@@ -72,9 +71,9 @@ public distinct class NVarcharValue {
     }
 }
 
-# Represents Varchar NVarchar  SQL field.
+# Represents SQL NVarchar type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NVarcharArrayValue {
     *TypedValue;
     public string?[] value;
@@ -84,9 +83,9 @@ public distinct class NVarcharArrayValue {
     }
 }
 
-# Represents Char SQL field.
+# Represents SQL Char type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class CharValue {
     *TypedValue;
     public string? value;
@@ -96,9 +95,9 @@ public distinct class CharValue {
     }
 }
 
-# Represents Char array SQL field.
+# Represents SQL Char array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class CharArrayValue {
     *TypedValue;
     public string?[] value;
@@ -108,9 +107,9 @@ public distinct class CharArrayValue {
     }
 }
 
-# Represents NChar SQL field.
+# Represents SQL NChar type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NCharValue {
     *TypedValue;
     public string? value;
@@ -120,9 +119,9 @@ public distinct class NCharValue {
     }
 }
 
-# Represents Text SQL field.
+# Represents SQL Text type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class TextValue {
     *TypedValue;
     public io:ReadableCharacterChannel|string? value;
@@ -132,9 +131,9 @@ public distinct class TextValue {
     }
 }
 
-# Represents Clob SQL field.
+# Represents SQL Clob type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class ClobValue {
     *TypedValue;
     public io:ReadableCharacterChannel|string? value;
@@ -144,9 +143,9 @@ public distinct class ClobValue {
     }
 }
 
-# Represents NClob SQL field.
+# Represents SQL NClob type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NClobValue {
     *TypedValue;
     public io:ReadableCharacterChannel|string? value;
@@ -156,9 +155,9 @@ public distinct class NClobValue {
     }
 }
 
-# Represents SmallInt SQL field.
+# Represents SQL SmallInt type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class SmallIntValue {
     *TypedValue;
     public int? value;
@@ -168,9 +167,9 @@ public distinct class SmallIntValue {
     }
 }
 
-# Represents SmallInt array SQL field.
+# Represents SQL SmallInt array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class SmallIntArrayValue {
     *TypedValue;
     public int?[] value;
@@ -180,9 +179,9 @@ public distinct class SmallIntArrayValue {
     }
 }
 
-# Represents Integer SQL field.
+# Represents SQL Integer type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class IntegerValue {
     *TypedValue;
     public int? value;
@@ -192,9 +191,9 @@ public distinct class IntegerValue {
     }
 }
 
-# Represents Integer array SQL field.
+# Represents SQL Integer array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class IntegerArrayValue {
     *TypedValue;
     public int?[] value;
@@ -204,9 +203,9 @@ public distinct class IntegerArrayValue {
     }
 }
 
-# Represents BigInt SQL field.
+# Represents SQL BigInt type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BigIntValue {
     *TypedValue;
     public int? value;
@@ -216,9 +215,9 @@ public distinct class BigIntValue {
     }
 }
 
-# Represents BigInt array  SQL field.
+# Represents SQL BigInt array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BigIntArrayValue {
     *TypedValue;
     public int?[] value;
@@ -228,9 +227,9 @@ public distinct class BigIntArrayValue {
     }
 }
 
-# Represents Numeric SQL field.
+# Represents SQL Numeric type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NumericValue {
     *TypedValue;
     public int|float|decimal? value;
@@ -240,9 +239,9 @@ public distinct class NumericValue {
     }
 }
 
-# Represents Numeric array SQL field.
+# Represents SQL Numeric array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class NumericArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
@@ -252,9 +251,9 @@ public distinct class NumericArrayValue {
     }
 }
 
-# Represents Decimal SQL field.
+# Represents SQL Decimal type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DecimalValue {
     *TypedValue;
     public int|decimal? value;
@@ -264,9 +263,9 @@ public distinct class DecimalValue {
     }
 }
 
-# Represents Decimal array SQL field.
+# Represents SQL Decimal array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DecimalArrayValue {
     *TypedValue;
     public int?[]|decimal?[] value;
@@ -276,9 +275,9 @@ public distinct class DecimalArrayValue {
     }
 }
 
-# Represents Real SQL field.
+# Represents SQL Real type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class RealValue {
     *TypedValue;
     public int|float|decimal? value;
@@ -288,9 +287,9 @@ public distinct class RealValue {
     }
 }
 
-# Represents Real array SQL field.
+# Represents SQL Real array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class RealArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
@@ -300,9 +299,9 @@ public distinct class RealArrayValue {
     }
 }
 
-# Represents Float SQL field.
+# Represents SQL Float type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class FloatValue {
     *TypedValue;
     public int|float? value;
@@ -312,9 +311,9 @@ public distinct class FloatValue {
     }
 }
 
-# Represents Float array SQL field.
+# Represents SQL Float array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class FloatArrayValue {
     *TypedValue;
     public int?[]|float?[] value;
@@ -324,9 +323,9 @@ public distinct class FloatArrayValue {
     }
 }
 
-# Represents Double SQL field.
+# Represents SQL Double type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DoubleValue {
     *TypedValue;
     public int|float|decimal? value;
@@ -336,9 +335,9 @@ public distinct class DoubleValue {
     }
 }
 
-# Represents Double array SQL field.
+# Represents SQL Double array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DoubleArrayValue {
     *TypedValue;
     public int?[]|float?[]|decimal?[] value;
@@ -348,9 +347,9 @@ public distinct class DoubleArrayValue {
     }
 }
 
-# Represents Bit SQL field.
+# Represents SQL Bit type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BitValue {
     *TypedValue;
     public boolean|int? value;
@@ -360,9 +359,9 @@ public distinct class BitValue {
     }
 }
 
-# Represents Bit array SQL field.
+# Represents SQL Bit array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BitArrayValue {
     *TypedValue;
     public boolean?[]|int?[] value;
@@ -372,9 +371,9 @@ public distinct class BitArrayValue {
     }
 }
 
-# Represents Boolean SQL field.
+# Represents SQL Boolean type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BooleanValue {
     *TypedValue;
     public boolean? value;
@@ -384,9 +383,9 @@ public distinct class BooleanValue {
     }
 }
 
-# Represents Boolean array SQL field.
+# Represents SQL Boolean array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BooleanArrayValue {
     *TypedValue;
     public boolean?[] value;
@@ -396,9 +395,9 @@ public distinct class BooleanArrayValue {
     }
 }
 
-# Represents Binary SQL field.
+# Represents SQL Binary type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BinaryValue {
     *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
@@ -408,9 +407,9 @@ public distinct class BinaryValue {
     }
 }
 
-# Represents Boolean array SQL field.
+# Represents SQL Boolean array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BinaryArrayValue {
     *TypedValue;
     public byte[]?[]|io:ReadableByteChannel[] value;
@@ -420,9 +419,9 @@ public distinct class BinaryArrayValue {
     }
 }
 
-# Represents VarBinary SQL field.
+# Represents SQL VarBinary type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class VarBinaryValue {
     *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
@@ -432,9 +431,9 @@ public distinct class VarBinaryValue {
     }
 }
 
-# Represents Boolean array SQL field.
+# Represents SQL Boolean array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class VarBinaryArrayValue {
     *TypedValue;
     public byte[]?[]|io:ReadableByteChannel[] value;
@@ -444,9 +443,9 @@ public distinct class VarBinaryArrayValue {
     }
 }
 
-# Represents Blob SQL field.
+# Represents SQL Blob type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class BlobValue {
     *TypedValue;
     public byte[]|io:ReadableByteChannel? value;
@@ -456,9 +455,9 @@ public distinct class BlobValue {
     }
 }
 
-# Represents Date SQL field.
+# Represents SQL Date type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DateValue {
     *TypedValue;
     public string|time:Date? value;
@@ -468,9 +467,9 @@ public distinct class DateValue {
     }
 }
 
-# Represents Date array SQL field.
+# Represents SQL Date array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DateArrayValue {
     *TypedValue;
     public string?[]|time:Date?[] value;
@@ -480,9 +479,9 @@ public distinct class DateArrayValue {
     }
 }
 
-# Represents Time SQL field.
+# Represents SQL Time type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class TimeValue {
     *TypedValue;
     public string|time:TimeOfDay? value;
@@ -492,9 +491,9 @@ public distinct class TimeValue {
     }
 }
 
-# Represents Time array SQL field.
+# Represents SQL Time array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class TimeArrayValue {
     *TypedValue;
     public string?[]|time:TimeOfDay?[] value;
@@ -504,9 +503,9 @@ public distinct class TimeArrayValue {
     }
 }
 
-# Represents DateTime SQL field.
+# Represents SQL DateTime type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DateTimeValue {
     *TypedValue;
     public string|time:Civil? value;
@@ -516,9 +515,9 @@ public distinct class DateTimeValue {
     }
 }
 
-# Represents DateTime array SQL field.
+# Represents SQL DateTime array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class DateTimeArrayValue {
     *TypedValue;
     public string?[]|time:Civil?[] value;
@@ -528,9 +527,9 @@ public distinct class DateTimeArrayValue {
     }
 }
 
-# Represents Timestamp SQL field.
+# Represents SQL Timestamp type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class TimestampValue {
     *TypedValue;
     public string|time:Utc? value;
@@ -540,9 +539,9 @@ public distinct class TimestampValue {
     }
 }
 
-# Represents Timestamp array SQL field.
+# Represents SQL Timestamp array type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class TimestampArrayValue {
     *TypedValue;
     public string?[]|time:Utc?[] value;
@@ -552,9 +551,9 @@ public distinct class TimestampArrayValue {
     }
 }
 
-# Represents ArrayValue SQL field.
+# Represents SQL ArrayValue type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 #
 # # Deprecated
 # This `ArrayValue` class deprecated by introducing the a new `ArrayValueType` type.
@@ -569,9 +568,9 @@ public distinct class ArrayValue {
     }
 }
 
-# Represents Ref SQL field.
+# Represents SQL Ref type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class RefValue {
     *TypedValue;
     public record {}? value;
@@ -581,9 +580,9 @@ public distinct class RefValue {
     }
 }
 
-# Represents Struct SQL field.
+# Represents SQL Struct type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class StructValue {
     *TypedValue;
     public record {}? value;
@@ -593,9 +592,9 @@ public distinct class StructValue {
     }
 }
 
-# Represents Row SQL field.
+# Represents SQL Row type parameter in `sql:ParameterizedQuery`.
 #
-# + value - Value of parameter passed into the SQL statement
+# + value - Value of the parameter
 public distinct class RowValue {
     *TypedValue;
     public byte[]? value;
@@ -605,10 +604,11 @@ public distinct class RowValue {
     }
 }
 
-# Represents Parameterized SQL query.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Value` type can be indicated using `${<variable name>}`.
+# This validates the parameter types during the query execution.  
 #
-# + strings - The separated parts of the sql query
-# + insertions - The values that should be filled in between the parts
+# + strings - The separated parts of the SQL query 
+# + insertions - The values of the parameters that should be filled in between the parts
 public type ParameterizedQuery distinct object {
     *obj:RawTemplate;
     public (string[] & readonly) strings;
@@ -616,718 +616,712 @@ public type ParameterizedQuery distinct object {
 };
 
 # Constant indicating that the specific batch statement executed successfully
-# but that no count of the number of rows it affected is available.
+# but that the count of affected rows is unavailable.
 public const SUCCESS_NO_INFO = -2;
 
 # Constant indicating that the specific batch statement failed.
 public const EXECUTION_FAILED = -3;
 
-# The result of the query without returning the rows.
+# Metadata of the query execution.
 #
 # + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,  
-#                      (1) A number greater than or equal to zero -- indicates that the command was processed
-#                          successfully and is the affected row count in the database that were affected by
-#                          the command's execution  
-#                      (2) A value of the `SUCCESS_NO_INFO` indicates that the command was processed successfully but
-#                          that the number of rows affected is unknown  
-#                      (3) A value of the `EXECUTION_FAILED` indicated the specific command that failed. This can be
-#                          returned in `sql:BatchExecuteError` and only if the driver continues to process the
-#                          statements after the error occurred  
-# + lastInsertId - The integer or string generated by the database in response to a query execution.
-#                  Typically this will be from an `auto increment` column when inserting a new row. Not all databases
-#                  support this feature, and thereby, it can also be `()`
+#                      (1) A number greater than or equal to zero, the count of affected rows after the successful execution of the query  
+#                      (2) A value of the `SUCCESS_NO_INFO`, the count of affected rows is unknown after the successful execution of the query  
+#                      (3) A value of the `EXECUTION_FAILED`, the query execution failed
+# + lastInsertId - The ID generated by the database in response to a query execution. This can be `()` in case the database does not support this feature
 public type ExecutionResult record {
     int? affectedRowCount;
     string|int? lastInsertId;
 };
 
-# Represents all OUT parameters used in SQL stored procedure call.
+
+# Represents the generic OUT Parameters in `sql:ParameterizedCallQuery`.
 public type OutParameter object {
 
-    # Parses returned Char SQL value to ballerina value.
+    # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error;
 };
 
-# Represents Char Out Parameter used in procedure calls.
+# Represents Char Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class CharOutParameter {
     *OutParameter;
-    # Parses returned Char SQL value to ballerina value.
+    # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Char Array Out Parameter used in procedure calls
+# Represents Char Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class CharArrayOutParameter {
     *OutParameter;
-    # Parses returned Char SQL value to ballerina value.
+    # Parses returned Char SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Varchar Out Parameter used in procedure calls.
+# Represents Varchar Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class VarcharOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Varchar Array Out Parameter used in procedure calls.
+# Represents Varchar Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class VarcharArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents NChar Out Parameter used in procedure calls.
+# Represents NChar Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NCharOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents NVarchar Out Parameter used in procedure calls.
+# Represents NVarchar Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NVarcharOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents NVarchar Array Out Parameter used in procedure calls.
+# Represents NVarchar Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NVarcharArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Binary Out Parameter used in procedure calls.
+# Represents Binary Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BinaryOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Binary Array Out Parameter used in procedure calls.
+# Represents Binary Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BinaryArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents VarBinary Out Parameter used in procedure calls.
+# Represents VarBinary Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class VarBinaryOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents VarBinary Array Out Parameter used in procedure calls.
+# Represents VarBinary Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class VarBinaryArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Text Out Parameter used in procedure calls.
+# Represents Text Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TextOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Blob Out Parameter used in procedure calls.
+# Represents Blob Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BlobOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Clob Out Parameter used in procedure calls.
+# Represents Clob Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class ClobOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents NClob Out Parameter used in procedure calls.
+# Represents NClob Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NClobOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Date Out Parameter used in procedure calls.
+# Represents Date Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DateOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Date Array Out Parameter used in procedure calls.
+# Represents Date Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DateArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Time Out Parameter used in procedure calls.
+# Represents Time Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimeOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Time Array Out Parameter used in procedure calls.
+# Represents Time Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimeArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Time With Timezone Out Parameter used in procedure calls.
+# Represents Time With Timezone Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimeWithTimezoneOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Time With Timezone Array Out Parameter used in procedure calls.
+# Represents Time With Timezone Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimeWithTimezoneArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents DateTime Out Parameter used in procedure calls.
+# Represents DateTime Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DateTimeOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents DateTime Array Out Parameter used in procedure calls.
+# Represents DateTime Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DateTimeArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Timestamp Out Parameter used in procedure calls.
+# Represents Timestamp Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimestampOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Timestamp Array Out Parameter used in procedure calls.
+# Represents Timestamp Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimestampArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Timestamp with Timezone Out Parameter used in procedure calls.
+# Represents Timestamp with Timezone Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimestampWithTimezoneOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Timestamp with Timezone Array Out Parameter used in procedure calls.
+# Represents Timestamp with Timezone Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class TimestampWithTimezoneArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Array Out Parameter used in procedure calls.
+# Represents Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class ArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Row Out Parameter used in procedure calls.
+# Represents Row Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class RowOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents SmallInt Out Parameter used in procedure calls.
+# Represents SmallInt Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class SmallIntOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents SmallInt Array Out Parameter used in procedure calls.
+# Represents SmallInt Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class SmallIntArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Integer Out Parameter used in procedure calls.
+# Represents Integer Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class IntegerOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents BigInt Out Parameter used in procedure calls.
+# Represents BigInt Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BigIntOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Integer Array Out Parameter used in procedure calls.
+# Represents Integer Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class IntegerArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents BigInt Array Out Parameter used in procedure calls
+# Represents BigInt Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BigIntArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Real Out Parameter used in procedure calls.
+# Represents Real Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class RealOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Real Array Out Parameter used in procedure calls.
+# Represents Real Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class RealArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Float Out Parameter used in procedure calls.
+# Represents Float Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class FloatOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Float Array Out Parameter used in procedure calls.
+# Represents Float Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class FloatArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Double Out Parameter used in procedure calls.
+# Represents Double Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DoubleOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Double Array Out Parameter used in procedure calls.
+# Represents Double Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DoubleArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Numeric Out Parameter used in procedure calls.
+# Represents Numeric Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NumericOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Numeric Array Out Parameter used in procedure calls.
+# Represents Numeric Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class NumericArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Decimal Out Parameter used in procedure calls.
+# Represents Decimal Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DecimalOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Decimal Out Parameter used in procedure calls.
+# Represents Decimal Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class DecimalArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Bit Out Parameter used in procedure calls.
+# Represents Bit Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BitOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Bit Array Out Parameter used in procedure calls.
+# Represents Bit Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BitArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Boolean Out Parameter used in procedure calls.
+# Represents Boolean Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BooleanOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Boolean Array Out Parameter used in procedure calls.
+# Represents Boolean Array Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class BooleanArrayOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Ref Out Parameter used in procedure calls.
+# Represents Ref Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class RefOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents Struct Out Parameter used in procedure calls.
+# Represents Struct Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class StructOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents XML Out Parameter used in procedure calls.
+# Represents XML Out Parameter in `sql:ParameterizedCallQuery`.
 public distinct class XMLOutParameter {
     *OutParameter;
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getOutParameterValue"
     } external;
 }
 
-# Represents SQL InOutParameter used in procedure calls.
+# Represents SQL InOutParameter in `sql:ParameterizedCallQuery`.
 public class InOutParameter {
     Value 'in;
 
@@ -1335,36 +1329,35 @@ public class InOutParameter {
         self.'in = 'in;
     }
 
-    # Parses returned SQL value to ballerina value.
+    # Parses returned SQL value to a ballerina value.
     #
-    # + typeDesc - Type description of the data that need to be converted
-    # + return - The converted ballerina value or Error
+    # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+    # + return - The result in the `typeDesc` type, or an `sql:Error`
     public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
         name: "getInOutParameterValue"
     } external;
 }
 
-# Represents all parameters used in SQL stored procedure call.
+# Generic type that can be passed to `sql:ParameterizedCallQuery` to indicate procedure/function parameters.
 public type Parameter Value|InOutParameter|OutParameter;
 
-# Represents Parameterized Call SQL Statement.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`.
+# This validates the parameter types during the query execution.
 #
-# + strings - The separated parts of the sql call query
-# + insertions - The values that should be filled in between the parts
+# + strings - The separated parts of the SQL query 
+# + insertions - The values of the parameters that should be filled in between the parts
 public type ParameterizedCallQuery distinct object {
     *obj:RawTemplate;
     public (string[] & readonly) strings;
     public Parameter[] insertions;
 };
 
-# The result iterator object that is used to iterate through the results in the event stream.
+# The result iterator used to iterate results in stream returned from `query` function.
 #
-# + customResultIterator - The instance of the custom Ballerina class that is structurally equivalent to
-#                          the `customResultIterator` object type. This instance includes a custom implementation
-#                          of the `nextResult` method
-# + err - Used to hold any error to be returned 
-# + isClosed - The boolean flag used to indicate that the result iterator is closed 
+# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
+# + err - Used to hold any error occurring at the instance of stream creation
+# + isClosed - Indicated the stream state
 public class ResultIterator {
     private boolean isClosed = false;
     private Error? err;
@@ -1417,13 +1410,11 @@ public class ResultIterator {
     }
 }
 
-# Object that is used to return stored procedure call results.
+# Represents the results from `call` method holding returned results or metadata of query execution.
 #
-# + executionResult - Summary of the execution of DML/DLL query
+# + executionResult - Summary of the query execution
 # + queryResult - Results from the SQL query
-# + customResultIterator - The instance of the custom Ballerina class that is structurally equivalent to
-#                          the `customResultIterator` object type. This instance includes a custom implementation
-#                          of the `getNextQueryResult` method
+# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
 public class ProcedureCallResult {
     public ExecutionResult? executionResult = ();
     public stream<record {}, Error?>? queryResult = ();
@@ -1433,8 +1424,8 @@ public class ProcedureCallResult {
         self.customResultIterator = customResultIterator;
     }
 
-    # Updates `executionResult` or `queryResult` with the next result in the result. This will also close the current
-    # results by default.
+    # Updates `executionResult` or `queryResult` field with the succeeding result in the result list. This will also close the current
+    # results when called.
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error {
@@ -1444,17 +1435,15 @@ public class ProcedureCallResult {
         return getNextQueryResult(self);
     }
 
-    # Closes the `sql:ProcedureCallResult` object and releases the associated resources.
+    # Releases the associated resources such as database connection, results, etc.
     #
-    # + return - An `sql:Error` if any error occurred while closing
+    # + return - An `sql:Error` if any error occurred while cleanup
     public isolated function close() returns Error? {
         return closeCallResult(self);
     }
 }
 
-# The object type that is used as a structure to define a custom class with custom
-# implementations for nextResult and getNextQueryResult in the connector modules.
-#
+# The iterator for the stream returned in `query` function to be used overriding the default behaviour of sql:ResultIterator.
 public type CustomResultIterator object {
     public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;

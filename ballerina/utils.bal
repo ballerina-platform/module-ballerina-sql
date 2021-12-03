@@ -57,7 +57,7 @@ isolated function addValues(Value[] insertionValues, Value[] values) {
     }
 }
 
-# Joins the elements in the array with the `,` delimiter into an `sql:ParameterizedQuery`.
+# Joins the parameters in the array with the `,` delimiter into an `sql:ParameterizedQuery`.
 #
 # + values - An array of `sql:Value` values
 # + return - An `sql:ParameterizedQuery`
