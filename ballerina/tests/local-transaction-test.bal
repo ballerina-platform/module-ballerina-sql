@@ -67,7 +67,7 @@ function testLocalTransaction() returns error? {
         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
                                                         values ('James', 'Clerk', 200, 5000.75, 'USA')`);
         transInfo = transactions:info();
-        var commitResult = commit;
+        error? commitResult = commit;
         if commitResult is () {
             committedBlockExecuted = true;
         }
@@ -125,12 +125,12 @@ function testTransactionRollbackWithRollback() returns error? {
     transactions:Info transInfo;
     retry<SQLDefaultRetryManager> (1) transaction {
         transInfo = transactions:info();
-        var e1 = dbClient->execute(`Insert into Customers (firstName,lastName,registrationID, creditLimit,country)
+        ExecutionResult|Error e1 = dbClient->execute(`Insert into Customers (firstName,lastName,registrationID, creditLimit,country)
                                                     values ('James', 'Clerk', 211, 5000.75, 'USA')`);
         if e1 is error {
             rollback;
         } else {
-            var e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
+            ExecutionResult|Error e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
                                                     values ('James', 'Clerk', 211, 5000.75, 'USA')`);
             if e2 is error {
                 rollback;
@@ -255,8 +255,7 @@ int testTransactionErrorPanicRetVal = 0;
 function testTransactionErrorPanic() returns error? {
     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
     int catchValue = 0;
-    var ret = trap testTransactionErrorPanicHelper(dbClient);
-    io:println(ret);
+    error? ret = trap testTransactionErrorPanicHelper(dbClient);
     if ret is error {
         catchValue = -1;
     }
@@ -389,7 +388,7 @@ function testLocalTransactionFailed() returns error? {
 
     string a = "beforetx";
 
-    var ret = trap testLocalTransactionFailedHelper(dbClient);
+    string|error ret = trap testLocalTransactionFailedHelper(dbClient);
     if ret is string {
         a += ret;
     } else {
@@ -416,7 +415,7 @@ isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns 
         transactions:onRollback(onRollbackFunc);
         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
                                                         values ('James', 'Clerk', 111, 5000.75, 'USA')`);
-        var e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
+        ExecutionResult|Error e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
                                                         values ('Anne', 'Clerk', 111, 5000.75, 'USA')`);
         if e2 is error {
             check getError();
@@ -497,7 +496,7 @@ function testLocalTransactionWithBatchExecute() returns error? {
     retry<SQLDefaultRetryManager> (1) transaction {
         _ = check dbClient->batchExecute(sqlQueries);
         transInfo = transactions:info();
-        var commitResult = commit;
+        error? commitResult = commit;
         if commitResult is () {
             committedBlockExecuted = true;
         }
@@ -535,7 +534,7 @@ function testLocalTransactionWithQuery() returns error? {
         _ = check dbClient->batchExecute(sqlQueries);
         count = check getCount(dbClient, "302");
         transInfo = transactions:info();
-        var commitResult = commit;
+        error? commitResult = commit;
         if commitResult is () {
             committedBlockExecuted = true;
         }
@@ -572,7 +571,7 @@ function testLocalTransactionWithQueryRow() returns error? {
         _ = check dbClient->batchExecute(sqlQueries);
         count = check dbClient->queryRow(`Select COUNT(*) as countval from Customers where registrationID = 303`);
         transInfo = transactions:info();
-        var commitResult = commit;
+        error? commitResult = commit;
         if commitResult is () {
             committedBlockExecuted = true;
         }

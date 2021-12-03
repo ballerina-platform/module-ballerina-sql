@@ -94,9 +94,8 @@ function testConnectionAfterClose() returns error? {
 function testStreamNextAfterClose() returns error? {
     MockClient testDB = check new (connectDB, user, password);
     stream<record{}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
-    var iterator = streamData.iterator();
     check streamData.close();
-    record {|record {} value;|}?|error data = iterator.next();
+    record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
         test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " + 
