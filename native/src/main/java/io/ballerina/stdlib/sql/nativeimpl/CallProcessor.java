@@ -213,10 +213,12 @@ public class CallProcessor {
                         statement.registerOutParameter(index, sqlType);
                         break;
                     default:
-                        statementParameterProcessor.setSQLValueParam(connection, statement, index, object, false);
+                        statementParameterProcessor.setSQLValueParam(connection, statement, index,
+                                object, false);
                 }
             } else {
-                statementParameterProcessor.setSQLValueParam(connection, statement, index, object, false);
+                statementParameterProcessor.setSQLValueParam(connection, statement, index, object,
+                        false);
             }
         }
     }
