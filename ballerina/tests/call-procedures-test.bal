@@ -360,7 +360,7 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     check ret.close();
 
     string clobType = "very long text";
-    var varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    byte[] varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
     time:Civil dateTimeRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
 
     test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
@@ -598,10 +598,10 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
     check ret.close();
 
     string clobType = "very long text";
-    var varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    byte[] varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
     int[] int_array = [1, 2, 3];
     string[] string_array = ["Hello", "Ballerina"];
-    var binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
+    byte[] binaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
 
     test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
     test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
