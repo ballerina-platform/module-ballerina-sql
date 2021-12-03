@@ -22,7 +22,7 @@ public type Client client object {
 
     # Executes the query, which may return multiple results.
     #
-    # + sqlQuery - The SQL query such as `SELECT`
+    # + sqlQuery - The SQL query
     # + rowType - The `typedesc` of the record to which the result needs to be returned
     # + return - Stream of records in the `rowType` type
     remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
