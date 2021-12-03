@@ -115,8 +115,7 @@ public class QueryProcessor {
                 sqlQuery = parameterizedQuery.getSqlQuery();
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions(),
-                        parameterizedQuery.getSqlQuery());
+                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
                 resultSet = statement.executeQuery();
                 RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
@@ -189,8 +188,7 @@ public class QueryProcessor {
                 sqlQuery = parameterizedQuery.getSqlQuery();
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions(),
-                        parameterizedQuery.getSqlQuery());
+                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
                 resultSet = statement.executeQuery();
                 if (!resultSet.next()) {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");

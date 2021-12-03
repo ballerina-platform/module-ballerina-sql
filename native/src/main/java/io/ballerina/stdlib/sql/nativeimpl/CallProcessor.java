@@ -203,7 +203,7 @@ public class CallProcessor {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
                         sqlType = statementParameterProcessor.setSQLValueParam(connection, statement,
-                                index, innerObject, true, query);
+                                index, innerObject, true);
                         outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
@@ -214,11 +214,11 @@ public class CallProcessor {
                         break;
                     default:
                         statementParameterProcessor.setSQLValueParam(connection, statement, index,
-                                object, false, query);
+                                object, false);
                 }
             } else {
                 statementParameterProcessor.setSQLValueParam(connection, statement, index, object,
-                        false, query);
+                        false);
             }
         }
     }

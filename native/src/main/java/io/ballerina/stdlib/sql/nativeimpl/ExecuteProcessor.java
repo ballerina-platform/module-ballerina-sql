@@ -114,8 +114,7 @@ public class ExecuteProcessor {
                     statement = connection.prepareStatement(sqlQuery);
                 }
 
-                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions(),
-                        parameterizedQuery.getSqlQuery());
+                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
 
                 int count = statement.executeUpdate();
                 Object lastInsertedId = null;
@@ -211,8 +210,7 @@ public class ExecuteProcessor {
                 }
 
                 for (Object[] param : parameters) {
-                    statementParameterProcessor.setParams(connection, statement, param,
-                            parameterizedQuery.getSqlQuery());
+                    statementParameterProcessor.setParams(connection, statement, param);
                     statement.addBatch();
                 }
 

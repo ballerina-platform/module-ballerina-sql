@@ -174,9 +174,8 @@ function TestUnsupportedTypeValue() returns error? {
     check mockClient.close();
     test:assertTrue(stringVal is DataError);
     DataError sqlError = <DataError> stringVal;
-    test:assertEquals(sqlError.message(), "Error while constructing SQL query: SELECT string_type from " +
-                "DataTable WHERE row_id =  ? . data exception: invalid character value for cast: {value:hi}",
-                sqlError.message());
+    test:assertEquals(sqlError.message(), "Error while constructing SQL query. data exception: invalid " +
+                "character value for cast: {value:hi}", sqlError.message());
 }
 
 @test:Config {

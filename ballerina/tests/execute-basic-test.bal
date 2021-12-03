@@ -349,9 +349,8 @@ function testErroneousExcuteWithParams() returns error? {
     ExecutionResult|error result = dbClient->execute(query);
     test:assertTrue(result is error);
     if result is DataError {
-        test:assertTrue(result.message().startsWith("Error while constructing SQL query: Insert into " +
-                "NumericTypes (int_type) values ( ? ). incompatible data type in conversion: {value:[1,2]}"),
-                result.message());
+        test:assertTrue(result.message().startsWith("Error while constructing SQL query. " +
+                "incompatible data type in conversion: {value:[1,2]}"), result.message());
     } else {
         test:assertFail("DatabaseError Error expected.");
     }

@@ -197,16 +197,16 @@ public abstract class AbstractStatementParameterProcessor {
                                                 Object value, boolean returnType) throws DataError, SQLException;
 
     public void setParams(Connection connection, PreparedStatement preparedStatement,
-                          Object[] insertions, String query) throws DataError, SQLException {
+                          Object[] insertions) throws DataError, SQLException {
         for (int i = 0; i < insertions.length; i++) {
             Object object = insertions[i];
             int index = i + 1;
-            setSQLValueParam(connection, preparedStatement, index, object, false, query);
+            setSQLValueParam(connection, preparedStatement, index, object, false);
         }
     }
 
     public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement, int index, Object object,
-                                boolean returnType, String query) throws DataError, SQLException {
+                                boolean returnType) throws DataError, SQLException {
         try {
             if (object == null) {
                 preparedStatement.setNull(index, Types.NULL);
@@ -279,7 +279,7 @@ public abstract class AbstractStatementParameterProcessor {
         } catch (SQLException e) {
             String msg = e.getMessage();
             if (msg.contains("data exception") || msg.contains("incompatible data type")) {
-                throw new DataError(String.format("Error while constructing SQL query: %s. %s: %s", query,
+                throw new DataError(String.format("Error while constructing SQL query. %s: %s",
                         e.getMessage(), object));
             }
             throw new SQLException(e);

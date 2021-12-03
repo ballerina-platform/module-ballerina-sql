@@ -53,11 +53,7 @@ isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) return
 
 isolated function addValues(Value[] insertionValues, Value[] values) {
     foreach Value insertionValue in insertionValues {
-        if insertionValue is null {
-            values.push(null);
-        } else {
-            values.push(insertionValue);
-        }
+        values.push(insertionValue);
     }
 }
 
