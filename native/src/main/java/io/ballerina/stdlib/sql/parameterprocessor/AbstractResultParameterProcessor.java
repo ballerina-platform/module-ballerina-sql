@@ -24,7 +24,6 @@ import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.JsonUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
-import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
@@ -479,20 +478,6 @@ public abstract class AbstractResultParameterProcessor {
         resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
         resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
         return resultIterator;
-    }
-
-    public BMap<BString, Object> createRecord(ResultSet resultSet, List<ColumnDefinition> columnDefinitions,
-                                              StructureType recordConstraint) throws SQLException, DataError {
-        BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
-        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
-        Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
-        return record;
-    }
-
-    public Object createValue(ResultSet resultSet, int columnIndex, PrimitiveTypeColumnDefinition columnDefinition)
-            throws SQLException, DataError {
-        DefaultResultParameterProcessor resultParameterProcessor = DefaultResultParameterProcessor.getInstance();
-        return Utils.getResult(resultSet, columnIndex, columnDefinition, resultParameterProcessor);
     }
 
     public abstract BObject getBalStreamResultIterator();
