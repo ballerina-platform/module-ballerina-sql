@@ -25,17 +25,21 @@ import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
+import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
@@ -251,7 +255,7 @@ public class QueryProcessor {
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !Utils.isSupportedRecordType(type)) {
             RecordType recordConstraint = (RecordType) type;
             List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, recordConstraint);
-            return resultParameterProcessor.createRecord(resultSet, columnDefinitions, recordConstraint);
+            return createRecord(resultSet, columnDefinitions, recordConstraint, resultParameterProcessor);
         }
 
         if (resultSet.getMetaData().getColumnCount() > 1) {
@@ -259,7 +263,7 @@ public class QueryProcessor {
         }
 
         PrimitiveTypeColumnDefinition definition = Utils.getColumnDefinition(resultSet, 1, type);
-        return resultParameterProcessor.createValue(resultSet, 1, definition);
+        return createValue(resultSet, 1, definition, resultParameterProcessor);
     }
 
     private static BStream getErrorStream(Object recordType, BError errorValue) {
@@ -272,5 +276,22 @@ public class QueryProcessor {
         return ValueCreator.createObjectValue(ModuleUtils.getModule(), Constants.RESULT_ITERATOR_OBJECT,
                 errorValue, null);
     }
+
+    public static BMap<BString, Object> createRecord(ResultSet resultSet, List<ColumnDefinition> columnDefinitions,
+                                                     StructureType recordConstraint,
+                                                     AbstractResultParameterProcessor resultParameterProcessor)
+            throws SQLException, DataError {
+        BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
+        Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
+        return record;
+    }
+
+    public static Object createValue(ResultSet resultSet, int columnIndex,
+                                     PrimitiveTypeColumnDefinition columnDefinition,
+                                     AbstractResultParameterProcessor resultParameterProcessor)
+            throws SQLException, DataError {
+        return Utils.getResult(resultSet, columnIndex, columnDefinition, resultParameterProcessor);
+    }
+
 
 }

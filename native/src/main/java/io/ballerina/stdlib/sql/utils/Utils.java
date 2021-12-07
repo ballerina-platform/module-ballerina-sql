@@ -45,7 +45,7 @@ import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.exception.FieldMismatchError;
 import io.ballerina.stdlib.sql.exception.TypeMismatchError;
-import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
+import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
 import java.io.BufferedReader;
@@ -428,7 +428,7 @@ public class Utils {
                 ballerinaType);
     }
 
-    public static void updateBallerinaRecordFields(DefaultResultParameterProcessor resultParameterProcessor,
+    public static void updateBallerinaRecordFields(AbstractResultParameterProcessor resultParameterProcessor,
                                                    ResultSet resultSet, BMap<BString, Object> bStruct,
                                                    List<ColumnDefinition> columnDefinitions)
             throws SQLException, DataError {
@@ -452,7 +452,7 @@ public class Utils {
     }
 
     public static Object getResult(ResultSet resultSet, int columnIndex, PrimitiveTypeColumnDefinition columnDefinition,
-                                   DefaultResultParameterProcessor resultParameterProcessor)
+                                   AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
         int sqlType = columnDefinition.getSqlType();
         Type ballerinaType = columnDefinition.getBallerinaType();
