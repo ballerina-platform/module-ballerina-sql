@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Validate connection pool configurations](https://github.com/ballerina-platform/ballerina-standard-library/issues/2355)
 - [Change queryRow return type to anydata](https://github.com/ballerina-platform/ballerina-standard-library/issues/2390)
 - [Make OutParameter get function parameter optional](https://github.com/ballerina-platform/ballerina-standard-library/issues/2388)
+- [Fix queryRow method to use module's provided resultParameterProcessor](https://github.com/ballerina-platform/ballerina-standard-library/issues/2466)
 
 ## [1.0.0] - 2021-10-09
 
