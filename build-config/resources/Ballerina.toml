@@ -6,7 +6,7 @@ authors = ["Ballerina"]
 keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
 license = ["Apache-2.0"]
-distribution = "slbeta3"
+distribution = "slbeta6"
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/sql-native-@project.version@.jar"
