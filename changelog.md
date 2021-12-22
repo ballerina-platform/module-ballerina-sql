@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Release SQL module on Ballerina 2201.0.0 distribution
+- [Fix Compiler plugin crash when variable is passed for `sql:connectionPool`](https://github.com/ballerina-platform/ballerina-standard-library/issues/2536)
 
 ## [1.2.0] - 2021-12-13
 
