@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- [Fix Compiler plugin crash when variable is passed for `sql:connectionPool`](https://github.com/ballerina-platform/ballerina-standard-library/issues/2536)
+
+## [1.2.0] - 2021-12-13
+
+### Changed
 - [Fix queryRow method to use module's provided resultParameterProcessor](https://github.com/ballerina-platform/ballerina-standard-library/issues/2466)
 
 ## [1.1.0] - 2021-11-20
