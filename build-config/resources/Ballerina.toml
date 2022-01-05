@@ -5,6 +5,7 @@ version = "@toml.version@"
 authors = ["Ballerina"]
 keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
+icon = "resources/icon.png"
 license = ["Apache-2.0"]
 distribution = "2201.0.0"
 
