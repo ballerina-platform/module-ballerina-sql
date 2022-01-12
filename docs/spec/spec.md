@@ -1,0 +1,547 @@
+ # Specification: Ballerina SQL Library
+
+_Owners_: @daneshk @niveathika  
+_Reviewers_: @daneshk  
+_Created_: 2022/01/13   
+_Updated_: 2022/01/13  
+_Issue_: [#2060](https://github.com/ballerina-platform/ballerina-standard-library/issues/2060)
+
+# Introduction
+
+This is the specification for SQL standard library, which provides the generic interface and functionality to interact
+with a SQL database in the [Ballerina programming language](https://ballerina.io/), which is an open-source programming 
+language for the cloud that makes it easier to use, combine, and create network services.
+
+# Contents
+
+1. [Overview](#1-overview)  
+2. [Client](#2-client)  
+   2.1. [Connection Pool Handling](#21-connection-pool-handling)  
+   2.2. [Closing the Client](#22-closing-the-client)
+3. [Queries and Values](#3-queries-and-values)  
+   3.1. [ParameterizedQuery and Values](#31-parameterizedquery-and-values)  
+   3.2. [ParameterizedCallQuery and Parameters](#32-parameterizedcallquery-and-parameters)  
+   3.3. [Query Concatenation](#33-query-concatenation)  
+4. [Database Operations](#4-database-operations)  
+   4.1. [Query](#41-query)  
+   4.2. [Query Row](#42-query-row)  
+   4.3. [Execute](#43-execute)  
+   4.4. [Batch Execute](#44-batch-execute)  
+   4.5. [Call](#45-call)  
+5. [Errors](#5-errors)
+
+# 1. Overview
+
+This specification elaborates on the generic `Client` interface used in ballerina SQL connectors
+to interface with a relational database such as MySQL, MSSQL, Postgresql and OracleDB. 
+
+`Client` supports five database operations as follows,
+1. Executes the query, which may return multiple results.
+2. Executes the query, which is expected to return at most one row of the result.
+3. Executes the SQL query. Only the metadata of the execution is returned.
+4. Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned.
+5. Executes a SQL query, which calls a stored procedure. This can either return results or nil.
+
+All the above operations make use of `ParameterizedQuery` object, backtick surrounded string template to pass 
+SQL statements to the database. `ParameterizedQuery` supports passing of Ballerina basic types or Typed SQL Values such 
+as `CharValue`, `BigIntValue`, etc. to indicate parameter types in SQL statements. 
+
+# 2. Client
+
+Each client represents a pool of connections to the database. The pool of connections is maintained throughout the 
+lifetime of the client.
+
+## 2.1. Connection Pool Handling
+
+**Configuration available for tweaking the connection pool properties:**
+
+   ```ballerina
+   # The properties which are used to configure DB connection pool.
+   # Default values of the fields can be set through the configuration API.
+   #
+   # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have including
+   #                        both idle and in-use connections. The default value is 15. This can be changed through the
+   #                        configuration API with the `ballerina.sql.maxOpenConnections` key
+   # + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. The default value is 1800
+   #                           seconds (30 minutes). This can be changed through the configuration API with the
+   #                           `ballerina.sql.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
+   #                           lifetime (infinite lifetime)
+   # + minIdleConnections - The minimum number of idle connections that the pool tries to maintain in it. The default
+   #                        value is the same as `maxOpenConnections` and it can be changed through the configuration
+   #                        API with the `ballerina.sql.minIdleConnections` key
+   public type ConnectionPool record {|
+       int maxOpenConnections = maxOpenConnections;
+       decimal maxConnectionLifeTime = maxConnectionLifeTime;
+       int minIdleConnections = minIdleConnections;
+   |};
+   ```
+
+There are three possible scenarios for connection pool handling,
+1. Global, shareable, default connection pool
+
+   If the `poolOptions` field is **NOT** provided when creating the database client, a globally-shareable pool will be
+   created for the database connection unless a connection pool matching with the properties provided already exists.
+   The JDBC module sample below shows how the global connection pool is used.
+
+    ```ballerina
+    jdbc:Client|sql:Error dbClient = new ("jdbc:mysql://localhost:3306/testdb", "root", "root");
+    ```
+
+2. Client-owned, unsharable connection pool
+
+   If the `connectionPool` field is defined inline when creating the database client with the `sql:ConnectionPool` type,
+   an unsharable connection pool will be created. The JDBC module sample below shows how the global
+   connection pool is used.
+
+    ```ballerina
+    jdbc:Client|sql:Error dbClient =  new (url = "jdbc:mysql://localhost:3306/testdb",
+                                                connectionPool = { maxOpenConnections: 5 });
+    ```
+
+3. Local, shareable connection pool
+
+   If a record of the `sql:ConnectionPool` type is created and reused in the configuration of multiple clients,
+   for each set of clients that connects to the same database instance with the same set of properties, a shared
+   connection pool will be created. The JDBC module sample below shows how the global connection pool is used.
+
+    ```ballerina
+    sql:ConnectionPool connPool = { maxOpenConnections: 5 };
+    
+    jdbc:Client|sql:Error dbClient1 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient2 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient3 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    ```
+
+## 2.2. Closing the Client
+
+Once all the database operations are performed, the client can be closed by invoking the `close()`
+operation. This will close the corresponding connection pool if it is not shared by any other database clients.
+
+   ```ballerina
+    # Closes the SQL client and shuts down the connection pool.
+    #
+    # + return - Possible error when closing the client
+    public isolated function close() returns Error?;
+   ```
+
+# 3. Queries and Values
+
+## 3.1. ParameterizedQuery and Values
+
+The `sql:ParameterizedQuery` is used to construct the SQL query to be executed by the client. It is backtick string 
+template which allows dynamic values for query parameters.
+
+*Query with constant values*
+
+```ballerina
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < 10 AND age > 12`;
+```
+
+*Query with dynamic values*
+
+```ballerina
+int[] ids = [10, 50];
+int age = 12;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${ids[0]} AND age > ${age}`;
+```
+
+All primitive Ballerina types are supported for parameter values in `sql:ParameterizedQuery`. Following mapping is used to map ballerina types to SQL types,
+
+| Ballerina Type | SQL Type |
+|:--------------:|:--------:|
+|     String     | VARCHAR  |
+|      int       | INTEGER  |
+|    boolean     | BOOLEAN  |
+|     float      |   REAL   |
+|    decimal     | DECIMAL  |
+|     byte[]     |  BINARY  |
+|      xml       |  SQLXML  |
+|   record {}    |  STRUCT  |
+|     Array      |  ARRAY   |
+
+In addition to the above `time` module constructs are used to represent SQL Time Data Types,
+
+| `time` Constructs | SQL Type  |
+|:-----------------:|:---------:|
+|     time:Date     |   DATE    |
+|  time:TimeOfDay   |   TIME    |
+|    time:Civil     | DATETIME  |
+|     time:Utc      | TIMESTAMP |
+
+Furthermore, TypedValues are used to map values to a specific SQL Data Type such as BIGINT,
+   ```ballerina
+      BigIntValue value = new(1000000000000);
+      sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${value}`;
+   ```
+
+List of Typed Values:
+
+1. VarcharValue
+2. NVarcharValue
+3. CharValue
+4. NCharValue
+5. TextValue 
+6. ClobValue
+7. NClobValue
+8. SmallIntValue
+9. IntegerValue
+10. BigIntValue
+11. NumericValue 
+12. DecimalValue
+13. RealValue
+14. FloatValue
+15. DoubleValue 
+16. BitValue
+17. BooleanValue
+18. BinaryValue
+19. VarBinaryValue
+20. BlobValue
+21. DateValue
+22. TimeValue
+23. DateTimeValue
+24. TimestampValue 
+25. RefValue 
+26. StructValue 
+27. RowValue
+
+## 3.2. ParameterizedCallQuery and Parameters
+
+The `sql:ParameterizedCallQuery` is used to construct the SQL CALL Statement to be executed by the client. It is backtick string
+template which allows dynamic values for query parameters. In addition to Values supported by `sql:ParameterizedQuery`, 
+`sql:ParameterizedCallQuery` supports following SQL Parameters,
+
+1. InOutParameter
+2. Typed OutParameters
+
+These types can be used to retrieve values from SQL Stored Procedures using `get()` method.
+
+   ```ballerina
+   # Parses returned Char SQL value to a ballerina value.
+   #
+   # + typeDesc - The `typedesc` of the type to which the result needs to be returned
+   # + return - The result in the `typeDesc` type, or an `sql:Error`
+   public isolated function get(typedesc<anydata> typeDesc = <>) returns typeDesc|Error;
+   ```
+
+   ```ballerina
+   InOutParameter parameter = new ("varchar value");
+   
+   // Execute DB Call Method
+   
+   string procedureParam = parameter.get();
+   ```
+   Type of the returned value is inferred from LHS of the expression.
+
+## 3.3. Query Concatenation
+
+`sql:ParameterizedQuery` can be concatenated using util methods such as `sql:queryConcat()` and 
+`sql:arrayFlattenQuery()` which makes it easier to create a dynamic/constant complex query.
+
+The `sql:queryConcat()` is used to create a parameterized query by concatenating a set of parameterized queries.
+
+```ballerina
+int id = 10;
+int age = 12;
+sql:ParameterizedQuery query = `SELECT * FROM students`;
+sql:ParameterizedQuery query1 = ` WHERE id < ${id} AND age > ${age}`;
+sql:ParameterizedQuery sqlQuery = sql:queryConcat(query, query1);
+```
+
+The query with the `IN` operator can be created using the `sql:ParameterizedQuery()`. Here the values in the array are
+flattened with a comma separator to add it in the query.
+
+```ballerina
+int[] ids = [1, 2, 3];
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+                                WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
+```
+
+The util function `sql:arrayFlattenQuery()` can be used to make the array flatten easier. It makes the inclusion of 
+varying array elements into the query easier by flattening the array to return a parameterized query.
+
+```ballerina
+int[] ids = [1, 2];
+sql:ParameterizedQuery sqlQuery = sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
+                                          sql:arrayFlattenQuery(ids), `)`);
+```
+
+# 4. Database Operations
+
+The client supports five remote methods, each for one Database operation
+
+## 4.1. Query
+
+`query()` remote method execute the SQL query and returns multiple results.
+
+```ballerina
+# Executes the query, which may return multiple results.
+#
+# + sqlQuery - The SQL query
+# + rowType - The `typedesc` of the record to which the result needs to be returned
+# + return - Stream of records in the `rowType` type
+remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>) 
+                        returns stream <rowType, Error?>;
+```
+
+Here the returned stream can consist of following types of records,
+1. Open Record  
+   The property name in the open record type will be the same as how the column is defined in the database.
+   ```ballerina
+   sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${id} AND age > ${age}`;
+   stream<record {}, sql:Error?> resultStream = dbClient->query(query);
+   ```
+   
+2. Typed Record  
+   A ballerina record type is created to represent the returned result set. the `SELECT` query is executed
+   via the `query` remote function of the client. Once the query is executed, each data record can be retrieved by looping
+   the result set. The `stream` returned by the select operation holds a pointer to the actual data in the database, and it
+   loads data from the table only when it is accessed. This stream can be iterated only once.
+
+   This record can be defined as an open or a closed record according to the requirement. If an open record is defined, 
+   the returned stream type will include both defined fields in the record and additional database columns fetched by 
+   the SQL query which are not defined in the record. Additional Column names added to the returned record as in the 
+   SQL query. If the record is defined as a close record, only defined fields in the record are returned or gives 
+   an error when additional columns present in the SQL query.
+
+   Note the mapping of the database column to the returned record's property is case-insensitive if it is defined in the
+   record(i.e., the `ID` column in the result can be mapped to the `id` property in the record).
+   
+   ```ballerina
+   type Student record {
+       int id;
+       int age;
+       string name;
+   };
+   
+   int id = 10;
+   int age = 12;
+   sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${id} AND age > ${age}`;
+   stream<Student, sql:Error?> resultStream = dbClient->query(query);
+   ```
+
+The returned stream needs to be closed properly to release resources. The stream is automatically closed if either it
+is iterated fully or consists of an error. If result is accessed one by one using `next()` method, it should be closed 
+after the required results are accessed.
+```ballerina
+# Releases the associated resources such as database connection, results, etc.
+#
+# + return - An `sql:Error` if any error occurred while cleanup
+public isolated function close() returns Error?;
+```
+
+Usage:
+```ballerina
+check resultStream.close();
+```
+
+## 4.2. Query Row
+
+`queryRow()` remote method executes the SQL query return at most one row of the result.
+```ballerina
+# Executes the query, which is expected to return at most one row of the result.
+# If the query does not return any results, `sql:NoRowsError` is returned
+#
+# + sqlQuery - The SQL query
+# + returnType - The `typedesc` of the record to which the result needs to be returned.
+#                It can be a basic type if the query contains only one column
+# + return - Result in the `returnType` type or an `sql:Error`
+remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
+                                            returns returnType|Error;
+```
+
+The provided return type(inferred from LHS) can be of 2 types,
+1. Ballerina Record
+   Returns only the first row retrieved by the query as a record.
+   
+   ```ballerina
+   int id = 10;
+   sql:ParameterizedQuery query = `SELECT * FROM students WHERE id = ${id}`;
+   Student retrievedStudent = check dbClient->queryRow(query);
+   ```
+3. Ballerina Primitive Type
+   Return the value of the first column of the first row retrieved by the query.
+   
+   ```ballerina
+   int age = 12;
+   sql:ParameterizedQuery query = `SELECT COUNT(*) FROM students WHERE age < ${age}`;
+   int youngStudents = check dbClient->queryRow(query);
+   ```
+
+`sql:NoRowsError` is returned if the query does not return at most of one result.
+
+## 4.3. Execute
+
+`execute()` remote method executes the SQL query return metadata of the execution.
+```ballerina
+# Executes the SQL query. Only the metadata of the execution is returned (not the results from the query).
+#
+# + sqlQuery - The SQL query
+# + return - Metadata of the query execution as an `sql:ExecutionResult` or an `sql:Error`
+remote isolated function execute(ParameterizedQuery sqlQuery) returns ExecutionResult|Error;
+```
+
+The metadata is returned as `sql:ExecutionResult` record,
+```ballerina
+# Metadata of the query execution.
+#
+# + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,  
+#                      (1) A number greater than or equal to zero, the count of affected rows after the successful 
+#                          execution of the query  
+#                      (2) A value of the `SUCCESS_NO_INFO`, the count of affected rows is unknown after the successful 
+#                          execution of the query  
+#                      (3) A value of the `EXECUTION_FAILED`, the query execution failed
+# + lastInsertId - The ID generated by the database in response to a query execution. This can be `()` in case 
+#                  the database does not support this feature
+public type ExecutionResult record {
+    int? affectedRowCount;
+    string|int? lastInsertId;
+};
+```
+
+This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote function of
+the client.
+
+```ballerina
+int age = 23;
+sql:ParameterizedQuery query = `UPDATE students SET name = 'John' WHERE age = ${age}`;
+sql:ExecutionResult result = check dbClient->execute(query);
+```
+
+
+## 4.4. Batch Execute
+
+`batchExecute()` remote method executes the SQL query with multiple sets of parameters in a batch.
+```ballerina
+# Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned 
+# (not results from the query).
+# If one of the commands in the batch fails, this will return an `sql:BatchExecuteError`. However, the driver may
+# or may not continue to process the remaining commands in the batch after a failure.
+#
+# + sqlQueries - The SQL query with multiple sets of parameters
+# + return - Metadata of the query execution as an `sql:ExecutionResult[]` or an `sql:Error`
+remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
+```
+
+This sample demonstrates how to insert multiple records with a single `INSERT` statement that is executed via the
+`batchExecute` remote function of the client. This is done by creating a `table` with multiple records and
+parameterized SQL query as same as the above `execute` operations.
+
+```ballerina
+var data = [
+  { name: "John", age: 25  },
+  { name: "Peter", age: 24 },
+  { name: "jane", age: 22 }
+];
+
+sql:ParameterizedQuery[] batch = from var row in data
+                                 select `INSERT INTO students ('name', 'age')
+                                           VALUES (${row.name}, ${row.age})`;
+sql:ExecutionResult[] result = check dbClient->batchExecute(batch);
+```
+
+## 4.5. Call
+
+`call()` remote method executes a SQL query, which calls a stored procedure. This can either return results or nil.
+```ballerina
+# Executes a SQL query, which calls a stored procedure. This can either return results or nil.
+#
+# + sqlQuery - The SQL query
+# + rowTypes - The array `typedesc` of the records to which the results needs to be returned
+# + return - Summary of the execution and results are returned in an `sql:ProcedureCallResult`, or an `sql:Error`
+remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
+returns ProcedureCallResult|Error;
+```
+
+The returned results are returned as of type `sql:ProcedureCallResult`,
+```ballerina
+# Represents the results from `call` method holding returned results or metadata of query execution.
+#
+# + executionResult - Summary of the query execution
+# + queryResult - Results from the SQL query
+# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
+public class ProcedureCallResult {
+    public ExecutionResult? executionResult = ();
+    public stream<record {}, Error?>? queryResult = ();
+    public CustomResultIterator? customResultIterator;
+
+    public isolated function init(CustomResultIterator? customResultIterator = ());
+
+    # Updates `executionResult` or `queryResult` field with the succeeding result in the result list. 
+    # This will also close the current results when called.
+    #
+    # + return - True if the next result is `queryResult`
+    public isolated function getNextQueryResult() returns boolean|Error;
+
+    # Releases the associated resources such as database connection, results, etc.
+    #
+    # + return - An `sql:Error` if any error occurred while cleanup
+    public isolated function close();
+}
+```
+
+Here `getNextQueryResult()` can be used to update the pointer to iterate through the returned result sets.
+
+This sample demonstrates how to execute a stored procedure with a single `INSERT` statement that is executed via the
+`call` remote function of the client.
+
+```ballerina
+int uid = 10;
+sql:IntegerOutParameter insertId = new;
+
+sql:ProcedureCallResult result = 
+                         check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
+stream<record{}, sql:Error?>? resultStr = result.queryResult;
+if resultStr is stream<record{}, sql:Error?> {
+    sql:Error? e = resultStr.forEach(function(record{} result) {
+      // Can perform operations using the record 'result'.
+    });
+}
+check result.close();
+```
+The close operation needs to be explicitly invoked on the `sql:ProcedureCallResult` to release the connection resources 
+and avoid a connection leak as shown above.
+
+# 5. Errors
+
+`sql` package consists of following Errors,
+```bash
+.
+└── Error                            # Generic error type for the `sql` module. 
+    ├── DatabaseError                # Error caused by an issue related to database accessibility, erroneous queries, etc
+    ├── BatchExecuteError            # Error occurred during execution of batch queries.
+    ├── NoRowsError                  # Error that occurs when a query retrieves no rows when at most one row is expected.
+    └── ApplicationError             # Error originating from application-level configurations.
+        └── DataError                # Error during the processing of the parameters or returned results.
+            ├── TypeMismatchError    # Error when a query retrieves a result that differs from the supported result type.
+            ├── ConversionError      # Error when result is corrupted and cannot be casted to expected result type.
+            ├── FieldMismatchError   # Error when the result cannot be casted to the expected record type.
+            └── UnsupportedTypeError # Error that occurs when an unsupported parameter type is added to the query.
+```
+
+All errors include detailed error message.
+
+Along with this `sql:DatabaseError` include Error Details as follows,
+```ballerina
+# Represents the properties belonging to an `sql:DatabaseError`.
+#
+# + errorCode - SQL error code
+# + sqlState - SQL state
+public type DatabaseErrorDetail record {
+    int errorCode;
+    string? sqlState;
+};
+```
+
+`sql:BatchExecuteError` includes detail of the metadata of the executed queries before the error occurred.
+```ballerina
+# Represents the properties belonging to an `sql:BatchExecuteError`.
+#
+# + errorCode - SQL error code
+# + sqlState - SQL state
+# + executionResults - Metadata of the query executions
+public type BatchExecuteErrorDetail record {
+    int errorCode;
+    string? sqlState;
+    ExecutionResult[] executionResults;
+};
+```
