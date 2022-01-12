@@ -52,7 +52,7 @@ public type Client client object {
     # + return - Metadata of the query execution as an `sql:ExecutionResult[]` or an `sql:Error`
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
-    # Executes a SQL query, which calls a stored procedure. This can return results or not.
+    # Executes a SQL query, which calls a stored procedure. This can either return results or nil.
     #
     # + sqlQuery - The SQL query
     # + rowTypes - The array `typedesc` of the records to which the results needs to be returned
