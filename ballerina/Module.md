@@ -242,7 +242,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<Student, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-error? e = check from Student student in resultStream
+check from Student student in resultStream
     do {
        //Can perform operations using the record 'student' of type `Student`.
     }
@@ -263,7 +263,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<record{}, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-error? e = check from record{} student in resultStream 
+check from record{} student in resultStream 
     do {
         // Can perform operations using the record 'student'.
         io:println("Student name: ", student.value["name"]);
@@ -346,7 +346,7 @@ sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
-    error? e = check from record{} value in resultStr
+    check from record{} value in resultStr
         do {
           // Can perform operations using the record 'result'.
         }
