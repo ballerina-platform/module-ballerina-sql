@@ -898,7 +898,7 @@ function testMultipleRecords() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        error? e = check from record{} data in streamData
+        _ = check from record{} data in streamData
             do {
                 returnData = data;
             };
@@ -934,7 +934,7 @@ function testMultipleRecordsWithNoReturnType() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        error? e = check from record{} data in streamData
+        _ = check from record{} data in streamData
             do {
                 returnData = data;
             };
