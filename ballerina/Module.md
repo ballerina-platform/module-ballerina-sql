@@ -1,21 +1,26 @@
 ## Overview
 
-This module provides the generic interface and functionality to interact with a SQL database. The corresponding database
+This module provides the generic interface and functionality to interact with an SQL database. The corresponding database
 clients can be created by using specific database modules such as `mysql` or using the Java Database Connectivity 
 module `jdbc`.
 
 ### List of Database Modules
-Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc/latest) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
-Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases and you can access their DB-specific functionalities.
+Ballerina now has the [`jdbc` module](https://central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
+
+Ballerina also provides specially designed database-specific DB connectors so that you can work with different databases and access their DB-specific functionalities.
+* [`MySQL` module](https://central.ballerina.io/ballerinax/mysql)
+* [`PostgreSQL` module](https://central.ballerina.io/ballerinax/postgresql)
+* [`MSSQL` module (SQL Server)](https://central.ballerina.io/ballerinax/mssql)
+* [`OracleDB` module](https://central.ballerina.io/ballerinax/oracledb)
 
 ### Client
 
-The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used. 
+The database client should be created using any of the database modules listed above and once it is created, the operations and functionality explained below can be used. 
 
 #### Connection Pool Handling
 
 All database modules share the same connection pooling concept and there are three possible scenarios for 
-connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).  
+connection pool handling. For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).  
 
 1. Global, shareable, default connection pool
 
@@ -247,7 +252,7 @@ error? e = resultStream.forEach(function(Student student) {
 });
 ```
 
-Defining the return type is optional and you can query the database without providing the result type. Hence, 
+Defining the return type is optional, and you can query the database without providing the result type. Hence, 
 the above sample can be modified as follows with an open record type as the return type. The property name in the open record 
 type will be the same as how the column is defined in the database. 
 
