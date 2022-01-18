@@ -70,9 +70,10 @@ function testCallWithStringTypes() returns error? {
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
-    error? e = queryData.forEach(function(StringDataForCall data) {
-        returnData = data;
-    });
+    error? e = check from StringDataForCall data in queryData
+        do {
+            returnData = data;
+        };
     if e is error {
         test:assertFail("Call procedure insert did not work properly");
     } else {
@@ -101,9 +102,10 @@ function testCallWithStringTypesInParams() returns error? {
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
-    error? e = queryData.forEach(function(StringDataForCall data) {
-        returnData = data;
-    });
+    error? e = check from StringDataForCall data in queryData
+        do {
+            returnData = data;
+        };
     if e is error {
         test:assertFail("Call procedure insert did not work properly");
     } else {
@@ -896,9 +898,10 @@ function testMultipleRecords() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        check streamData.forEach(function(record {} data) {
-            returnData = data;
-        });
+        error? e = check from record{} data in streamData
+            do {
+                returnData = data;
+            };
     } else {
         test:assertFail("streamData is nil.");
     }
@@ -931,9 +934,10 @@ function testMultipleRecordsWithNoReturnType() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        check streamData.forEach(function(record {} data) {
-            returnData = data;
-        });
+        error? e = check from record{} data in streamData
+            do {
+                returnData = data;
+            };
     } else {
         test:assertFail("streamData is nil.");
     }
