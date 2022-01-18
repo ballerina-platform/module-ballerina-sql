@@ -242,9 +242,10 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<Student, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-error? e = resultStream.forEach(function(Student student) {
-   //Can perform operations using the record 'student' of type `Student`.
-});
+error? e = check from Student student in resultStream
+    do {
+       //Can perform operations using the record 'student' of type `Student`.
+    }
 ```
 
 Defining the return type is optional and you can query the database without providing the result type. Hence, 
@@ -262,10 +263,11 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<record{}, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-error? e = resultStream.forEach(function(record{} student) {
-    // Can perform operations using the record 'student'.
-    io:println("Student name: ", student.value["name"]);
-});
+error? e = check from record{} student in resultStream 
+    do {
+        // Can perform operations using the record 'student'.
+        io:println("Student name: ", student.value["name"]);
+    }
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
@@ -344,9 +346,10 @@ sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
-    sql:Error? e = resultStr.forEach(function(record{} result) {
-      // Can perform operations using the record 'result'.
-    });
+    error? e = check from record{} value in streamData
+        do {
+          // Can perform operations using the record 'result'.
+        }
 }
 check result.close();
 ```
