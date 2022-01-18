@@ -346,7 +346,7 @@ sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
-    error? e = check from record{} value in streamData
+    error? e = check from record{} value in resultStr
         do {
           // Can perform operations using the record 'result'.
         }
