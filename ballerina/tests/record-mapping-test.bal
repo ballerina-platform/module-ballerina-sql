@@ -148,7 +148,7 @@ function queryTypedRecordWithFieldsStream() returns error? {
     stream<Student1, Error?> studentStream = 
                 dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
-    _ = check from Student1 data in studentStream
+    check from Student1 data in studentStream
         do {
             returnData = data;
         };

@@ -70,23 +70,19 @@ function testCallWithStringTypes() returns error? {
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
-    error? e = check from StringDataForCall data in queryData
+    check from StringDataForCall data in queryData
         do {
             returnData = data;
         };
-    if e is error {
-        test:assertFail("Call procedure insert did not work properly");
-    } else {
-        StringDataForCall expectedDataRow = {
-            varchar_type: "test1",
-            charmax_type: "test2     ",
-            char_type: "c",
-            charactermax_type: "test3     ",
-            character_type: "d",
-            nvarcharmax_type: "test4"
-        };
-        test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
-    }
+    StringDataForCall expectedDataRow = {
+        varchar_type: "test1",
+        charmax_type: "test2     ",
+        char_type: "c",
+        charactermax_type: "test3     ",
+        character_type: "d",
+        nvarcharmax_type: "test4"
+    };
+    test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     check dbClient.close();
 }
 
@@ -106,19 +102,15 @@ function testCallWithStringTypesInParams() returns error? {
         do {
             returnData = data;
         };
-    if e is error {
-        test:assertFail("Call procedure insert did not work properly");
-    } else {
-        StringDataForCall expectedDataRow = {
-            varchar_type: "test1",
-            charmax_type: "test2     ",
-            char_type: "c",
-            charactermax_type: "test3     ",
-            character_type: "d",
-            nvarcharmax_type: "test4"
-        };
-        test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
-    }
+    StringDataForCall expectedDataRow = {
+        varchar_type: "test1",
+        charmax_type: "test2     ",
+        char_type: "c",
+        charactermax_type: "test3     ",
+        character_type: "d",
+        nvarcharmax_type: "test4"
+    };
+    test:assertEquals(returnData, expectedDataRow, "Call procedure insert and query did not match.");
     check dbClient.close();
 }
 
@@ -898,7 +890,7 @@ function testMultipleRecords() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        _ = check from record{} data in streamData
+        check from record{} data in streamData
             do {
                 returnData = data;
             };
@@ -934,7 +926,7 @@ function testMultipleRecordsWithNoReturnType() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        _ = check from record{} data in streamData
+        check from record{} data in streamData
             do {
                 returnData = data;
             };
