@@ -1356,7 +1356,7 @@ public type ParameterizedCallQuery distinct object {
 # The result iterator used to iterate results in stream returned from `query` function.
 #
 # + customResultIterator - Any custom result iterator to be used to override the default behaviour
-# + err - Used to hold any error that occurs at the instance of stream creation
+# + err - Used to hold any error that occurs at the instance of the stream creation
 # + isClosed - Indicates the stream state
 public class ResultIterator {
     private boolean isClosed = false;
@@ -1410,7 +1410,7 @@ public class ResultIterator {
     }
 }
 
-# Represents the results from `call` method holding returned results or metadata of the query execution.
+# Represents the results from the `call` method holding the returned results or metadata of the query execution.
 #
 # + executionResult - Summary of the query execution
 # + queryResult - Results from the SQL query
@@ -1443,7 +1443,7 @@ public class ProcedureCallResult {
     }
 }
 
-# The iterator for the stream returned in `query` function to be used to override the default behaviour of `sql:ResultIterator`.
+# The iterator for the stream returned in the `query` function to be used to override the default behavior of the `sql:ResultIterator`.
 public type CustomResultIterator object {
     public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;

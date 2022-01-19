@@ -46,7 +46,7 @@ public type DatabaseError distinct (Error & error<DatabaseErrorDetail>);
 # Represents an error that occurs during the execution of batch queries.
 public type BatchExecuteError distinct (Error & error<BatchExecuteErrorDetail>);
 
-# Represents an error that occurs when a query retrieves no rows when at least one row is expected.
+# Represents an error that occurs when a query retrieves does not retrieve any rows when at least one row is expected.
 public type NoRowsError distinct Error;
 
 # Represents an error originating from application-level configurations.

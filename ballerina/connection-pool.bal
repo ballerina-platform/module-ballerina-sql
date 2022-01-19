@@ -20,7 +20,7 @@ configurable int maxOpenConnections = 15;
 configurable decimal maxConnectionLifeTime = 1800.0;
 configurable int minIdleConnections = 15;
 
-# Represents the properties which are used to configure a DB connection pool.
+# Represents the properties, which are used to configure a DB connection pool.
 # Default values of the fields can be set through the configuration API.
 #
 # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have.
