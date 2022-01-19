@@ -9,9 +9,9 @@ Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerin
 
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
 * [`MySQL` module](https://central.ballerina.io/ballerinax/mysql)
-* [`PostgrSQL` module`](https://central.ballerina.io/ballerinax/postgresql)
-* [`MSSQL` module`](https://central.ballerina.io/ballerinax/mssql)
-* [`OracleDB` module`](https://central.ballerina.io/ballerinax/oracledb)
+* [`PostgreSQL` module](https://central.ballerina.io/ballerinax/postgresql)
+* [`MSSQL` module](https://central.ballerina.io/ballerinax/mssql)
+* [`OracleDB` module](https://central.ballerina.io/ballerinax/oracledb)
 
 ### Client
 
