@@ -604,7 +604,8 @@ public distinct class RowValue {
     }
 }
 
-# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Value` type can be indicated using `${<variable name>}`.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Value` type can be indicated using `${<variable name>}`
+# such as `` The sql:ParameterizedQuery is ${variable_name} ``.
 # This validates the parameter types during the query execution.  
 #
 # + strings - The separated parts of the SQL query 
@@ -1342,7 +1343,8 @@ public class InOutParameter {
 # Generic type that can be passed to `sql:ParameterizedCallQuery` to indicate procedure/function parameters.
 public type Parameter Value|InOutParameter|OutParameter;
 
-# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`
+# such as `` The sql:ParameterizedQuery is ${variable_name} ``.
 # This validates the parameter types during the query execution.
 #
 # + strings - The separated parts of the SQL query 
