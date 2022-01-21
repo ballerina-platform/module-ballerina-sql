@@ -56,17 +56,17 @@ lifetime of the client.
 **Configuration available for tweaking the connection pool properties:**
 
    ```ballerina
-   # The properties which are used to configure DB connection pool.
+   # The properties, which are used to configure a DB connection pool.
    # Default values of the fields can be set through the configuration API.
    #
-   # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have including
-   #                        both idle and in-use connections. The default value is 15. This can be changed through the
-   #                        configuration API with the `ballerina.sql.maxOpenConnections` key
+   # + maxOpenConnections - The maximum number of open connections that the pool is allowed to have.
+   #                        Includes both idle and in-use connections. The default value is 15. This can be changed through
+   #                        the configuration API with the `ballerina.sql.maxOpenConnections` key
    # + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. The default value is 1800
    #                           seconds (30 minutes). This can be changed through the configuration API with the
    #                           `ballerina.sql.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
    #                           lifetime (infinite lifetime)
-   # + minIdleConnections - The minimum number of idle connections that the pool tries to maintain in it. The default
+   # + minIdleConnections - The minimum number of idle connections that the pool tries to maintain. The default
    #                        value is the same as `maxOpenConnections` and it can be changed through the configuration
    #                        API with the `ballerina.sql.minIdleConnections` key
    public type ConnectionPool record {|
@@ -323,7 +323,7 @@ The returned stream needs to be closed properly to release resources. The stream
 is iterated fully or consists of an error. If result is accessed one by one using `next()` method, it should be closed 
 after the required results are accessed.
 ```ballerina
-# Releases the associated resources such as database connection, results, etc.
+# Releases the associated resources such as the database connection, results, etc.
 #
 # + return - An `sql:Error` if any error occurred while cleanup
 public isolated function close() returns Error?;
@@ -339,11 +339,11 @@ check resultStream.close();
 `queryRow()` remote method executes the SQL query return at most one row of the result.
 ```ballerina
 # Executes the query, which is expected to return at most one row of the result.
-# If the query does not return any results, `sql:NoRowsError` is returned
+# If the query does not return any results, `sql:NoRowsError` is returned.
 #
 # + sqlQuery - The SQL query
 # + returnType - The `typedesc` of the record to which the result needs to be returned.
-#                It can be a basic type if the query contains only one column
+#                It can be a basic type if the query result contains only one column
 # + return - Result in the `returnType` type or an `sql:Error`
 remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
                                             returns returnType|Error;
@@ -412,9 +412,9 @@ sql:ExecutionResult result = check dbClient->execute(query);
 
 `batchExecute()` remote method executes the SQL query with multiple sets of parameters in a batch.
 ```ballerina
-# Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned 
-# (not results from the query).
-# If one of the commands in the batch fails, this will return an `sql:BatchExecuteError`. However, the driver may
+# Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned
+# (not the results from the query).
+# If one of the commands in the batch fails, an `sql:BatchExecuteError` will be returned. However, the driver may
 # or may not continue to process the remaining commands in the batch after a failure.
 #
 # + sqlQueries - The SQL query with multiple sets of parameters
@@ -443,10 +443,10 @@ sql:ExecutionResult[] result = check dbClient->batchExecute(batch);
 
 `call()` remote method executes a SQL query, which calls a stored procedure. This can either return results or nil.
 ```ballerina
-# Executes a SQL query, which calls a stored procedure. This can either return results or nil.
+# Executes an SQL query, which calls a stored procedure. This may or may not return results.
 #
 # + sqlQuery - The SQL query
-# + rowTypes - The array `typedesc` of the records to which the results needs to be returned
+# + rowTypes - `typedesc` array of the records to which the results need to be returned
 # + return - Summary of the execution and results are returned in an `sql:ProcedureCallResult`, or an `sql:Error`
 remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
 returns ProcedureCallResult|Error;
@@ -454,11 +454,11 @@ returns ProcedureCallResult|Error;
 
 The returned results are returned as of type `sql:ProcedureCallResult`,
 ```ballerina
-# Represents the results from `call` method holding returned results or metadata of query execution.
+# Represents the results from the `call` method holding the returned results or metadata of the query execution.
 #
 # + executionResult - Summary of the query execution
 # + queryResult - Results from the SQL query
-# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
+# + customResultIterator - Any custom result iterator to be used to override the default behaviour
 public class ProcedureCallResult {
     public ExecutionResult? executionResult = ();
     public stream<record {}, Error?>? queryResult = ();
@@ -467,12 +467,12 @@ public class ProcedureCallResult {
     public isolated function init(CustomResultIterator? customResultIterator = ());
 
     # Updates `executionResult` or `queryResult` field with the succeeding result in the result list. 
-    # This will also close the current results when called.
+    # This will also close the current result when called.
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error;
 
-    # Releases the associated resources such as database connection, results, etc.
+    # Releases the associated resources such as the database connection, results, etc.
     #
     # + return - An `sql:Error` if any error occurred while cleanup
     public isolated function close();
@@ -492,9 +492,10 @@ sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
-    sql:Error? e = resultStr.forEach(function(record{} result) {
-      // Can perform operations using the record 'result'.
-    });
+    check from record{} value in resultStr
+        do {
+          // Can perform operations using the record 'result'.
+        };
 }
 check result.close();
 ```
@@ -508,13 +509,13 @@ and avoid a connection leak as shown above.
 .
 └── Error                            # Generic error type for the `sql` module. 
     ├── DatabaseError                # Error caused by an issue related to database accessibility, erroneous queries, etc
-    ├── BatchExecuteError            # Error occurred during execution of batch queries.
-    ├── NoRowsError                  # Error that occurs when a query retrieves no rows when at most one row is expected.
+    ├── BatchExecuteError            # Error that occurs during the execution of batch queries.
+    ├── NoRowsError                  # Error when a query retrieves does not retrieve any rows when at least one row is expected.
     └── ApplicationError             # Error originating from application-level configurations.
         └── DataError                # Error during the processing of the parameters or returned results.
             ├── TypeMismatchError    # Error when a query retrieves a result that differs from the supported result type.
             ├── ConversionError      # Error when result is corrupted and cannot be casted to expected result type.
-            ├── FieldMismatchError   # Error when the result cannot be casted to the expected record type.
+            ├── FieldMismatchError   # Error when a query retrieves a result that cannot be mapped to the expected record type.
             └── UnsupportedTypeError # Error that occurs when an unsupported parameter type is added to the query.
 ```
 
