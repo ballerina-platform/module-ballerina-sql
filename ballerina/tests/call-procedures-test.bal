@@ -98,7 +98,7 @@ function testCallWithStringTypesInParams() returns error? {
                    nvarcharmax_type from StringTypes where id = ${id};`;
     stream<StringDataForCall, Error?> queryData = dbClient->query(sqlQuery);
     StringDataForCall? returnData = ();
-    error? e = check from StringDataForCall data in queryData
+    check from StringDataForCall data in queryData
         do {
             returnData = data;
         };

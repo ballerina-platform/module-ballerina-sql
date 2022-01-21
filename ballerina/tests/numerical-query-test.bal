@@ -81,7 +81,7 @@ function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<NumericTypeForQuery, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     NumericTypeForQuery? returnData = ();
-    _ = check from NumericTypeForQuery data in streamData
+    check from NumericTypeForQuery data in streamData
         do {
             returnData = data;
         };
