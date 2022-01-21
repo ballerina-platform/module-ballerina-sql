@@ -249,7 +249,7 @@ stream<Student, sql:Error?> resultStream = dbClient->query(query);
 check from Student student in resultStream
     do {
        //Can perform operations using the record 'student' of type `Student`.
-    }
+    };
 ```
 
 Defining the return type is optional, and you can query the database without providing the result type. Hence,
@@ -271,7 +271,7 @@ check from record{} student in resultStream
     do {
         // Can perform operations using the record 'student'.
         io:println("Student name: ", student.value["name"]);
-    }
+    };
 ```
 
 There are situations in which you may not want to iterate through the database and in that case, you may decide
@@ -353,7 +353,7 @@ if resultStr is stream<record{}, sql:Error?> {
     check from record{} value in resultStr
         do {
           // Can perform operations using the record 'result'.
-        }
+        };
 }
 check result.close();
 ```
