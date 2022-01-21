@@ -510,12 +510,12 @@ and avoid a connection leak as shown above.
 └── Error                            # Generic error type for the `sql` module. 
     ├── DatabaseError                # Error caused by an issue related to database accessibility, erroneous queries, etc
     ├── BatchExecuteError            # Error that occurs during the execution of batch queries.
-    ├── NoRowsError                  # Error that occurs when a query retrieves does not retrieve any rows when at least one row is expected.
+    ├── NoRowsError                  # Error when a query retrieves does not retrieve any rows when at least one row is expected.
     └── ApplicationError             # Error originating from application-level configurations.
-        └── DataError                # Error that occurs during the processing of the parameters or returned results.
+        └── DataError                # Error during the processing of the parameters or returned results.
             ├── TypeMismatchError    # Error when a query retrieves a result that differs from the supported result type.
             ├── ConversionError      # Error when result is corrupted and cannot be casted to expected result type.
-            ├── FieldMismatchError   # Error that occurs when a query retrieves a result that cannot be mapped to the expected record type.
+            ├── FieldMismatchError   # Error when a query retrieves a result that cannot be mapped to the expected record type.
             └── UnsupportedTypeError # Error that occurs when an unsupported parameter type is added to the query.
 ```
 
