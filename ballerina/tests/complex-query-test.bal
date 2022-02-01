@@ -292,16 +292,19 @@ function testMultipleRecordRetrieval() returns error? {
 
     ResultMap? mixTypesActual = ();
     int counter = 0;
-    check from record{} value in streamData
-        do {
-            if value is ResultMap && counter == 0 {
-                mixTypesActual = value;
-            }
-            counter = counter + 1;
-        };
+    error? e = streamData.forEach(function(record {} value) {
+        if value is ResultMap && counter == 0 {
+            mixTypesActual = value;
+        }
+        counter = counter + 1;
+    });
+    if e is error {
+        test:assertFail("Error when iterating through records " + e.message());
+    }
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
     test:assertEquals(counter, 4);
     check dbClient.close();
+
 }
 
 type ResultDates record {
@@ -510,15 +513,17 @@ function testColumnAlias() returns error? {
         dt2int_type: 100
     };
     int counter = 0;
-    check from record{} value in queryResult
-        do {
-            if value is ResultSetTestAlias {
-                test:assertEquals(value, expectedData, "Expected record did not match.");
-                counter = counter + 1;
-            } else {
-                test:assertFail("Expected data type is ResultSetTestAlias");
-            }
-        };
+    error? e = queryResult.forEach(function(record {} value) {
+        if value is ResultSetTestAlias {
+            test:assertEquals(value, expectedData, "Expected record did not match.");
+            counter = counter + 1;
+        } else {
+            test:assertFail("Expected data type is ResultSetTestAlias");
+        }
+    });
+    if e is error {
+        test:assertFail("Query failed");
+    }
     test:assertEquals(counter, 1, "Expected only one data row.");
     check dbClient.close();
 }
@@ -542,13 +547,15 @@ function testQueryRowId() returns error? {
 
     record {}? mixTypesActual = ();
     int counter = 0;
-    check from record{} value in streamData
-        do {
-            if counter == 0 {
-                mixTypesActual = value;
-            }
-            counter = counter + 1;
-        };
+    error? e = streamData.forEach(function(record {} value) {
+        if counter == 0 {
+            mixTypesActual = value;
+        }
+        counter = counter + 1;
+    });
+    if e is error {
+        test:assertFail("Query failed");
+    }
     test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
     test:assertEquals(counter, 4);
     check dbClient.close();

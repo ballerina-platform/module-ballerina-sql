@@ -43,17 +43,17 @@ public type Error distinct error;
 # database resource clean-up, and other similar scenarios.
 public type DatabaseError distinct (Error & error<DatabaseErrorDetail>);
 
-# Represents an error that occurs during the execution of batch queries.
+# Represents an error occurred during execution of batch queries.
 public type BatchExecuteError distinct (Error & error<BatchExecuteErrorDetail>);
 
-# Represents an error that occurs when a query retrieves does not retrieve any rows when at least one row is expected.
+# Represents an error that occurs when a query retrieves no rows when at most one row is expected.
 public type NoRowsError distinct Error;
 
 # Represents an error originating from application-level configurations.
 public type ApplicationError distinct Error;
 
 //Level 3
-# Represents an error that occurs during the processing of the parameters or returned results.
+# Represents an error during the processing of the parameters or returned results.
 public type DataError distinct ApplicationError;
 
 // Level 4
@@ -63,7 +63,7 @@ public type TypeMismatchError distinct DataError;
 # Represents an error that occurs when a query retrieves a result that is corrupted and cannot be converted to the expected type.
 public type ConversionError distinct DataError;
 
-# Represents an error that occurs when a query retrieves a result that cannot be mapped to the expected record type.
+# Represents an error that occurs when a query retrieves a result that cannot be casted to the expected record type.
 public type FieldMismatchError distinct DataError;
 
 # Represents an error that occurs when an unsupported parameter type is added to the query.

@@ -51,10 +51,9 @@ function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {}? returnData = ();
-    check from record{} data in streamData
-        do {
-            returnData = data;
-        };
+    check streamData.forEach(function(record {} data) {
+        returnData = data;
+    });
     check dbClient.close();
 
     if !(returnData is ()) {
@@ -81,10 +80,9 @@ function testQueryNumericTypeRecord() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<NumericTypeForQuery, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     NumericTypeForQuery? returnData = ();
-    check from NumericTypeForQuery data in streamData
-        do {
-            returnData = data;
-        };
+    check streamData.forEach(function(NumericTypeForQuery data) {
+        returnData = data;
+    });
     check dbClient.close();
 
     test:assertEquals(returnData?.id, 1);
@@ -281,11 +279,10 @@ function testQueryFromNullTable() returns error? {
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericNullTypes`);
     record {} returnData = {};
     int count = 0;
-    check from record{} data in streamData
-        do {
-            returnData = data;
-            count += 1;
-        };
+    check streamData.forEach(function(record {} data) {
+        returnData = data;
+        count += 1;
+    });
     check dbClient.close();
     test:assertEquals(count, 2, "More than one record present");
     test:assertEquals(returnData["ID"], 2);
@@ -311,10 +308,9 @@ function testQueryDatabaseError() returns error? {
     stream<DataTable, Error?> streamData = 
             <stream<DataTable, Error?>>dbClient->query(`SELECT int_type from DataTable1`, DataTable);
 
-    error? e = from DataTable data in streamData
-        do {
-            // No need to do anything
-        };
+    Error? e = streamData.forEach(function(DataTable data) {
+    // No need to do anything
+    });
     check dbClient.close();
     test:assertTrue(e is Error);
 }

@@ -148,10 +148,9 @@ function queryTypedRecordWithFieldsStream() returns error? {
     stream<Student1, Error?> studentStream = 
                 dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
-    check from Student1 data in studentStream
-        do {
-            returnData = data;
-        };
+    check studentStream.forEach(function(Student1 data) {
+        returnData = data;
+    });
 
     check dbClient.close();
 

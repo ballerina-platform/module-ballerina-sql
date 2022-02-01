@@ -99,7 +99,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                 ExpressionNode valueNode = ((SpecificFieldNode) field).valueExpr().get();
                 switch (name) {
                     case Constants.ConnectionPool.MAX_OPEN_CONNECTIONS:
-                        int maxOpenConnections = Integer.parseInt(getTerminalNodeValue(valueNode, "1"));
+                        int maxOpenConnections = Integer.parseInt(getTerminalNodeValue(valueNode));
                         if (maxOpenConnections < 1) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_101.getCode(), SQL_101.getMessage(),
                                     SQL_101.getSeverity());
@@ -110,7 +110,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         }
                         break;
                     case Constants.ConnectionPool.MIN_IDLE_CONNECTIONS:
-                        int minIdleConnection = Integer.parseInt(getTerminalNodeValue(valueNode, "0"));
+                        int minIdleConnection = Integer.parseInt(getTerminalNodeValue(valueNode));
                         if (minIdleConnection < 0) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_102.getCode(), SQL_102.getMessage(),
                                     SQL_102.getSeverity());
@@ -120,7 +120,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         }
                         break;
                     case Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME:
-                        float maxConnectionTime = Float.parseFloat(getTerminalNodeValue(valueNode, "30"));
+                        float maxConnectionTime = Float.parseFloat(getTerminalNodeValue(valueNode));
                         if (maxConnectionTime < 30) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_103.getCode(), SQL_103.getMessage(),
                                     SQL_103.getSeverity());
@@ -137,16 +137,15 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
         }
     }
 
-    private String getTerminalNodeValue(Node valueNode, String defaultValue) {
-        String value = defaultValue;
+    private String getTerminalNodeValue(Node valueNode) {
+        String value;
         if (valueNode instanceof BasicLiteralNode) {
             value = ((BasicLiteralNode) valueNode).literalToken().text();
-        } else if (valueNode instanceof UnaryExpressionNode) {
+        } else {
             UnaryExpressionNode unaryExpressionNode = (UnaryExpressionNode) valueNode;
             value = unaryExpressionNode.unaryOperator() +
                     ((BasicLiteralNode) unaryExpressionNode.expression()).literalToken().text();
         }
-        // Currently we cannot process values from variables, this needs code flow analysis
         return value.replaceAll(UNNECESSARY_CHARS_REGEX, "");
     }
 
