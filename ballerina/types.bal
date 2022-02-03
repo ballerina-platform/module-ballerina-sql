@@ -604,7 +604,8 @@ public distinct class RowValue {
     }
 }
 
-# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Value` type can be indicated using `${<variable name>}`.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Value` type can be indicated using `${<variable name>}`
+# such as `` `The sql:ParameterizedQuery is ${variable_name}` ``.
 # This validates the parameter types during the query execution.  
 #
 # + strings - The separated parts of the SQL query 
@@ -624,7 +625,7 @@ public const EXECUTION_FAILED = -3;
 
 # Metadata of the query execution.
 #
-# + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,  
+# + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,
 #                      (1) A number greater than or equal to zero, the count of affected rows after the successful execution of the query  
 #                      (2) A value of the `SUCCESS_NO_INFO`, the count of affected rows is unknown after the successful execution of the query  
 #                      (3) A value of the `EXECUTION_FAILED`, the query execution failed
@@ -1342,7 +1343,8 @@ public class InOutParameter {
 # Generic type that can be passed to `sql:ParameterizedCallQuery` to indicate procedure/function parameters.
 public type Parameter Value|InOutParameter|OutParameter;
 
-# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`.
+# The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`
+# such as `` `The sql:ParameterizedQuery is ${variable_name}` ``.
 # This validates the parameter types during the query execution.
 #
 # + strings - The separated parts of the SQL query 
@@ -1355,9 +1357,9 @@ public type ParameterizedCallQuery distinct object {
 
 # The result iterator used to iterate results in stream returned from `query` function.
 #
-# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
-# + err - Used to hold any error occurring at the instance of stream creation
-# + isClosed - Indicated the stream state
+# + customResultIterator - Any custom result iterator to be used to override the default behaviour
+# + err - Used to hold any error that occurs at the instance of the stream creation
+# + isClosed - Indicates the stream state
 public class ResultIterator {
     private boolean isClosed = false;
     private Error? err;
@@ -1410,11 +1412,11 @@ public class ResultIterator {
     }
 }
 
-# Represents the results from `call` method holding returned results or metadata of query execution.
+# Represents the results from the `call` method holding the returned results or metadata of the query execution.
 #
 # + executionResult - Summary of the query execution
 # + queryResult - Results from the SQL query
-# + customResultIterator - Any custom result iterator to be used overriding the default behaviour
+# + customResultIterator - Any custom result iterator to be used to override the default behaviour
 public class ProcedureCallResult {
     public ExecutionResult? executionResult = ();
     public stream<record {}, Error?>? queryResult = ();
@@ -1425,7 +1427,7 @@ public class ProcedureCallResult {
     }
 
     # Updates `executionResult` or `queryResult` field with the succeeding result in the result list. This will also close the current
-    # results when called.
+    # result when called.
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error {
@@ -1435,7 +1437,7 @@ public class ProcedureCallResult {
         return getNextQueryResult(self);
     }
 
-    # Releases the associated resources such as database connection, results, etc.
+    # Releases the associated resources such as the database connection, results, etc.
     #
     # + return - An `sql:Error` if any error occurred while cleanup
     public isolated function close() returns Error? {
@@ -1443,7 +1445,7 @@ public class ProcedureCallResult {
     }
 }
 
-# The iterator for the stream returned in `query` function to be used overriding the default behaviour of sql:ResultIterator.
+# The iterator for the stream returned in the `query` function to be used to override the default behavior of the `sql:ResultIterator`.
 public type CustomResultIterator object {
     public isolated function nextResult(ResultIterator iterator) returns record {}|Error?;
     public isolated function getNextQueryResult(ProcedureCallResult callResult) returns boolean|Error;
