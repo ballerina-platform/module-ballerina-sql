@@ -3,14 +3,19 @@
 _Owners_: @daneshk @niveathika  
 _Reviewers_: @daneshk  
 _Created_: 2022/01/13   
-_Updated_: 2022/01/13  
+_Updated_: 2022/02/07  
+_Edition_: Swan Lake  
 _Issue_: [#2060](https://github.com/ballerina-platform/ballerina-standard-library/issues/2060)
 
 # Introduction
 
-This is the specification for SQL standard library, which provides the generic interface and functionality to interact
-with a SQL database in the [Ballerina programming language](https://ballerina.io/), which is an open-source programming 
-language for the cloud that makes it easier to use, combine, and create network services.
+This is the specification for the SQL standard library of [Ballerina language](https://ballerina.io/), which provides the generic interface and functionality to interact with a SQL database.  
+
+The SQL library specification has evolved and may continue to evolve in the future. Released versions of the specification can be found under the relevant Github tag. 
+
+If you have any feedback or suggestions about the library, start a discussion via a Github issue or in the [Slack channel](https://ballerina.io/community/). Based on the outcome of the discussion, specification and implementation can be updated. Community feedback is always welcome. Any accepted proposal which affects the specification is stored under `/docs/proposals`. Proposals under discussion can be found with the label `type/proposal` in Github.
+
+Conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
 # Contents
 
