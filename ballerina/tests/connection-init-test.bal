@@ -15,13 +15,13 @@
 
 import ballerina/test;
 
-string connectDB = urlPrefix + "9001/connection";
+string connectDB = urlPrefix + "9001/Connection";
 
 @test:BeforeGroups {
     value: ["connection"]
 }
 function initConnectionContainer() returns error? {
-    check initializeDockerContainer("sql-connection", "connection", "9001", "connection", "connector-init-test-data.sql");
+    check initializeDockerContainer("sql-connection", "Connection", "9001", "connection", "connector-init-test-data.sql");
 }
 
 @test:AfterGroups {

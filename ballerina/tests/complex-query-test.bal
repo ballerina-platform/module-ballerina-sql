@@ -16,13 +16,13 @@
 import ballerina/test;
 import ballerina/time;
 
-string complexQueryDb = urlPrefix + "9008/querycomplexparams";
+string complexQueryDb = urlPrefix + "9008/QueryComplexParams";
 
 @test:BeforeGroups {
     value: ["query-complex-params"]
 }
 function initQueryComplexContainer() returns error? {
-    check initializeDockerContainer("sql-query-complex", "querycomplexparams", "9008", "query", "complex-test-data.sql");
+    check initializeDockerContainer("sql-query-complex", "QueryComplexParams", "9008", "query", "complex-test-data.sql");
 }
 
 @test:AfterGroups {

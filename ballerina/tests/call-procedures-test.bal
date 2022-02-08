@@ -18,7 +18,7 @@ import ballerina/time;
 import ballerina/jballerina.java;
 
 string proceduresDb = "procedures";
-string proceduresDB = urlPrefix + "9012/procedures";
+string proceduresDB = urlPrefix + "9012/Procedures";
 
 type IntArray int[];
 type StringArray string[];
@@ -47,14 +47,14 @@ type StringDataSingle record {
 @test:BeforeGroups {
     value: ["procedures"]
 }
-function initproceduresContainer() returns error? {
-    check initializeDockerContainer("sql-procedures", "procedures", "9012", "procedures", "call-procedures-test-data.sql");
+function initProceduresContainer() returns error? {
+    check initializeDockerContainer("sql-procedures", "Procedures", "9012", "procedures", "call-procedures-test-data.sql");
 }
 
 @test:AfterGroups {
     value: ["procedures"]
 }
-function cleanproceduresContainer() returns error? {
+function cleanProceduresContainer() returns error? {
     check cleanDockerContainer("sql-procedures");
 }
 
@@ -441,7 +441,7 @@ function testCallWithInoutParams() returns error? {
     check ret.close();
     decimal[] decimalArray = [245, 5559, 8796];
     byte[][] byteArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]];
-    test:assertEquals(paraIntArray.get(IntArray), [1, 2, 3], "Int arra out parameter of procedure did not match.");
+    test:assertEquals(paraIntArray.get(IntArray), [1, 2, 3], "Int array out parameter of procedure did not match.");
     test:assertEquals(paraStrArray.get(StringArray), ["Hello", "Ballerina"], "String array out parameter " + 
     "of procedure did not match.");
     test:assertEquals(paraFloArray.get(FloatArray), [245.23, 5559.49, 8796.123], "Float array out parameter of " + 
@@ -545,11 +545,11 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     groups: ["procedures"],
     dependsOn: [testCreateProcedures7]
 }
-function testCallWithTimestamptzRetrievalWithOutParams() returns error? {
+function testCallWithTimestampTZRetrievalWithOutParams() returns error? {
     IntegerValue paraID = new (1);
     TimestampWithTimezoneOutParameter paraTimestampWithTz = new;
 
-    ParameterizedCallQuery callProcedureQuery = `call SelectTimestamptzWithOutParams(${paraID}, ${paraTimestampWithTz})`;
+    ParameterizedCallQuery callProcedureQuery = `call SelectTimestampTZWithOutParams(${paraID}, ${paraTimestampWithTz})`;
 
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
@@ -776,7 +776,7 @@ function testCreateProcedures6() returns error? {
 }
 function testCreateProcedures7() returns error? {
     ParameterizedQuery createProcedure = `
-        CREATE PROCEDURE SelectTimestamptzWithOutParams (IN p_id INT, OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
+        CREATE PROCEDURE SelectTimestampTZWithOutParams (IN p_id INT, OUT p_timestampwithtz_type TIMESTAMP WITH TIME ZONE)
             READS SQL DATA DYNAMIC RESULT SETS 2
             BEGIN ATOMIC
                 SELECT timestampwithtz_type INTO p_timestampwithtz_type FROM DateTimeTypes where id = p_id;
@@ -1168,10 +1168,10 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     time:Date[] dateArray = [{"year": 2017, "month": 2, "day": 3}, {"year": 2017, "month": 2, "day": 3}];
     string[] dateArrayInString = ["2017-02-03", "2017-02-03"];
     time:TimeOfDay[] timeOfDayArray = [{"hour": 11, "minute": 22, "second": 42}, {"hour": 12, "minute": 23, "second": 45}];
-    string[] timeOfDayArrayInstring = ["11:22:42", "12:23:45"];
-    time:TimeOfDay[] timetzArray = [{"utcOffset": {"hours": 6, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+06:30"}, {"utcOffset": {"hours": 4, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+04:30"}];
-    time:Civil[] timestamptzArray = [{"utcOffset": {"hours": -8, "minutes": 0}, "timeAbbrev": "-08:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}, {"utcOffset": {"hours": -5, "minutes": 0}, "timeAbbrev": "-05:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}];
-    string[] timestamptzArrayInString = ["2017-01-25T16:33:55-08:00", "2017-01-25T16:33:55-05:00"];
+    string[] timeOfDayArrayInString = ["11:22:42", "12:23:45"];
+    time:TimeOfDay[] timeTZArray = [{"utcOffset": {"hours": 6, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+06:30"}, {"utcOffset": {"hours": 4, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+04:30"}];
+    time:Civil[] timestampTZArray = [{"utcOffset": {"hours": -8, "minutes": 0}, "timeAbbrev": "-08:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}, {"utcOffset": {"hours": -5, "minutes": 0}, "timeAbbrev": "-05:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}];
+    string[] timestampTZArrayInString = ["2017-01-25T16:33:55-08:00", "2017-01-25T16:33:55-05:00"];
     test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " + 
     "procedure did not match.");
     test:assertEquals(smallint_array.get(StringArray), ["12", "232"], "Small int array out parameter of " + 
@@ -1231,18 +1231,18 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     "of procedure did not match.");
     test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " + 
     "of procedure did not match.");
-    test:assertEquals(time_array.get(StringArray), timeOfDayArrayInstring, "String time array out parameter " + 
+    test:assertEquals(time_array.get(StringArray), timeOfDayArrayInString, "String time array out parameter " +
     "of procedure did not match.");
     test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " + 
     "of procedure did not match.");
     test:assertFalse((bit_array.get(StringArray) is Error));
-    test:assertEquals(time_tz_array.get(TimeOfDayArray), timetzArray, "Time with timezone array out parameter " + 
+    test:assertEquals(time_tz_array.get(TimeOfDayArray), timeTZArray, "Time with timezone array out parameter " +
     "of procedure did not match.");
     test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30", "16:33:55+04:30"], "Timestamp with timezone array out " + 
     "parameter of procedure did not match.");
-    test:assertEquals(timestamp_tz_array.get(CivilArray), timestamptzArray, "Timestamp with timezone array out " + 
+    test:assertEquals(timestamp_tz_array.get(CivilArray), timestampTZArray, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
-    test:assertEquals(timestamp_tz_array.get(StringArray), timestamptzArrayInString, "Timestamp with timezone array out " + 
+    test:assertEquals(timestamp_tz_array.get(StringArray), timestampTZArrayInString, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
     test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " + 
     "procedure did not match.");

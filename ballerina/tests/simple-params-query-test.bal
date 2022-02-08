@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/time;
 import ballerina/test;
 
-string simpleParamsDb = urlPrefix + "9010/querysimpleparams";
+string simpleParamsDb = urlPrefix + "9010/QuerySimpleParams";
 boolean initSimpleParams = false;
 boolean cleanSimpleParams = false;
 
@@ -26,7 +26,7 @@ boolean cleanSimpleParams = false;
     value: ["query-simple-params"]
 }
 function initQueryParamsContainer() returns error? {
-    check initializeDockerContainer("sql-query-params", "querysimpleparams", "9010", "query", "simple-params-test-data.sql");
+    check initializeDockerContainer("sql-query-params", "QuerySimpleParams", "9010", "query", "simple-params-test-data.sql");
 }
 
 @test:AfterGroups {
@@ -169,7 +169,7 @@ function queryTypeNVarCharStringParam() returns error? {
 }
 
 @test:Config {
-    groups: ["queryx", "query-simple-params"]
+    groups: ["query", "query-simple-params"]
 }
 function queryTypeVarCharIntegerParam() returns error? {
     int intVal = 1;
@@ -698,7 +698,7 @@ isolated function testCreatingTextValue() returns error? {
 @test:Config {
     groups: ["query", "query-simple-params"]
 }
-isolated function testCreatingStuctValue() returns error? {
+isolated function testCreatingStructValue() returns error? {
     StructValue structValue = new ({"key": "value"});
     test:assertTrue(structValue.value is record {});
 }

@@ -15,13 +15,13 @@
 
 import ballerina/test;
 
-string jdbcURL = urlPrefix + "9009/querynumericparams";
+string jdbcURL = urlPrefix + "9009/QueryNumericParams";
 
 @test:BeforeGroups {
     value: ["query-numeric-params"]
 }
-function inißtQueryNumericContainer() returns error? {
-    check initializeDockerContainer("sql-query-numeric", "querynumericparams", "9009", "query", "numerical-test-data.sql");
+function initQueryNumericContainer() returns error? {
+    check initializeDockerContainer("sql-query-numeric", "QueryNumericParams", "9009", "query", "numerical-test-data.sql");
 }
 
 @test:AfterGroups {

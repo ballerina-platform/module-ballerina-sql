@@ -17,8 +17,8 @@ import ballerina/lang.runtime as runtime;
 import ballerina/lang.'string as strings;
 import ballerina/test;
 
-string poolDB_1 = urlPrefix + "9002/pool1";
-string poolDB_2 = urlPrefix + "9003/pool2";
+string poolDB_1 = urlPrefix + "9002/Pool1";
+string poolDB_2 = urlPrefix + "9003/Pool2";
 
 public type Result record {
     int val;
@@ -33,8 +33,8 @@ map<anydata> connectionPoolOptions = {
     value: ["pool"]
 }
 function initPoolContainer() returns error? {
-    check initializeDockerContainer("sql-pool1", "pool1", "9002", "pool", "connection-pool-test-data.sql");
-    check initializeDockerContainer("sql-pool2", "pool2", "9003", "pool", "connection-pool-test-data.sql");
+    check initializeDockerContainer("sql-pool1", "Pool1", "9002", "pool", "connection-pool-test-data.sql");
+    check initializeDockerContainer("sql-pool2", "Pool2", "9003", "pool", "connection-pool-test-data.sql");
 }
 
 @test:AfterGroups {

@@ -16,13 +16,13 @@
 import ballerina/lang.'string as strings;
 import ballerina/test;
 
-string errorDB = urlPrefix + "9013/error";
+string errorDB = urlPrefix + "9013/Error";
 
 @test:BeforeGroups {
     value: ["error"]
 }
 function initErrorContainer() returns error? {
-    check initializeDockerContainer("sql-error", "error", "9013", "error", "error-database-init.sql");
+    check initializeDockerContainer("sql-error", "Error", "9013", "error", "error-database-init.sql");
 }
 
 @test:AfterGroups {
