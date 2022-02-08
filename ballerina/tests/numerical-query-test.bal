@@ -311,10 +311,7 @@ function testQueryDatabaseError() returns error? {
     stream<DataTable, Error?> streamData = 
             <stream<DataTable, Error?>>dbClient->query(`SELECT int_type from DataTable1`, DataTable);
 
-    error? e = from DataTable data in streamData
-        do {
-            // No need to do anything
-        };
+    DataTable[]|error? e = from DataTable data in streamData select data;
     check dbClient.close();
     test:assertTrue(e is Error);
 }
