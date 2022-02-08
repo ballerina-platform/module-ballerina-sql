@@ -15,13 +15,13 @@
 
 import ballerina/test;
 
-string executeDb = urlPrefix + "9006/execute";
+string executeDb = urlPrefix + "9006/Execute";
 
 @test:BeforeGroups {
     value: ["execute-basic"]
 }
 function initExecuteContainer() returns error? {
-    check initializeDockerContainer("sql-execute", "execute", "9006", "execute", "execute-test-data.sql");
+    check initializeDockerContainer("sql-execute", "Execute", "9006", "execute", "execute-test-data.sql");
 }
 
 @test:AfterGroups {

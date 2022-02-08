@@ -36,4 +36,4 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew.bat build -x test
-        # Due to no docker available in gitaction windows
+        # Due to no docker available in git-action windows

@@ -500,12 +500,12 @@ public class TestUtils {
             }
 
             @Override
-            public <T> T unwrap(Class<T> iface) {
+            public <T> T unwrap(Class<T> iFace) {
                 return null;
             }
 
             @Override
-            public boolean isWrapperFor(Class<?> iface) {
+            public boolean isWrapperFor(Class<?> iFace) {
                 return false;
             }
         };
@@ -534,7 +534,7 @@ public class TestUtils {
             }
 
             @Override
-            public boolean isSameRM(XAResource xares) {
+            public boolean isSameRM(XAResource xaResource) {
                 return false;
             }
 

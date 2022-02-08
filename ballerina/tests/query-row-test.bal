@@ -18,13 +18,13 @@ import ballerina/io;
 import ballerina/test;
 import ballerina/time;
 
-string queryRowDb = urlPrefix + "9011/queryrow";
+string queryRowDb = urlPrefix + "9011/QueryRow";
 
 @test:BeforeGroups {
     value: ["query-row"]
 }
 function initQueryRowContainer() returns error? {
-    check initializeDockerContainer("sql-query-row", "queryrow", "9011", "query", "query-row-test-data.sql");
+    check initializeDockerContainer("sql-query-row", "QueryRow", "9011", "query", "query-row-test-data.sql");
 }
 
 @test:AfterGroups {

@@ -18,7 +18,7 @@ import ballerina/lang.'transaction as transactions;
 import ballerina/io;
 import ballerina/test;
 
-string localTransactionDB = urlPrefix + "9004/transaction";
+string localTransactionDB = urlPrefix + "9004/Transaction";
 
 type TransactionResultCount record {
     int COUNTVAL;
@@ -43,7 +43,7 @@ public class SQLDefaultRetryManager {
     value: ["transaction"]
 }
 function initTransactionContainer() returns error? {
-    check initializeDockerContainer("sql-transaction", "transaction", "9004", "transaction", "local-transaction-test-data.sql");
+    check initializeDockerContainer("sql-transaction", "Transaction", "9004", "transaction", "local-transaction-test-data.sql");
 }
 
 @test:AfterGroups {
@@ -386,7 +386,7 @@ isolated string rollbackOut = "";
 function testLocalTransactionFailed() returns error? {
     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
 
-    string a = "beforetx";
+    string a = "beforeTrx";
 
     string|error ret = trap testLocalTransactionFailedHelper(dbClient);
     if ret is string {
@@ -397,7 +397,7 @@ function testLocalTransactionFailed() returns error? {
     a = a + " afterTrx";
     int count = check getCount(dbClient, "111");
     check dbClient.close();
-    test:assertEquals(a, "beforetx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
+    test:assertEquals(a, "beforeTrx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
     test:assertEquals(count, 0);
 }
 
@@ -440,7 +440,7 @@ isolated function getError() returns error? {
 function testLocalTransactionSuccessWithFailed() returns error? {
     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
 
-    string a = "beforetx";
+    string a = "beforeTrx";
     string|error ret = trap testLocalTransactionSuccessWithFailedHelper(a, dbClient);
     if ret is string {
         a = ret;
@@ -450,7 +450,7 @@ function testLocalTransactionSuccessWithFailed() returns error? {
     a = a + " afterTrx";
     int count = check getCount(dbClient, "222");
     check dbClient.close();
-    test:assertEquals(a, "beforetx inTrx inTrx inTrx committed afterTrx");
+    test:assertEquals(a, "beforeTrx inTrx inTrx inTrx committed afterTrx");
     test:assertEquals(count, 2);
 }
 
@@ -569,7 +569,7 @@ function testLocalTransactionWithQueryRow() returns error? {
     int count = 0;
     retry<SQLDefaultRetryManager> (1) transaction {
         _ = check dbClient->batchExecute(sqlQueries);
-        count = check dbClient->queryRow(`Select COUNT(*) as countval from Customers where registrationID = 303`);
+        count = check dbClient->queryRow(`Select COUNT(*) as countVal from Customers where registrationID = 303`);
         transInfo = transactions:info();
         error? commitResult = commit;
         if commitResult is () {
@@ -587,7 +587,7 @@ function testLocalTransactionWithQueryRow() returns error? {
 
 isolated function getCount(MockClient dbClient, string id) returns int|error {
     stream<TransactionResultCount, Error?> streamData = dbClient->query(
-        `Select COUNT(*) as countval from Customers where registrationID = ${id}`);
+        `Select COUNT(*) as countVal from Customers where registrationID = ${id}`);
     record {|TransactionResultCount value;|}? data = check streamData.next();
     check streamData.close();
     TransactionResultCount? value = data?.value;

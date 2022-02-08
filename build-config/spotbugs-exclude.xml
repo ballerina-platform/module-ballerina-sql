@@ -22,7 +22,7 @@
     </Match>
 
     <!-- In QueryProcessor native call method the ResultSet instance is not closed because user wants
-        to iterate the Resultset and close it later. -->
+        to iterate the Result Set and close it later. -->
     <Match>
         <class name="org.ballerina.stdlib.sql.nativeimpl.QueryProcessor"/>
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>

@@ -19,13 +19,13 @@ import ballerina/lang.'string as strings;
 import ballerina/test;
 import ballerina/time;
 
-string executeParamsDb = urlPrefix + "9007/executeparams";
+string executeParamsDb = urlPrefix + "9007/ExecuteParams";
 
 @test:BeforeGroups {
     value: ["execute-params"]
 }
 function initExecuteParamsContainer() returns error? {
-    check initializeDockerContainer("sql-execute-params", "executeparams", "9007", "execute", "execute-params-test-data.sql");
+    check initializeDockerContainer("sql-execute-params", "ExecuteParams", "9007", "execute", "execute-params-test-data.sql");
 }
 
 @test:AfterGroups {
@@ -95,7 +95,7 @@ function insertIntoDataTable4() returns error? {
     FloatValue floatType = new (124.34);
     DoubleValue doubleType = new (29095039);
     BooleanValue boolType = new (false);
-    VarcharValue stringType = new ("stringvalue");
+    VarcharValue stringType = new ("stringValue");
     decimal decimalVal = 25.45;
     DecimalValue decimalType = new (decimalVal);
 
@@ -362,14 +362,14 @@ function insertIntoNumericTable3() returns error? {
     BitValue bitType = new (1);
     decimal decimalVal = 1234.567;
     DecimalValue decimalType = new (decimalVal);
-    NumericValue numbericType = new (1234.567);
+    NumericValue numericType = new (1234.567);
     FloatValue floatType = new (1234.567);
     RealValue realType = new (1234.567);
 
     ParameterizedQuery sqlQuery = 
             `INSERT INTO NumericTypes (int_type, bigint_type, smallint_type, tinyint_type, bit_type, decimal_type,
              numeric_type, float_type, real_type) VALUES(${intType},${bigIntType},${smallIntType},${tinyIntType},
-             ${bitType},${decimalType},${numbericType},${floatType},${realType})`;
+             ${bitType},${decimalType},${numericType},${floatType},${realType})`;
     validateResult(check executeQueryMockClient(sqlQuery), 1, 2);
 }
 

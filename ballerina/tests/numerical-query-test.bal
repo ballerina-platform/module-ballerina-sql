@@ -15,13 +15,13 @@
 
 import ballerina/test;
 
-string jdbcURL = urlPrefix + "9009/querynumericparams";
+string jdbcURL = urlPrefix + "9009/QueryNumericParams";
 
 @test:BeforeGroups {
     value: ["query-numeric-params"]
 }
-function inißtQueryNumericContainer() returns error? {
-    check initializeDockerContainer("sql-query-numeric", "querynumericparams", "9009", "query", "numerical-test-data.sql");
+function initQueryNumericContainer() returns error? {
+    check initializeDockerContainer("sql-query-numeric", "QueryNumericParams", "9009", "query", "numerical-test-data.sql");
 }
 
 @test:AfterGroups {
@@ -311,10 +311,7 @@ function testQueryDatabaseError() returns error? {
     stream<DataTable, Error?> streamData = 
             <stream<DataTable, Error?>>dbClient->query(`SELECT int_type from DataTable1`, DataTable);
 
-    error? e = from DataTable data in streamData
-        do {
-            // No need to do anything
-        };
+    DataTable[]|error? e = from DataTable data in streamData select data;
     check dbClient.close();
     test:assertTrue(e is Error);
 }

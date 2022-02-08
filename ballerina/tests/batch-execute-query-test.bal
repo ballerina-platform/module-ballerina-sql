@@ -16,13 +16,13 @@
 
 import ballerina/test;
 
-string batchExecuteDB = urlPrefix + "9005/batchexecute";
+string batchExecuteDB = urlPrefix + "9005/BatchExecute";
 
 @test:BeforeGroups {
     value: ["batch-execute"]
 }
 function initBatchExecuteContainer() returns error? {
-    check initializeDockerContainer("sql-batch-execute", "batchexecute", "9005", "batchexecute", "batch-execute-test-data.sql");
+    check initializeDockerContainer("sql-batch-execute", "BatchExecute", "9005", "batchexecute", "batch-execute-test-data.sql");
 }
 
 @test:AfterGroups {
