@@ -323,6 +323,18 @@ Here the returned stream can consist of following types of records,
    sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${id} AND age > ${age}`;
    stream<Student, sql:Error?> resultStream = dbClient->query(query);
    ```
+   
+   `sql:Column` annotation can be used to map database columns to record fields of different name. This annotation should be attached to record fields.
+   ```ballerina
+   type Person record {
+       int id;
+       @sql:Column { name = "first_name" }
+       string firstName;
+       @sql:Column { name = "last_name" }
+       string lastName
+   };
+   ```
+   The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
 
 The returned stream needs to be closed properly to release resources. The stream is automatically closed if either it
 is iterated fully or consists of an error. If result is accessed one by one using `next()` method, it should be closed 
