@@ -936,7 +936,8 @@ function queryWithColumnAnnotation() returns error? {
     Album expectedAlbum = {
         id: "1",
         name: "Lemonade",
-        artist: "Beyonce"
+        artist: "Beyonce",
+        price: 20.0
     };
 
     test:assertEquals(album, expectedAlbum, "Expected Album record did not match");

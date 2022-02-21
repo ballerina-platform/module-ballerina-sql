@@ -236,6 +236,8 @@ function queryTypedRecordWithoutFieldsClosed() returns error? {
     }
 }
 
+annotation ColumnConfig TestColumn on record field;
+
 public type Album record {|
     @Column{
         name: "id_test"
@@ -246,6 +248,10 @@ public type Album record {|
         name: "artist_test"
     }
     string artist;
+    @TestColumn{
+        name: "price"
+    }
+    decimal price;
 |};
 
 @test:Config {
@@ -259,7 +265,8 @@ function queryRowWithColumnAnnotation() returns error? {
     Album expectedAlbum = {
         id: "1",
         name: "Lemonade",
-        artist: "Beyonce"
+        artist: "Beyonce",
+        price: 20.0
     };
 
     test:assertEquals(album, expectedAlbum, "Expected Album record did not match");

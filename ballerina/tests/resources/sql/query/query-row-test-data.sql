@@ -218,7 +218,8 @@ INSERT INTO Students (id, name, age, supervisorId) VALUES (1, 'Alice', 25, 1);
 CREATE TABLE Album (
     id_test     VARCHAR(10),
     name        VARCHAR(10),
-    artist_test VARCHAR(10)
+    artist_test VARCHAR(10),
+    price DECIMAL
 );
 
-INSERT INTO Album VALUES ('1', 'Lemonade', 'Beyonce');
+INSERT INTO Album VALUES ('1', 'Lemonade', 'Beyonce', 20.0);
