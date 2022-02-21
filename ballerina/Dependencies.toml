@@ -88,7 +88,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "io"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
@@ -277,7 +277,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "sql"
-version = "1.3.1"
+version = "1.4.0"
 dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
@@ -319,7 +319,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "time"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
