@@ -214,3 +214,11 @@ CREATE TABLE Students (
 
 INSERT INTO Teachers (id, name) VALUES (1, 'James');
 INSERT INTO Students (id, name, age, supervisorId) VALUES (1, 'Alice', 25, 1);
+
+CREATE TABLE Album (
+    id_test     VARCHAR(10),
+    name        VARCHAR(10),
+    artist_test VARCHAR(10)
+);
+
+INSERT INTO Album VALUES ('1', 'Lemonade', 'Beyonce');

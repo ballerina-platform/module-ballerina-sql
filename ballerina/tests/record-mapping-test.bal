@@ -235,3 +235,32 @@ function queryTypedRecordWithoutFieldsClosed() returns error? {
         test:assertFail("Error expected");
     }
 }
+
+public type Album record {|
+    @Column{
+        name: "id_test"
+    }
+    string id;
+    string name;
+    @Column{
+        name: "artist_test"
+    }
+    string artist;
+|};
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowWithColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album album = check dbClient->queryRow(`SELECT * FROM Album`);
+    check dbClient.close();
+
+    Album expectedAlbum = {
+        id: "1",
+        name: "Lemonade",
+        artist: "Beyonce"
+    };
+
+    test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
+}
