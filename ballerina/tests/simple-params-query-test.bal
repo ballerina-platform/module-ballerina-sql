@@ -920,6 +920,28 @@ function testInOperator13() returns error? {
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
 
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryWithColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(simpleParamsDb);
+
+    // Reused record defined in record-mapping-test.bal
+    stream<Album, Error?> albums = dbClient->query(`SELECT * FROM Album`);
+    record {|Album value;|}? data = check albums.next();
+    check albums.close();
+    Album? album = data?.value;
+    check dbClient.close();
+
+    Album expectedAlbum = {
+        id: "1",
+        name: "Lemonade",
+        artist: "Beyonce"
+    };
+
+    test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
+}
+
 isolated function validateDataTableResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {
