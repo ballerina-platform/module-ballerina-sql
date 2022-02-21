@@ -79,10 +79,13 @@ import java.util.Set;
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.ANNON_RECORD_TYPE_NAME;
+import static io.ballerina.stdlib.sql.Constants.ANN_COLUMN_NAME_FIELD;
 import static io.ballerina.stdlib.sql.Constants.BACKTICK;
+import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
+import static io.ballerina.stdlib.sql.Constants.RECORD_FIELD_ANN_PREFIX;
 import static io.ballerina.stdlib.time.util.Constants.ANALOG_GIGA;
 
 /**
@@ -403,7 +406,13 @@ public class Utils {
         String ballerinaFieldName = null;
         Type ballerinaType = null;
         for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
-            if (field.getKey().equalsIgnoreCase(metadata.getColumnName())) {
+            String fieldName = field.getKey();
+            //Get sql:Column annotation name if present
+            String annotatedDBColName = getColumnName(streamConstraint, fieldName);
+            if (annotatedDBColName != null) {
+                fieldName = annotatedDBColName;
+            }
+            if (fieldName.equalsIgnoreCase(metadata.getColumnName())) {
                 ballerinaFieldName = field.getKey();
                 ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
                 if (ballerinaType == null) {
@@ -426,6 +435,20 @@ public class Utils {
         return new PrimitiveTypeColumnDefinition(metadata.getColumnName(), metadata.getSqlType(),
                 metadata.getSqlName(), metadata.isNullable(), metadata.getResultSetColIndex(), ballerinaFieldName,
                 ballerinaType);
+    }
+
+    private static String getColumnName(StructureType streamConstraint, String fieldName) {
+        BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) streamConstraint
+                .getAnnotation(fromString(RECORD_FIELD_ANN_PREFIX + fieldName));
+        if (fieldAnnotations == null) {
+            return null;
+        }
+        BMap<BString, Object> columnAnnotation = (BMap<BString, Object>) fieldAnnotations.getMapValue(
+                fromString(ModuleUtils.getPkgIdentifier() + ":" + COLUMN_ANN_NAME));
+        if (columnAnnotation == null) {
+            return null;
+        }
+        return columnAnnotation.getStringValue(ANN_COLUMN_NAME_FIELD).getValue();
     }
 
     public static void updateBallerinaRecordFields(AbstractResultParameterProcessor resultParameterProcessor,

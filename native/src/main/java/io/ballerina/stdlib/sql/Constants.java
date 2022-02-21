@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.sql;
 
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -371,4 +372,10 @@ public final class Constants {
         public static final String OFFSET_TIME = "java.time.OffsetTime";
         public static final String OFFSET_DATE_TIME = "java.time.OffsetDateTime";
     }
+
+    // Annotations
+    public static final String RECORD_FIELD_ANN_PREFIX = "$field$.";
+    public static final String COLUMN_ANN_NAME = "Column";
+    public static final BString ANN_COLUMN_NAME_FIELD = StringUtils.fromString("name");
+
 }

@@ -20,6 +20,8 @@ package io.ballerina.stdlib.sql.utils;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BString;
 
 /**
  * Utility functions relevant to module operations.
@@ -29,15 +31,21 @@ import io.ballerina.runtime.api.Module;
 public class ModuleUtils {
 
     private static Module sqlModule;
+    private static BString pkgIdentifier;
 
     private ModuleUtils() {
     }
 
     public static void setModule(Environment env) {
         sqlModule = env.getCurrentModule();
+        pkgIdentifier = StringUtils.fromString(sqlModule.toString());
     }
 
     public static Module getModule() {
         return sqlModule;
+    }
+
+    public static BString getPkgIdentifier() {
+        return pkgIdentifier;
     }
 }
