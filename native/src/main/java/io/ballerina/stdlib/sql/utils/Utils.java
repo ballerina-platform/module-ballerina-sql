@@ -438,17 +438,19 @@ public class Utils {
     }
 
     private static String getAnnotatedColumnName(StructureType streamConstraint, String fieldName) {
-        BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) streamConstraint
+        Object fieldAnnotationsObj = streamConstraint
                 .getAnnotation(fromString(RECORD_FIELD_ANN_PREFIX + fieldName));
-        if (fieldAnnotations == null) {
-            return null;
+        if (fieldAnnotationsObj instanceof BMap) {
+            @SuppressWarnings("unchecked")
+            BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) fieldAnnotationsObj;
+
+            @SuppressWarnings("unchecked")
+            BMap<BString, Object> columnAnnotation = (BMap<BString, Object>) fieldAnnotations.getMapValue(
+                    fromString(ModuleUtils.getPkgIdentifier() + ":" + COLUMN_ANN_NAME));
+
+            return columnAnnotation != null ? columnAnnotation.getStringValue(ANN_COLUMN_NAME_FIELD).getValue() : null;
         }
-        BMap<BString, Object> columnAnnotation = (BMap<BString, Object>) fieldAnnotations.getMapValue(
-                fromString(ModuleUtils.getPkgIdentifier() + ":" + COLUMN_ANN_NAME));
-        if (columnAnnotation == null) {
-            return null;
-        }
-        return columnAnnotation.getStringValue(ANN_COLUMN_NAME_FIELD).getValue();
+        return null;
     }
 
     public static void updateBallerinaRecordFields(AbstractResultParameterProcessor resultParameterProcessor,
