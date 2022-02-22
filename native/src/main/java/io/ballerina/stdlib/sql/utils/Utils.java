@@ -448,14 +448,13 @@ public class Utils {
                 ballerinaType);
     }
 
+    @SuppressWarnings("unchecked")
     private static String getAnnotatedColumnName(StructureType streamConstraint, String fieldName) {
         Object fieldAnnotationsObj = streamConstraint
                 .getAnnotation(fromString(RECORD_FIELD_ANN_PREFIX + fieldName));
         if (fieldAnnotationsObj instanceof BMap) {
-            @SuppressWarnings("unchecked")
             BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) fieldAnnotationsObj;
 
-            @SuppressWarnings("unchecked")
             BMap<BString, Object> columnAnnotation = (BMap<BString, Object>) fieldAnnotations.getMapValue(
                     fromString(ModuleUtils.getPkgIdentifier() + ":" + COLUMN_ANN_NAME));
 
