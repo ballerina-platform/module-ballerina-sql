@@ -272,6 +272,39 @@ function queryRowWithColumnAnnotation() returns error? {
     test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
 }
 
+public type Album2 record {|
+    @Column{
+        name: "id_test2"
+    }
+    string id;
+    string name;
+    @Column{
+        name: "artist_test"
+    }
+    string artist;
+    @TestColumn{
+        name: "price"
+    }
+    decimal price;
+|};
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowWithFalseColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album2|Error album = dbClient->queryRow(`SELECT * FROM Album`);
+    check dbClient.close();
+
+    if album is FieldMismatchError {
+        test:assertEquals(album.message(),
+            "No mapping field found for SQL table column 'ID_TEST' in the record type 'Album2'",
+            "Expected error message record did not match");
+    } else {
+        test:assertFail("Error expected");
+    }
+}
+
 public type Student4 record {|
     int id;
     string name;
