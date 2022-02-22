@@ -408,7 +408,7 @@ public class Utils {
         for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
             String fieldName = field.getKey();
             //Get sql:Column annotation name if present
-            String annotatedDBColName = getColumnName(streamConstraint, fieldName);
+            String annotatedDBColName = getAnnotatedColumnName(streamConstraint, fieldName);
             if (annotatedDBColName != null) {
                 fieldName = annotatedDBColName;
             }
@@ -437,7 +437,7 @@ public class Utils {
                 ballerinaType);
     }
 
-    private static String getColumnName(StructureType streamConstraint, String fieldName) {
+    private static String getAnnotatedColumnName(StructureType streamConstraint, String fieldName) {
         BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) streamConstraint
                 .getAnnotation(fromString(RECORD_FIELD_ANN_PREFIX + fieldName));
         if (fieldAnnotations == null) {
