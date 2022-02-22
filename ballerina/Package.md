@@ -286,6 +286,47 @@ sql:ParameterizedQuery query = `SELECT * FROM students WHERE id = ${id}`;
 Student retrievedStudent = check dbClient->queryRow(query);
 ```
 
+`sql:Column` annotation can be used to map database columns to Typed record fields of different name. This annotation should be attached to record fields.
+```ballerina
+type Student record {
+    int id;
+    @sql:Column { name: "first_name" }
+    string firstName;
+    @sql:Column { name: "last_name" }
+    string lastName
+};
+```
+The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
+
+Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers.
+All columns of the Teachers table can be grouped to another Typed record such as `Teacher` type within the `Student` record.
+
+```ballerina
+public type Students record {|
+    int id;
+    string name;
+    string? age;
+    float? gpa;
+    Teachers teachers;
+|}
+type Teachers record {|
+    int id;
+    string name;
+|}
+```
+In the above scenario also, `sql:Column` annotation can be used to rename field name such as,
+```ballerina
+public type Students record {|
+    int id;
+    string name;
+    string? age;
+    float? gpa;
+    @sql:Column {
+        name: "teachers"
+    Teacher teacher;
+|}
+```
+
 The `sql:queryRow()` operation can also be used to retrieve a single value from the database (e.g., when querying using
 `COUNT()` and other SQL aggregation functions). If the provided return type is not a record (i.e., a primitive data type)
 , this operation will return the value of the first column of the first row retrieved by the query.
