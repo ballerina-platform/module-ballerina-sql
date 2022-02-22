@@ -332,15 +332,20 @@ public class Utils {
         List<SQLColumnMetadata> sqlColumnMetadata = new ArrayList<>();
         Map<String, List<SQLColumnMetadata>> groupedSQLColumnDefs = new HashMap<>();
         Set<String> columnNames = new HashSet<>();
-        Set<String> groupedColumnNames = new HashSet<>();
+        Map<String, String> groupedColumnNames = new HashMap<>();
         ResultSetMetaData rsMetaData = resultSet.getMetaData();
 
         boolean isTypedRecord = !streamConstraint.getName().startsWith(ANNON_RECORD_TYPE_NAME);
         if (isTypedRecord) {
             streamConstraint.getFields().forEach((name, field) -> {
                 if (field.getFieldType().getTag() == TypeTags.RECORD_TYPE_TAG) {
+                    String fieldName = name;
+                    String annotatedColumnName = getAnnotatedColumnName(streamConstraint, field.getFieldName());
+                    if (annotatedColumnName != null) {
+                        fieldName = annotatedColumnName;
+                    }
                     groupedSQLColumnDefs.put(name, new ArrayList<>());
-                    groupedColumnNames.add(name);
+                    groupedColumnNames.put(fieldName, name);
                 }
             });
         }
@@ -362,11 +367,12 @@ public class Utils {
             }
 
             String finalTablePrefix = tablePrefix;
-            String matchedRecordField = groupedColumnNames.stream()
+            String matchedRecordField = groupedColumnNames.keySet().stream()
                     .filter(name -> name.equalsIgnoreCase(finalTablePrefix))
                     .findFirst().orElse("");
             if (isTypedRecord && !matchedRecordField.equals("")) {
-                List<SQLColumnMetadata> sqlColumnDefs = groupedSQLColumnDefs.get(matchedRecordField);
+                List<SQLColumnMetadata> sqlColumnDefs = groupedSQLColumnDefs
+                        .get(groupedColumnNames.get(matchedRecordField));
                 sqlColumnDefs.add(new SQLColumnMetadata(
                         colName.substring(colName.indexOf(".") + 1), sqlType, sqlTypeName, isNullable, i));
             } else {
@@ -383,11 +389,16 @@ public class Utils {
 
         for (Map.Entry<String, List<SQLColumnMetadata>> groupedColDefs : groupedSQLColumnDefs.entrySet()) {
             if (!groupedColDefs.getValue().isEmpty()) {
+                String groupedColumnKey = groupedColDefs.getKey();
+                String annotatedColumnName = getAnnotatedColumnName(streamConstraint, groupedColumnKey);
+                if (annotatedColumnName != null) {
+                    groupedColumnKey = annotatedColumnName;
+                }
                 StructureType recordFieldType = ((StructureType) streamConstraint.getFields()
                         .get(groupedColDefs.getKey()).getFieldType());
                 ArrayList<PrimitiveTypeColumnDefinition> innerRecordFields = new ArrayList<>();
                 for (SQLColumnMetadata columnMetadata : groupedColDefs.getValue()) {
-                    String loggedColumnName = groupedColDefs.getKey().toUpperCase(Locale.getDefault()) + "." +
+                    String loggedColumnName = groupedColumnKey.toUpperCase(Locale.getDefault()) + "." +
                             columnMetadata.getColumnName();
                     innerRecordFields.add(
                             generateColumnDefinition(columnMetadata, recordFieldType, loggedColumnName)

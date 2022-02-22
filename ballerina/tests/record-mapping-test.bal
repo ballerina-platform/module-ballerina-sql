@@ -271,3 +271,46 @@ function queryRowWithColumnAnnotation() returns error? {
 
     test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
 }
+
+public type Student4 record {|
+    int id;
+    string name;
+    int age;
+    int supervisorId;
+    @Column {
+        name: "teachers"
+    }
+    Teacher teacher;
+|};
+
+public type Teacher record {
+    @Column{
+        name: "id"
+    }
+    int teacherId;
+    string name;
+};
+
+@test:Config {
+    groups: ["query", "query-test"]
+}
+function queryAnnotatedTypedRecordWithFields() returns error? {
+
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Student4 student = check
+                dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
+    check dbClient.close();
+
+    Student4 expectedStudent = {
+        id: 1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
+        teacher: {
+            teacherId: 1,
+            name: "James"
+        }
+    };
+
+    test:assertEquals(student, expectedStudent, "Expected student record did not match");
+}
