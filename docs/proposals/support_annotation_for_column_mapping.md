@@ -43,9 +43,9 @@ Introduce `sql:Column` annotation of `string` type. The user can provide the dat
 ```ballerina
 type Person record {
     int id;
-    @sql:Column { name = "first_name" }
+    @sql:Column { name: "first_name" }
     string firstName;
-    @sql:Column { name = "last_name" }
+    @sql:Column { name: "last_name" }
     string lastName
 };
 ```

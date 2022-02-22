@@ -326,11 +326,11 @@ Here the returned stream can consist of following types of records,
    
    `sql:Column` annotation can be used to map database columns to record fields of different name. This annotation should be attached to record fields.
    ```ballerina
-   type Person record {
+   type Student record {
        int id;
-       @sql:Column { name = "first_name" }
+       @sql:Column { name: "first_name" }
        string firstName;
-       @sql:Column { name = "last_name" }
+       @sql:Column { name: "last_name" }
        string lastName
    };
    ```
