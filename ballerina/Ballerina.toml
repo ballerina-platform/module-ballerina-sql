@@ -7,7 +7,7 @@ keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.0.0"
+distribution = "2201.0.1"
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/sql-native-1.4.0-SNAPSHOT.jar"
