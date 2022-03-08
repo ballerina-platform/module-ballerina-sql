@@ -282,8 +282,8 @@ function testInsertTableWithDatabaseError() returns error? {
     ExecutionResult|Error result = dbClient->execute(`Insert into NumericTypesNonExistTable (int_type) values (20)`);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypesNonExistTable " + 
-                        "(int_type) values (20). user lacks privilege or object not found: NUMERICTYPESNONEXISTTABLE in " + 
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypesNonExistTable " +
+                        "(int_type) values (20). user lacks privilege or object not found: NUMERICTYPESNONEXISTTABLE in " +
                         "statement [Insert into NumericTypesNonExistTable (int_type) values (20)]."));
         DatabaseErrorDetail errorDetails = result.detail();
         test:assertEquals(errorDetails.errorCode, -5501, "SQL Error code does not match");
@@ -304,8 +304,8 @@ function testInsertTableWithDataTypeError() returns error? {
     ExecutionResult|Error result = dbClient->execute(`Insert into NumericTypes (int_type) values ('This is wrong type')`);
 
     if result is DatabaseError {
-        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " + 
-                    "(int_type) values ('This is wrong type'). data exception: invalid character value for cast."), 
+        test:assertTrue(result.message().startsWith("Error while executing SQL query: Insert into NumericTypes " +
+                    "(int_type) values ('This is wrong type'). data exception: invalid character value for cast."),
                     "Error message does not match, actual :'" + result.message() + "'");
         DatabaseErrorDetail errorDetails = result.detail();
         test:assertEquals(errorDetails.errorCode, -3438, "SQL Error code does not match");

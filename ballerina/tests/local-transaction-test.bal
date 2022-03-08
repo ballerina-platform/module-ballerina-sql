@@ -485,10 +485,10 @@ function testLocalTransactionWithBatchExecute() returns error? {
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
     var data = [
-            {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"}, 
-            {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"}
+        {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"},
+        {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"}
     ];
-    ParameterizedQuery[] sqlQueries = 
+    ParameterizedQuery[] sqlQueries =
         from var row in data
     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
                                 VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
@@ -521,10 +521,10 @@ function testLocalTransactionWithQuery() returns error? {
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
     var data = [
-                {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"}, 
-                {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"}
-        ];
-    ParameterizedQuery[] sqlQueries = 
+        {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"},
+        {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"}
+    ];
+    ParameterizedQuery[] sqlQueries =
             from var row in data
     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
                                     VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
@@ -558,10 +558,10 @@ function testLocalTransactionWithQueryRow() returns error? {
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
     var data = [
-                {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"}, 
-                {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"}
-        ];
-    ParameterizedQuery[] sqlQueries = 
+        {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"},
+        {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"}
+    ];
+    ParameterizedQuery[] sqlQueries =
             from var row in data
     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
                                     VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},

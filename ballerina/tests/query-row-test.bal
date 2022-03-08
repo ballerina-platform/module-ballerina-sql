@@ -49,7 +49,7 @@ function queryRecordSingleIntParam() returns error? {
 function queryRecordDoubleIntParam() returns error? {
     int rowId = 1;
     int intType = 1;
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
                                     ` WHERE row_id = ${rowId} AND int_type =  ${intType}`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -126,7 +126,7 @@ function queryRecordDecimalParam() returns error? {
 }
 function queryRecordDecimalAnFloatParam() returns error? {
     decimal decimalValue = 23.45;
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`, 
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT * FROM DataTable`,
                                     ` WHERE decimal_type = ${decimalValue} and double_type = 2139095039.0`);
     validateDataTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
 }
@@ -242,7 +242,7 @@ function queryRecordIntTypeInvalidParam() returns error? {
     check dbClient.close();
     test:assertTrue(queryResult is error);
     if queryResult is ApplicationError {
-        test:assertTrue(queryResult.message().endsWith("The field 'int_type' of type float cannot be mapped to the column " + 
+        test:assertTrue(queryResult.message().endsWith("The field 'int_type' of type float cannot be mapped to the column " +
         "'INT_TYPE' of SQL type 'INTEGER'"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -300,7 +300,7 @@ function queryRecordTypeDoubleDoubleParam() returns error? {
 function queryRecordTypeDoubleIntParam() returns error? {
     DoubleValue typeVal = new (1234);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE float_type = ${typeVal}`;
-    record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
+    record {} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
     test:assertEquals(returnData["REAL_TYPE"], 1234.0);
@@ -349,7 +349,7 @@ function queryRecordTypeNumericDoubleParam() returns error? {
 function queryRecordTypeNumericIntParam() returns error? {
     NumericValue typeVal = new (1234);
     ParameterizedQuery sqlQuery = `SELECT * FROM NumericTypes WHERE numeric_type = ${typeVal}`;
-    record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
+    record {} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData.length(), 10);
     test:assertEquals(returnData["ID"], 2);
     test:assertEquals(returnData["REAL_TYPE"], 1234.0);
@@ -489,7 +489,7 @@ function queryRecordDateString2Param() returns error? {
 function queryRecordDateStringInvalidParam() {
     DateValue typeVal = new ("2017/2/3");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE date_type = ${typeVal}`;
-    record{}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
+    record {}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
@@ -542,7 +542,7 @@ function queryRecordTimeStringParam() returns error? {
 function queryRecordTimeStringInvalidParam() {
     TimeValue typeVal = new ("11-35-45");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_type = ${typeVal}`;
-    record{}|error? result = queryRecordMockClient(queryRowDb, sqlQuery);
+    record {}|error? result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is DataError {
@@ -588,7 +588,7 @@ function queryRecordTimestampStringParam() returns error? {
 function queryRecordTimestampStringInvalidParam() {
     TimestampValue typeVal = new ("2017/02/03 11:53:00");
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE timestamp_type = ${typeVal}`;
-    record{}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
+    record {}|error result = queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertTrue(result is error);
 
     if result is ApplicationError {
@@ -651,7 +651,7 @@ function queryRecordArrayBasicParams() returns error? {
     string[] paraString = ["Hello", "Ballerina"];
     boolean[] paraBool = [true, false, true];
 
-    ParameterizedQuery sqlQuery = 
+    ParameterizedQuery sqlQuery =
     `SELECT * FROM ArrayTypes WHERE int_array = ${paraInt}
                                 AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
@@ -659,7 +659,7 @@ function queryRecordArrayBasicParams() returns error? {
                                 AND decimal_array = ${paraDecimal}
                                 AND string_array = ${paraString}
                                 AND boolean_array = ${paraBool}`;
-    record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
+    record {} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData["INT_ARRAY"], [1, 2, 3]);
     test:assertEquals(returnData["LONG_ARRAY"], [10000, 20000, 30000]);
     test:assertEquals(returnData["BOOLEAN_ARRAY"], [true, false, true]);
@@ -673,12 +673,12 @@ function queryRecordArrayBasicParams() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordArrayBasicNullParams() returns error? {
-    ParameterizedQuery sqlQuery = 
+    ParameterizedQuery sqlQuery =
         `SELECT * FROM ArrayTypes WHERE int_array is null AND long_array is null AND float_array
          is null AND double_array is null AND decimal_array is null AND string_array is null
          AND boolean_array is null`;
 
-    record{} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
+    record {} returnData = check queryRecordMockClient(queryRowDb, sqlQuery);
     test:assertEquals(returnData["INT_ARRAY"], ());
     test:assertEquals(returnData["LONG_ARRAY"], ());
     test:assertEquals(returnData["FLOAT_ARRAY"], ());
@@ -696,7 +696,7 @@ function queryRecordNoCheck() returns error? {
     int rowId = 1;
     MockClient dbClient = check getMockClient(queryRowDb);
     ParameterizedQuery sqlQuery = `SELECT * FROM DataTable WHERE row_id = ${rowId}`;
-    record{} queryResult = check dbClient->queryRow(sqlQuery);
+    record {} queryResult = check dbClient->queryRow(sqlQuery);
     check dbClient.close();
     validateDataTableRecordResult(queryResult);
 }
@@ -726,7 +726,7 @@ function queryRecordNoCheckNegative() returns error? {
     record {}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."), 
+        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."),
                         "Incorrect error message");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");
@@ -771,7 +771,7 @@ function queryValueNegative2() returns error? {
     int|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertEquals(queryResult.message(), 
+        test:assertEquals(queryResult.message(),
                         "SQL Type 'Retrieved SQL type' cannot be converted to ballerina type 'int'.");
     } else {
         test:assertFail("Expected error when query returns unexpected result type.");
@@ -1035,26 +1035,27 @@ function queryRowUnion3() returns error? {
 }
 
 type DataTableRow record {|
-      int row_id;
-      int int_type;
-      int long_type;
-      float float_type;
-      float double_type;
-      boolean boolean_type;
-      string string_type;
-      decimal decimal_type;
+    int row_id;
+    int int_type;
+    int long_type;
+    float float_type;
+    float double_type;
+    boolean boolean_type;
+    string string_type;
+    decimal decimal_type;
 |};
 
 type InvalidDataTableRow record {|
-      int row_id;
-      int int_type;
-      int long_type;
-      float float_type;
-      int double_type;
-      boolean boolean_type;
-      string string_type;
-      decimal decimal_type;
+    int row_id;
+    int int_type;
+    int long_type;
+    float float_type;
+    int double_type;
+    boolean boolean_type;
+    string string_type;
+    decimal decimal_type;
 |};
+
 @test:Config {
     groups: ["query", "query-row"]
 }
@@ -1100,6 +1101,7 @@ function queryRowUnion5() returns error? {
 }
 
 type DataTableRowUnion DataTableRow|InvalidDataTableRow;
+
 @test:Config {
     groups: ["query", "query-row"]
 }
@@ -1150,7 +1152,7 @@ function queryRowUnionNegative2() returns error? {
     if queryResult is error {
         test:assertTrue(queryResult is TypeMismatchError, "Incorrect error type");
         test:assertEquals(queryResult.message(),
-                          "The result generated from the query cannot be mapped to type (int|sql:InvalidDataTableRow).");
+                        "The result generated from the query cannot be mapped to type (int|sql:InvalidDataTableRow).");
     } else {
         test:assertFail("Expected TypeMismatchError");
     }
@@ -1162,7 +1164,7 @@ function queryRowUnionNegative2() returns error? {
 function testGetPrimitiveTypesRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     SelectTestAlias value = check dbClient->queryRow(
-	    `SELECT int_type, long_type, double_type, boolean_type, string_type FROM DataTable WHERE row_id = 1`);
+    `SELECT int_type, long_type, double_type, boolean_type, string_type FROM DataTable WHERE row_id = 1`);
     check dbClient.close();
 
     SelectTestAlias expectedData = {
@@ -1181,7 +1183,7 @@ function testGetPrimitiveTypesRecord() returns error? {
 function testGetPrimitiveTypesLessFieldsRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     SelectTestAlias2 value = check dbClient->queryRow(
-	    `SELECT int_type, long_type, double_type, boolean_type, string_type FROM DataTable WHERE row_id = 1`);
+    `SELECT int_type, long_type, double_type, boolean_type, string_type FROM DataTable WHERE row_id = 1`);
     check dbClient.close();
 
     var expectedData = {
@@ -1199,7 +1201,7 @@ function testGetPrimitiveTypesLessFieldsRecord() returns error? {
 }
 function testComplexTypesNilRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    record{} value = check dbClient->queryRow(
+    record {} value = check dbClient->queryRow(
         `SELECT blob_type, clob_type, binary_type, other_type, uuid_type FROM ComplexTypes WHERE row_id = 2`);
     check dbClient.close();
     var complexStringType = {
@@ -1217,7 +1219,7 @@ function testComplexTypesNilRecord() returns error? {
 }
 function testArrayRetrievalRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    record{} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
+    record {} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
         string_type, string_array, boolean_array FROM MixTypes WHERE row_id = 1`);
     check dbClient.close();
 
@@ -1239,7 +1241,7 @@ function testArrayRetrievalRecord() returns error? {
 }
 function testComplexWithStructDefRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
-    record{} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
+    record {} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
         string_type, boolean_array, string_array, json_type FROM MixTypes WHERE row_id = 1`, TestTypeData);
     check dbClient.close();
     TestTypeData mixTypesExpected = {
@@ -1321,43 +1323,43 @@ function testDateTimeRecord2() returns error? {
     groups: ["query", "query-row"]
 }
 function testDateTimeRecord3() returns error? {
-    record{}|error? result;
+    record {}|error? result;
     MockClient dbClient = check getMockClient(queryRowDb);
 
     result = dbClient->queryRow(`SELECT date_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Date type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT datetime_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Datetime type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT time_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     result = dbClient->queryRow(`SELECT timestamp_tz_type FROM DateTimeTypes where row_id = 1`, ResultDates3);
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
-    test:assertEquals((<error>result).message(), 
-        "The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
@@ -1375,8 +1377,10 @@ function testGetArrayTypesRecord() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 1,
-        blob_array: [<byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
-                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
+        blob_array: [
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46],
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]
+        ],
         smallint_array: [12, 232],
         int_array: [1, 2, 3],
         long_array: [100000000, 200000000, 300000000],
@@ -1448,8 +1452,11 @@ function testGetArrayTypesRecord3() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 3,
-        blob_array: [null, <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
-                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
+        blob_array: [
+            null,
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46],
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]
+        ],
         smallint_array: [null, 12, 232],
         int_array: [null, 1, 2, 3],
         long_array: [null, 100000000, 200000000, 300000000],

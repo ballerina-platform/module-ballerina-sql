@@ -114,3 +114,12 @@ CREATE TABLE IF NOT EXISTS MaskTable(
 );
 
 INSERT INTO MaskTable (row_id, int_type) VALUES(1, 1);
+
+CREATE TABLE Album (
+    id_test     VARCHAR(10),
+    name        VARCHAR(10),
+    artist_test VARCHAR(10),
+    price DECIMAL
+);
+
+INSERT INTO Album VALUES ('1', 'Lemonade', 'Beyonce', 20.0);

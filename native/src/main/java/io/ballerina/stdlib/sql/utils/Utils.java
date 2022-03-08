@@ -79,10 +79,13 @@ import java.util.Set;
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.ANNON_RECORD_TYPE_NAME;
+import static io.ballerina.stdlib.sql.Constants.ANN_COLUMN_NAME_FIELD;
 import static io.ballerina.stdlib.sql.Constants.BACKTICK;
+import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
+import static io.ballerina.stdlib.sql.Constants.RECORD_FIELD_ANN_PREFIX;
 import static io.ballerina.stdlib.time.util.Constants.ANALOG_GIGA;
 
 /**
@@ -329,15 +332,20 @@ public class Utils {
         List<SQLColumnMetadata> sqlColumnMetadata = new ArrayList<>();
         Map<String, List<SQLColumnMetadata>> groupedSQLColumnDefs = new HashMap<>();
         Set<String> columnNames = new HashSet<>();
-        Set<String> groupedColumnNames = new HashSet<>();
+        Map<String, String> groupedColumnNames = new HashMap<>();
         ResultSetMetaData rsMetaData = resultSet.getMetaData();
 
         boolean isTypedRecord = !streamConstraint.getName().startsWith(ANNON_RECORD_TYPE_NAME);
         if (isTypedRecord) {
             streamConstraint.getFields().forEach((name, field) -> {
                 if (field.getFieldType().getTag() == TypeTags.RECORD_TYPE_TAG) {
+                    String fieldName = name;
+                    String annotatedColumnName = getAnnotatedColumnName(streamConstraint, field.getFieldName());
+                    if (annotatedColumnName != null) {
+                        fieldName = annotatedColumnName;
+                    }
                     groupedSQLColumnDefs.put(name, new ArrayList<>());
-                    groupedColumnNames.add(name);
+                    groupedColumnNames.put(fieldName, name);
                 }
             });
         }
@@ -359,11 +367,12 @@ public class Utils {
             }
 
             String finalTablePrefix = tablePrefix;
-            String matchedRecordField = groupedColumnNames.stream()
+            String matchedRecordField = groupedColumnNames.keySet().stream()
                     .filter(name -> name.equalsIgnoreCase(finalTablePrefix))
                     .findFirst().orElse("");
             if (isTypedRecord && !matchedRecordField.equals("")) {
-                List<SQLColumnMetadata> sqlColumnDefs = groupedSQLColumnDefs.get(matchedRecordField);
+                List<SQLColumnMetadata> sqlColumnDefs = groupedSQLColumnDefs
+                        .get(groupedColumnNames.get(matchedRecordField));
                 sqlColumnDefs.add(new SQLColumnMetadata(
                         colName.substring(colName.indexOf(".") + 1), sqlType, sqlTypeName, isNullable, i));
             } else {
@@ -380,11 +389,16 @@ public class Utils {
 
         for (Map.Entry<String, List<SQLColumnMetadata>> groupedColDefs : groupedSQLColumnDefs.entrySet()) {
             if (!groupedColDefs.getValue().isEmpty()) {
+                String groupedColumnKey = groupedColDefs.getKey();
+                String annotatedColumnName = getAnnotatedColumnName(streamConstraint, groupedColumnKey);
+                if (annotatedColumnName != null) {
+                    groupedColumnKey = annotatedColumnName;
+                }
                 StructureType recordFieldType = ((StructureType) streamConstraint.getFields()
                         .get(groupedColDefs.getKey()).getFieldType());
                 ArrayList<PrimitiveTypeColumnDefinition> innerRecordFields = new ArrayList<>();
                 for (SQLColumnMetadata columnMetadata : groupedColDefs.getValue()) {
-                    String loggedColumnName = groupedColDefs.getKey().toUpperCase(Locale.getDefault()) + "." +
+                    String loggedColumnName = groupedColumnKey.toUpperCase(Locale.getDefault()) + "." +
                             columnMetadata.getColumnName();
                     innerRecordFields.add(
                             generateColumnDefinition(columnMetadata, recordFieldType, loggedColumnName)
@@ -403,7 +417,13 @@ public class Utils {
         String ballerinaFieldName = null;
         Type ballerinaType = null;
         for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
-            if (field.getKey().equalsIgnoreCase(metadata.getColumnName())) {
+            String fieldName = field.getKey();
+            //Get sql:Column annotation name if present
+            String annotatedDBColName = getAnnotatedColumnName(streamConstraint, fieldName);
+            if (annotatedDBColName != null) {
+                fieldName = annotatedDBColName;
+            }
+            if (fieldName.equalsIgnoreCase(metadata.getColumnName())) {
                 ballerinaFieldName = field.getKey();
                 ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
                 if (ballerinaType == null) {
@@ -426,6 +446,21 @@ public class Utils {
         return new PrimitiveTypeColumnDefinition(metadata.getColumnName(), metadata.getSqlType(),
                 metadata.getSqlName(), metadata.isNullable(), metadata.getResultSetColIndex(), ballerinaFieldName,
                 ballerinaType);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String getAnnotatedColumnName(StructureType streamConstraint, String fieldName) {
+        Object fieldAnnotationsObj = streamConstraint
+                .getAnnotation(fromString(RECORD_FIELD_ANN_PREFIX + fieldName));
+        if (fieldAnnotationsObj instanceof BMap) {
+            BMap<BString, Object> fieldAnnotations = (BMap<BString, Object>) fieldAnnotationsObj;
+
+            BMap<BString, Object> columnAnnotation = (BMap<BString, Object>) fieldAnnotations.getMapValue(
+                    fromString(ModuleUtils.getPkgIdentifier() + ":" + COLUMN_ANN_NAME));
+
+            return columnAnnotation != null ? columnAnnotation.getStringValue(ANN_COLUMN_NAME_FIELD).getValue() : null;
+        }
+        return null;
     }
 
     public static void updateBallerinaRecordFields(AbstractResultParameterProcessor resultParameterProcessor,

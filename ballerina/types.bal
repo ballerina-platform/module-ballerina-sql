@@ -625,7 +625,7 @@ public const EXECUTION_FAILED = -3;
 
 # Metadata of the query execution.
 #
-# + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,
+# + affectedRowCount - Number of rows affected by the execution of the query. It may be one of the following,  
 #                      (1) A number greater than or equal to zero, the count of affected rows after the successful execution of the query  
 #                      (2) A value of the `SUCCESS_NO_INFO`, the count of affected rows is unknown after the successful execution of the query  
 #                      (3) A value of the `EXECUTION_FAILED`, the query execution failed
@@ -634,7 +634,6 @@ public type ExecutionResult record {
     int? affectedRowCount;
     string|int? lastInsertId;
 };
-
 
 # Represents the generic OUT Parameters in `sql:ParameterizedCallQuery`.
 public type OutParameter object {

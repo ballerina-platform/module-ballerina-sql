@@ -105,7 +105,7 @@ Following scenarios are based on whether the Typed Record is an open record or a
         string name;
         string? age;
         float? gpa;
-        Teachers teachersந
+        Teachers teachers;
     |}
     ```
     Regardless of the record type (open or close), the module will match the columns with the prefix to the teacher record fields. Here there are additional scenarios considering whether the Typed Record field is closed or not.

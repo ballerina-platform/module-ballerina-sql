@@ -249,7 +249,7 @@ function queryIntTypeInvalidParam() returns error? {
     check dbClient.close();
     test:assertTrue(data is error);
     if data is ApplicationError {
-        test:assertTrue(data.message().startsWith("The field 'int_type' of type float cannot be mapped to the column " + 
+        test:assertTrue(data.message().startsWith("The field 'int_type' of type float cannot be mapped to the column " +
         "'INT_TYPE' of SQL type 'INTEGER'"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -733,7 +733,7 @@ function queryArrayBasicParams() returns error? {
     string[] paraString = ["Hello", "Ballerina"];
     boolean[] paraBool = [true, false, true];
 
-    ParameterizedQuery sqlQuery = 
+    ParameterizedQuery sqlQuery =
     `SELECT * from ArrayTypes WHERE int_array = ${paraInt}
                                 AND long_array = ${paraLong}
                                 AND float_array = ${paraFloat}
@@ -759,7 +759,7 @@ function queryArrayBasicParams() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryArrayBasicNullParams() returns error? {
-    ParameterizedQuery sqlQuery = 
+    ParameterizedQuery sqlQuery =
         `SELECT * from ArrayTypes WHERE int_array is null AND long_array is null AND float_array
          is null AND double_array is null AND decimal_array is null AND string_array is null
          AND boolean_array is null`;
@@ -784,7 +784,7 @@ function queryArrayBasicNullParams() returns error? {
 }
 function testInOperator1() returns error? {
     int[] ids = [1, 2, 3];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable`, 
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable`,
                                             ` WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
@@ -914,10 +914,33 @@ function testInOperator12() returns error? {
 }
 function testInOperator13() returns error? {
     int[] ids = [1, 2, 3];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id in (`, 
+    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id in (`,
     `${ids[0]}, ${ids[1]}, ${ids[2]})`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
+}
+
+@test:Config {
+    groups: ["query", "query-simple-params"]
+}
+function queryWithColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(simpleParamsDb);
+
+    // Reused record defined in record-mapping-test.bal
+    stream<Album, Error?> albums = dbClient->query(`SELECT * FROM Album`);
+    record {|Album value;|}? data = check albums.next();
+    check albums.close();
+    Album? album = data?.value;
+    check dbClient.close();
+
+    Album expectedAlbum = {
+        id: "1",
+        name: "Lemonade",
+        artist: "Beyonce",
+        price: 20.0
+    };
+
+    test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
 }
 
 isolated function validateDataTableResult(record {}? returnData) {

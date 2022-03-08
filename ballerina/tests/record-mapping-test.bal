@@ -57,13 +57,13 @@ public type StudentsWithoutTeachersFieldClosed record {|
 function queryWithoutRecordFieldSealed() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    StudentsWithoutTeachersFieldClosed|error failure = 
+    StudentsWithoutTeachersFieldClosed|error failure =
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     if failure is error {
-        test:assertEquals(failure.message(), 
-            "No mapping field found for SQL table column 'TEACHERS.ID' in the record type 'StudentsWithoutTeachersFieldClosed'", 
+        test:assertEquals(failure.message(),
+            "No mapping field found for SQL table column 'TEACHERS.ID' in the record type 'StudentsWithoutTeachersFieldClosed'",
             "Expected error message record did not match");
     } else {
         test:assertFail("Error expected");
@@ -84,7 +84,7 @@ public type Student record {|
 function queryAnnonRecord() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student student = check 
+    Student student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -121,7 +121,7 @@ public type Teachers1 record {
 function queryTypedRecordWithFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student1 student = check 
+    Student1 student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -145,7 +145,7 @@ function queryTypedRecordWithFields() returns error? {
 function queryTypedRecordWithFieldsStream() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    stream<Student1, Error?> studentStream = 
+    stream<Student1, Error?> studentStream =
                 dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
     check from Student1 data in studentStream
@@ -187,7 +187,7 @@ public type Teachers2 record {
 function queryTypedRecordWithoutFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student2 student = check 
+    Student2 student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -223,15 +223,111 @@ public type Teachers3 record {|
 function queryTypedRecordWithoutFieldsClosed() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student3|Error failure = 
+    Student3|Error failure =
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     if failure is error {
-        test:assertEquals(failure.message(), 
-            "No mapping field found for SQL table column 'TEACHERS.NAME' in the record type 'Teachers3'", 
+        test:assertEquals(failure.message(),
+            "No mapping field found for SQL table column 'TEACHERS.NAME' in the record type 'Teachers3'",
             "Expected error message record did not match");
     } else {
         test:assertFail("Error expected");
     }
+}
+
+annotation ColumnConfig TestColumn on record field;
+
+public type Album record {|
+    @Column { name: "id_test" }
+    string id;
+    string name;
+    @Column { name: "artist_test" }
+    string artist;
+    @TestColumn { name: "price" }
+    decimal price;
+|};
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowWithColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album album = check dbClient->queryRow(`SELECT * FROM Album`);
+    check dbClient.close();
+
+    Album expectedAlbum = {
+        id: "1",
+        name: "Lemonade",
+        artist: "Beyonce",
+        price: 20.0
+    };
+
+    test:assertEquals(album, expectedAlbum, "Expected Album record did not match");
+}
+
+public type Album2 record {|
+    @Column { name: "id_test2" }
+    string id;
+    string name;
+    @Column { name: "artist_test" }
+    string artist;
+    @TestColumn { name: "price" }
+    decimal price;
+|};
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowWithFalseColumnAnnotation() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album2|Error album = dbClient->queryRow(`SELECT * FROM Album`);
+    check dbClient.close();
+
+    if album is FieldMismatchError {
+        test:assertEquals(album.message(),
+            "No mapping field found for SQL table column 'ID_TEST' in the record type 'Album2'",
+            "Expected error message record did not match");
+    } else {
+        test:assertFail("Error expected");
+    }
+}
+
+public type Student4 record {|
+    int id;
+    string name;
+    int age;
+    int supervisorId;
+    @Column { name: "teachers" }
+    Teacher teacher;
+|};
+
+public type Teacher record {
+    @Column { name: "id" }
+    int teacherId;
+    string name;
+};
+
+@test:Config {
+    groups: ["query", "query-test"]
+}
+function queryAnnotatedTypedRecordWithFields() returns error? {
+
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Student4 student = check
+                dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
+    check dbClient.close();
+
+    Student4 expectedStudent = {
+        id: 1,
+        name: "Alice",
+        age: 25,
+        supervisorId: 1,
+        teacher: {
+            teacherId: 1,
+            name: "James"
+        }
+    };
+
+    test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }

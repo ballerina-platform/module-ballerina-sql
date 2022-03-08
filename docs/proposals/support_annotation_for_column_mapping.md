@@ -43,10 +43,25 @@ Introduce `sql:Column` annotation of `string` type. The user can provide the dat
 ```ballerina
 type Person record {
     int id;
-    @sql:Column { name = "first_name" }
+    @sql:Column { name: "first_name" }
     string firstName;
-    @sql:Column { name = "last_name" }
+    @sql:Column { name: "last_name" }
     string lastName
 };
 ```
 The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
+
+The annotation will be defined as,
+```
+# Defines the database column name which matches the record field. The default value is the record field name.
+#
+# + name - The database column name 
+public type ColumnConfig record {|
+    string name;
+|};
+
+# The Annotation used to specify which database column matches the record field.
+public annotation ColumnConfig Column on record field;
+```
+
+The `Column` annotation's keys' will be defined by the ColumnConfig closed record, which allows only `name` field.
