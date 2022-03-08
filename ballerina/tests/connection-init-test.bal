@@ -53,11 +53,11 @@ function testConnection2() returns error? {
 function testConnectionAfterClose() returns error? {
     MockClient testDB = check new (connectDB, user, password);
     check testDB.close();
-    stream<record{}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
+    stream<record {}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
-        test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " + 
+        test:assertTrue(data.message().startsWith("SQL Client is already closed, hence further operations are not " +
             "allowed"));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -65,19 +65,19 @@ function testConnectionAfterClose() returns error? {
 
     ExecutionResult|Error result = testDB->execute(`INSERT INTO Customers (firstName) VALUES ('Peter')`);
     if result is Error {
-        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " + 
+        test:assertTrue(result.message().startsWith("SQL Client is already closed, hence further operations are not " +
                     "allowed"));
     }
 
     ExecutionResult[]|Error result2 = testDB->batchExecute([`INSERT INTO Customers (firstName) VALUES ('Peter')`]);
     if result2 is Error {
-        test:assertTrue(result2.message().startsWith("SQL Client is already closed, hence further operations are not " + 
+        test:assertTrue(result2.message().startsWith("SQL Client is already closed, hence further operations are not " +
                     "allowed"));
     }
 
     ProcedureCallResult|Error result3 = testDB->call(`call MockProcedure()`);
     if result3 is Error {
-        test:assertTrue(result3.message().startsWith("SQL Client is already closed, hence further operations are not " + 
+        test:assertTrue(result3.message().startsWith("SQL Client is already closed, hence further operations are not " +
                         "allowed"));
     }
 
@@ -93,12 +93,12 @@ function testConnectionAfterClose() returns error? {
 }
 function testStreamNextAfterClose() returns error? {
     MockClient testDB = check new (connectDB, user, password);
-    stream<record{}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
+    stream<record {}, error?> streamData = testDB->query(`SELECT * FROM Customers`);
     check streamData.close();
     record {|record {} value;|}?|error data = streamData.next();
     test:assertTrue(data is error);
     if data is ApplicationError {
-        test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " + 
+        test:assertTrue(data.message().startsWith("Stream is closed. Therefore, no operations are allowed further " +
         "on the stream."));
     } else {
         test:assertFail("ApplicationError Error expected.");
@@ -145,7 +145,7 @@ function testConnectionWithValidDriver() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithInvalidDriver() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password, 
+    MockClient|Error dbClient = new (connectDB, user, password,
         "org.hsqldb.jdbc.JDBCDataSourceInvalid");
     if !(dbClient is Error) {
         check dbClient.close();
@@ -157,7 +157,7 @@ function testConnectionWithInvalidDriver() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithDatasourceOptions() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
+    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"loginTimeout": 5000});
     if dbClient is Error {
         test:assertFail("Datasource options throws DatabaseError");
@@ -170,10 +170,10 @@ function testConnectionWithDatasourceOptions() returns error? {
     groups: ["connection"]
 }
 function testConnectionWithDatasourceInvalidProperty() returns error? {
-    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
+    MockClient|Error dbClient = new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"invalidProperty": 10});
     if dbClient is Error {
-        test:assertEquals(dbClient.message(), 
+        test:assertEquals(dbClient.message(),
         "Error in SQL connector configuration: Property invalidProperty does not exist on target class org.hsqldb.jdbc.JDBCDataSource");
     } else {
         check dbClient.close();
@@ -188,7 +188,7 @@ function testWithConnectionPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = check new (url = connectDB, user = user, 
+    MockClient dbClient = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
     error? err = dbClient.close();
     if err is error {
@@ -206,11 +206,11 @@ function testWithSharedConnPool() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient1 = check new (url = connectDB, user = user, 
+    MockClient dbClient1 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
-    MockClient dbClient2 = check new (url = connectDB, user = user, 
+    MockClient dbClient2 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
-    MockClient dbClient3 = check new (url = connectDB, user = user, 
+    MockClient dbClient3 = check new (url = connectDB, user = user,
         password = password, connectionPool = connectionPool);
 
     test:assertEquals(dbClient1.close(), (), "HSQLDB connection failure.");
@@ -225,7 +225,7 @@ function testWithAllParams() returns error? {
     ConnectionPool connectionPool = {
         maxOpenConnections: 25
     };
-    MockClient dbClient = check new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource", 
+    MockClient dbClient = check new (connectDB, user, password, "org.hsqldb.jdbc.JDBCDataSource",
         {"loginTimeout": 5000}, connectionPool);
     test:assertEquals(dbClient.close(), (), "HSQLDB connection failure.");
 }

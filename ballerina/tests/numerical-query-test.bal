@@ -51,7 +51,7 @@ function testQuery() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericTypes`);
     record {}? returnData = ();
-    check from record{} data in streamData
+    check from record {} data in streamData
         do {
             returnData = data;
         };
@@ -281,7 +281,7 @@ function testQueryFromNullTable() returns error? {
     stream<record {}, Error?> streamData = dbClient->query(`SELECT * FROM NumericNullTypes`);
     record {} returnData = {};
     int count = 0;
-    check from record{} data in streamData
+    check from record {} data in streamData
         do {
             returnData = data;
             count += 1;
@@ -308,10 +308,11 @@ type DataTable record {
 }
 function testQueryDatabaseError() returns error? {
     MockClient dbClient = check new (url = jdbcURL, user = user, password = password);
-    stream<DataTable, Error?> streamData = 
+    stream<DataTable, Error?> streamData =
             <stream<DataTable, Error?>>dbClient->query(`SELECT int_type from DataTable1`, DataTable);
 
-    DataTable[]|error? e = from DataTable data in streamData select data;
+    DataTable[]|error? e = from DataTable data in streamData
+        select data;
     check dbClient.close();
     test:assertTrue(e is Error);
 }

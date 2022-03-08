@@ -143,7 +143,7 @@ function testGetPrimitiveTypesLessFields() returns error? {
 }
 function testToJson() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type, boolean_type,
+    stream<record {}, error?> streamData = dbClient->query(`SELECT int_type, long_type, double_type, boolean_type,
                                                     string_type from DataTable WHERE row_id = 1`, SelectTestAlias);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -167,7 +167,7 @@ function testToJson() returns error? {
 }
 function testToJsonComplexTypes() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record{}, error?> streamData = dbClient->query(`SELECT blob_type,clob_type,binary_type from ComplexTypes
+    stream<record {}, error?> streamData = dbClient->query(`SELECT blob_type,clob_type,binary_type from ComplexTypes
                                                             where row_id = 1`);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
@@ -292,7 +292,7 @@ function testMultipleRecordRetrieval() returns error? {
 
     ResultMap? mixTypesActual = ();
     int counter = 0;
-    check from record{} value in streamData
+    check from record {} value in streamData
         do {
             if value is ResultMap && counter == 0 {
                 mixTypesActual = value;
@@ -413,43 +413,43 @@ function testDateTime3() returns error? {
     queryResult = dbClient->query(`SELECT date_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Date type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Date' type is 'time:Date' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT time_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT timestamp_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT datetime_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Datetime type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT time_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Time with Timezone type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Time with Timezone' type is 'time:TimeOfDay' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     queryResult = dbClient->query(`SELECT timestamp_tz_type from DateTimeTypes where row_id = 1`, ResultDates3);
     result = queryResult.next();
     test:assertTrue(result is error, "Error Expected for Timestamp with Timezone type.");
-    test:assertEquals((<error>result).message(), 
-        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.", 
+    test:assertEquals((<error>result).message(),
+        "Error when iterating the SQL result. The ballerina type expected for 'SQL Timestamp with Timezone' type is 'time:Civil' but found type 'RandomType'.",
         "Wrong Error Message for Date type.");
 
     check dbClient.close();
@@ -510,7 +510,7 @@ function testColumnAlias() returns error? {
         dt2int_type: 100
     };
     int counter = 0;
-    check from record{} value in queryResult
+    check from record {} value in queryResult
         do {
             if value is ResultSetTestAlias {
                 test:assertEquals(value, expectedData, "Expected record did not match.");
@@ -542,7 +542,7 @@ function testQueryRowId() returns error? {
 
     record {}? mixTypesActual = ();
     int counter = 0;
-    check from record{} value in streamData
+    check from record {} value in streamData
         do {
             if counter == 0 {
                 mixTypesActual = value;
@@ -595,8 +595,10 @@ function testGetArrayTypes() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 1,
-        blob_array: [<byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
-                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
+        blob_array: [
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46],
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]
+        ],
         smallint_array: [12, 232],
         int_array: [1, 2, 3],
         long_array: [100000000, 200000000, 300000000],
@@ -674,8 +676,11 @@ function testGetArrayTypes3() returns error? {
     check dbClient.close();
     ArrayRecord expectedData = {
         row_id: 3,
-        blob_array: [null, <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46], 
-                    <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]],
+        blob_array: [
+            null,
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46],
+            <byte[]>[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]
+        ],
         smallint_array: [null, 12, 232],
         int_array: [null, 1, 2, 3],
         long_array: [null, 100000000, 200000000, 300000000],

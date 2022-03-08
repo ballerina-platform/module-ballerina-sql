@@ -166,23 +166,23 @@ function testLocalSharedConnectionPoolConfigSingleDestination() returns error? {
 }
 function testLocalSharedConnectionPoolConfigDifferentDbOptions() returns error? {
     ConnectionPool pool = {maxOpenConnections: 3};
-    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
+    MockClient dbClient1 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
+    MockClient dbClient2 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool, 
+    MockClient dbClient3 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "2000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
+    MockClient dbClient4 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
+    MockClient dbClient5 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
-    MockClient dbClient6 = check new (url = poolDB_1, user = user, password = password, 
-        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool, 
+    MockClient dbClient6 = check new (url = poolDB_1, user = user, password = password,
+        datasourceName = datasourceName, options = {"loginTimeout": "1000"}, connectionPool = pool,
         connectionPoolOptions = connectionPoolOptions);
 
     stream<Result, error?>[] resultArray = [];
@@ -326,18 +326,18 @@ function testLocalSharedConnectionPoolStopInitInterleave() returns error? {
     test:assertEquals(result, 1);
 }
 
-function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url) 
+function testLocalSharedConnectionPoolStopInitInterleaveHelper1(string url)
 returns error? {
-    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1, 
+    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
         connectionPoolOptions = connectionPoolOptions);
     runtime:sleep(1);
     check dbClient.close();
 }
 
-function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url) 
+function testLocalSharedConnectionPoolStopInitInterleaveHelper2(string url)
 returns int|error {
     runtime:sleep(1);
-    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1, 
+    MockClient dbClient = check new (url = url, user = user, password = password, connectionPool = pool1,
         connectionPoolOptions = connectionPoolOptions);
     stream<Result, error?> dt = dbClient->query(`SELECT COUNT(*) as val from Customers where registrationID = 1`);
     int|error count = getReturnValue(dt);

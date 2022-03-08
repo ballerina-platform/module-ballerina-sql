@@ -442,15 +442,15 @@ function testCallWithInoutParams() returns error? {
     decimal[] decimalArray = [245, 5559, 8796];
     byte[][] byteArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]];
     test:assertEquals(paraIntArray.get(IntArray), [1, 2, 3], "Int array out parameter of procedure did not match.");
-    test:assertEquals(paraStrArray.get(StringArray), ["Hello", "Ballerina"], "String array out parameter " + 
+    test:assertEquals(paraStrArray.get(StringArray), ["Hello", "Ballerina"], "String array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(paraFloArray.get(FloatArray), [245.23, 5559.49, 8796.123], "Float array out parameter of " + 
+    test:assertEquals(paraFloArray.get(FloatArray), [245.23, 5559.49, 8796.123], "Float array out parameter of " +
     "procedure did not match.");
-    test:assertEquals(paraDecArray.get(DecimalArray), decimalArray, "Decimal array out parameter " + 
+    test:assertEquals(paraDecArray.get(DecimalArray), decimalArray, "Decimal array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(paraBooArray.get(BooleanArray), [true, false, true], "Boolean array out parameter " + 
+    test:assertEquals(paraBooArray.get(BooleanArray), [true, false, true], "Boolean array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " + 
+    test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " +
     "procedure did not match.");
 }
 
@@ -466,8 +466,8 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     test:assertTrue(ret is error);
 
     if ret is DatabaseError {
-        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " + 
-        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " + 
+        test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
+        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
         "[call SelectNumericDataWithInoutParams( ? )]."));
     } else {
         test:assertFail("DatabaseError Error expected.");
@@ -890,7 +890,7 @@ function testMultipleRecords() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        check from record{} data in streamData
+        check from record {} data in streamData
             do {
                 returnData = data;
             };
@@ -926,7 +926,7 @@ function testMultipleRecordsWithNoReturnType() returns error? {
     record {}? returnData = ();
 
     if streamData is stream<record {}, Error?> {
-        check from record{} data in streamData
+        check from record {} data in streamData
             do {
                 returnData = data;
             };
@@ -1162,8 +1162,10 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     boolean[] booleanArray = [true, false, true];
     byte[][] byteArray = [[128], [128], [0]];
     byte[][] binaryArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 105, 110, 97, 114, 121, 32, 116, 101, 115, 116, 139]];
-    time:Civil[] civilArray = [{year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0}, 
-    {year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}];
+    time:Civil[] civilArray = [
+        {year: 2017, month: 2, day: 3, hour: 11, minute: 53, second: 0},
+        {year: 2019, month: 4, day: 5, hour: 12, minute: 33, second: 10}
+    ];
     string[] civilArrayInString = ["2017-02-03 11:53:00.0", "2019-04-05 12:33:10.0"];
     time:Date[] dateArray = [{"year": 2017, "month": 2, "day": 3}, {"year": 2017, "month": 2, "day": 3}];
     string[] dateArrayInString = ["2017-02-03", "2017-02-03"];
@@ -1172,9 +1174,9 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     time:TimeOfDay[] timeTZArray = [{"utcOffset": {"hours": 6, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+06:30"}, {"utcOffset": {"hours": 4, "minutes": 30}, "hour": 16, "minute": 33, "second": 55, "timeAbbrev": "+04:30"}];
     time:Civil[] timestampTZArray = [{"utcOffset": {"hours": -8, "minutes": 0}, "timeAbbrev": "-08:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}, {"utcOffset": {"hours": -5, "minutes": 0}, "timeAbbrev": "-05:00", "year": 2017, "month": 1, "day": 25, "hour": 16, "minute": 33, "second": 55}];
     string[] timestampTZArrayInString = ["2017-01-25T16:33:55-08:00", "2017-01-25T16:33:55-05:00"];
-    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " + 
+    test:assertEquals(smallint_array.get(IntArray), smallIntArray, "Small int array out parameter of " +
     "procedure did not match.");
-    test:assertEquals(smallint_array.get(StringArray), ["12", "232"], "Small int array out parameter of " + 
+    test:assertEquals(smallint_array.get(StringArray), ["12", "232"], "Small int array out parameter of " +
     "procedure did not match.");
     test:assertEquals(int_array.get(IntArray), intArray, "Int array out parameter of procedure did not match.");
     test:assertEquals(int_array.get(StringArray), ["1", "2", "3"], "Int array out parameter of procedure did not match.");
@@ -1182,69 +1184,69 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     test:assertEquals(real_array.get(IntArray), [199, 2399], "Real array out parameter of procedure did not match.");
     test:assertEquals(real_array.get(StringArray), ["199.33", "2399.1"], "Real array out parameter of procedure did not match.");
     test:assertEquals(real_array.get(DecimalArray), realArrayInDecimal, "Real array out parameter of procedure did not match.");
-    test:assertEquals(numeric_array.get(FloatArray), numericArrayInFloat, "Numeric array out parameter " + 
+    test:assertEquals(numeric_array.get(FloatArray), numericArrayInFloat, "Numeric array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(StringArray), ["11.11", "23.23"], "Numeric array out parameter " + 
+    test:assertEquals(numeric_array.get(StringArray), ["11.11", "23.23"], "Numeric array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(IntArray), [11, 23], "Numeric array out parameter " + 
+    test:assertEquals(numeric_array.get(IntArray), [11, 23], "Numeric array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(numeric_array.get(DecimalArray), numericArray, "Numeric array out parameter " + 
+    test:assertEquals(numeric_array.get(DecimalArray), numericArray, "Numeric array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter " + 
+    test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter " +
     "of procedure did not match.");
     test:assertEquals(long_array.get(IntArray), longArray, "Long array out parameter of procedure did not match.");
-    test:assertEquals(long_array.get(StringArray), ["100000000", "200000000", "300000000"], "Long array out parameter of " + 
+    test:assertEquals(long_array.get(StringArray), ["100000000", "200000000", "300000000"], "Long array out parameter of " +
     "procedure did not match.");
-    test:assertEquals(float_array.get(IntArray), [245, 5559, 8796], "Float array out parameter " + 
+    test:assertEquals(float_array.get(IntArray), [245, 5559, 8796], "Float array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(float_array.get(StringArray), ["245.23", "5559.49", "8796.123"], "Float array out parameter " + 
+    test:assertEquals(float_array.get(StringArray), ["245.23", "5559.49", "8796.123"], "Float array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(double_array.get(FloatArray), doubleArray, "Double array out parameter " + 
+    test:assertEquals(double_array.get(FloatArray), doubleArray, "Double array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(BooleanArray), booleanArray, "Boolean array out parameter " + 
+    test:assertEquals(boolean_array.get(BooleanArray), booleanArray, "Boolean array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(IntArray), [1, 0, 1], "Boolean array out parameter " + 
+    test:assertEquals(boolean_array.get(IntArray), [1, 0, 1], "Boolean array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(boolean_array.get(StringArray), ["true", "false", "true"], "Boolean array out parameter " + 
+    test:assertEquals(boolean_array.get(StringArray), ["true", "false", "true"], "Boolean array out parameter " +
         "of procedure did not match.");
-    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter " + 
+    test:assertEquals(decimal_array.get(DecimalArray), decimalArray, "Decimal array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(StringArray), ["245.12", "5559.12", "8796.92"], "Decimal array out parameter " + 
+    test:assertEquals(decimal_array.get(StringArray), ["245.12", "5559.12", "8796.92"], "Decimal array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(IntArray), [245, 5559, 8796], "Decimal array out parameter " + 
+    test:assertEquals(decimal_array.get(IntArray), [245, 5559, 8796], "Decimal array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(decimal_array.get(FloatArray), decimalArrayInFloat, "Decimal array out parameter " + 
+    test:assertEquals(decimal_array.get(FloatArray), decimalArrayInFloat, "Decimal array out parameter " +
     "of procedure did not match.");
     test:assertEquals(char_array.get(StringArray), charArray, "Char array out parameter of procedure did not match.");
-    test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " + 
+    test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " + 
+    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " + 
+    test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " +
         "of procedure did not match.");
     test:assertEquals(date_array.get(DateArray), dateArray, "Date array out parameter of procedure did not match.");
-    test:assertEquals(date_array.get(StringArray), dateArrayInString, "String date array out parameter of procedure " + 
+    test:assertEquals(date_array.get(StringArray), dateArrayInString, "String date array out parameter of procedure " +
     "did not match.");
-    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Date time array out parameter " + 
+    test:assertEquals(datetime_array.get(CivilArray), civilArray, "Date time array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(datetime_array.get(StringArray), civilArrayInString, "String date time array out parameter " + 
+    test:assertEquals(datetime_array.get(StringArray), civilArrayInString, "String date time array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " + 
+    test:assertEquals(time_array.get(TimeOfDayArray), timeOfDayArray, "Time array out parameter " +
     "of procedure did not match.");
     test:assertEquals(time_array.get(StringArray), timeOfDayArrayInString, "String time array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " + 
+    test:assertEquals(bit_array.get(ByteArray), byteArray, "Bit array out parameter " +
     "of procedure did not match.");
     test:assertFalse((bit_array.get(StringArray) is Error));
     test:assertEquals(time_tz_array.get(TimeOfDayArray), timeTZArray, "Time with timezone array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30", "16:33:55+04:30"], "Timestamp with timezone array out " + 
+    test:assertEquals(time_tz_array.get(StringArray), ["16:33:55+06:30", "16:33:55+04:30"], "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
     test:assertEquals(timestamp_tz_array.get(CivilArray), timestampTZArray, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
     test:assertEquals(timestamp_tz_array.get(StringArray), timestampTZArrayInString, "Timestamp with timezone array out " +
     "parameter of procedure did not match.");
-    test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " + 
+    test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " +
     "procedure did not match.");
     test:assertFalse((binary_array.get(StringArray) is Error));
 }
@@ -1286,7 +1288,7 @@ function negativeOutParamsTest() returns error? {
     check ret.close();
     byte[][]|Error result = smallint_array.get(ByteArray);
     if result is TypeMismatchError {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
         "The ballerina type expected for 'SmallInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1295,7 +1297,7 @@ function negativeOutParamsTest() returns error? {
     result = int_array.get(ByteArray);
 
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
         "The ballerina type expected for 'Integer Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1303,7 +1305,7 @@ function negativeOutParamsTest() returns error? {
 
     result = real_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                 "The ballerina type expected for 'Real Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1311,7 +1313,7 @@ function negativeOutParamsTest() returns error? {
 
     result = numeric_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                 "The ballerina type expected for 'Numeric Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1319,7 +1321,7 @@ function negativeOutParamsTest() returns error? {
 
     result = nvarchar_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'NVarchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1327,7 +1329,7 @@ function negativeOutParamsTest() returns error? {
 
     result = long_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'BigInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1335,7 +1337,7 @@ function negativeOutParamsTest() returns error? {
 
     result = float_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Float Array' type are 'float[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1343,7 +1345,7 @@ function negativeOutParamsTest() returns error? {
 
     result = double_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Double Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1351,7 +1353,7 @@ function negativeOutParamsTest() returns error? {
 
     result = decimal_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Decimal Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1359,7 +1361,7 @@ function negativeOutParamsTest() returns error? {
 
     result = char_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Char Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1367,7 +1369,7 @@ function negativeOutParamsTest() returns error? {
 
     result = varchar_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Varchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1382,7 +1384,7 @@ function negativeOutParamsTest() returns error? {
 
     result = date_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Date Array' type are 'time:Date[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1390,7 +1392,7 @@ function negativeOutParamsTest() returns error? {
 
     result = time_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Time Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1398,7 +1400,7 @@ function negativeOutParamsTest() returns error? {
 
     result = timestamp_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Timestamp Array' type are 'time:Utc[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1406,7 +1408,7 @@ function negativeOutParamsTest() returns error? {
 
     result = datetime_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'DateTime Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1414,7 +1416,7 @@ function negativeOutParamsTest() returns error? {
 
     result = time_tz_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
             "The ballerina type expected for 'TimeWithTimezone Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1422,7 +1424,7 @@ function negativeOutParamsTest() returns error? {
 
     result = timestamp_tz_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
         "The ballerina type expected for 'TimestampWithTimezone Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1430,7 +1432,7 @@ function negativeOutParamsTest() returns error? {
 
     result = boolean_array.get(ByteArray);
     if result is Error {
-        test:assertEquals(result.message(), 
+        test:assertEquals(result.message(),
                     "The ballerina type expected for 'Boolean Array' type are 'boolean[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
@@ -1438,7 +1440,7 @@ function negativeOutParamsTest() returns error? {
 
     float[]|Error output = binary_array.get(FloatArray);
     if output is Error {
-        test:assertEquals(output.message(), 
+        test:assertEquals(output.message(),
                     "The ballerina type expected for 'Binary Array' type are 'byte[][]', and 'string[]' but found type 'float[]'.");
     } else {
         test:assertFail("Result is not mismatch");

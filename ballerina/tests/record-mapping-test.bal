@@ -57,13 +57,13 @@ public type StudentsWithoutTeachersFieldClosed record {|
 function queryWithoutRecordFieldSealed() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    StudentsWithoutTeachersFieldClosed|error failure = 
+    StudentsWithoutTeachersFieldClosed|error failure =
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     if failure is error {
-        test:assertEquals(failure.message(), 
-            "No mapping field found for SQL table column 'TEACHERS.ID' in the record type 'StudentsWithoutTeachersFieldClosed'", 
+        test:assertEquals(failure.message(),
+            "No mapping field found for SQL table column 'TEACHERS.ID' in the record type 'StudentsWithoutTeachersFieldClosed'",
             "Expected error message record did not match");
     } else {
         test:assertFail("Error expected");
@@ -84,7 +84,7 @@ public type Student record {|
 function queryAnnonRecord() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student student = check 
+    Student student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -121,7 +121,7 @@ public type Teachers1 record {
 function queryTypedRecordWithFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student1 student = check 
+    Student1 student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -145,7 +145,7 @@ function queryTypedRecordWithFields() returns error? {
 function queryTypedRecordWithFieldsStream() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    stream<Student1, Error?> studentStream = 
+    stream<Student1, Error?> studentStream =
                 dbClient->query(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     Student1? returnData = ();
     check from Student1 data in studentStream
@@ -187,7 +187,7 @@ public type Teachers2 record {
 function queryTypedRecordWithoutFields() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student2 student = check 
+    Student2 student = check
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
@@ -223,13 +223,13 @@ public type Teachers3 record {|
 function queryTypedRecordWithoutFieldsClosed() returns error? {
 
     MockClient dbClient = check getMockClient(queryRowDb);
-    Student3|Error failure = 
+    Student3|Error failure =
                 dbClient->queryRow(`SELECT * FROM students JOIN teachers ON students.supervisorId = teachers.id`);
     check dbClient.close();
 
     if failure is error {
-        test:assertEquals(failure.message(), 
-            "No mapping field found for SQL table column 'TEACHERS.NAME' in the record type 'Teachers3'", 
+        test:assertEquals(failure.message(),
+            "No mapping field found for SQL table column 'TEACHERS.NAME' in the record type 'Teachers3'",
             "Expected error message record did not match");
     } else {
         test:assertFail("Error expected");
@@ -239,16 +239,16 @@ function queryTypedRecordWithoutFieldsClosed() returns error? {
 annotation ColumnConfig TestColumn on record field;
 
 public type Album record {|
-    @Column{
+    @Column {
         name: "id_test"
     }
     string id;
     string name;
-    @Column{
+    @Column {
         name: "artist_test"
     }
     string artist;
-    @TestColumn{
+    @TestColumn {
         name: "price"
     }
     decimal price;
@@ -273,16 +273,16 @@ function queryRowWithColumnAnnotation() returns error? {
 }
 
 public type Album2 record {|
-    @Column{
+    @Column {
         name: "id_test2"
     }
     string id;
     string name;
-    @Column{
+    @Column {
         name: "artist_test"
     }
     string artist;
-    @TestColumn{
+    @TestColumn {
         name: "price"
     }
     decimal price;
@@ -317,7 +317,7 @@ public type Student4 record {|
 |};
 
 public type Teacher record {
-    @Column{
+    @Column {
         name: "id"
     }
     int teacherId;

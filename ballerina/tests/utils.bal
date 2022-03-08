@@ -37,14 +37,14 @@ isolated function afterSuite() {
     io:println("Test suite finished");
 }
 
-function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder, 
+function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
         string scriptName) returns error? {
     int exitCode = 1;
     Process result = check exec("docker", {}, scriptPath, "run", "--rm",
-        "-d", "--name", containerName, 
-        "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias, 
-        "-e", "HSQLDB_USER=test", 
-        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts", 
+        "-d", "--name", containerName,
+        "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
+        "-e", "HSQLDB_USER=test",
+        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts",
         "-p", port + ":9001", "kaneeldias/hsqldb");
     _ = check result.waitForExit();
     exitCode = check result.exitCode();
@@ -57,10 +57,10 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
     while (exitCode > 0 && counter < 12) {
         runtime:sleep(5);
         result = check exec(
-            "docker", {}, scriptPath, "exec", containerName, 
-            "java", "-jar", "/opt/hsqldb/sqltool.jar", 
-            "--autoCommit", 
-            "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=", 
+            "docker", {}, scriptPath, "exec", containerName,
+            "java", "-jar", "/opt/hsqldb/sqltool.jar",
+            "--autoCommit",
+            "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=",
             "/scripts/" + scriptName
         );
         _ = check result.waitForExit();
@@ -108,7 +108,7 @@ function getMockClient(string url) returns MockClient|error {
     return dbClient;
 }
 
-function queryMockClient(string url, ParameterizedQuery sqlQuery) 
+function queryMockClient(string url, ParameterizedQuery sqlQuery)
 returns record {}|error? {
     MockClient dbClient = check getMockClient(url);
     stream<record {}, error?> streamData = dbClient->query(sqlQuery);
@@ -119,7 +119,7 @@ returns record {}|error? {
     return value;
 }
 
-function queryRecordMockClient(string url, ParameterizedQuery sqlQuery) 
+function queryRecordMockClient(string url, ParameterizedQuery sqlQuery)
 returns record {}|error {
     MockClient dbClient = check getMockClient(url);
     record {} resultRecord = check dbClient->queryRow(sqlQuery);
@@ -127,7 +127,7 @@ returns record {}|error {
     return resultRecord;
 }
 
-function exec(string command, map<string> env = {}, 
+function exec(string command, map<string> env = {},
                     string? dir = (), string... args) returns Process|error = @java:Method {
     name: "exec",
     'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.Exec"
