@@ -14,12 +14,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Defines SQL Column annotation fields.
+# Defines the database column name which matches the record field. The default value is the record field name.
 #
-# + name - Name of the database table column the Ballerina record field should be mapped to
+# + name - The database column name
 public type ColumnConfig record {|
     string name;
 |};
 
-# Annotation which is used to map fields of different names to DB Table Columns.
+# The Annotation used to specify which database column matches the record field.
 public annotation ColumnConfig Column on record field;
