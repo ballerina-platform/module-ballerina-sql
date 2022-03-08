@@ -360,8 +360,7 @@ Here the returned stream can consist of following types of records,
        string name;
        string? age;
        float? gpa;
-       @sql:Column {
-           name: "teachers"
+       @sql:Column { name: "teachers" }
        Teacher teacher;
    |}
    ```

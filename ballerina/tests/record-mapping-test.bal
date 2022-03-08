@@ -239,18 +239,12 @@ function queryTypedRecordWithoutFieldsClosed() returns error? {
 annotation ColumnConfig TestColumn on record field;
 
 public type Album record {|
-    @Column {
-        name: "id_test"
-    }
+    @Column { name: "id_test" }
     string id;
     string name;
-    @Column {
-        name: "artist_test"
-    }
+    @Column { name: "artist_test" }
     string artist;
-    @TestColumn {
-        name: "price"
-    }
+    @TestColumn { name: "price" }
     decimal price;
 |};
 
@@ -273,18 +267,12 @@ function queryRowWithColumnAnnotation() returns error? {
 }
 
 public type Album2 record {|
-    @Column {
-        name: "id_test2"
-    }
+    @Column { name: "id_test2" }
     string id;
     string name;
-    @Column {
-        name: "artist_test"
-    }
+    @Column { name: "artist_test" }
     string artist;
-    @TestColumn {
-        name: "price"
-    }
+    @TestColumn { name: "price" }
     decimal price;
 |};
 
@@ -310,16 +298,12 @@ public type Student4 record {|
     string name;
     int age;
     int supervisorId;
-    @Column {
-        name: "teachers"
-    }
+    @Column { name: "teachers" }
     Teacher teacher;
 |};
 
 public type Teacher record {
-    @Column {
-        name: "id"
-    }
+    @Column { name: "id" }
     int teacherId;
     string name;
 };

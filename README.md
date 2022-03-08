@@ -318,8 +318,7 @@ public type Students record {|
     string name;
     string? age;
     float? gpa;
-    @sql:Column {
-        name: "teachers"
+    @sql:Column { name: "teachers" }
     Teacher teacher;
 |}
 ```
