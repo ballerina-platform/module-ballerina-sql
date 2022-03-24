@@ -4,7 +4,7 @@ This module provides the generic interface and functionality to interact with an
 clients can be created by using specific database modules such as `mysql` or using the Java Database Connectivity
 module `jdbc`.
 
-### List of Database Modules
+### List of database modules
 Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc/latest) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
 
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
@@ -17,7 +17,7 @@ Ballerina also provides specially designed various database-specific DB connecto
 
 The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used.
 
-#### Connection Pool Handling
+#### Handle connection pools
 
 All database modules share the same connection pooling concept and there are three possible scenarios for
 connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).
@@ -65,7 +65,7 @@ connection pool handling.  For its properties and possible values, see the [`sql
                             connectionPool = connPool);
     ```
 
-#### Closing the Client
+#### Close the client
 
 Once all the database operations are performed, you can close the database client you have created by invoking the `close()`
 operation. This will close the corresponding connection pool if it is not shared by any other database clients.
@@ -78,13 +78,13 @@ Or
 check dbClient.close();
 ```
 
-### Database Operations
+### Database operations
 
 Once the client is created, database operations can be executed through that client. This module defines the interface
 and generic properties that are shared among multiple database clients. It also supports querying, inserting, deleting,
 updating, and batch updating data.
 
-#### Parameterized Query
+#### Parameterized query
 
 The `sql:ParameterizedQuery` is used to construct the SQL query to be executed by the client.
 You can create a query with constant or dynamic input data as follows.
@@ -136,7 +136,7 @@ sql:ParameterizedQuery sqlQuery =
                                           sql:arrayFlattenQuery(ids), `)`);
 ```
 
-#### Creating Tables
+#### Create tables
 
 This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
 The `CREATE` statement is executed via the `execute` remote function of the client.
@@ -153,7 +153,7 @@ sql:ExecutionResult result =
 // A value of the sql:ExecutionResult type is returned for 'result'. 
 ```
 
-#### Inserting Data
+#### Insert data
 
 These samples show the data insertion by executing an `INSERT` statement using the `execute` remote function
 of the client.
@@ -193,7 +193,7 @@ sql:ParameterizedQuery query = `INSERT INTO student(age, name)
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
-#### Inserting Data With Auto-generated Keys
+#### Insert data with auto-generated keys
 
 This sample demonstrates inserting data while returning the auto-generated keys. It achieves this by using the
 `execute` remote function to execute the `INSERT` statement.
@@ -213,7 +213,7 @@ int? count = result.affectedRowCount;
 string|int? generatedKey = result.lastInsertId;
 ```
 
-#### Querying Data
+#### Query data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
 database table and obtain the results.
@@ -336,7 +336,7 @@ sql:ParameterizedQuery query = `SELECT COUNT(*) FROM students WHERE age < ${age}
 int youngStudents = check dbClient->queryRow(query);
 ```
 
-#### Updating Data
+#### Update data
 
 This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote function of
 the client.
@@ -347,7 +347,7 @@ sql:ParameterizedQuery query = `UPDATE students SET name = 'John' WHERE age = ${
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
-#### Deleting Data
+#### Delete data
 
 This sample demonstrates deleting data by executing a `DELETE` statement via the `execute` remote function of
 the client.
@@ -358,7 +358,7 @@ sql:ParameterizedQuery query = `DELETE from students WHERE name = ${name}`;
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
-#### Batch Updating Data
+#### Batch update data
 
 This sample demonstrates how to insert multiple records with a single `INSERT` statement that is executed via the
 `batchExecute` remote function of the client. This is done by creating a `table` with multiple records and a
@@ -379,7 +379,7 @@ sql:ParameterizedQuery[] batch = from var row in data
 sql:ExecutionResult[] result = check dbClient->batchExecute(batch);
 ```
 
-#### Execute SQL Stored Procedures
+#### Execute SQL stored procedures
 
 This sample demonstrates how to execute a stored procedure with a single `INSERT` statement that is executed via the
 `call` remote function of the client.
