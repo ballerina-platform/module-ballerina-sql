@@ -131,7 +131,7 @@ operation. This will close the corresponding connection pool if it is not shared
 
 # 3. Queries and values
 
-## 3.1. ParameterizedQuery and values
+## 3.1. `ParameterizedQuery` and values
 
 The `sql:ParameterizedQuery` is used to construct the SQL query to be executed by the client. It is backtick string 
 template which allows dynamic values for query parameters.
@@ -164,16 +164,16 @@ All primitive Ballerina types are supported for parameter values in `sql:Paramet
 |   record {}    |  STRUCT  |
 |     Array      |  ARRAY   |
 
-In addition to the above `time` module constructs are used to represent SQL Time data types,
+In addition to the above `time` module constructs are used to represent SQL Time data types.
 
-| `time` Constructs | SQL Type  |
+| `time` constructs | SQL type  |
 |:-----------------:|:---------:|
 |     time:Date     |   DATE    |
 |  time:TimeOfDay   |   TIME    |
 |    time:Civil     | DATETIME  |
 |     time:Utc      | TIMESTAMP |
 
-Furthermore, TypedValues are used to map values to a specific SQL data type such as BIGINT,
+Furthermore, typed values are used to map values to a specific SQL data type such as `BIGINT`,
    ```ballerina
       BigIntValue value = new(1000000000000);
       sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${value}`;
@@ -209,7 +209,7 @@ List of typed values:
 26. StructValue 
 27. RowValue
 
-## 3.2. ParameterizedCallQuery and parameters
+## 3.2. `ParameterizedCallQuery` and parameters
 
 The `sql:ParameterizedCallQuery` is used to construct the SQL CALL Statement to be executed by the client. It is backtick string
 template which allows dynamic values for query parameters. In addition to Values supported by `sql:ParameterizedQuery`, 
@@ -218,7 +218,7 @@ template which allows dynamic values for query parameters. In addition to Values
 1. InOutParameter
 2. Typed OutParameters
 
-These types can be used to retrieve values from SQL stored procedures using `get()` method.
+These types can be used to retrieve values from SQL stored procedures using the `get()` method.
 
    ```ballerina
    # Parses returned Char SQL value to a ballerina value.
@@ -231,7 +231,7 @@ These types can be used to retrieve values from SQL stored procedures using `get
    ```ballerina
    InOutParameter parameter = new ("varchar value");
    
-   // Execute DB call method
+   // Execute the DB call method
    
    string procedureParam = parameter.get();
    ```
@@ -304,7 +304,7 @@ Here the returned stream can consist of following types of records,
 
    This record can be defined as an open or a closed record according to the requirement. If an open record is defined, 
    the returned stream type will include both defined fields in the record and additional database columns fetched by 
-   the SQL query which are not defined in the record. Additional column names added to the returned record as in the 
+   the SQL query that are not defined in the record. Additional column names added to the returned record as in the 
    SQL query. If the record is defined as a close record, only defined fields in the record are returned or gives 
    an error when additional columns present in the SQL query.
 
@@ -567,7 +567,7 @@ and avoid a connection leak as shown above.
 
 All errors include detailed error message.
 
-Along with this `sql:DatabaseError` include error details as follows,
+Include error details along with this `sql:DatabaseError` as follows.
 ```ballerina
 # Represents the properties belonging to an `sql:DatabaseError`.
 #
