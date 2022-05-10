@@ -234,6 +234,7 @@ public class Utils {
             case Types.DATE:
                 // todo Record validate for time:Date
                 if (requestedReturnType == TypeDescKind.RECORD ||
+                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -243,6 +244,7 @@ public class Utils {
             case Types.TIME_WITH_TIMEZONE:
                 // todo Record validate for time:TimeOfDay
                 if (requestedReturnType == TypeDescKind.RECORD ||
+                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -252,6 +254,7 @@ public class Utils {
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 // todo Record validate for time:Civil, time:Utc
                 if (requestedReturnType == TypeDescKind.RECORD ||
+                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
                         requestedReturnType == TypeDescKind.TUPLE ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
