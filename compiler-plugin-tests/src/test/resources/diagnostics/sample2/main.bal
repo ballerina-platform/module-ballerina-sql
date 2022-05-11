@@ -15,13 +15,29 @@
 // under the License.
 
 import ballerina/sql;
+import ballerina/time;
 
 public function main() returns error? {
     sql:CharOutParameter charOut = new();
-    string charVal = check charOut.get(string);
-    int intVal = check charOut.get(int);
+    string _ = check charOut.get(string);
+    int _ = check charOut.get(int);
 
     sql:TimeOutParameter timeOut = new();
-    int timeIntVal = check timeOut.get(int);
-    json jsonVal = check timeOut.get(json);
+    int _ = check timeOut.get(int);
+    time:TimeOfDay _ = check timeOut.get(time:TimeOfDay);
+    string _ = check timeOut.get(string);
+    json _ = check timeOut.get(json);
+
+    sql:DateOutParameter dateOut = new();
+    int _ = check dateOut.get(int);
+    time:Date _ = check dateOut.get(time:Date);
+    string _ = check dateOut.get(string);
+    json _ = check dateOut.get(json);
+
+    sql:TimestampWithTimezoneOutParameter timeWithTimezoneOut = new();
+    int _ = check timeWithTimezoneOut.get(int);
+    time:Civil _ = check timeWithTimezoneOut.get(time:Civil);
+    time:Utc _ = check timeWithTimezoneOut.get(time:Utc);
+    string _ = check timeWithTimezoneOut.get(string);
+    json _ = check timeWithTimezoneOut.get(json);
 }

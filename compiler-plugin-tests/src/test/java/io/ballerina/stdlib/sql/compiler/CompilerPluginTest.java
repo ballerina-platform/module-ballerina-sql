@@ -102,17 +102,23 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 2);
+        Assert.assertEquals(availableErrors, 4);
 
         DiagnosticInfo charOutParameter = errorDiagnosticsList.get(0).diagnosticInfo();
         Assert.assertEquals(charOutParameter.code(), SQLDiagnosticsCodes.SQL_211.getCode());
-        Assert.assertEquals(charOutParameter.messageFormat(),
-                "invalid value: expected value is either string or json");
+        Assert.assertEquals(charOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_211.getMessage());
 
-        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_223.getCode());
-        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
-                "invalid value: expected value is any one of time:TimeOfDay, int or string");
+        DiagnosticInfo timeOutParameter = errorDiagnosticsList.get(1).diagnosticInfo();
+        Assert.assertEquals(timeOutParameter.code(), SQLDiagnosticsCodes.SQL_223.getCode());
+        Assert.assertEquals(timeOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_223.getMessage());
+
+        DiagnosticInfo dateOutParameter = errorDiagnosticsList.get(2).diagnosticInfo();
+        Assert.assertEquals(dateOutParameter.code(), SQLDiagnosticsCodes.SQL_222.getCode());
+        Assert.assertEquals(dateOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_222.getMessage());
+
+        DiagnosticInfo timeWithTimezoneOutParameter = errorDiagnosticsList.get(3).diagnosticInfo();
+        Assert.assertEquals(timeWithTimezoneOutParameter.code(), SQLDiagnosticsCodes.SQL_231.getCode());
+        Assert.assertEquals(timeWithTimezoneOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_231.getMessage());
     }
 
     @Test

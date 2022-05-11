@@ -31,6 +31,10 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import java.sql.Types;
 import java.util.Optional;
 
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.CIVIL;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.DATE;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.TIME_OF_DAY;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.UTC;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_201;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_202;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_203;
@@ -81,7 +85,8 @@ public class Utils {
     }
 
     public static DiagnosticInfo addDiagnosticsForInvalidTypes(String outParameterName,
-                                                               TypeDescKind requestedReturnType) {
+                                                               TypeDescKind requestedReturnType,
+                                                               String requestedReturnTypeName) {
         int sqlTypeValue;
         switch (outParameterName) {
             case Constants.OutParameter.VARCHAR:
@@ -232,9 +237,7 @@ public class Utils {
                 }
                 return new DiagnosticInfo(SQL_201.getCode(), SQL_201.getMessage(), SQL_201.getSeverity());
             case Types.DATE:
-                // todo Record validate for time:Date
-                if (requestedReturnType == TypeDescKind.RECORD ||
-                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(DATE)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -242,9 +245,7 @@ public class Utils {
                 return new DiagnosticInfo(SQL_222.getCode(), SQL_222.getMessage(), SQL_222.getSeverity());
             case Types.TIME:
             case Types.TIME_WITH_TIMEZONE:
-                // todo Record validate for time:TimeOfDay
-                if (requestedReturnType == TypeDescKind.RECORD ||
-                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(TIME_OF_DAY)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -252,10 +253,8 @@ public class Utils {
                 return new DiagnosticInfo(SQL_223.getCode(), SQL_223.getMessage(), SQL_223.getSeverity());
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                // todo Record validate for time:Civil, time:Utc
-                if (requestedReturnType == TypeDescKind.RECORD ||
-                        requestedReturnType == TypeDescKind.TYPE_REFERENCE ||
-                        requestedReturnType == TypeDescKind.TUPLE ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(CIVIL)) ||
+                        (requestedReturnType == TypeDescKind.INTERSECTION && requestedReturnTypeName.contains(UTC)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;

@@ -96,6 +96,15 @@ public class Constants {
         public static final String XML = "XMLOutParameter";
     }
 
-    public static final String UNNECESSARY_CHARS_REGEX = "\"|\\n";
+    /**
+     * Constants for Ballerina time module record types.
+     */
+    public static class TimeRecordTypes {
+        public static final String TIME_OF_DAY = "TimeOfDay";
+        public static final String DATE = "Date";
+        public static final String CIVIL = "Civil";
+        public static final String UTC = "Utc";
+    }
 
+    public static final String UNNECESSARY_CHARS_REGEX = "\"|\\n";
 }
