@@ -87,7 +87,7 @@ public class Utils {
     public static DiagnosticInfo addDiagnosticsForInvalidTypes(String outParameterName,
                                                                TypeSymbol argumentTypeSymbol) {
         TypeDescKind requestedReturnType = argumentTypeSymbol.typeKind();
-        String requestedReturnTypeName = null;
+        String requestedReturnTypeName = "";
         if (requestedReturnType == TypeDescKind.TYPE_REFERENCE) {
             TypeSymbol typeDescriptor = ((TypeReferenceTypeSymbol) argumentTypeSymbol).typeDescriptor();
             requestedReturnType = typeDescriptor.typeKind();
@@ -244,7 +244,7 @@ public class Utils {
                 }
                 return new DiagnosticInfo(SQL_201.getCode(), SQL_201.getMessage(), SQL_201.getSeverity());
             case Types.DATE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(DATE)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.matches(DATE)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -252,7 +252,7 @@ public class Utils {
                 return new DiagnosticInfo(SQL_222.getCode(), SQL_222.getMessage(), SQL_222.getSeverity());
             case Types.TIME:
             case Types.TIME_WITH_TIMEZONE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(TIME_OF_DAY)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.matches(TIME_OF_DAY)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -260,8 +260,8 @@ public class Utils {
                 return new DiagnosticInfo(SQL_223.getCode(), SQL_223.getMessage(), SQL_223.getSeverity());
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.contains(CIVIL)) ||
-                        (requestedReturnType == TypeDescKind.INTERSECTION && requestedReturnTypeName.contains(UTC)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeName.matches(CIVIL)) ||
+                        (requestedReturnType == TypeDescKind.INTERSECTION && requestedReturnTypeName.matches(UTC)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;

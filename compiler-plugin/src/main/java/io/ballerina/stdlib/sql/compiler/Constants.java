@@ -97,13 +97,13 @@ public class Constants {
     }
 
     /**
-     * Constants for Ballerina time module record types.
+     * Constants for regex validation for Ballerina time module record types.
      */
-    public static class TimeRecordTypes {
-        public static final String TIME_OF_DAY = "TimeOfDay";
-        public static final String DATE = "Date";
-        public static final String CIVIL = "Civil";
-        public static final String UTC = "Utc";
+    public static class TimeRecordTypesRegex {
+        public static final String TIME_OF_DAY = "ballerina/time:[0-9].[0-9].[0-9]:TimeOfDay";
+        public static final String DATE = "ballerina/time:[0-9].[0-9].[0-9]:Date";
+        public static final String CIVIL = "ballerina/time:[0-9].[0-9].[0-9]:Civil";
+        public static final String UTC = "ballerina/time:[0-9].[0-9].[0-9]:Utc";
     }
 
     public static final String UNNECESSARY_CHARS_REGEX = "\"|\\n";
