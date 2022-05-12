@@ -31,10 +31,11 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import java.sql.Types;
 import java.util.Optional;
 
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.CIVIL;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.DATE;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.TIME_OF_DAY;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.UTC;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.CIVIL;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.DATE;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.PACKAGE_NAME;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.TIME_OF_DAY;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.UTC;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_201;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_202;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_203;
@@ -244,7 +245,8 @@ public class Utils {
                 }
                 return new DiagnosticInfo(SQL_201.getCode(), SQL_201.getMessage(), SQL_201.getSeverity());
             case Types.DATE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.matches(DATE)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.startsWith(PACKAGE_NAME)
+                        && requestedReturnTypeArgValue.endsWith(DATE)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -252,7 +254,8 @@ public class Utils {
                 return new DiagnosticInfo(SQL_222.getCode(), SQL_222.getMessage(), SQL_222.getSeverity());
             case Types.TIME:
             case Types.TIME_WITH_TIMEZONE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.matches(TIME_OF_DAY)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.startsWith(PACKAGE_NAME)
+                        && requestedReturnTypeArgValue.endsWith(TIME_OF_DAY)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
@@ -260,8 +263,11 @@ public class Utils {
                 return new DiagnosticInfo(SQL_223.getCode(), SQL_223.getMessage(), SQL_223.getSeverity());
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.matches(CIVIL)) ||
-                        (requestedReturnType == TypeDescKind.INTERSECTION && requestedReturnTypeArgValue.matches(UTC)) ||
+                if ((requestedReturnType == TypeDescKind.RECORD && requestedReturnTypeArgValue.startsWith(PACKAGE_NAME)
+                        && requestedReturnTypeArgValue.endsWith(CIVIL)) ||
+                    (requestedReturnType == TypeDescKind.INTERSECTION
+                            && requestedReturnTypeArgValue.startsWith(PACKAGE_NAME)
+                            && requestedReturnTypeArgValue.endsWith(UTC)) ||
                         requestedReturnType == TypeDescKind.INT ||
                         requestedReturnType == TypeDescKind.STRING) {
                     return null;
