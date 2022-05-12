@@ -31,10 +31,10 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import java.sql.Types;
 import java.util.Optional;
 
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.CIVIL;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.DATE;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.TIME_OF_DAY;
-import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypes.UTC;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.CIVIL;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.DATE;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.TIME_OF_DAY;
+import static io.ballerina.stdlib.sql.compiler.Constants.TimeRecordTypesRegex.UTC;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_201;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_202;
 import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_203;
@@ -85,8 +85,15 @@ public class Utils {
     }
 
     public static DiagnosticInfo addDiagnosticsForInvalidTypes(String outParameterName,
-                                                               TypeDescKind requestedReturnType,
-                                                               String requestedReturnTypeName) {
+                                                               TypeSymbol argumentTypeSymbol) {
+        TypeDescKind requestedReturnType = argumentTypeSymbol.typeKind();
+        String requestedReturnTypeName = null;
+        if (requestedReturnType == TypeDescKind.TYPE_REFERENCE) {
+            TypeSymbol typeDescriptor = ((TypeReferenceTypeSymbol) argumentTypeSymbol).typeDescriptor();
+            requestedReturnType = typeDescriptor.typeKind();
+            requestedReturnTypeName = argumentTypeSymbol.signature();
+        }
+
         int sqlTypeValue;
         switch (outParameterName) {
             case Constants.OutParameter.VARCHAR:

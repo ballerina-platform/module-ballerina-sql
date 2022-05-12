@@ -97,16 +97,9 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
             return;
         }
         TypeSymbol argumentTypeSymbol = ((TypeSymbol) typeDescriptionArgument.get());
-        TypeDescKind argTypeKind = argumentTypeSymbol.typeKind();
-        String typeName = null;
-        if (argTypeKind == TypeDescKind.TYPE_REFERENCE) {
-            TypeSymbol typeDescriptor = ((TypeReferenceTypeSymbol) argumentTypeSymbol).typeDescriptor();
-            argTypeKind = typeDescriptor.typeKind();
-            typeName = argumentTypeSymbol.signature();
-        }
 
         DiagnosticInfo diagnosticsForInvalidTypes =
-                Utils.addDiagnosticsForInvalidTypes(objectName, argTypeKind, typeName);
+                Utils.addDiagnosticsForInvalidTypes(objectName, argumentTypeSymbol);
         if (diagnosticsForInvalidTypes != null) {
             ctx.reportDiagnostic(DiagnosticFactory.createDiagnostic(diagnosticsForInvalidTypes,
                     node.arguments().get(0).location()));
