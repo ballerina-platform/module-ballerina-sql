@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+## [1.4.0] - 2022-05-30
+
+### Added
 - [Improve Database columns to Ballerina record Mapping through `sql:Column` Annotation](https://github.com/ballerina-platform/ballerina-standard-library/issues/2652)
 
 ### Changed
