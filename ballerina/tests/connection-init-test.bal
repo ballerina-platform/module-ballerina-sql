@@ -28,7 +28,7 @@ function initConnectionContainer() returns error? {
     value: ["connection"]
 }
 function cleanConnectionContainer() returns error? {
-    check cleanDockerContainer("sql-connection");
+    //check cleanDockerContainer("sql-connection");
 }
 
 @test:Config {

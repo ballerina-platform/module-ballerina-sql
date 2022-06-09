@@ -56,6 +56,9 @@ public type ApplicationError distinct Error;
 # Represents an error that occurs during the processing of the parameters or returned results.
 public type DataError distinct ApplicationError;
 
+# Represents an error that occurs when the user does not have the required authorization to execute an action.
+public type AuthorizationError distinct ApplicationError;
+
 // Level 4
 # Represents an error that occurs when a query retrieves a result that differs from the supported result type.
 public type TypeMismatchError distinct DataError;
