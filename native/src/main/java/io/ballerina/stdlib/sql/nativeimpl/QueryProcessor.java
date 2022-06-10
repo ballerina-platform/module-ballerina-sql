@@ -25,7 +25,6 @@ import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
-import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.values.BError;
@@ -278,10 +277,10 @@ public class QueryProcessor {
     }
 
     public static BMap<BString, Object> createRecord(ResultSet resultSet, List<ColumnDefinition> columnDefinitions,
-                                                     StructureType recordConstraint,
+                                                     RecordType recordConstraint,
                                                      AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
-        BMap<BString, Object> record = ValueCreator.createMapValue(recordConstraint);
+        BMap<BString, Object> record = ValueCreator.createRecordValue(recordConstraint);
         Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
         return record;
     }
