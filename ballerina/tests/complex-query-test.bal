@@ -356,9 +356,12 @@ type ResultDates2 record {
 }
 function testDateTime2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    ResultDates2 value = check dbClient->queryRow(`SELECT date_type, time_type, timestamp_type, datetime_type,
+    stream<record {}, error?> queryResult = dbClient->query(`SELECT date_type, time_type, timestamp_type, datetime_type,
                                                                 time_tz_type, timestamp_tz_type from DateTimeTypes
-                                                                where row_id = 1`);
+                                                                where row_id = 1`, ResultDates2);
+    record {|record {} value;|}? data = check queryResult.next();
+    record {}? value = data?.value;
+    check dbClient.close();
 
     time:Date dateTypeRecord = {year: 2017, month: 5, day: 23};
     time:TimeOfDay timeTypeRecord = {hour: 14, minute: 15, second: 23};
