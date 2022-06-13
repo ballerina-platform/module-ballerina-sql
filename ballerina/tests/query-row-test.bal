@@ -1516,6 +1516,39 @@ function testGetArrayTypesRecord4() returns error? {
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
+type DataTableRowWithDefaults record {|
+    int row_id;
+    int int_type = 442;
+    int long_type = 384283334;
+    float float_type = 3223.23;
+    float double_type = 129.22;
+    boolean boolean_type = false;
+    string string_type = "default";
+    decimal decimal_type = 10.0;
+|};
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowWithDefaults() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    ParameterizedQuery sqlQuery = `SELECT row_id FROM DataTable WHERE row_id = 1`;
+    DataTableRowWithDefaults queryResult = check dbClient->queryRow(sqlQuery);
+    check dbClient.close();
+
+    DataTableRowWithDefaults expectedRecord = {
+        row_id: 1,
+        int_type: 442,
+        long_type: 384283334,
+        float_type: 3223.23,
+        double_type: 129.22,
+        boolean_type: false,
+        string_type: "default",
+        decimal_type: 10.0
+    };
+    test:assertEquals(queryResult, expectedRecord);
+}
+
 isolated function validateDataTableRecordResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {

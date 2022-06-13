@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
 
 /**
@@ -54,7 +55,13 @@ public class RecordIteratorUtils {
             if (resultSet.next()) {
                 StructureType streamConstraint = (StructureType) recordIterator.
                         getNativeData(Constants.RECORD_TYPE_DATA_FIELD);
-                BMap<BString, Object> bStruct = ValueCreator.createMapValue(streamConstraint);
+                BMap<BString, Object> bStruct;
+                if (streamConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
+                    bStruct = ValueCreator.createMapValue(streamConstraint);
+                } else {
+                    bStruct = ValueCreator.createRecordValue(
+                            streamConstraint.getPackage(), streamConstraint.getName());
+                }
                 List<ColumnDefinition> columnDefinitions = (List<ColumnDefinition>) recordIterator
                         .getNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD);
                 Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, bStruct, columnDefinitions);
