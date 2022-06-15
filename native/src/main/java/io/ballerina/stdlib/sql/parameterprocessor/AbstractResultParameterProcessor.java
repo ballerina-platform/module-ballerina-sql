@@ -415,18 +415,22 @@ public abstract class AbstractResultParameterProcessor {
     public Object convertArrayInOutParameter(Object[] dataArray, Type ballerinaType) throws DataError, SQLException {
         String name = ballerinaType.toString();
         String className = dataArray[0].getClass().getCanonicalName();
-        if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
+        if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.STRING_ARRAY)) {
             return Utils.createStringArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE) &&
+        } else if ((name.equalsIgnoreCase(Constants.ArrayTypes.BYTE) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.BYTE_ARRAY)) &&
                 className.equalsIgnoreCase(Constants.Classes.BYTE)) {
             return Utils.createByteArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN_ARRAY)) {
             if (className.equalsIgnoreCase(Constants.Classes.INTEGER)) {
                 return Utils.booleanToIntArray(dataArray);
             } else {
                 return Utils.createBooleanArray(dataArray);
             }
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.INT_ARRAY)) {
             if (className.equalsIgnoreCase(Constants.Classes.LONG)) {
                 return Utils.createLongArray(dataArray);
             } else if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
@@ -434,7 +438,8 @@ public abstract class AbstractResultParameterProcessor {
             } else {
                 return Utils.createIntegerArray(dataArray);
             }
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.FLOAT_ARRAY)) {
             if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
                 return Utils.floatToFloatArray(dataArray);
             } else if (className.equalsIgnoreCase(Constants.Classes.DOUBLE)) {
@@ -442,19 +447,24 @@ public abstract class AbstractResultParameterProcessor {
             } else {
                 return Utils.createFloatArray(dataArray);
             }
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.DECIMAL_ARRAY)) {
             if (className.equalsIgnoreCase(Constants.Classes.BIG_DECIMAL)) {
                 return Utils.createBigDecimalArray(dataArray);
             } else {
                 return Utils.createDoubleArray(dataArray);
             }
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL_ARRAY)) {
             return Utils.createTimestampArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.UTC_ARRAY)) {
             return Utils.createTimestampArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.TIME_OF_DAY_ARRAY)) {
             return Utils.createTimeArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.DATE) ||
+                name.equalsIgnoreCase(Constants.ArrayTypes.DATE_ARRAY)) {
             return Utils.createDateArray(dataArray);
         } else {
             return processCustomArrayInOutParameter(dataArray, ballerinaType);

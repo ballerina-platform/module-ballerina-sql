@@ -348,6 +348,20 @@ public final class Constants {
         public static final String DECIMAL = "decimal[]";
         public static final String UTC = "([int,decimal] & readonly)[]";
         public static final String BYTE = "byte[][]";
+
+        public static final String STRING_ARRAY = "sql:StringArray";
+        public static final String INT_ARRAY = "sql:IntArray";
+        public static final String BOOLEAN_ARRAY = "sql:BooleanArray";
+        public static final String FLOAT_ARRAY = "sql:FloatArray";
+        public static final String DECIMAL_ARRAY = "sql:DecimalArray";
+        public static final String BYTE_ARRAY = "sql:ByteArray";
+        public static final String CIVIL_ARRAY = "sql:CivilArray";
+        public static final String TIME_OF_DAY_ARRAY = "sql:TimeOfDayArray";
+        public static final String UTC_ARRAY = "sql:UTCArray";
+        public static final String DATE_ARRAY = "sql:DateArray";
+
+
+
     }
 
     /**
