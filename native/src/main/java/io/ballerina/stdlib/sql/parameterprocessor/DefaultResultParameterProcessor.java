@@ -570,6 +570,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     return Timestamp.valueOf(offsetDateTime.toLocalDateTime()).getTime();
                 case TypeTags.INTERSECTION_TAG:
                 case TypeTags.TUPLE_TAG:
+                case TypeTags.TYPE_REFERENCED_TYPE_TAG:
                     return Utils.createTimeStruct(Timestamp.valueOf(
                             offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()).getTime());
             }
