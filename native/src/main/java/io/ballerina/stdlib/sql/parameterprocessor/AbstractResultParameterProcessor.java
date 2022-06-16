@@ -417,7 +417,7 @@ public abstract class AbstractResultParameterProcessor {
         String className = dataArray[0].getClass().getCanonicalName();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return Utils.createStringArray(dataArray);
-        } else if ((name.equalsIgnoreCase(Constants.ArrayTypes.BYTE)) &&
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BYTE) &&
                 className.equalsIgnoreCase(Constants.Classes.BYTE)) {
             return Utils.createByteArray(dataArray);
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.BOOLEAN)) {
