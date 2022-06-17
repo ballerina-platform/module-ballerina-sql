@@ -16,22 +16,23 @@
 
 # Represents an SQL metadata client.
 #
-public type MetadataClient client object {
+public type SchemaClient client object {
 
-    remote isolated function getTables(boolean fetchColumns = false) returns TableDefinition[]|Error;
+    remote isolated function listTables() returns string[]|Error;
 
-    remote isolated function getTable(string tableName) returns TableDefinition|Error;
+    remote isolated function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) returns TableDefinition|Error;
 
-    remote isolated function getColumns(string tableName, boolean fetchConstraints = false) returns ColumnDefinition[]|Error;
+    remote isolated function listRoutines() returns string[]|Error;
 
-    remote isolated function getColumn(string tableName, string columnName) returns ColumnDefinition|Error;
-
-    remote isolated function getRoutines(boolean fetchParameters = false) returns RoutineDefinition[]|Error;
-
-    remote isolated function getRoutine(string name) returns RoutineDefinition|Error;
+    remote isolated function getRoutineInfo(string name) returns RoutineDefinition|Error;
 
     # Closes the SQL metadata client.
     #
     # + return - Possible `sql:Error` when closing the client
     public isolated function close() returns Error?;
 };
+
+public enum ColumnRetrievalOptions {
+    COLUMNS_ONLY,
+    COLUMNS_WITH_CONSTRAINTS
+}
