@@ -82,6 +82,7 @@ import static io.ballerina.stdlib.sql.Constants.ANNON_RECORD_TYPE_NAME;
 import static io.ballerina.stdlib.sql.Constants.ANN_COLUMN_NAME_FIELD;
 import static io.ballerina.stdlib.sql.Constants.BACKTICK;
 import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
+import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
@@ -242,7 +243,7 @@ public class Utils {
     public static RecordType getDefaultStreamConstraint() {
         Module ballerinaAnnotation = new Module("ballerina", "lang.annotations", "0.0.0");
         return TypeCreator.createRecordType(
-                "$stream$anon$constraint$", ballerinaAnnotation, 0,
+                DEFAULT_STREAM_CONSTRAINT_NAME, ballerinaAnnotation, 0,
                 new HashMap<>(), PredefinedTypes.TYPE_ANYDATA, false,
                 TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
     }
