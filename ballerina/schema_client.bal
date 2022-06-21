@@ -33,6 +33,7 @@ public type SchemaClient client object {
 };
 
 public enum ColumnRetrievalOptions {
+    NO_COLUMNS,
     COLUMNS_ONLY,
     COLUMNS_WITH_CONSTRAINTS
 }

@@ -27,20 +27,66 @@ isolated client class MockSchemaClient {
     }
 
     isolated remote function listTables() returns string[]|Error {
-        stream<record {string name;}, error?> tablesStream = self.dbClient->query(
+        stream<record {string TABLE_NAME;}, error?> tablesStream = self.dbClient->query(
             `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ${self.database}`
         );
         string[] tables = [];
-        error? e = check from record {string name;} 'table in tablesStream
+
+        error? e = from record {string TABLE_NAME;} 'table in tablesStream
             do {
-                tables.push('table.name);
+                tables.push('table.TABLE_NAME);
             };
+        if e is error {
+            return <InsufficientPrivilegesError>error("dsf");
+        }
+
         return tables;
     }
 
     isolated remote function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) 
     returns TableDefinition|Error {
-        return error("sdf");
+        record {string TABLE_TYPE;} 'table = check self.dbClient->queryRow(
+            `SELECT TABLE_TYPE
+            FROM INFORMATION_SCHEMA.TABLES 
+            WHERE TABLE_NAME = ${tableName} AND TABLE_SCHEMA = ${self.database}`
+        );
+        TableDefinition result = {
+            name: tableName,
+            'type: 'table.TABLE_TYPE is "BASE TABLE" ? BASE_TABLE : VIEW
+        };
+
+        if include is COLUMNS_ONLY {
+            ColumnDefinition[] columns = [];
+            stream<record {
+                string COLUMN_NAME;
+                string DATA_TYPE;
+                string COLUMN_DEFAULT;
+                string IS_NULLABLE;
+            }, error?> columnStream = self.dbClient->query(
+                `SELECT COLUMN_NAME, DATA_TYPE, COLUMN_DEFAULT, IS_NULLABLE
+                FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ${self.database} AND TABLE_NAME = ${tableName}`
+            );
+            error? e = from record {
+                string COLUMN_NAME;
+                string DATA_TYPE;
+                string COLUMN_DEFAULT;
+                string IS_NULLABLE;
+            } column in columnStream
+                do {
+                    ColumnDefinition column2 = {
+                        name: column.COLUMN_NAME,
+                        'type: column.DATA_TYPE,
+                        defaultValue: column.COLUMN_DEFAULT,
+                        nullable: false
+                    };
+                    columns.push(column2);
+                };
+            if e is error {
+                return <InsufficientPrivilegesError>error("sfd");
+            }
+            result.columns = columns;
+        }
+        return result;   
     }
 
     isolated remote function listRoutines() returns string[]|Error {
