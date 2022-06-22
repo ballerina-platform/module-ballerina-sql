@@ -322,7 +322,7 @@ public class Utils {
         int sqlType = rsMetaData.getColumnType(columnIndex);
         String sqlTypeName = rsMetaData.getColumnTypeName(columnIndex);
         boolean isNullable = rsMetaData.isNullable(columnIndex) != ResultSetMetaData.columnNoNulls;
-        Utils.validatedInvalidFieldAssignment(sqlType, type, "Retrieved SQL type");
+        Utils.validatedInvalidFieldAssignment(sqlType, type, sqlTypeName);
         return new PrimitiveTypeColumnDefinition(columnName, sqlType, sqlTypeName, isNullable, 1, columnName, type);
     }
 
@@ -654,9 +654,10 @@ public class Utils {
     }
 
     private static boolean isValidPrimitiveConstraint(int sqlType, Type type) {
+        int tag = type.getTag();
         switch (sqlType) {
             case Types.ARRAY:
-                return type.getTag() == TypeTags.ARRAY_TAG;
+                return tag == TypeTags.ARRAY_TAG;
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -665,74 +666,75 @@ public class Utils {
             case Types.LONGNVARCHAR:
             case Types.CLOB:
             case Types.NCLOB:
-                return type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.JSON_TAG;
+                return tag == TypeTags.STRING_TAG ||
+                        tag == TypeTags.JSON_TAG;
             case Types.DATE:
             case Types.TIME:
             case Types.TIME_WITH_TIMEZONE:
-                return type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
-                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
-                        type.getTag() == TypeTags.INT_TAG;
+                return tag == TypeTags.STRING_TAG ||
+                        tag == TypeTags.OBJECT_TYPE_TAG ||
+                        tag == TypeTags.RECORD_TYPE_TAG ||
+                        tag == TypeTags.INT_TAG;
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                return type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.OBJECT_TYPE_TAG ||
-                        type.getTag() == TypeTags.RECORD_TYPE_TAG ||
-                        type.getTag() == TypeTags.INTERSECTION_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.TUPLE_TAG;
+                return tag == TypeTags.STRING_TAG ||
+                        tag == TypeTags.OBJECT_TYPE_TAG ||
+                        tag == TypeTags.RECORD_TYPE_TAG ||
+                        tag == TypeTags.INTERSECTION_TAG ||
+                        tag == TypeTags.INT_TAG ||
+                        tag == TypeTags.TUPLE_TAG ||
+                        tag == TypeTags.TYPE_REFERENCED_TYPE_TAG;
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
             case Types.BIGINT:
-                return type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
+                return tag == TypeTags.INT_TAG ||
+                        tag == TypeTags.STRING_TAG;
             case Types.BIT:
             case Types.BOOLEAN:
-                return type.getTag() == TypeTags.BOOLEAN_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
+                return tag == TypeTags.BOOLEAN_TAG ||
+                        tag == TypeTags.INT_TAG ||
+                        tag == TypeTags.STRING_TAG;
             case Types.NUMERIC:
             case Types.DECIMAL:
-                return type.getTag() == TypeTags.DECIMAL_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
+                return tag == TypeTags.DECIMAL_TAG ||
+                        tag == TypeTags.INT_TAG ||
+                        tag == TypeTags.STRING_TAG;
             case Types.REAL:
             case Types.FLOAT:
             case Types.DOUBLE:
-                return type.getTag() == TypeTags.FLOAT_TAG ||
-                        type.getTag() == TypeTags.STRING_TAG;
+                return tag == TypeTags.FLOAT_TAG ||
+                        tag == TypeTags.STRING_TAG;
             case Types.BLOB:
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
             case Types.ROWID:
-                if (type.getTag() == TypeTags.ARRAY_TAG) {
+                if (tag == TypeTags.ARRAY_TAG) {
                     int elementTypeTag = ((ArrayType) type).getElementType().getTag();
                     return elementTypeTag == TypeTags.BYTE_TAG;
                 }
-                return type.getTag() == TypeTags.STRING_TAG || type.getTag() == TypeTags.BYTE_ARRAY_TAG;
+                return tag == TypeTags.STRING_TAG || tag == TypeTags.BYTE_ARRAY_TAG;
             case Types.REF:
             case Types.STRUCT:
-                return type.getTag() == TypeTags.RECORD_TYPE_TAG;
+                return tag == TypeTags.RECORD_TYPE_TAG;
             case Types.SQLXML:
-                return type.getTag() == TypeTags.XML_TAG;
+                return tag == TypeTags.XML_TAG;
             default:
                 //If user is passing the intended type variable for the sql types, then it will use
                 // those types to resolve the result.
-                return type.getTag() == TypeTags.ANY_TAG ||
-                        type.getTag() == TypeTags.ANYDATA_TAG ||
-                        (type.getTag() == TypeTags.ARRAY_TAG &&
+                return tag == TypeTags.ANY_TAG ||
+                        tag == TypeTags.ANYDATA_TAG ||
+                        (tag == TypeTags.ARRAY_TAG &&
                                 ((ArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG) ||
-                        type.getTag() == TypeTags.STRING_TAG ||
-                        type.getTag() == TypeTags.INT_TAG ||
-                        type.getTag() == TypeTags.BOOLEAN_TAG ||
-                        type.getTag() == TypeTags.XML_TAG ||
-                        type.getTag() == TypeTags.FLOAT_TAG ||
-                        type.getTag() == TypeTags.DECIMAL_TAG ||
-                        type.getTag() == TypeTags.JSON_TAG ||
-                        type.getTag() == TypeTags.RECORD_TYPE_TAG;
+                        tag == TypeTags.STRING_TAG ||
+                        tag == TypeTags.INT_TAG ||
+                        tag == TypeTags.BOOLEAN_TAG ||
+                        tag == TypeTags.XML_TAG ||
+                        tag == TypeTags.FLOAT_TAG ||
+                        tag == TypeTags.DECIMAL_TAG ||
+                        tag == TypeTags.JSON_TAG ||
+                        tag == TypeTags.RECORD_TYPE_TAG;
         }
     }
 
@@ -1124,7 +1126,7 @@ public class Utils {
         } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
             return createTimestampArray(dataArray);
         } else {
-            return getError(objectTypeName, ballerinaType, "time:Utc[]", Constants.ArrayTypes.STRING);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.UTC, Constants.ArrayTypes.STRING);
         }
     }
 
