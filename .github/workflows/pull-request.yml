@@ -1,6 +1,10 @@
 name: PR build
 
-on: [ pull_request ]
+on: 
+  pull_request:
+    branches:
+      - master
+      - 2201.[0-9]+.x
 
 jobs:
   ubuntu-build:

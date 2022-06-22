@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - 2201.[0-9]+.x
     paths-ignore:
       - '*.md'
       - 'docs/**'
