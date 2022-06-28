@@ -20,6 +20,7 @@ package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.sql.Constants;
@@ -68,7 +69,7 @@ public class OutParameterProcessor {
                               AbstractResultParameterProcessor resultParameterProcessor, String parameterType) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
-        Type ballerinaType = typeDesc.getDescribingType();
+        Type ballerinaType = TypeUtils.getReferredType(typeDesc.getDescribingType());
         try {
             if (ballerinaType.getTag() == TypeTags.UNION_TAG) {
                 throw new ApplicationError(parameterType + " 'get' function does not support union return type.");

@@ -31,6 +31,7 @@ import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -317,6 +318,7 @@ public class Utils {
 
     public static PrimitiveTypeColumnDefinition getColumnDefinition(ResultSet resultSet, int columnIndex, Type type)
             throws SQLException, ApplicationError {
+        type = TypeUtils.getReferredType(type);
         ResultSetMetaData rsMetaData = resultSet.getMetaData();
         String columnName = rsMetaData.getColumnLabel(columnIndex);
         int sqlType = rsMetaData.getColumnType(columnIndex);
@@ -426,7 +428,8 @@ public class Utils {
             }
             if (fieldName.equalsIgnoreCase(metadata.getColumnName())) {
                 ballerinaFieldName = field.getKey();
-                ballerinaType = validFieldConstraint(metadata.getSqlType(), field.getValue().getFieldType());
+                Type fieldType = TypeUtils.getReferredType(field.getValue().getFieldType());
+                ballerinaType = validFieldConstraint(metadata.getSqlType(), fieldType);
                 if (ballerinaType == null) {
                     throw new TypeMismatchError("The field '" + field.getKey() + "' of type " +
                             field.getValue().getFieldType().getName() + " cannot be mapped to the column '" +
@@ -593,7 +596,7 @@ public class Utils {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
-                //In case if the member type is another union type, check recursively.
+                // In case if the member type is another union type, check recursively.
                 if (isValidFieldConstraint(sqlType, memberType)) {
                     return true;
                 }
@@ -682,8 +685,7 @@ public class Utils {
                         tag == TypeTags.RECORD_TYPE_TAG ||
                         tag == TypeTags.INTERSECTION_TAG ||
                         tag == TypeTags.INT_TAG ||
-                        tag == TypeTags.TUPLE_TAG ||
-                        tag == TypeTags.TYPE_REFERENCED_TYPE_TAG;
+                        tag == TypeTags.TUPLE_TAG;
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
@@ -721,7 +723,7 @@ public class Utils {
             case Types.SQLXML:
                 return tag == TypeTags.XML_TAG;
             default:
-                //If user is passing the intended type variable for the sql types, then it will use
+                // If user is passing the intended type variable for the sql types, then it will use
                 // those types to resolve the result.
                 return tag == TypeTags.ANY_TAG ||
                         tag == TypeTags.ANYDATA_TAG ||
@@ -1123,10 +1125,10 @@ public class Utils {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
-        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.UTC)) {
+        } else if (name.equalsIgnoreCase(Constants.ArrayTypes.CIVIL)) {
             return createTimestampArray(dataArray);
         } else {
-            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.UTC, Constants.ArrayTypes.STRING);
+            return getError(objectTypeName, ballerinaType, Constants.ArrayTypes.CIVIL, Constants.ArrayTypes.STRING);
         }
     }
 
