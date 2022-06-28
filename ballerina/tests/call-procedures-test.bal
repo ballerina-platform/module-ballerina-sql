@@ -910,6 +910,33 @@ function testMultipleRecords() returns error? {
 
 }
 
+type Person2 record {
+    int id;
+    int name;
+    int age;
+    int birthday;
+    int country_code;
+};
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testMultipleRecords]
+}
+function testMultipleRecordsNegative() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(`call FetchMultipleRecords();`, [Person2]);
+    boolean|Error status = result.getNextQueryResult();
+    check result.close();
+    check dbClient.close();
+
+    if status is Error {
+        test:assertEquals(status.message(), "Error when accessing the next query result. The field 'name' of type int cannot " +
+                                                                     "be mapped to the column 'NAME' of SQL type 'VARCHAR'");
+    } else {
+        test:assertFail("Expected error.");
+    }
+}
+
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testMultipleRecords]

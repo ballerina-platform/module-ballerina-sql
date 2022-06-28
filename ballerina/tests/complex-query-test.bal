@@ -63,6 +63,71 @@ function testGetPrimitiveTypes() returns error? {
     test:assertEquals(value, expectedData, "Expected data did not match.");
 }
 
+type CustomInt int;
+type CustomDecimal decimal;
+type CustomFloat float;
+type CustomString string;
+type CustomBoolean boolean;
+
+type CustomDataTableRow record {|
+    CustomInt int_type;
+    CustomDecimal decimal_type;
+    CustomFloat float_type;
+    CustomString string_type;
+    CustomBoolean boolean_type;
+|};
+
+type CustomDataTableRow2 record {|
+    CustomBoolean int_type;
+    CustomBoolean decimal_type;
+    CustomBoolean float_type;
+    CustomBoolean string_type;
+|};
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testGetReferredTypes() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<CustomDataTableRow, error?> streamData = dbClient->query(
+	                                                 `SELECT int_type, float_type, decimal_type, boolean_type, string_type
+	                                                 from DataTable WHERE row_id = 1`, CustomDataTableRow);
+    record {|CustomDataTableRow value;|}? data = check streamData.next();
+    check streamData.close();
+    record {}? value = data?.value;
+    check dbClient.close();
+
+    CustomDataTableRow expectedData = {
+        int_type: 1,
+        float_type: 123.34,
+        decimal_type: 23.45,
+        boolean_type: true,
+        string_type: "Hello"
+    };
+    test:assertEquals(value, expectedData, "Expected data did not match.");
+}
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testGetReferredTypesNegative() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    stream<CustomDataTableRow2, error?> streamData = dbClient->query(
+	                                                 `SELECT int_type, float_type, decimal_type, boolean_type, string_type
+	                                                 from DataTable WHERE row_id = 1`, CustomDataTableRow2);
+    record {|CustomDataTableRow2 value;|}|error? data = streamData.next();
+    check streamData.close();
+    check dbClient.close();
+
+    if data is Error {
+        test:assertEquals(data.message(), "The field 'int_type' of type boolean cannot be mapped to the column 'INT_TYPE' o" +
+                                                                   "f SQL type 'INTEGER'");
+    } else {
+        test:assertFail("Expected error.");
+    }
+}
+
+
 @test:Config {
     groups: ["query", "query-complex-params"]
 }
