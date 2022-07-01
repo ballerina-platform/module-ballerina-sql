@@ -910,6 +910,33 @@ function testMultipleRecords() returns error? {
 
 }
 
+type Person2 record {
+    int id;
+    int name;
+    int age;
+    int birthday;
+    int country_code;
+};
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testMultipleRecords]
+}
+function testMultipleRecordsNegative() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(`call FetchMultipleRecords();`, [Person2]);
+    boolean|Error status = result.getNextQueryResult();
+    check result.close();
+    check dbClient.close();
+
+    if status is Error {
+        test:assertEquals(status.message(), "Error when accessing the next query result. The field 'name' of type int cannot " +
+                                                                     "be mapped to the column 'NAME' of SQL type 'VARCHAR'");
+    } else {
+        test:assertFail("Expected error.");
+    }
+}
+
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testMultipleRecords]
@@ -1220,7 +1247,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     test:assertEquals(char_array.get(StringArray), charArray, "Char array out parameter of procedure did not match.");
     test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " +
+    test:assertEquals(timestamp_array.get(CivilArray), civilArray, "Timestamp array out parameter " +
     "of procedure did not match.");
     test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " +
         "of procedure did not match.");
@@ -1286,10 +1313,10 @@ function negativeOutParamsTest() returns error? {
                                         ${timestamp_tz_array}, ${binary_array})`;
     ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
     check ret.close();
-    ByteArray|Error result = smallint_array.get(ByteArray);
+    byte[][]|Error result = smallint_array.get(ByteArray);
     if result is TypeMismatchError {
         test:assertEquals(result.message(),
-        "The ballerina type expected for 'SmallInt Array' type are 'sql:IntArray', and 'sql:StringArray' but found type 'ByteArray'.");
+        "The ballerina type expected for 'SmallInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1298,7 +1325,7 @@ function negativeOutParamsTest() returns error? {
 
     if result is Error {
         test:assertEquals(result.message(),
-        "The ballerina type expected for 'Integer Array' type are 'sql:IntArray', and 'sql:StringArray' but found type 'ByteArray'.");
+        "The ballerina type expected for 'Integer Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1306,7 +1333,7 @@ function negativeOutParamsTest() returns error? {
     result = real_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                "The ballerina type expected for 'Real Array' type are 'sql:IntArray', 'sql:DecimalArray', 'sql:FloatArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                "The ballerina type expected for 'Real Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1314,7 +1341,7 @@ function negativeOutParamsTest() returns error? {
     result = numeric_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                "The ballerina type expected for 'Numeric Array' type are 'sql:IntArray', 'sql:DecimalArray', 'sql:FloatArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                "The ballerina type expected for 'Numeric Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1322,7 +1349,7 @@ function negativeOutParamsTest() returns error? {
     result = nvarchar_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'NVarchar Array' type is 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'NVarchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1330,7 +1357,7 @@ function negativeOutParamsTest() returns error? {
     result = long_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'BigInt Array' type are 'sql:IntArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'BigInt Array' type are 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1338,7 +1365,7 @@ function negativeOutParamsTest() returns error? {
     result = float_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Float Array' type are 'sql:FloatArray', 'sql:IntArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Float Array' type are 'float[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1346,7 +1373,7 @@ function negativeOutParamsTest() returns error? {
     result = double_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Double Array' type are 'sql:IntArray', 'sql:DecimalArray', 'sql:FloatArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Double Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1354,7 +1381,7 @@ function negativeOutParamsTest() returns error? {
     result = decimal_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Decimal Array' type are 'sql:IntArray', 'sql:DecimalArray', 'sql:FloatArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Decimal Array' type are 'int[]', 'decimal[]', 'float[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1362,7 +1389,7 @@ function negativeOutParamsTest() returns error? {
     result = char_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Char Array' type is 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Char Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1370,7 +1397,7 @@ function negativeOutParamsTest() returns error? {
     result = varchar_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Varchar Array' type is 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Varchar Array' type is 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1385,7 +1412,7 @@ function negativeOutParamsTest() returns error? {
     result = date_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Date Array' type are 'sql:DateArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Date Array' type are 'time:Date[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1393,7 +1420,7 @@ function negativeOutParamsTest() returns error? {
     result = time_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Time Array' type are 'sql:TimeOfDayArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Time Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1401,7 +1428,7 @@ function negativeOutParamsTest() returns error? {
     result = timestamp_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Timestamp Array' type are 'sql:UtcArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Timestamp Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1409,7 +1436,7 @@ function negativeOutParamsTest() returns error? {
     result = datetime_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'DateTime Array' type are 'sql:CivilArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'DateTime Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1417,7 +1444,7 @@ function negativeOutParamsTest() returns error? {
     result = time_tz_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-            "The ballerina type expected for 'TimeWithTimezone Array' type are 'sql:TimeOfDayArray', and 'sql:StringArray' but found type 'ByteArray'.");
+            "The ballerina type expected for 'TimeWithTimezone Array' type are 'time:TimeOfDay[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1425,7 +1452,7 @@ function negativeOutParamsTest() returns error? {
     result = timestamp_tz_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-        "The ballerina type expected for 'TimestampWithTimezone Array' type are 'sql:CivilArray', and 'sql:StringArray' but found type 'ByteArray'.");
+        "The ballerina type expected for 'TimestampWithTimezone Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
@@ -1433,15 +1460,15 @@ function negativeOutParamsTest() returns error? {
     result = boolean_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Boolean Array' type are 'sql:BooleanArray', 'sql:IntArray', and 'sql:StringArray' but found type 'ByteArray'.");
+                    "The ballerina type expected for 'Boolean Array' type are 'boolean[]', 'int[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
 
-    FloatArray|Error output = binary_array.get(FloatArray);
+    float[]|Error output = binary_array.get(FloatArray);
     if output is Error {
         test:assertEquals(output.message(),
-                    "The ballerina type expected for 'Binary Array' type are 'sql:ByteArray', and 'sql:StringArray' but found type 'FloatArray'.");
+                    "The ballerina type expected for 'Binary Array' type are 'byte[][]', and 'string[]' but found type 'float[]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }

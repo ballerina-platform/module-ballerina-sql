@@ -1549,6 +1549,74 @@ function queryRowWithDefaults() returns error? {
     test:assertEquals(queryResult, expectedRecord);
 }
 
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function testReferredTypesRetrievalRow() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    CustomDataTableRow row = check dbClient->queryRow(`
+        SELECT int_type, decimal_type, float_type, string_type FROM DataTable WHERE row_id = 1`);
+    check dbClient.close();
+
+    CustomDataTableRow expectedRow = {
+        int_type: 1,
+        decimal_type: 23.45,
+        float_type: 123.34,
+        string_type: "Hello",
+        boolean_type: false
+    };
+    test:assertEquals(row, expectedRow);
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function testReferredTypesRetrievalRowNegative() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    CustomDataTableRow2|error row = dbClient->queryRow(`
+        SELECT int_type, decimal_type, float_type, string_type, boolean_type FROM DataTable WHERE row_id = 1`);
+    check dbClient.close();
+
+    if row is error {
+        test:assertEquals(row.message(), "The field 'int_type' of type boolean cannot be mapped to the column 'INT_TYPE' of SQL type 'INTEGER'");
+    } else {
+        test:assertFail("Error expected");
+    }
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function testReferredTypesRetrievalValue() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    CustomInt intValue = check dbClient->queryRow(`SELECT int_type FROM DataTable WHERE row_id = 1`);
+    CustomDecimal decimalValue = check dbClient->queryRow(`SELECT decimal_type FROM DataTable WHERE row_id = 1`);
+    CustomFloat floatValue = check dbClient->queryRow(`SELECT float_type FROM DataTable WHERE row_id = 1`);
+    CustomString stringValue = check dbClient->queryRow(`SELECT string_type FROM DataTable WHERE row_id = 1`);
+    CustomBoolean booleanValue = check dbClient->queryRow(`SELECT boolean_type FROM DataTable WHERE row_id = 1`);
+    check dbClient.close();
+
+    test:assertEquals(intValue, 1, "Expected value did not match.");
+    test:assertEquals(decimalValue, <decimal>23.45, "Expected value did not match.");
+    test:assertEquals(floatValue, 123.34, "Expected value did not match.");
+    test:assertEquals(stringValue, "Hello", "Expected value did not match.");
+    test:assertEquals(booleanValue, true, "Expected value did not match.");
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function testReferredTypesRetrievalValueNegative() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    CustomBoolean|error intValue = dbClient->queryRow(`SELECT int_type FROM DataTable WHERE row_id = 1`);
+    check dbClient.close();
+
+    if intValue is error {
+        test:assertEquals(intValue.message(), "SQL Type 'INTEGER' cannot be converted to ballerina type 'boolean'.");
+    } else {
+        test:assertFail("Error expected");
+    }}
+
 isolated function validateDataTableRecordResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {

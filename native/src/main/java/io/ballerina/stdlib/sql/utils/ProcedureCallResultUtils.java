@@ -22,6 +22,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
@@ -80,8 +81,8 @@ public class ProcedureCallResultUtils {
                             .getNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD);
                     int recordDescription = (int) procedureCallResult.getNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD);
                     if (recordDescription <= totalRecordDescriptions) {
-                        streamConstraint = (StructureType)
-                                ((BTypedesc) recordDescriptions[recordDescription]).getDescribingType();
+                        streamConstraint = (StructureType) TypeUtils.getReferredType(
+                                ((BTypedesc) recordDescriptions[recordDescription]).getDescribingType());
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, recordDescription + 1);
                     } else {

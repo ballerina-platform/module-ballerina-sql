@@ -24,6 +24,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StructureType;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
@@ -144,7 +145,8 @@ public class CallProcessor {
                         streamConstraint = getDefaultStreamConstraint();
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                     } else {
-                        streamConstraint = (StructureType) ((BTypedesc) recordDescriptions[0]).getDescribingType();
+                        streamConstraint = (StructureType) TypeUtils.getReferredType(
+                                ((BTypedesc) recordDescriptions[0]).getDescribingType());
                         columnDefinitions = getColumnDefinitions(resultSet, streamConstraint);
                         resultSetCount++;
                     }

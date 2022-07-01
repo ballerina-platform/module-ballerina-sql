@@ -27,6 +27,7 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -120,7 +121,8 @@ public class QueryProcessor {
                 statement = connection.prepareStatement(sqlQuery);
                 statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
                 resultSet = statement.executeQuery();
-                RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
+                RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(
+                        ((BTypedesc) recordType).getDescribingType());
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
@@ -174,7 +176,7 @@ public class QueryProcessor {
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
             TransactionResourceManager trxResourceManager) {
-        Type describingType = ballerinaType.getDescribingType();
+        Type describingType = TypeUtils.getReferredType(ballerinaType.getDescribingType());
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;

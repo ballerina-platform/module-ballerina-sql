@@ -339,16 +339,16 @@ public final class Constants {
         private ArrayTypes() {
         }
 
-        public static final String STRING = "sql:StringArray";
-        public static final String INTEGER = "sql:IntArray";
-        public static final String BOOLEAN = "sql:BooleanArray";
-        public static final String FLOAT = "sql:FloatArray";
-        public static final String DECIMAL = "sql:DecimalArray";
-        public static final String BYTE = "sql:ByteArray";
-        public static final String CIVIL = "sql:CivilArray";
-        public static final String TIME_OF_DAY = "sql:TimeOfDayArray";
-        public static final String UTC = "sql:UtcArray";
-        public static final String DATE = "sql:DateArray";
+        public static final String STRING = "string[]";
+        public static final String INTEGER = "int[]";
+        public static final String FLOAT = "float[]";
+        public static final String BOOLEAN = "boolean[]";
+        public static final String DATE = "time:Date[]";
+        public static final String CIVIL = "time:Civil[]";
+        public static final String TIME_OF_DAY = "time:TimeOfDay[]";
+        public static final String DECIMAL = "decimal[]";
+        public static final String UTC = "time:Utc[]";
+        public static final String BYTE = "byte[][]";
     }
 
     /**
