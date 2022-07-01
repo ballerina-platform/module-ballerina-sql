@@ -341,7 +341,7 @@ public class Utils {
         boolean isTypedRecord = !streamConstraint.getName().startsWith(ANNON_RECORD_TYPE_NAME);
         if (isTypedRecord) {
             streamConstraint.getFields().forEach((name, field) -> {
-                if (field.getFieldType().getTag() == TypeTags.RECORD_TYPE_TAG) {
+                if (TypeUtils.getReferredType(field.getFieldType()).getTag() == TypeTags.RECORD_TYPE_TAG) {
                     String fieldName = name;
                     String annotatedColumnName = getAnnotatedColumnName(streamConstraint, field.getFieldName());
                     if (annotatedColumnName != null) {

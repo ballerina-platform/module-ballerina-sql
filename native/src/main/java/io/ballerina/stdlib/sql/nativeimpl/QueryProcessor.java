@@ -121,7 +121,8 @@ public class QueryProcessor {
                 statement = connection.prepareStatement(sqlQuery);
                 statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
                 resultSet = statement.executeQuery();
-                RecordType streamConstraint = (RecordType) ((BTypedesc) recordType).getDescribingType();
+                RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(
+                        ((BTypedesc) recordType).getDescribingType());
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
