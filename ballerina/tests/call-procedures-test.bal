@@ -910,6 +910,33 @@ function testMultipleRecords() returns error? {
 
 }
 
+type Person2 record {
+    int id;
+    int name;
+    int age;
+    int birthday;
+    int country_code;
+};
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testMultipleRecords]
+}
+function testMultipleRecordsNegative() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult result = check dbClient->call(`call FetchMultipleRecords();`, [Person2]);
+    boolean|Error status = result.getNextQueryResult();
+    check result.close();
+    check dbClient.close();
+
+    if status is Error {
+        test:assertEquals(status.message(), "Error when accessing the next query result. The field 'name' of type int cannot " +
+                                                                     "be mapped to the column 'NAME' of SQL type 'VARCHAR'");
+    } else {
+        test:assertFail("Expected error.");
+    }
+}
+
 @test:Config {
     groups: ["procedures"],
     dependsOn: [testMultipleRecords]
@@ -1220,7 +1247,7 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     test:assertEquals(char_array.get(StringArray), charArray, "Char array out parameter of procedure did not match.");
     test:assertEquals(varchar_array.get(StringArray), varcharArray, "Varchar array out parameter " +
     "of procedure did not match.");
-    test:assertEquals(timestamp_array.get(UtcArray), civilArray, "Timestamp array out parameter " +
+    test:assertEquals(timestamp_array.get(CivilArray), civilArray, "Timestamp array out parameter " +
     "of procedure did not match.");
     test:assertEquals(timestamp_array.get(StringArray), civilArrayInString, "String timestamp array out parameter " +
         "of procedure did not match.");
@@ -1401,7 +1428,7 @@ function negativeOutParamsTest() returns error? {
     result = timestamp_array.get(ByteArray);
     if result is Error {
         test:assertEquals(result.message(),
-                    "The ballerina type expected for 'Timestamp Array' type are 'time:Utc[]', and 'string[]' but found type 'byte[][]'.");
+                    "The ballerina type expected for 'Timestamp Array' type are 'time:Civil[]', and 'string[]' but found type 'byte[][]'.");
     } else {
         test:assertFail("Result is not mismatch");
     }
