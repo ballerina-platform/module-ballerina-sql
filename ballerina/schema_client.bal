@@ -18,12 +18,32 @@
 #
 public type SchemaClient client object {
 
+    # Retrieves all tables in the database.
+    # 
+    # + return - A string array containing the names of the tables or an `sql:Error`
     remote isolated function listTables() returns string[]|Error;
 
+    # Retrieves information relevant to the provided table in the database.
+    # 
+    # + tableName - The name of the table
+    # + include - Options on whether columnar and constraint related information should be fetched.
+    #             If `NO_COLUMNS` is provided, then no information related to columns will be retrieved.
+    #             If `COLUMNS_ONLY` is provided, then columnar information will be retrieved, but not constraint
+    #             related information.
+    #             If `COLUMNS_WITH_CONSTRAINTS` is provided, then columar information along with constraint related
+    #             information will be retrieved
+    # + return - An 'sql:TableDefinition' with the relevant table information or an `sql:Error`
     remote isolated function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) returns TableDefinition|Error;
 
+    # Retrieves all routines in the database.
+    # 
+    # + return - A string array containing the names of the routines or an `sql:Error`
     remote isolated function listRoutines() returns string[]|Error;
 
+    # Retrieves information relevant to the provided routine in the database.
+    # 
+    # + name - The name of the routine
+    # + return - An 'sql:RoutineDefinition' with the relevant routine information or an `sql:Error`
     remote isolated function getRoutineInfo(string name) returns RoutineDefinition|Error;
 
     # Closes the SQL metadata client.
