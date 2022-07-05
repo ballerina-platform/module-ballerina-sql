@@ -4,8 +4,7 @@ _Owners_: @kaneeldias
 _Reviewers_: @daneshk @niveathika
 _Created_: 2022/06/07  
 _Updated_: 2022/06/07
-// TODO:
-_Issues_: [#1924](https://github.com/ballerina-platform/ballerina-standard-library/issues/1924)
+_Issues_: [#2965](https://github.com/ballerina-platform/ballerina-standard-library/issues/2965)
 
 ## Summary
 Introduce a metadata client, APIs and corresponding record types to retrieve and represent metadata relating to tables,
@@ -32,7 +31,7 @@ Instead, they may make simple API calls to retrieve the necessary information.
 
 ## Description
 
-### Metadata client
+### Schema client
 A new client would be introduced which is used to query the database to retrieve the relevant metadata. On initialization,
 the user would have to provide credentials to access the relevant metadata tables (e.g. `INFORMATION_SCHEMA` tables in
 MySQL and SQL server). If the provided credentials do not provide the necessary privileges to access the metadata tables,
@@ -40,19 +39,18 @@ an `AuthorizationError` would be returned.
 
 ```ballerina
 # Represents an error that occurs when the user does not have the required authorization to execute an action.
-public type AuthorizationError distinct ApplicationError;
+public type InsufficientPrivilegesError distinct ApplicationError;
 ```
 
 It is also required to provide the name of the database regarding which the metadata should be retrieved.
 
-#### Example client initialization
+#### Example client initialization (for MySQL)
 ```ballerina
-# Represents a Mock database client.
-isolated client class MockMetadataClient {
-    *sql:MetadataClient;
+# Represents a Mock database schema client.
+isolated client class MockSchemaClient {
+    *SchemaClient;
 
-    public function init(string database, string host = "localhost", int port = 3306, string user = "root", string password = "password")
-    returns sql:AuthorizationError? {
+    public function init(string host, int port, string user, string password, string database) returns Error? {
         // Use the connector's underlying `client` to establish the connection.
     }
 }
@@ -72,7 +70,7 @@ New record-types would be introduced to represent the metadata which may be retr
 - `RoutineDefinition`
 - `ParameterDefinition`
 
-These record types contain only fields which are common to relational databased. However, they may be inherited and then
+These record types contain only fields which are common to relational databases. However, they may be inherited and then
 extended by each SQL connector to provide support for additional database-specific fields.
 
 #### Table Definition
@@ -163,15 +161,11 @@ public type CheckConstraint record {
 # + 'type - The type of the routine (procedure or function)
 # + returnType - If the routine returns a value, the return data-type. Else ()
 # + parameters - The parameters associated with the routine
-# + created - The timestamp at which the routine was created
-# + lastAltered- The timestamp at which the routine was last altered
 public type RoutineDefinition record {
     string name;
     RoutineType 'type;
     string? returnType;
     ParameterDefinition[] parameters;
-    time:Civil created;
-    time:Civil lastAltered;
 };
 ```
 
@@ -181,16 +175,16 @@ The `RoutineType` type is an enum which can take one of two values
 
 #### Parameter Definition
 ```ballerina
-    # Represents a routine parameter.
-    # 
-    # + mode - The mode of the parameter (IN, OUT, INOUT)
-    # + name - The name of the parameter
-    # + type - The data-type of the parameter
-    public type ParameterDefinition record {
-        ParameterMode mode;
-        string name;
-        string type;
-    };
+# Represents a routine parameter.
+# 
+# + mode - The mode of the parameter (IN, OUT, INOUT)
+# + name - The name of the parameter
+# + type - The data-type of the parameter
+public type ParameterDefinition record {
+    ParameterMode mode;
+    string name;
+    string type;
+};
 ```
 
 The `ParameterMode` type is an enum which can take one of three values
@@ -199,55 +193,41 @@ The `ParameterMode` type is an enum which can take one of three values
 - `INOUT`
 
 ### Methods
-The `MetadataClient` will contain six methods which may be used to retrieve metadata.
-- `tables`
-- `table`
-- `columns`
-- `column`
-- `routines`
-- `routine`
+The `SchemaClient` will contain six methods which may be used to retrieve metadata.
+- `listTables()`
+- `getTableInfo()`
+- `listRoutines()`
+- `getRoutineInfo()`
 
 All of these methods will be implemented by each SQL connector.
 
 #### Retrieve all tables
 ```ballerina
-public isolated function tables(boolean fetchColumns = false) returns TableDefinition[]|Error;
+remote isolated function listTables() returns string[]|Error;
 ```
-This would fetch all the tables in the database. By default, this would not retrieve the details of the columns
-associated with each database, however a parameter could be passed to retrieve column data as well.
-
-In either case, constraint data (for columns) would not be fetched.
+This would fetch the names of all the tables in the database.
 
 #### Retrieve a single table
 ```ballerina
-public isolated function table(string tableName) returns TableDefinition|Error;
-```
-This would fetch all relevant information from a given table from the database, along with the column data.
-This would not fetch constraint data (for columns).
+remote isolated function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) returns TableDefinition|Error;
 
-#### Retrieve all columns
-```ballerina
-public isolated function columns(string tableName, boolean fetchConstraints = false) returns ColumnDefinition[]|Error;
+public enum ColumnRetrievalOptions {
+    NO_COLUMNS,
+    COLUMNS_ONLY,
+    COLUMNS_WITH_CONSTRAINTS
+}
 ```
-This would fetch all columns in the provided table. By default, constraint data would not be retrieved.
-However, a parameter may be passed to retrieve this data as well.
-
-#### Retrieve a single column
-```ballerina
-public isolated function column(string tableName, string columnName) returns ColumnDefinition|Error;
-```
-This would fetch all relevant information regarding the given column (including constraint data).
+This would fetch all relevant information from a given table from the database. Based on the option provided for the `include` parameter, relevant column information would also be retrieved.
 
 #### Retrieve all routines
 ```ballerina
-public isolated function routines(boolean fetchParameters = false) returns RoutineDefinition[]|Error;
+remote isolated function listRoutines() returns string[]|Error;
 ```
-This would fetch all routines created in the database. By default, this would not fetch the parameter data.
-However, a parameter may be passed to retrieve this data as well.
+This would fetch the names of all the routines created in the database.
 
 #### Retrieve a single routine
 ```ballerina
-public isolated function routine(string name) returns RoutineDefinition|Error;
+remote isolated function getRoutineInfo(string name) returns RoutineDefinition|Error;
 ```
 This would fetch all relevant information regarding the provided routine (including the parameter data).
 
