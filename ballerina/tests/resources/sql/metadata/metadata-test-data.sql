@@ -1,16 +1,17 @@
 CREATE USER generalUser PASSWORD 'password';
 
-CREATE TABLE IF NOT EXISTS Customers(
+CREATE TABLE IF NOT EXISTS Customers (
   customerId INTEGER NOT NULL IDENTITY,
   firstName  VARCHAR(300) NOT NULL,
   lastName  VARCHAR(300) NOT NULL,
   registrationID INTEGER NOT NULL,
   creditLimit DOUBLE DEFAULT 100.00,
   country  VARCHAR(300),
-  PRIMARY KEY (customerId)
+  PRIMARY KEY (customerId),
+  CHECK (creditLimit > 50)
 );
 
-CREATE TABLE IF NOT EXISTS DataTable(
+CREATE TABLE IF NOT EXISTS DataTable (
   row_id       INTEGER IDENTITY,
   int_type     INTEGER,
   long_type    BIGINT,
@@ -37,3 +38,28 @@ CREATE TABLE NumericTypes (
 );
 
 CREATE VIEW IF NOT EXISTS CustomerNames AS SELECT firstName, lastName FROM Customers;
+
+CREATE TABLE IF NOT EXISTS Company (
+  companyId INTEGER NOT NULL IDENTITY,
+  name VARCHAR(300) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Person (
+  personId INTEGER NOT NULL IDENTITY,
+  name VARCHAR(300) NOT NULL,
+  companyId INTEGER NOT NULL,
+  FOREIGN KEY (companyId) REFERENCES Company(companyId),
+  CHECK (personId > 100),
+  CHECK (companyId > 20)
+);
+
+CREATE TABLE IF NOT EXISTS StringTypes (
+  id INT IDENTITY,
+  varchar_type VARCHAR(255),
+  charmax_type CHAR(10),
+  char_type CHAR,
+  charactermax_type CHARACTER(10),
+  character_type CHARACTER,
+  nvarcharmax_type NVARCHAR(255),
+  PRIMARY KEY (id)
+);
