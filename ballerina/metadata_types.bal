@@ -1,26 +1,24 @@
-import ballerina/time;
-
 public enum TableType {
-    BASE_TABLE,
-    VIEW
+    BASE_TABLE = "BASE TABLE",
+    VIEW = "VIEW"
 }
 
 public enum ReferentialRule {
-    NO_ACTION,
-    CASCADE,
-    SET_NULL,
-    SET_DEFAULT
+    NO_ACTION = "NO ACTION",
+    CASCADE = "CASCADE",
+    SET_NULL = "SET NULL",
+    SET_DEFAULT = "SET DEFAULT"
 }
 
 public enum RoutineType {
-    PROCEDURE,
-    FUNCTION
+    PROCEDURE = "PROCEDURE",
+    FUNCTION = "FUNCTION"
 }
 
 public enum ParameterMode {
-    IN,
-    OUT,
-    INOUT
+    IN = "IN",
+    OUT = "OUT",
+    INOUT = "INOUT"
 }
 
 # Represents a table in the database.
@@ -81,15 +79,11 @@ public type CheckConstraint record {
 # + 'type - The type of the routine (procedure or function)
 # + returnType - If the routine returns a value, the return data-type. Else ()
 # + parameters - The parameters associated with the routine
-# + created - The timestamp at which the routine was created
-# + lastAltered- The timestamp at which the routine was last altered
 public type RoutineDefinition record {
     string name;
     RoutineType 'type;
     string? returnType;
     ParameterDefinition[] parameters;
-    time:Civil created;
-    time:Civil lastAltered;
 };
 
 # Represents a routine parameter.
