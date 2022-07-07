@@ -55,6 +55,9 @@ import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_231;
  */
 public class Utils {
 
+    private Utils() {
+    }
+
     public static boolean isSQLOutParameter(SyntaxNodeAnalysisContext ctx, ExpressionNode node) {
         Optional<TypeSymbol> objectType = ctx.semanticModel().typeOf(node);
         if (objectType.isEmpty()) {

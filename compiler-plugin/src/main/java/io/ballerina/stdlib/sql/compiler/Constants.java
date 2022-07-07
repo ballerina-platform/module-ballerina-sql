@@ -27,10 +27,17 @@ public class Constants {
     public static final String INOUT_PARAMETER = "InOutParameter";
     public static final String OUT_PARAMETER_POSTFIX = "OutParameter";
 
+    private Constants() {
+    }
+
     /**
      * Constants for fields in sql:ConnectionPool.
      */
     public static class ConnectionPool {
+
+        private ConnectionPool() {
+        }
+
         public static final String MAX_OPEN_CONNECTIONS = "maxOpenConnections";
         public static final String MAX_CONNECTION_LIFE_TIME = "maxConnectionLifeTime";
         public static final String MIN_IDLE_CONNECTIONS = "minIdleConnections";
@@ -40,6 +47,10 @@ public class Constants {
      * Constants for fields in OutParameter objects.
      */
     public static class OutParameter {
+
+        private OutParameter() {
+        }
+
         public static final String METHOD_NAME = "get";
 
         public static final String CHAR = "CharOutParameter";
@@ -100,6 +111,10 @@ public class Constants {
      * Constants for regex validation for Ballerina time module record types.
      */
     public static class TimeRecordTypes {
+
+        private TimeRecordTypes(){
+        }
+
         public static final String PACKAGE_NAME = "ballerina/time";
         public static final String TIME_OF_DAY = "TimeOfDay";
         public static final String DATE = "Date";
