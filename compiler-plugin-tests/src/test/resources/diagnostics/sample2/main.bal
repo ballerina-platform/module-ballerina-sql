@@ -98,6 +98,7 @@ public function main() returns error? {
     int _ = check realOut.get(int);
     float _ = check realOut.get(float);
     string _ = check realOut.get(string);
+    string _ = check realOut.get();
 
     sql:DoubleOutParameter doubleOut = new();
     int _ = check doubleOut.get(int);
