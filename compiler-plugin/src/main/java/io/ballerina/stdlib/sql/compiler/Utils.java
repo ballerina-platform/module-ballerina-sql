@@ -23,7 +23,6 @@ import io.ballerina.compiler.api.symbols.ModuleSymbol;
 import io.ballerina.compiler.api.symbols.TypeDescKind;
 import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
 import io.ballerina.compiler.api.symbols.TypeSymbol;
-import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
@@ -62,12 +61,6 @@ public class Utils {
         Optional<TypeSymbol> objectType = ctx.semanticModel().typeOf(node);
         if (objectType.isEmpty()) {
             return false;
-        }
-        if (objectType.get().typeKind() == TypeDescKind.UNION) {
-            return ((UnionTypeSymbol) objectType.get()).memberTypeDescriptors().stream()
-                    .filter(typeDescriptor -> typeDescriptor instanceof TypeReferenceTypeSymbol)
-                    .map(typeReferenceTypeSymbol -> (TypeReferenceTypeSymbol) typeReferenceTypeSymbol)
-                    .anyMatch(Utils::isSQLOutParameter);
         }
         if (objectType.get() instanceof TypeReferenceTypeSymbol) {
             return isSQLOutParameter(((TypeReferenceTypeSymbol) objectType.get()));
