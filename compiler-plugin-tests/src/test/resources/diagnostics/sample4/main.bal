@@ -31,4 +31,5 @@ public function main() returns error? {
     };
 
     http:Client httpclient = check new ("adasdsasd");
+    _ = httpclient.getCookieStore();
 }
