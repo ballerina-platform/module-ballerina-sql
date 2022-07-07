@@ -32,7 +32,10 @@ The conforming implementation of the specification is released and included in t
    4.3. [Execute](#43-execute)  
    4.4. [Batch execute](#44-batch-execute)  
    4.5. [Call](#45-call)  
-5. [Metadata operations](#5-metadata-operations)
+5. [Metadata operations](#5-metadata-operations)  
+   5.1. [Schema client](#51-schema-client)  
+   5.2. [Metadata types](#52-metadata-types)  
+   5.3. [Metadata methods](#53-metadata-methods)  
 6. [Errors](#6-errors)
 
 # 1. Overview
@@ -550,24 +553,209 @@ and avoid a connection leak as shown above.
 
 # 5. Metadata operations
 
+## 5.1. Schema client
+The `SchemaClient` is used to query the database to retrieve the relevant metadata. On initialization,
+the user would have to provide credentials to access the relevant metadata tables. It is also required to provide the name
+of the database regarding which the metadata should be retrieved.
 
+```ballerina
+isolated client class MockSchemaClient {
+    *SchemaClient;
+
+    public function init(string host, int port, string user, string password, string database) returns Error? {
+        self.database = database;
+        self.dbClient = check new(url, user, password);
+    }
+}
+```
+
+This client will be extended by each SQL connector to customize the implementation as necessary.
+
+## 5.2. Metadata types
+New record-types would be introduced to represent the metadata which may be retrieved.
+- `TableDefinition`
+- `ColumnDefinition`
+- `CheckConstraintDefinition`
+- `ReferentialConstraintDefinition`
+- `RoutineDefinition`
+- `ParameterDefinition`
+
+These record types contain only fields which are common to relational databases. However, they may be inherited and then
+extended by each SQL connector to provide support for additional database-specific fields.
+
+### Table definition
+```ballerina
+# Represents a table in the database.
+#
+# + name - The name of the table
+# + 'type - Whether the table is a base table or a view
+# + columns - The columns included in the table
+public type TableDefinition record {
+    string name;
+    TableType 'type;
+    ColumnDefinition[] columns?;
+};
+```
+
+The `columns` field is optional as there are use cases where the user would not want to retrieve information regarding
+the columns of a table.
+
+The `TableType` type is an enum, which can take one of two values:
+- `BASE_TABLE`
+- `VIEW`
+
+### Column definition
+```ballerina
+# Represents a column in a table.
+#
+# + name - The name of the column  
+# + 'type - The SQL data-type associated with the column
+# + defaultValue - The default value of the column  
+# + nullable - Whether the column is nullable  
+# + referentialConstraints - Referential constraints (foreign key relationships) associated with the column
+# + checkConstraints - Check constraints associated with the column
+public type ColumnDefinition record {
+    string name;
+    string 'type;
+    anydata? defaultValue;
+    boolean nullable;
+    ReferentialConstraint[] referentialConstraints?;
+    CheckConstraint[] checkConstraints?;
+};
+```
+
+The `referentialConstraints` and `checkConstraints` fields are optional as there may be use cases where the user does not
+want to retrieve this information.
+
+### Referential constraint
+```ballerina
+# Represents a referential constraint (foriegn key constraint).
+# 
+# + name - The name of the constraint
+# + tableName - The name of the table which contains the referenced column
+# + columnName - The name of the referenced column
+# + updateRule - The action taken when an update statement violates the constraint
+# + deleteRule - The action taken when a delete statement violates the constraint
+public type ReferentialConstraint record {
+    string name;
+    string tableName;
+    string columnName;
+    ReferentialRule updateRule;
+    ReferentialRule deleteRule; 
+};
+```
+
+The `ReferentialRule` type is an enum with four possible values:
+- `NO_ACTION`
+- `CASCADE`
+- `SET_NULL`
+- `SET_DEFAULT`
+
+### Check constraint
+```ballerina
+# Represents a check constraint.
+# 
+# + name - The name of the constraint
+# + clause - The actual text of the SQL definition statement
+public type CheckConstraint record {
+    string name;
+    string clause;
+};
+```
+
+### Routine definition
+```ballerina
+# Represents a routine.
+# 
+# + name - The name of the routine
+# + 'type - The type of the routine (procedure or function)
+# + returnType - If the routine returns a value, the return data-type. Else ()
+# + parameters - The parameters associated with the routine
+public type RoutineDefinition record {
+    string name;
+    RoutineType 'type;
+    string? returnType;
+    ParameterDefinition[] parameters;
+};
+```
+
+The `RoutineType` type is an enum which can take one of two values
+- `PROCEDURE`
+- `FUNCTION`
+
+### Parameter definition
+```ballerina
+# Represents a routine parameter.
+# 
+# + mode - The mode of the parameter (IN, OUT, INOUT)
+# + name - The name of the parameter
+# + type - The data-type of the parameter
+public type ParameterDefinition record {
+    ParameterMode mode;
+    string name;
+    string type;
+};
+```
+
+The `ParameterMode` type is an enum which can take one of three values
+- `IN`
+- `OUT`
+- `INOUT`
+
+## 5.3. Metadata methods
+The `SchemaClient` contains six methods which may be used to retrieve metadata.
+- `listTables()`
+- `getTableInfo()`
+- `listRoutines()`
+- `getRoutineInfo()`
+
+All of these methods will be implemented by each SQL connector.
+
+### Retrieve all tables
+```ballerina
+remote isolated function listTables() returns string[]|Error;
+```
+This would fetch the names of all the tables in the database.
+
+### Retrieve a single table
+```ballerina
+remote isolated function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) returns TableDefinition|Error;
+
+public enum ColumnRetrievalOptions {
+    NO_COLUMNS,
+    COLUMNS_ONLY,
+    COLUMNS_WITH_CONSTRAINTS
+}
+```
+This would fetch all relevant information from a given table from the database. Based on the option provided for the `include` parameter, relevant column information would also be retrieved.
+
+### Retrieve all routines
+```ballerina
+remote isolated function listRoutines() returns string[]|Error;
+```
+This would fetch the names of all the routines created in the database.
+
+### Retrieve a single routine
+```ballerina
+remote isolated function getRoutineInfo(string name) returns RoutineDefinition|Error;
+```
+This would fetch all relevant information regarding the provided routine (including the parameter data).
 
 # 6. Errors
 
 `sql` package consists of following Errors,
 ```bash
 .
-└── Error                               # Generic error type for the `sql` module. 
-    ├── DatabaseError                   # Error caused by an issue related to database accessibility, erroneous queries, etc
-    ├── BatchExecuteError               # Error that occurs during the execution of batch queries.
-    ├── NoRowsError                     # Error when a query retrieves does not retrieve any rows when at least one row is expected.
-    └── ApplicationError                # Error originating from application-level configurations.
-        └── DataError                   # Error during the processing of the parameters or returned results.
-            ├── TypeMismatchError       # Error when a query retrieves a result that differs from the supported result type.
-            ├── ConversionError         # Error when result is corrupted and cannot be casted to expected result type.
-            ├── FieldMismatchError      # Error when a query retrieves a result that cannot be mapped to the expected record type.
-            └── UnsupportedTypeError    # Error that occurs when an unsupported parameter type is added to the query.
-            
+└── Error                            # Generic error type for the `sql` module. 
+    ├── DatabaseError                # Error caused by an issue related to database accessibility, erroneous queries, etc
+    ├── BatchExecuteError            # Error that occurs during the execution of batch queries.
+    ├── NoRowsError                  # Error when a query retrieves does not retrieve any rows when at least one row is expected.
+    └── ApplicationError             # Error originating from application-level configurations.
+        └── DataError                # Error during the processing of the parameters or returned results.
+            ├── TypeMismatchError    # Error when a query retrieves a result that differs from the supported result type.
+            ├── ConversionError      # Error when result is corrupted and cannot be casted to expected result type.
+            ├── FieldMismatchError   # Error when a query retrieves a result that cannot be mapped to the expected record type.
+            └── UnsupportedTypeError # Error that occurs when an unsupported parameter type is added to the query.
 ```
 
 All errors include detailed error message.
