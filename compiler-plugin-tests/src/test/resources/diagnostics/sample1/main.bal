@@ -20,6 +20,12 @@ type ConnectionPool record {
     int connection?;
 };
 
+int|sql:ConnectionPool pool2 = {
+    maxOpenConnections: 10,
+    maxConnectionLifeTime: 10,
+    minIdleConnections: 2
+};
+
 public function main() {
 
     int id = 5;

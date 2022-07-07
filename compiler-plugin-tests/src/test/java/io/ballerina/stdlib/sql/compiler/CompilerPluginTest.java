@@ -69,27 +69,35 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 4);
+        Assert.assertEquals(availableErrors, 5);
 
-        DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionZero.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionZero.messageFormat(),
-                "invalid value: expected value is greater than one");
+        for (int i = 0; i < errorDiagnosticsList.size(); i++) {
+            switch (i) {
+                case 0:
+                case 2:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_103.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_103.getMessage());
+                    break;
+                case 1:
+                case 4:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_101.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_101.getMessage());
+                    break;
 
-        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_103.getCode());
-        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
-                "invalid value: expected value is greater than or equal to 30");
-
-        DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
-        Assert.assertEquals(minIdleConnections.code(), SQLDiagnosticsCodes.SQL_102.getCode());
-        Assert.assertEquals(minIdleConnections.messageFormat(),
-                "invalid value: expected value is greater than zero");
-
-        DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionNegative.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
-                "invalid value: expected value is greater than one");
+                case 3:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_102.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_102.getMessage());
+                    break;
+                default:
+                    Assert.fail();
+            }
+        }
     }
 
     @Test
