@@ -27,15 +27,13 @@ isolated client class MockSchemaClient {
     }
 
     isolated remote function listTables() returns string[]|Error {
-        stream<record {}, error?> tablesStream = self.dbClient->query(
+        stream<record {}, Error?> tablesStream = self.dbClient->query(
             `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ${self.database}`
         );
 
-        string[]|error? tables = from record {} 'table in tablesStream
+        string[]? tables = check from record {} 'table in tablesStream
                                     select <string>'table["TABLE_NAME"];
-        if tables is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
-        } else if tables is () {
+        if tables is () {
             return [];
         } else {
             return tables;
@@ -43,49 +41,54 @@ isolated client class MockSchemaClient {
     }
 
     isolated remote function getTableInfo(string tableName, ColumnRetrievalOptions include = COLUMNS_ONLY) returns TableDefinition|Error {
-        record {} 'table = check self.dbClient->queryRow(`
+        record {}|Error 'table = self.dbClient->queryRow(`
             SELECT TABLE_TYPE
             FROM INFORMATION_SCHEMA.TABLES 
             WHERE TABLE_NAME = ${tableName} AND TABLE_SCHEMA = ${self.database}
         `);
-        TableDefinition result = {
-            name: tableName,
-            'type: <TableType>'table["TABLE_TYPE"]
-        };
 
-        if !(include is NO_COLUMNS) {
-            result.columns = check self.getColumns(tableName);
+        if 'table is NoRowsError {
+            return <NoRowsError>error("The table '" + tableName + "' does not exist or the user does not have the required privilege level to view it.");
+        } if 'table is Error {
+            return 'table;
+        } else {
+            TableDefinition result = {
+                name: tableName,
+                'type: <TableType>'table["TABLE_TYPE"]
+            };
 
-            if include is COLUMNS_WITH_CONSTRAINTS {
-                map<ReferentialConstraint[]> refConstraintsMap = check self.getReferentialConstraints(tableName);
-                map<CheckConstraint[]> checkConstraintsMap = check self.getCheckConstraints(tableName);
+            if !(include is NO_COLUMNS) {
+                result.columns = check self.getColumns(tableName);
 
-                _ = checkpanic from ColumnDefinition column in <ColumnDefinition[]>result.columns
-                    do {
-                        ReferentialConstraint[]? refConstraints = refConstraintsMap[column.name];
-                        if !(refConstraints is ()) && refConstraints.length() != 0 {
-                            column.referentialConstraints = refConstraints;
-                        }
+                if include is COLUMNS_WITH_CONSTRAINTS {
+                    map<ReferentialConstraint[]> refConstraintsMap = check self.getReferentialConstraints(tableName);
+                    map<CheckConstraint[]> checkConstraintsMap = check self.getCheckConstraints(tableName);
 
-                        CheckConstraint[]? checkConstraints = checkConstraintsMap[column.name];
-                        if !(checkConstraints is ()) && checkConstraints.length() != 0 {
-                            column.checkConstraints = checkConstraints;
-                        }
-                    };     
+                    _ = checkpanic from ColumnDefinition column in <ColumnDefinition[]>result.columns
+                        do {
+                            ReferentialConstraint[]? refConstraints = refConstraintsMap[column.name];
+                            if !(refConstraints is ()) && refConstraints.length() != 0 {
+                                column.referentialConstraints = refConstraints;
+                            }
+
+                            CheckConstraint[]? checkConstraints = checkConstraintsMap[column.name];
+                            if !(checkConstraints is ()) && checkConstraints.length() != 0 {
+                                column.checkConstraints = checkConstraints;
+                            }
+                        };     
+                }
             }
+            return result; 
         }
-        return result; 
     }
 
     isolated remote function listRoutines() returns string[]|Error {
-        stream<record {}, error?> routinesStream = self.dbClient->query(
+        stream<record {}, Error?> routinesStream = self.dbClient->query(
             `SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = ${self.database}`
         );
-        string[]|error? routines = from record {} routine in routinesStream
+        string[]? routines = check from record {} routine in routinesStream
                                     select <string>routine["ROUTINE_NAME"];
-        if routines is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
-        } else if routines is () {
+        if routines is () {
             return [];
         } else {
             return routines;
@@ -93,20 +96,25 @@ isolated client class MockSchemaClient {
     }
 
     isolated remote function getRoutineInfo(string name) returns RoutineDefinition|Error {
-        record {} routine = check self.dbClient->queryRow(`
+        record {}|Error routine = self.dbClient->queryRow(`
             SELECT ROUTINE_TYPE, DATA_TYPE
             FROM INFORMATION_SCHEMA.ROUTINES 
             WHERE ROUTINE_SCHEMA = ${self.database} AND ROUTINE_NAME = ${name}
         `);
 
-        RoutineDefinition result = {
-            name: name,
-            'type: <RoutineType>routine["ROUTINE_TYPE"],
-            returnType: routine["DATA_TYPE"] is string ? <string>routine["DATA_TYPE"] : (),
-            parameters: check self.getRoutineParameters(name)
-        };
-
-        return result;
+        if routine is NoRowsError {
+            return <NoRowsError>error("The routine '" + name + "' does not exist or the user does not have the required privilege level to view it.");
+        } if routine is Error {
+            return routine;
+        } else {
+            RoutineDefinition result = {
+                name: name,
+                'type: <RoutineType>routine["ROUTINE_TYPE"],
+                returnType: routine["DATA_TYPE"] is string ? <string>routine["DATA_TYPE"] : (),
+                parameters: check self.getRoutineParameters(name)
+            };
+            return result;
+        }
     }
 
     public isolated function close() returns Error? {
@@ -115,10 +123,10 @@ isolated client class MockSchemaClient {
 
     private isolated function getColumns(string tableName) returns ColumnDefinition[]|Error {
         ColumnDefinition[] columns = [];
-        stream<record {}, error?> columnStream = self.dbClient->query(
-            `SELECT COLUMN_NAME, DATA_TYPE, COLUMN_DEFAULT, IS_NULLABLE
-            FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ${self.database} AND TABLE_NAME = ${tableName}`
-        );
+        stream<record {}, Error?> columnStream = self.dbClient->query(`
+            SELECT COLUMN_NAME, DATA_TYPE, COLUMN_DEFAULT, IS_NULLABLE
+            FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ${self.database} AND TABLE_NAME = ${tableName}
+        `);
 
         error? e = from record {} retrievedColumn in columnStream
             do {
@@ -131,7 +139,7 @@ isolated client class MockSchemaClient {
                 columns.push(column);
             };
         if e is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
+            return <DataError>error(e.message());
         }
         return columns;
     }
@@ -139,7 +147,7 @@ isolated client class MockSchemaClient {
     private isolated function getReferentialConstraints(string tableName) returns map<ReferentialConstraint[]>|Error {
         map<ReferentialConstraint[]> refConstraintsMap = {};
 
-        stream<record {}, error?> referentialConstraintStream = self.dbClient->query(`
+        stream<record {}, Error?> referentialConstraintStream = self.dbClient->query(`
             SELECT 
                 KCU1.CONSTRAINT_NAME AS FK_CONSTRAINT_NAME,
                 KCU1.COLUMN_NAME AS FK_COLUMN_NAME,
@@ -176,11 +184,9 @@ isolated client class MockSchemaClient {
                 }
                 refConstraintsMap.get(columnName).push(refConstraint);
             };
-
         if e is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
+            return <DataError>error(e.message());
         }
-
         return refConstraintsMap;
     }
 
@@ -214,9 +220,8 @@ isolated client class MockSchemaClient {
                 }
             };
         if e is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
+            return <DataError>error(e.message());
         }
-
         return checkConstraintsMap;
     }
 
@@ -246,9 +251,8 @@ isolated client class MockSchemaClient {
                 parameters.push('parameter);
             };
         if e is error {
-            return <InsufficientPrivilegesError>error("Unable to access INFORMATION SCHEMA database.");
+            return <DataError>error(e.message());
         }
-
         return parameters;
     }
 }

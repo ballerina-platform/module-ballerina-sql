@@ -3,7 +3,7 @@
 _Owners_: @daneshk @niveathika  
 _Reviewers_: @daneshk  
 _Created_: 2022/01/13   
-_Updated_: 2022/03/23  
+_Updated_: 2022/07/07  
 _Edition_: Swan Lake  
 
 ## Introduction
@@ -32,7 +32,8 @@ The conforming implementation of the specification is released and included in t
    4.3. [Execute](#43-execute)  
    4.4. [Batch execute](#44-batch-execute)  
    4.5. [Call](#45-call)  
-5. [Errors](#5-errors)
+5. [Metadata operations](#5-metadata-operations)
+6. [Errors](#6-errors)
 
 # 1. Overview
 
@@ -547,21 +548,26 @@ check result.close();
 The close operation needs to be explicitly invoked on the `sql:ProcedureCallResult` to release the connection resources 
 and avoid a connection leak as shown above.
 
-# 5. Errors
+# 5. Metadata operations
+
+
+
+# 6. Errors
 
 `sql` package consists of following Errors,
 ```bash
 .
-└── Error                            # Generic error type for the `sql` module. 
-    ├── DatabaseError                # Error caused by an issue related to database accessibility, erroneous queries, etc
-    ├── BatchExecuteError            # Error that occurs during the execution of batch queries.
-    ├── NoRowsError                  # Error when a query retrieves does not retrieve any rows when at least one row is expected.
-    └── ApplicationError             # Error originating from application-level configurations.
-        └── DataError                # Error during the processing of the parameters or returned results.
-            ├── TypeMismatchError    # Error when a query retrieves a result that differs from the supported result type.
-            ├── ConversionError      # Error when result is corrupted and cannot be casted to expected result type.
-            ├── FieldMismatchError   # Error when a query retrieves a result that cannot be mapped to the expected record type.
-            └── UnsupportedTypeError # Error that occurs when an unsupported parameter type is added to the query.
+└── Error                               # Generic error type for the `sql` module. 
+    ├── DatabaseError                   # Error caused by an issue related to database accessibility, erroneous queries, etc
+    ├── BatchExecuteError               # Error that occurs during the execution of batch queries.
+    ├── NoRowsError                     # Error when a query retrieves does not retrieve any rows when at least one row is expected.
+    └── ApplicationError                # Error originating from application-level configurations.
+        └── DataError                   # Error during the processing of the parameters or returned results.
+            ├── TypeMismatchError       # Error when a query retrieves a result that differs from the supported result type.
+            ├── ConversionError         # Error when result is corrupted and cannot be casted to expected result type.
+            ├── FieldMismatchError      # Error when a query retrieves a result that cannot be mapped to the expected record type.
+            └── UnsupportedTypeError    # Error that occurs when an unsupported parameter type is added to the query.
+            
 ```
 
 All errors include detailed error message.

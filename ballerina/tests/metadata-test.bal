@@ -36,11 +36,21 @@ function cleanMetadataContainer() returns error? {
 @test:Config {
     groups: ["metadata"]
 }
-function listTablesTest() returns error? {
+function listTablesTest1() returns error? {
     MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
     string[] tables = check schemaClient->listTables();
     check schemaClient.close();
     test:assertEquals(tables, ["CUSTOMERS", "DATATABLE", "NUMERICTYPES", "CUSTOMERNAMES", "COMPANY", "PERSON", "STRINGTYPES"]);
+}
+
+@test:Config {
+    groups: ["metadata"]
+}
+function listTablesTest2() returns error? {
+    MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLICX");
+    string[] tables = check schemaClient->listTables();
+    check schemaClient.close();
+    test:assertEquals(tables, []);
 }
 
 @test:Config {
@@ -97,6 +107,21 @@ function getTableInfoTest() returns error? {
 @test:Config {
     groups: ["metadata"]
 }
+function getTableInfoNegativeTest() returns error? {
+    MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
+    TableDefinition|Error 'table = schemaClient->getTableInfo("CUSTOMERS2");
+    check schemaClient.close();
+    if 'table is NoRowsError {
+        test:assertEquals('table.message(), "The table 'CUSTOMERS2' does not exist or the user does not have the required privilege level to view it.");
+    } else {
+        test:assertFail("NoRowsError expected.");
+    }
+}
+
+
+@test:Config {
+    groups: ["metadata"]
+}
 function getTableInfoWithConstraintsTest() returns error? {
     MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
     TableDefinition 'table = check schemaClient->getTableInfo("PERSON", COLUMNS_WITH_CONSTRAINTS);
@@ -147,6 +172,61 @@ function getTableInfoWithConstraintsTest() returns error? {
         ]
     });
 }
+
+@test:Config {
+    groups: ["metadata"]
+}
+function getTableInfoWithConstraintsTest2() returns error? {
+    MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
+    TableDefinition 'table = check schemaClient->getTableInfo("PERSON", COLUMNS_WITH_CONSTRAINTS);
+    check schemaClient.close();
+    test:assertEquals('table, {
+        name: "PERSON",
+        "type":BASE_TABLE,
+        "columns":[
+            {
+                "name":"PERSONID",
+                "type":"INTEGER",
+                "defaultValue":null,
+                "nullable":false,
+                "checkConstraints": [
+                    {
+                        "name":"SYS_CT_10125",
+                        "clause":"PUBLIC.PERSON.PERSONID>100"
+                    }
+                ]
+            },
+            {
+                "name":"NAME",
+                "type":"CHARACTER VARYING",
+                "defaultValue":null,
+                "nullable":false
+            },
+            {
+                "name":"COMPANYID",
+                "type":"INTEGER",
+                "defaultValue":null,
+                "nullable":false,
+                "referentialConstraints":[
+                    {
+                        "name":"SYS_FK_10125",
+                        "tableName":"COMPANY",
+                        "columnName":"COMPANYID",
+                        "updateRule":CASCADE,
+                        "deleteRule":CASCADE
+                    }
+                ],
+                "checkConstraints": [
+                    {
+                        "name":"SYS_CT_10126",
+                        "clause":"PUBLIC.PERSON.COMPANYID>20"
+                    }
+                ]
+            }
+        ]
+    });
+}
+
 
 @test:Config {
     groups: ["metadata"]
@@ -207,6 +287,22 @@ function getRoutineInfoTest() returns error? {
             }
         ]
     });
+}
+
+@test:Config {
+    groups: ["metadata"]
+}
+function getRoutineInfoNegativeTest() returns error? {
+    MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
+    RoutineDefinition|Error routine = schemaClient->getRoutineInfo("INSERTSTRINGDATA2");
+    check schemaClient.close();
+    if routine is NoRowsError {
+        test:assertEquals(routine.message(), "The routine 'INSERTSTRINGDATA2' does not exist or the user does not have the required privilege level to view it.");
+    } else {
+        test:assertFail("NoRowsError expected.");
+    }
+
+
 }
 
 function createProcedures() returns error? {

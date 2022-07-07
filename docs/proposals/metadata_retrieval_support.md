@@ -33,16 +33,8 @@ Instead, they may make simple API calls to retrieve the necessary information.
 
 ### Schema client
 A new client would be introduced which is used to query the database to retrieve the relevant metadata. On initialization,
-the user would have to provide credentials to access the relevant metadata tables (e.g. `INFORMATION_SCHEMA` tables in
-MySQL and SQL server). If the provided credentials do not provide the necessary privileges to access the metadata tables,
-an `AuthorizationError` would be returned.
-
-```ballerina
-# Represents an error that occurs when the user does not have the required authorization to execute an action.
-public type InsufficientPrivilegesError distinct ApplicationError;
-```
-
-It is also required to provide the name of the database regarding which the metadata should be retrieved.
+the user would have to provide credentials to access the relevant metadata tables. It is also required to provide the name 
+of the database regarding which the metadata should be retrieved.
 
 #### Example client initialization (for MySQL)
 ```ballerina
