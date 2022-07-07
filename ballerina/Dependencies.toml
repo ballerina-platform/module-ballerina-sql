@@ -9,7 +9,7 @@ dependencies-toml-version = "2"
 [[package]]
 org = "ballerina"
 name = "auth"
-version = "2.3.0"
+version = "2.3.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "crypto"},
@@ -109,7 +109,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "jwt"
-version = "2.3.0"
+version = "2.3.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "cache"},
@@ -238,7 +238,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "oauth2"
-version = "2.3.0"
+version = "2.3.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "cache"},
@@ -251,7 +251,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "observe"
-version = "1.0.4"
+version = "1.0.5"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
