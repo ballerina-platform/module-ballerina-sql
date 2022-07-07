@@ -40,7 +40,7 @@ function listTablesTest1() returns error? {
     MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
     string[] tables = check schemaClient->listTables();
     check schemaClient.close();
-    test:assertEquals(tables, ["CUSTOMERS", "DATATABLE", "NUMERICTYPES", "CUSTOMERNAMES", "COMPANY", "PERSON", "STRINGTYPES"]);
+    test:assertEquals(tables, ["CUSTOMERS", "DATATABLE", "NUMERICTYPES", "CUSTOMERNAMES", "COMPANY", "PERSON", "PERSON2", "STRINGTYPES"]);
 }
 
 @test:Config {
@@ -178,10 +178,10 @@ function getTableInfoWithConstraintsTest() returns error? {
 }
 function getTableInfoWithConstraintsTest2() returns error? {
     MockSchemaClient schemaClient = check new(url = metadataDb, user = user, password = password, database = "PUBLIC");
-    TableDefinition 'table = check schemaClient->getTableInfo("PERSON", COLUMNS_WITH_CONSTRAINTS);
+    TableDefinition 'table = check schemaClient->getTableInfo("PERSON2", COLUMNS_WITH_CONSTRAINTS);
     check schemaClient.close();
     test:assertEquals('table, {
-        name: "PERSON",
+        name: "PERSON2",
         "type":BASE_TABLE,
         "columns":[
             {
@@ -191,8 +191,8 @@ function getTableInfoWithConstraintsTest2() returns error? {
                 "nullable":false,
                 "checkConstraints": [
                     {
-                        "name":"SYS_CT_10125",
-                        "clause":"PUBLIC.PERSON.PERSONID>100"
+                        "name":"SYS_CT_10140",
+                        "clause":"PUBLIC.PERSON2.PERSONID>100"
                     }
                 ]
             },
@@ -209,7 +209,7 @@ function getTableInfoWithConstraintsTest2() returns error? {
                 "nullable":false,
                 "referentialConstraints":[
                     {
-                        "name":"SYS_FK_10125",
+                        "name":"SYS_FK_10139",
                         "tableName":"COMPANY",
                         "columnName":"COMPANYID",
                         "updateRule":CASCADE,
@@ -218,8 +218,8 @@ function getTableInfoWithConstraintsTest2() returns error? {
                 ],
                 "checkConstraints": [
                     {
-                        "name":"SYS_CT_10126",
-                        "clause":"PUBLIC.PERSON.COMPANYID>20"
+                        "name":"SYS_CT_10141",
+                        "clause":"PUBLIC.PERSON2.COMPANYID>20"
                     }
                 ]
             }

@@ -1,5 +1,3 @@
-CREATE USER generalUser PASSWORD 'password';
-
 CREATE TABLE IF NOT EXISTS Customers (
   customerId INTEGER NOT NULL IDENTITY,
   firstName  VARCHAR(300) NOT NULL,
@@ -23,7 +21,7 @@ CREATE TABLE IF NOT EXISTS DataTable (
   PRIMARY KEY (row_id)
 );
 
-CREATE TABLE NumericTypes (
+CREATE TABLE IF NOT EXISTS NumericTypes (
    id INT IDENTITY,
    int_type INT,
    bigint_type BIGINT,
@@ -52,6 +50,16 @@ CREATE TABLE IF NOT EXISTS Person (
   CHECK (personId > 100),
   CHECK (companyId > 20)
 );
+
+CREATE TABLE IF NOT EXISTS Person2 (
+  personId INTEGER NOT NULL IDENTITY,
+  name VARCHAR(300) NOT NULL,
+  companyId INTEGER NOT NULL,
+  FOREIGN KEY (companyId) REFERENCES Company(companyId) ON UPDATE CASCADE ON DELETE CASCADE,
+  CHECK (personId > 100),
+  CHECK (companyId > 20)
+);
+
 
 CREATE TABLE IF NOT EXISTS StringTypes (
   id INT IDENTITY,
