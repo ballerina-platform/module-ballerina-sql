@@ -110,7 +110,7 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 5);
+        Assert.assertEquals(availableErrors, 31);
 
         DiagnosticInfo charOutParameter = errorDiagnosticsList.get(1).diagnosticInfo();
         Assert.assertEquals(charOutParameter.code(), SQLDiagnosticsCodes.SQL_211.getCode());
