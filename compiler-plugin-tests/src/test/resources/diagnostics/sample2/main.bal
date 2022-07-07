@@ -19,6 +19,10 @@ import ballerina/time;
 import ballerina/http;
 
 public function main() returns error? {
+
+    sql:ParameterizedQuery query = ``;
+    sql:Value value = 5;
+
     sql:CharOutParameter charOut = new();
     string _ = check charOut.get(string);
     int _ = check charOut.get(int);
@@ -44,4 +48,5 @@ public function main() returns error? {
 
     http:Client httpclient = check new ("adasdsasd");
     _ = check httpclient->get("sdfsdf");
+    _ = httpclient.getCookieStore();
 }
