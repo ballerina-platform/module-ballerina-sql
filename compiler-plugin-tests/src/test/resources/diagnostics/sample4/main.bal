@@ -15,8 +15,9 @@
 // under the License.
 
 import ballerina/sql;
+import ballerina/http;
 
-public function main() {
+public function main() returns error? {
 
     int connectionNum = 5;
     int connectionNumInvalid = -5;
@@ -29,4 +30,5 @@ public function main() {
         maxOpenConnections: connectionNumInvalid
     };
 
+    http:Client httpclient = check new ("adasdsasd");
 }

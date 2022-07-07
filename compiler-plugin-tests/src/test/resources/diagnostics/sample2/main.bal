@@ -16,6 +16,7 @@
 
 import ballerina/sql;
 import ballerina/time;
+import ballerina/http;
 
 public function main() returns error? {
     sql:CharOutParameter charOut = new();
@@ -40,4 +41,7 @@ public function main() returns error? {
     time:Utc _ = check timeWithTimezoneOut.get(time:Utc);
     string _ = check timeWithTimezoneOut.get(string);
     json _ = check timeWithTimezoneOut.get(json);
+
+    http:Client httpclient = check new ("adasdsasd");
+    _ = check httpclient->get("sdfsdf");
 }
