@@ -129,6 +129,7 @@ public type ReferentialConstraint record {
 
 The `ReferentialRule` type is an enum with four possible values:
 - `NO_ACTION`
+- `RESTRICT`
 - `CASCADE`
 - `SET_NULL`
 - `SET_DEFAULT`

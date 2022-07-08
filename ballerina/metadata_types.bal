@@ -14,23 +14,44 @@
 // specific language governing permissions and limitations
 // under the License.
 
+# Represents the type of the table/view retrieved through the `getTableInfo` function.
+#
+# + BASE_TABLE - The retrieved object is a table
+# + VIEW - The retrieved object is a view
 public enum TableType {
     BASE_TABLE = "BASE TABLE",
     VIEW = "VIEW"
 }
 
+# Represents the type of actions that would be taken on delete or on update for foreign key constraints.
+#
+# + NO_ACTION - Behaviour is dependent on the database
+# + RESTRICT - Rejects the operations if the foreign key constraint is violated
+# + CASCADE - The changes are propogated to the child table
+# + NET_NULL - Sets the values in the child table's corresponding rows to `null`
+# + SET_DEFAULT - Replaces the values in the child table's corresponding rows with the default value
 public enum ReferentialRule {
     NO_ACTION = "NO ACTION",
+    RESTRICT = "RESTRICT",
     CASCADE = "CASCADE",
     SET_NULL = "SET NULL",
     SET_DEFAULT = "SET DEFAULT"
 }
 
+# Represents the type of the routine retrieved through the `getRoutineInfo` function.
+#
+# + PROCEDURE - The retrieved object is a procedure
+# + FUNCTION - The retrieved object is a function
 public enum RoutineType {
     PROCEDURE = "PROCEDURE",
     FUNCTION = "FUNCTION"
 }
 
+# Represents the mode of the parameter for a routine.
+#
+# + IN - Only used to pass an input into the routine
+# + OUT - Only used to retrieve an output from the routine
+# + INOUT - Used to both pass and input and retrieve an output from the routine
 public enum ParameterMode {
     IN = "IN",
     OUT = "OUT",
