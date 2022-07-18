@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Added support for metadata retrieval](https://github.com/ballerina-platform/ballerina-standard-library/issues/3061)
 
 ### Changed
+- [Fix sql:queryConcat not working for empty query](https://github.com/ballerina-platform/ballerina-standard-library/issues/3127)
 
 ## [1.4.1] - 2022-06-21
 

@@ -804,7 +804,8 @@ function testInOperator2() returns error? {
 }
 function testInOperator3() returns error? {
     int[] ids = [1, 2, 3];
-    ParameterizedQuery sqlQuery = `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
+    ParameterizedQuery sqlQuery = queryConcat(
+                       `SELECT count(*) as total FROM DataTable WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`, ``);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
@@ -814,7 +815,7 @@ function testInOperator3() returns error? {
 }
 function testInOperator4() returns error? {
     int[] ids = [1, 2, 3];
-    ParameterizedQuery sqlQuery = queryConcat(`SELECT count(*) as total FROM DataTable WHERE row_id IN (`, arrayFlattenQuery(ids), `)`);
+    ParameterizedQuery sqlQuery = queryConcat(``, `SELECT count(*) as total FROM DataTable WHERE row_id IN (`, arrayFlattenQuery(ids), `)`);
     record {}? returnData = check queryMockClient(simpleParamsDb, sqlQuery);
     test:assertEquals(returnData["TOTAL"], 3, "Total count is different.");
 }
