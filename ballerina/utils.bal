@@ -35,15 +35,17 @@ isolated function prepareParameterizedQuery(ParameterizedQuery[] queries) return
     string previousString = "";
     foreach ParameterizedQuery query in queries {
         int length = query.strings.length();
-        previousString = previousString + query.strings[0];
-        if length > 1 {
-            newQueryStrings.push(previousString);
-            foreach var i in 1 ... length - 2 {
-                newQueryStrings.push(query.strings[i]);
+        if length > 0 {
+            previousString = previousString + query.strings[0];
+            if length > 1 {
+                newQueryStrings.push(previousString);
+                foreach var i in 1 ... length - 2 {
+                    newQueryStrings.push(query.strings[i]);
+                }
+                previousString = query.strings[length - 1];
             }
-            previousString = query.strings[length - 1];
+            addValues(query.insertions, newQueryInsertions);
         }
-        addValues(query.insertions, newQueryInsertions);
     }
     newQueryStrings.push(previousString);
     newParameterizedQuery.insertions = newQueryInsertions;
