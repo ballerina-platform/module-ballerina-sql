@@ -120,8 +120,8 @@ function testGetReferredTypesNegative() returns error? {
     check dbClient.close();
 
     if data is Error {
-        test:assertEquals(data.message(), "The field 'int_type' of type boolean cannot be mapped to the column 'INT_TYPE' o" +
-                                                                   "f SQL type 'INTEGER'");
+        test:assertEquals(data.message(), "The field 'int_type' of type CustomBoolean cannot be mapped to the column "
+                                            + "'INT_TYPE' of SQL type 'INTEGER'");
     } else {
         test:assertFail("Expected error.");
     }
