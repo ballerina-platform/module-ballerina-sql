@@ -397,8 +397,9 @@ public class Utils {
                 if (annotatedColumnName != null) {
                     groupedColumnKey = annotatedColumnName;
                 }
-                StructureType recordFieldType = ((StructureType) streamConstraint.getFields()
+                Type fieldType = TypeUtils.getReferredType(streamConstraint.getFields()
                         .get(groupedColDefs.getKey()).getFieldType());
+                StructureType recordFieldType = ((StructureType) fieldType);
                 ArrayList<PrimitiveTypeColumnDefinition> innerRecordFields = new ArrayList<>();
                 for (SQLColumnMetadata columnMetadata : groupedColDefs.getValue()) {
                     String loggedColumnName = groupedColumnKey.toUpperCase(Locale.getDefault()) + "." +
