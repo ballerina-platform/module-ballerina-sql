@@ -277,7 +277,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             int index = 0;
             for (Field internalField : internalStructFields) {
-                int type = internalField.getFieldType().getTag();
+                int type = TypeUtils.getReferredType(internalField.getFieldType()).getTag();
                 BString fieldName = fromString(internalField.getFieldName());
                 Object value = dataArray[index];
                 switch (type) {
@@ -311,7 +311,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
                     case TypeTags.OBJECT_TYPE_TAG:
                     case TypeTags.RECORD_TYPE_TAG:
                         struct.put(fieldName,
-                                createUserDefinedType((Struct) value, (StructureType) internalField.getFieldType()));
+                                createUserDefinedType((Struct) value,
+                                        (StructureType) TypeUtils.getReferredType(internalField.getFieldType())));
                         break;
                     default:
                         createUserDefinedTypeSubtype(internalField, structType);

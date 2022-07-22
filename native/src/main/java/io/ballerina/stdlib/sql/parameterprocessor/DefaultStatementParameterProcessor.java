@@ -587,7 +587,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
         for (int i = 0; i < fieldCount; ++i) {
             Field field = fieldIterator.next();
             Object bValue = ((BMap) value).get(fromString(field.getFieldName()));
-            int typeTag = field.getFieldType().getTag();
+            int typeTag = TypeUtils.getReferredType(field.getFieldType()).getTag();
             switch (typeTag) {
                 case TypeTags.INT_TAG:
                 case TypeTags.FLOAT_TAG:
