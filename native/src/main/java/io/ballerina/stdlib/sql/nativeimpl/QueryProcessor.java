@@ -210,6 +210,9 @@ public class QueryProcessor {
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
+            } catch (BError e) {
+                return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
+                        "SQL result. " + e.getDetails());
             } catch (Throwable e) {
                 String message = e.getMessage();
                 if (message == null) {
@@ -282,11 +285,8 @@ public class QueryProcessor {
                                                      RecordType recordConstraint,
                                                      AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
-        BMap<BString, Object> record = ValueCreator.createRecordValue(
-                recordConstraint.getPackage(), recordConstraint.getName()
-        );
-        Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
-        return record;
+        return Utils.createBallerinaRecord(recordConstraint, resultParameterProcessor, resultSet,
+                  columnDefinitions);
     }
 
     public static Object createValue(ResultSet resultSet, int columnIndex,

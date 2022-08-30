@@ -35,6 +35,7 @@ import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BMapInitialValueEntry;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BValue;
@@ -468,10 +469,12 @@ public class Utils {
         return null;
     }
 
-    public static void updateBallerinaRecordFields(AbstractResultParameterProcessor resultParameterProcessor,
-                                                   ResultSet resultSet, BMap<BString, Object> bStruct,
-                                                   List<ColumnDefinition> columnDefinitions)
+    public static BMap<BString, Object> createBallerinaRecord(RecordType recordConstraint,
+                                                              AbstractResultParameterProcessor resultParameterProcessor,
+                                                              ResultSet resultSet,
+                                                              List<ColumnDefinition> columnDefinitions)
             throws SQLException, DataError {
+        Map<String, Object> struct = new HashMap<>();
         for (ColumnDefinition columnDefinition : columnDefinitions) {
             if (columnDefinition instanceof RecordColumnDefinition) {
                 RecordColumnDefinition recordColumnDef = (RecordColumnDefinition) columnDefinition;
@@ -481,13 +484,26 @@ public class Utils {
                             Utils.getResult(resultSet, innerField.getResultSetColumnIndex(), innerField,
                                     resultParameterProcessor));
                 }
-                bStruct.put(fromString(recordColumnDef.getBallerinaFieldName()), innerRecord);
+                struct.put(recordColumnDef.getBallerinaFieldName(), innerRecord);
             } else if (columnDefinition instanceof PrimitiveTypeColumnDefinition) {
                 PrimitiveTypeColumnDefinition definition = (PrimitiveTypeColumnDefinition) columnDefinition;
-                bStruct.put(fromString(columnDefinition.getBallerinaFieldName()), Utils.getResult(resultSet,
+                struct.put(columnDefinition.getBallerinaFieldName(), Utils.getResult(resultSet,
                         definition.getResultSetColumnIndex(), definition, resultParameterProcessor));
             }
             // Not possible to reach the final else since there is only two types of Column Definition
+        }
+
+        if (recordConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
+            //return ValueCreator.createMapValue(recordConstraint);
+            BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
+            int i = 0;
+            for (Map.Entry<String, Object> entry : struct.entrySet()) {
+                entries[i] = ValueCreator.createKeyFieldEntry(fromString(entry.getKey()), entry.getValue());
+                i++;
+            }
+            return ValueCreator.createRecordValue(recordConstraint, entries);
+        } else {
+            return ValueCreator.createRecordValue(recordConstraint.getPackage(), recordConstraint.getName(), struct);
         }
     }
 
