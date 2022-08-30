@@ -223,3 +223,4 @@ CREATE TABLE Album (
 );
 
 INSERT INTO Album VALUES ('1', 'Lemonade', 'Beyonce', 20.0);
+INSERT INTO Album (id_test, name, price) VALUES ('2', 'Lemonade', 20.0);
