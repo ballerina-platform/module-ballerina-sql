@@ -938,8 +938,7 @@ function testMultipleRecordsNegative() returns error? {
 }
 
 @test:Config {
-    groups: ["procedures"],
-    dependsOn: [testMultipleRecords]
+    groups: ["procedures"]
 }
 function testMultipleRecordsWithNoReturnType() returns error? {
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
