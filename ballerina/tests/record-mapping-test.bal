@@ -344,7 +344,7 @@ function queryEmptyTest1() returns error? {
     };
     test:assertEquals(count, 0);
     if e is TypeMismatchError {
-        test:assertEquals(e.message(), "invalid value for record field 'artist': expected value of type 'string', found '()'");
+        test:assertEquals(e.message(), "Error when iterating the SQL result. invalid value for record field 'artist': expected value of type 'string', found '()'");
     } else {
         test:assertFail("TypeMismatchError expected");
     }
@@ -403,6 +403,3 @@ function queryEmptyTest3() returns error? {
     test:assertTrue(e is ());
     test:assertEquals(count, 1);
 }
-
-
-
