@@ -493,17 +493,27 @@ public class Utils {
             // Not possible to reach the final else since there is only two types of Column Definition
         }
 
-        if (recordConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
-            //return ValueCreator.createMapValue(recordConstraint);
-            BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
-            int i = 0;
-            for (Map.Entry<String, Object> entry : struct.entrySet()) {
-                entries[i] = ValueCreator.createKeyFieldEntry(fromString(entry.getKey()), entry.getValue());
-                i++;
+        try {
+            if (recordConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
+                //return ValueCreator.createMapValue(recordConstraint);
+                BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
+                int i = 0;
+                for (Map.Entry<String, Object> entry : struct.entrySet()) {
+                    entries[i] = ValueCreator.createKeyFieldEntry(fromString(entry.getKey()), entry.getValue());
+                    i++;
+                }
+                return ValueCreator.createRecordValue(recordConstraint, entries);
+            } else {
+                return ValueCreator.createRecordValue(recordConstraint.getPackage(), recordConstraint.getName(),
+                        struct);
             }
-            return ValueCreator.createRecordValue(recordConstraint, entries);
-        } else {
-            return ValueCreator.createRecordValue(recordConstraint.getPackage(), recordConstraint.getName(), struct);
+        } catch (BError e) {
+            if (e.getMessage().equals(Constants.INHERENT_TYPE_VIOLATION)) {
+                Map<BString, BString> errorDetails = (Map<BString, BString>) e.getDetails();
+                String message = errorDetails.get(fromString("message")).toString();
+                throw new TypeMismatchError(message);
+            }
+            throw e;
         }
     }
 

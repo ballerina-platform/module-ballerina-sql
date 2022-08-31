@@ -343,14 +343,11 @@ function queryEmptyTest1() returns error? {
         count = count + 1;
     };
     test:assertEquals(count, 0);
-    if e is error {
-        test:assertEquals(e.message(),
-            "Error when iterating through the SQL result. {\"message\":\"invalid value for record field 'artist': " +
-            "expected value of type 'string', found '()'\"}");
+    if e is TypeMismatchError {
+        test:assertEquals(e.message(), "invalid value for record field 'artist': expected value of type 'string', found '()'");
     } else {
-        test:assertFail("Error expected");
+        test:assertFail("TypeMismatchError expected");
     }
-    test:assertTrue(e is error);
 }
 
 public type Album3 record {|

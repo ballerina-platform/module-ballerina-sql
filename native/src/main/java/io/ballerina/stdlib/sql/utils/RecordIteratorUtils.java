@@ -18,7 +18,6 @@
 package io.ballerina.stdlib.sql.utils;
 
 import io.ballerina.runtime.api.types.RecordType;
-import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
@@ -67,11 +66,7 @@ public class RecordIteratorUtils {
         } catch (ApplicationError e) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
-            return ErrorGenerator.getSQLApplicationError("Error when iterating the SQL result. "
-                    + e.getMessage());
-        } catch (BError e) {
-            return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
-                    "SQL result. " + e.getDetails());
+            return ErrorGenerator.getSQLApplicationError(e);
         } catch (Throwable throwable) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);

@@ -210,9 +210,6 @@ public class QueryProcessor {
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
                 return ErrorGenerator.getSQLApplicationError(e);
-            } catch (BError e) {
-                return ErrorGenerator.getSQLApplicationError("Error when iterating through the " +
-                        "SQL result. " + e.getDetails());
             } catch (Throwable e) {
                 String message = e.getMessage();
                 if (message == null) {

@@ -21,7 +21,7 @@ import ballerina/time;
 string queryRowDb = urlPrefix + "9011/QueryRow";
 
 @test:BeforeGroups {
-    value: ["query-row"]
+    value: ["query-row", "query-test"]
 }
 function initQueryRowContainer() returns error? {
     check initializeDockerContainer("sql-query-row", "QueryRow", "9011", "query", "query-row-test-data.sql");
@@ -1627,12 +1627,10 @@ function queryRowEmptyTest1() returns error? {
     Album|error result = dbClient->queryRow(`SELECT * FROM Album WHERE id_test = 2`);
     check dbClient.close();
 
-    if result is error {
-        test:assertEquals(result.message(),
-            "Error when iterating through the SQL result. {\"message\":\"invalid value for record field 'artist': " +
-            "expected value of type 'string', found '()'\"}");
+    if result is TypeMismatchError {
+        test:assertEquals(result.message(), "invalid value for record field 'artist': expected value of type 'string', found '()'");
     } else {
-        test:assertFail("Error expected");
+        test:assertFail("TypeMismatchError expected");
     }
 }
 

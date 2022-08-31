@@ -79,6 +79,7 @@ public final class Constants {
     public static final String ANNON_RECORD_TYPE_NAME = "record {";
     public static final String BACKTICK = "`";
     public static final String DEFAULT_STREAM_CONSTRAINT_NAME = "$stream$anon$constraint$";
+    public static final String INHERENT_TYPE_VIOLATION = "{ballerina/lang.map}InherentTypeViolation";
     /**
      * Constants related connection pool.
      */
