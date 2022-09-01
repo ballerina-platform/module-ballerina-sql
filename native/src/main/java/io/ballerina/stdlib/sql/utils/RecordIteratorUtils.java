@@ -66,7 +66,7 @@ public class RecordIteratorUtils {
         } catch (ApplicationError e) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
-            return ErrorGenerator.getSQLApplicationError(e);
+            return ErrorGenerator.getSQLApplicationError(e, "Error when iterating the SQL result. ");
         } catch (Throwable throwable) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);

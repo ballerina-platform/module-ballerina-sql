@@ -495,13 +495,7 @@ public class Utils {
 
         try {
             if (recordConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
-                BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
-                int i = 0;
-                for (Map.Entry<String, Object> entry : struct.entrySet()) {
-                    entries[i] = ValueCreator.createKeyFieldEntry(fromString(entry.getKey()), entry.getValue());
-                    i++;
-                }
-                return ValueCreator.createRecordValue(recordConstraint, entries);
+                return ValueCreator.createRecordValue(recordConstraint, getInitialValueEntries(struct));
             } else {
                 return ValueCreator.createRecordValue(recordConstraint.getPackage(), recordConstraint.getName(),
                         struct);
@@ -510,7 +504,7 @@ public class Utils {
             if (e.getMessage().equals(Constants.INHERENT_TYPE_VIOLATION)) {
                 Map<BString, BString> errorDetails = (Map<BString, BString>) e.getDetails();
                 String message = errorDetails.get(fromString("message")).toString();
-                throw new TypeMismatchError("Error when iterating the SQL result. " + message);
+                throw new TypeMismatchError(message);
             }
             throw e;
         }
@@ -1334,4 +1328,13 @@ public class Utils {
         return KNOWN_RECORD_TYPES.contains(getBTypeName(ballerinaType));
     }
 
+    private static BMapInitialValueEntry[] getInitialValueEntries(Map<String, Object> struct) {
+        BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
+        int i = 0;
+        for (Map.Entry<String, Object> entry : struct.entrySet()) {
+            entries[i] = ValueCreator.createKeyFieldEntry(fromString(entry.getKey()), entry.getValue());
+            i++;
+        }
+        return entries;
+    }
 }

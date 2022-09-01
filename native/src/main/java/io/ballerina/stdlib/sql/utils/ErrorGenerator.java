@@ -77,7 +77,12 @@ public class ErrorGenerator {
     }
 
     public static BError getSQLApplicationError(ApplicationError error) {
+        return getSQLApplicationError(error, "");
+    }
+
+    public static BError getSQLApplicationError(ApplicationError error, String messagePrefix) {
         String message = error.getMessage() != null ? error.getMessage() : error.getClass().getSimpleName();
+        message = messagePrefix + message;
         String errorName;
         if (error instanceof ConversionError) {
             errorName = Constants.CONVERSION_ERROR;
@@ -108,12 +113,6 @@ public class ErrorGenerator {
     public static BError getNoRowsError(String message) {
         message = removeJavaClassNames(message);
         return ErrorCreator.createError(ModuleUtils.getModule(), Constants.NO_ROWS_ERROR,
-                StringUtils.fromString(message), null, null);
-    }
-
-    public static BError getTypeMismatchError(String message) {
-        message = removeJavaClassNames(message);
-        return ErrorCreator.createError(ModuleUtils.getModule(), Constants.TYPE_MISMATCH_ERROR,
                 StringUtils.fromString(message), null, null);
     }
 

@@ -1628,7 +1628,7 @@ function queryRowEmptyTest1() returns error? {
     check dbClient.close();
 
     if result is TypeMismatchError {
-        test:assertEquals(result.message(), "Error when iterating the SQL result. invalid value for record field 'artist': expected value of type 'string', found '()'");
+        test:assertEquals(result.message(), "invalid value for record field 'artist': expected value of type 'string', found '()'");
     } else {
         test:assertFail("TypeMismatchError expected");
     }
