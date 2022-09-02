@@ -346,7 +346,7 @@ type ResultMap record {
 function testMultipleRecordRetrieval() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record {}, error?> streamData = dbClient->query(`SELECT int_array, long_array, boolean_array,string_array
-                                                                from ArrayTypes`, ResultMap);
+                                                                from ArrayTypes`);
 
     ResultMap mixTypesExpected = {
         int_array: [1, 2, 3],
@@ -355,16 +355,16 @@ function testMultipleRecordRetrieval() returns error? {
         boolean_array: [true, false, true]
     };
 
-    ResultMap? mixTypesActual = ();
     int counter = 0;
+    boolean valid = false;
     check from record {} value in streamData
         do {
-            if value is ResultMap && counter == 0 {
-                mixTypesActual = value;
+            if value == mixTypesExpected {
+               valid = true;
             }
             counter = counter + 1;
         };
-    test:assertEquals(mixTypesActual, mixTypesExpected, "Expected record did not match.");
+    test:assertTrue(valid);
     test:assertEquals(counter, 4);
     check dbClient.close();
 }
@@ -692,8 +692,8 @@ function testGetArrayTypes() returns error? {
 }
 function testGetArrayTypes2() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
-    stream<record {}, error?> streamData = dbClient->query(`SELECT row_id,smallint_array, int_array, long_array,
-                                                            float_array, double_array, decimal_array, real_array,numeric_array,
+    stream<record {}, error?> streamData = dbClient->query(`SELECT row_id, smallint_array, int_array, long_array,
+                                                            float_array, double_array, decimal_array, real_array, numeric_array,
                                                             varchar_array, char_array, nvarchar_array, boolean_array,
                                                             bit_array, date_array, time_array, datetime_array, timestamp_array,
                                                             blob_array, time_tz_array, timestamp_tz_array from ArrayTypes2

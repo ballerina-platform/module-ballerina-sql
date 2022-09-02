@@ -331,3 +331,75 @@ function queryAnnotatedTypedRecordWithFields() returns error? {
 
     test:assertEquals(student, expectedStudent, "Expected student record did not match");
 }
+
+@test:Config {
+    groups: ["query", "query-test"]
+}
+function queryEmptyTest1() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    stream<Album, Error?> albumStream = dbClient->query(`SELECT * FROM Album WHERE id_test = 2`);
+    int count = 0;
+    error? e = from Album _ in albumStream do {
+        count = count + 1;
+    };
+    test:assertEquals(count, 0);
+    if e is TypeMismatchError {
+        test:assertEquals(e.message(), "Error when iterating the SQL result. invalid value for record field 'artist': expected value of type 'string', found '()'");
+    } else {
+        test:assertFail("TypeMismatchError expected");
+    }
+}
+
+public type Album3 record {|
+    @Column { name: "id_test" }
+    string id;
+    string name;
+    @Column { name: "artist_test" }
+    string? artist;
+    @TestColumn { name: "price" }
+    decimal price;
+|};
+
+@test:Config {
+    groups: ["query", "query-test"]
+}
+function queryEmptyTest2() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    stream<Album3, Error?> albumStream = dbClient->query(`SELECT * FROM Album WHERE id_test = 2`);
+    int count = 0;
+    error? e = from Album3 album in albumStream do {
+        Album3 expectedAlbum = {
+            id: "2",
+            name: "Lemonade",
+            artist: (),
+            price: 20.0
+        };
+
+        test:assertEquals(album, expectedAlbum);
+        count = count + 1;
+    };
+    test:assertTrue(e is ());
+    test:assertEquals(count, 1);
+}
+
+@test:Config {
+    groups: ["query", "query-test"]
+}
+function queryEmptyTest3() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    stream<record {}, Error?> albumStream = dbClient->query(`SELECT * FROM Album WHERE id_test = 2`);
+    int count = 0;
+    error? e = from record {} album in albumStream do {
+        record {} expectedAlbum = {
+            "ID_TEST": "2",
+            "NAME": "Lemonade",
+            "ARTIST_TEST": (),
+            "PRICE": <decimal>20.0
+        };
+
+        test:assertEquals(album, expectedAlbum);
+        count = count + 1;
+    };
+    test:assertTrue(e is ());
+    test:assertEquals(count, 1);
+}

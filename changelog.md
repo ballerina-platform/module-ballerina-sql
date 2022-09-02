@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Fix sql:queryConcat not working for empty query](https://github.com/ballerina-platform/ballerina-standard-library/issues/3127)
+- [Fix error not being thrown when mandatory fields are not fetched](https://github.com/ballerina-platform/ballerina-standard-library/issues/3251)
 
 ## [1.4.1] - 2022-06-21
 

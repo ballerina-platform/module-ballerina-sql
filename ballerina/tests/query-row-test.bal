@@ -1616,7 +1616,40 @@ function testReferredTypesRetrievalValueNegative() returns error? {
         test:assertEquals(intValue.message(), "SQL Type 'INTEGER' cannot be converted to ballerina type 'boolean'.");
     } else {
         test:assertFail("Error expected");
-    }}
+    }
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowEmptyTest1() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album|error result = dbClient->queryRow(`SELECT * FROM Album WHERE id_test = 2`);
+    check dbClient.close();
+
+    if result is TypeMismatchError {
+        test:assertEquals(result.message(), "invalid value for record field 'artist': expected value of type 'string', found '()'");
+    } else {
+        test:assertFail("TypeMismatchError expected");
+    }
+}
+
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function queryRowEmptyTest2() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    Album3 result = check dbClient->queryRow(`SELECT * FROM Album WHERE id_test = 2`);
+    check dbClient.close();
+
+    Album3 expectedAlbum = {
+        id: "2",
+        name: "Lemonade",
+        artist: (),
+        price: 20.0
+    };
+    test:assertEquals(result, expectedAlbum);
+}
 
 isolated function validateDataTableRecordResult(record {}? returnData) {
     decimal decimalVal = 23.45;

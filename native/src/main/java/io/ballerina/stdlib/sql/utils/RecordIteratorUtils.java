@@ -17,11 +17,8 @@
  */
 package io.ballerina.stdlib.sql.utils;
 
-import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.StructureType;
-import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.DefaultResultParameterProcessor;
@@ -32,7 +29,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
 
 /**
@@ -53,19 +49,12 @@ public class RecordIteratorUtils {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
         try {
             if (resultSet.next()) {
-                StructureType streamConstraint = (StructureType) recordIterator.
-                        getNativeData(Constants.RECORD_TYPE_DATA_FIELD);
-                BMap<BString, Object> bStruct;
-                if (streamConstraint.getName().equals(DEFAULT_STREAM_CONSTRAINT_NAME)) {
-                    bStruct = ValueCreator.createMapValue(streamConstraint);
-                } else {
-                    bStruct = ValueCreator.createRecordValue(
-                            streamConstraint.getPackage(), streamConstraint.getName());
-                }
+                RecordType streamConstraint = (RecordType) recordIterator.getNativeData(
+                        Constants.RECORD_TYPE_DATA_FIELD);
                 List<ColumnDefinition> columnDefinitions = (List<ColumnDefinition>) recordIterator
                         .getNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD);
-                Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, bStruct, columnDefinitions);
-                return bStruct;
+                return Utils.createBallerinaRecord(streamConstraint, resultParameterProcessor, resultSet,
+                        columnDefinitions);
             }
             // Stream has reached the end, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
@@ -77,8 +66,7 @@ public class RecordIteratorUtils {
         } catch (ApplicationError e) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);
-            return ErrorGenerator.getSQLApplicationError("Error when iterating the SQL result. "
-                    + e.getMessage());
+            return ErrorGenerator.getSQLApplicationError(e, "Error when iterating the SQL result. ");
         } catch (Throwable throwable) {
             // Stream throws an error, we clean up the resources, here any error from closing the stream is ignored.
             closeResult(recordIterator);

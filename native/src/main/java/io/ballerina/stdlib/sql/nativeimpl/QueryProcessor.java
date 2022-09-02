@@ -282,11 +282,8 @@ public class QueryProcessor {
                                                      RecordType recordConstraint,
                                                      AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
-        BMap<BString, Object> record = ValueCreator.createRecordValue(
-                recordConstraint.getPackage(), recordConstraint.getName()
-        );
-        Utils.updateBallerinaRecordFields(resultParameterProcessor, resultSet, record, columnDefinitions);
-        return record;
+        return Utils.createBallerinaRecord(recordConstraint, resultParameterProcessor, resultSet,
+                  columnDefinitions);
     }
 
     public static Object createValue(ResultSet resultSet, int columnIndex,

@@ -21,6 +21,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
@@ -191,7 +192,7 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
             return refValueArray;
         } else if (firstNonNullElement == null) {
-            refValueArray = createEmptyBBRefValueArray(type);
+            refValueArray = createEmptyBBRefValueArray(((ArrayType) type).getElementType());
             for (int i = 0; i < length; i++) {
                 refValueArray.add(i, firstNonNullElement);
             }
