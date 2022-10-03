@@ -1,15 +1,20 @@
 {
-  "resources":{
-  "includes":[
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
+      },
+      {
+        "pattern": "\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
+      }
+    ]
+  },
+  "bundles": [
     {
-      "pattern":"\\QMETA-INF/services/java.sql.Driver\\E"
-    }, 
-    {
-      "pattern":"\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
+      "name": "org.hsqldb.resources.sql-state-messages",
+      "locales": [
+        ""
+      ]
     }
-  ]},
-  "bundles":[{
-      "name":"org.hsqldb.resources.sql-state-messages",
-      "locales":[""]
-    }]
+  ]
 }
