@@ -8,8 +8,5 @@
   {
     "name": "com.zaxxer.hikari.HikariConfig",
     "allDeclaredFields": true
-  },
-  {
-    "name": "org.hsqldb.jdbc.JDBCDriver"
   }
 ]

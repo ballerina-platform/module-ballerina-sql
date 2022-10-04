@@ -5,13 +5,5 @@
         "pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
       }
     ]
-  },
-  "bundles": [
-    {
-      "name": "org.hsqldb.resources.sql-state-messages",
-      "locales": [
-        ""
-      ]
-    }
-  ]
+  }
 }
