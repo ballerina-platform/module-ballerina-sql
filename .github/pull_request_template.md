@@ -9,3 +9,4 @@ Fixes:
 - [ ] Updated the specification
 - [ ] Updated the changelog
 - [ ] Added tests
+- [ ] Checked native-image compatibility
