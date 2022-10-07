@@ -321,7 +321,7 @@ function testCreateProceduresWithMissingParams() returns error? {
 
 @test:Config {
     groups: ["error"],
-    dependsOn: [testCreateProcedures1]
+    dependsOn: [testCreateProceduresWithMissingParams]
 }
 function testCreateProceduresWithParameterTypeMismatch() returns error? {
     MockClient mockClient = check getMockClient(errorDB);
