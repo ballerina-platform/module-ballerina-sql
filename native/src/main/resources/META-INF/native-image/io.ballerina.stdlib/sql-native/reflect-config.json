@@ -8,5 +8,18 @@
   {
     "name": "com.zaxxer.hikari.HikariConfig",
     "allDeclaredFields": true
+  },
+  {
+    "name": "com.zaxxer.hikari.HikariConfig",
+    "allDeclaredFields": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "setConnectionTimeout",
+        "parameterTypes": [
+          "long"
+        ]
+      }
+    ]
   }
 ]
