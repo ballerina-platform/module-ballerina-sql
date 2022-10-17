@@ -15,6 +15,12 @@
         "parameterTypes": [
           "long"
         ]
+      },
+      {
+        "name": "setAutoCommit",
+        "parameterTypes": [
+          "boolean"
+        ]
       }
     ]
   }
