@@ -26,5 +26,5 @@ version = "3.3.1"
 path = "./lib/HikariCP-3.3.1.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/hsqldb-2.5.1.jar"
+path = "./lib/hsqldb-2.7.1.jar"
 scope = "testOnly"
