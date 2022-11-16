@@ -28,7 +28,7 @@ import static io.ballerina.tools.diagnostics.DiagnosticSeverity.HINT;
 public enum SQLDiagnosticsCodes {
     SQL_101("SQL_101", "invalid value: expected value is greater than one", ERROR),
     SQL_102("SQL_102", "invalid value: expected value is greater than zero", ERROR),
-    SQL_103("SQL_103", "invalid value: expected value is greater than or equal to 30", ERROR),
+    SQL_103("SQL_103", "invalid value: expected value is either 0 or greater than or equal to 30", ERROR),
 
     // Out parameter return type validations diagnostics
     SQL_201("SQL_201", "invalid value: expected value is array", ERROR),

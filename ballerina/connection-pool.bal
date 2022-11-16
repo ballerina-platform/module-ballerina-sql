@@ -27,9 +27,9 @@ configurable int minIdleConnections = 15;
 #                        Includes both idle and in-use connections. The default value is 15. This can be changed through
 #                        the configuration API with the `ballerina.sql.maxOpenConnections` key
 # + maxConnectionLifeTime - The maximum lifetime (in seconds) of a connection in the pool. The default value is 1800
-#                           seconds (30 minutes). This can be changed through the configuration API with the
-#                           `ballerina.sql.maxConnectionLifeTime` key. A value of 0 indicates an unlimited maximum
-#                           lifetime (infinite lifetime)
+#                           seconds (30 minutes). A value of 0 indicates an unlimited maximum lifetime (infinite lifetime).
+#                           The minimum allowed value is 30 seconds. This can be changed through the configuration API
+#                           with the `ballerina.sql.maxConnectionLifeTime` key.
 # + minIdleConnections - The minimum number of idle connections that the pool tries to maintain. The default value
 #                        is the same as `maxOpenConnections` and it can be changed through the configuration
 #                        API with the `ballerina.sql.minIdleConnections` key

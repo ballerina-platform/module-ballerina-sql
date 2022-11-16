@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Updated API Docs](https://github.com/ballerina-platform/ballerina-standard-library/issues/3463)
+- [Fix Unable to set unlimited life time (0) to ballerina.sql.maxConnectionLifeTime](https://github.com/ballerina-platform/ballerina-standard-library/issues/3657)
 
 ## [1.5.0] - 2022-09-08
 
