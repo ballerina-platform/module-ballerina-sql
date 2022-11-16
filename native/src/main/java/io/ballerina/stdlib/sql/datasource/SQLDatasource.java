@@ -195,6 +195,11 @@ public class SQLDatasource {
                 conn = ((SQLTransactionContext) txContext).getConnection();
             }
         } catch (SQLException e) {
+            if (e.getCause() != null) {
+                throw new SQLException("error while getting the connection for " + Constants.CONNECTOR_NAME +
+                        ". Data source rejected establishment of connection. "
+                        + e.getMessage(), e.getSQLState(), e.getErrorCode());
+            }
             throw new SQLException("error while getting the connection for " + Constants.CONNECTOR_NAME + ". "
                     + e.getMessage(), e.getSQLState(), e.getErrorCode());
         }
