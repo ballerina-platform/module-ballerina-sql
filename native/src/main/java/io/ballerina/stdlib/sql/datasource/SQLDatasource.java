@@ -31,6 +31,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -195,12 +196,11 @@ public class SQLDatasource {
                 conn = ((SQLTransactionContext) txContext).getConnection();
             }
         } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-            if (e.getCause() != null) {
-                errorMessage = e.getCause().getMessage();
-            }
+            // The SQLException thrown here sometimes (by Hikari) does not contain adequate information to determine the
+            // actual cause of the connection failure. Hence, we would need to find and return the root cause.
+            SQLException rootSQLException = Utils.getRootSQLException(e);
             throw new SQLException("error while getting the connection for " + Constants.CONNECTOR_NAME + ". "
-                    + errorMessage, e.getSQLState(), e.getErrorCode());
+                + rootSQLException.getMessage(), rootSQLException.getSQLState(), rootSQLException.getErrorCode());
         }
         return conn;
     }

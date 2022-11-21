@@ -1337,4 +1337,16 @@ public class Utils {
         }
         return entries;
     }
+
+    public static SQLException getRootSQLException(SQLException e) {
+        SQLException rootSQLException = e;
+        Throwable t = e.getCause();
+        while (t != null) {
+            if (t instanceof SQLException) {
+                rootSQLException = (SQLException) t;
+            }
+            t = t.getCause();
+        }
+        return rootSQLException;
+    }
 }
