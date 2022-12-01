@@ -15,8 +15,8 @@ on:
         description: Default native-image options
         required: false
         default: '-J-Xmx7G'
-  schedule:
-    - cron: '30 18 * * *'
+#  schedule:
+#    - cron: '30 18 * * *'
 
 jobs:
   call_stdlib_workflow:
