@@ -380,4 +380,6 @@ public final class Constants {
     public static final String COLUMN_ANN_NAME = "Column";
     public static final BString ANN_COLUMN_NAME_FIELD = StringUtils.fromString("name");
 
+    public static final String HIKARI_CLASS_NAME = "com.zaxxer.hikari";
+
 }
