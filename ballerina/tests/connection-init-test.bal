@@ -258,7 +258,8 @@ function testWithConnectionPoolNegative() returns error? {
     };
     err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
     if err is error {
-        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field " +
+                                         "'maxConnectionLifeTime' can either be 0 or greater than or equal to 30.");
     } else {
         test:assertFail("Connection should fail with negative value");
     }

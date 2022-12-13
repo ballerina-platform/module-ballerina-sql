@@ -121,7 +121,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         break;
                     case Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME:
                         float maxConnectionTime = Float.parseFloat(getTerminalNodeValue(valueNode, "30"));
-                        if (maxConnectionTime < 30) {
+                        if (maxConnectionTime < 0 || (maxConnectionTime > 0 && maxConnectionTime < 30)) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_103.getCode(), SQL_103.getMessage(),
                                     SQL_103.getSeverity());
                             ctx.reportDiagnostic(

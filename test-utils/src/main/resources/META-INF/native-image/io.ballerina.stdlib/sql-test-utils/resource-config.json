@@ -1,0 +1,10 @@
+{
+    "bundles": [
+        {
+            "name": "org.hsqldb.resources.sql-state-messages",
+            "locales": [
+                ""
+            ]
+        }
+    ]
+}

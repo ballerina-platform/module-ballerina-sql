@@ -44,7 +44,15 @@ public function main() {
         minIdleConnections: 0
     };
 
-    ConnectionPool pool5 = {
+    sql:ConnectionPool pool5 = {
+        maxConnectionLifeTime: 0
+    };
+
+    ConnectionPool pool6 = {
         connection: 0
+    };
+
+    sql:ConnectionPool pool7 = {
+        maxConnectionLifeTime: -5
     };
 }
