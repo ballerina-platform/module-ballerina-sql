@@ -67,27 +67,27 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 4);
+        Assert.assertEquals(availableErrors, 5);
 
         DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
         Assert.assertEquals(maxOpenConnectionZero.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionZero.messageFormat(),
-                "invalid value: expected value is greater than one");
+        Assert.assertEquals(maxOpenConnectionZero.messageFormat(), SQLDiagnosticsCodes.SQL_101.getMessage());
 
         DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
         Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_103.getCode());
-        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
-                "invalid value: expected value is greater than or equal to 30");
+        Assert.assertEquals(maxConnectionLifeTime.messageFormat(), SQLDiagnosticsCodes.SQL_103.getMessage());
 
         DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
         Assert.assertEquals(minIdleConnections.code(), SQLDiagnosticsCodes.SQL_102.getCode());
-        Assert.assertEquals(minIdleConnections.messageFormat(),
-                "invalid value: expected value is greater than zero");
+        Assert.assertEquals(minIdleConnections.messageFormat(), SQLDiagnosticsCodes.SQL_102.getMessage());
 
         DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
         Assert.assertEquals(maxOpenConnectionNegative.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
-                "invalid value: expected value is greater than one");
+        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(), SQLDiagnosticsCodes.SQL_101.getMessage());
+
+        DiagnosticInfo maxConnectionLifeTimeNegative = errorDiagnosticsList.get(4).diagnosticInfo();
+        Assert.assertEquals(maxConnectionLifeTimeNegative.code(), SQLDiagnosticsCodes.SQL_103.getCode());
+        Assert.assertEquals(maxConnectionLifeTimeNegative.messageFormat(), SQLDiagnosticsCodes.SQL_103.getMessage());
     }
 
     @Test

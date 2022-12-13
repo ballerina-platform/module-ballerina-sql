@@ -77,6 +77,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
@@ -1336,5 +1339,23 @@ public class Utils {
             i++;
         }
         return entries;
+    }
+
+    public static SQLException getRootSQLException(SQLException e) {
+        SQLException rootSQLException = e;
+        Throwable t = e.getCause();
+        while (t != null) {
+            if (t instanceof SQLException) {
+                rootSQLException = (SQLException) t;
+            }
+            t = t.getCause();
+        }
+        return rootSQLException;
+    }
+
+    public static void disableHikariLogs() {
+        Logger hikariLogger = Logger.getLogger(Constants.HIKARI_CLASS_NAME);
+        hikariLogger.setLevel(Level.OFF);
+        LogManager.getLogManager().addLogger(hikariLogger);
     }
 }

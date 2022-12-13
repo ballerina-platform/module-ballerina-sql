@@ -2,10 +2,11 @@ Ballerina SQL Library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml)
+  [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-sql/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-sql)
   [![Trivy](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/trivy-scan.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/trivy-scan.yml)
+  [![GraalVM Check](https://img.shields.io/github/workflow/status/ballerina-platform/module-ballerina-sql/Build%20with%20bal%20test%20native?label=GraalVM%20Check)](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-with-bal-test-native.yml)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/commits/master)
   [![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/sql.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql)
-  [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-sql/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-sql)
 
 This library provides the generic interface and functionality to interact with an SQL database. The corresponding database
 clients can be created by using specific database libraries such as `mysql` or using the Java Database Connectivity
@@ -146,7 +147,7 @@ sql:ParameterizedQuery sqlQuery =
 #### Create tables
 
 This sample creates a table with two columns. One column is of type `int` and the other is of type `varchar`.
-The `CREATE` statement is executed via the `execute` remote function of the client.
+The `CREATE` statement is executed via the `execute` remote method of the client.
 
 ```ballerina
 // Create the ‘Students’ table with the ‘id’, 'name', and ‘age’ fields.
@@ -162,11 +163,11 @@ sql:ExecutionResult result =
 
 #### Insert data
 
-These samples show the data insertion by executing an `INSERT` statement using the `execute` remote function
+These samples show the data insertion by executing an `INSERT` statement using the `execute` remote method
 of the client.
 
 In this sample, the query parameter values are passed directly into the query statement of the `execute`
-remote function.
+remote method.
 
 ```ballerina
 sql:ExecutionResult result = check dbClient->execute(`INSERT INTO student(age, name)
@@ -174,7 +175,7 @@ sql:ExecutionResult result = check dbClient->execute(`INSERT INTO student(age, n
 ```
 
 In this sample, the parameter values, which are assigned to local variables are used to parameterize the SQL query in
-the `execute` remote function. This parameterization can be performed with any primitive Ballerina type
+the `execute` remote method. This parameterization can be performed with any primitive Ballerina type
 like `string`, `int`, `float`, or `boolean` and in that case, the corresponding SQL type of the parameter is derived
 from the type of the Ballerina variable that is passed in.
 
@@ -187,7 +188,7 @@ sql:ParameterizedQuery query = `INSERT INTO student(age, name)
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
-In this sample, the parameter values are passed as a `sql:TypedValue` to the `execute` remote function. Use the
+In this sample, the parameter values are passed as a `sql:TypedValue` to the `execute` remote method. Use the
 corresponding subtype of the `sql:TypedValue` such as `sql:VarcharValue`, `sql:CharValue`, `sql:IntegerValue`, etc., when you need to
 provide more details such as the exact SQL type of the parameter.
 
@@ -203,7 +204,7 @@ sql:ExecutionResult result = check dbClient->execute(query);
 #### Insert data with auto-generated Keys
 
 This sample demonstrates inserting data while returning the auto-generated keys. It achieves this by using the
-`execute` remote function to execute the `INSERT` statement.
+`execute` remote method to execute the `INSERT` statement.
 
 ```ballerina
 int age = 31;
@@ -233,7 +234,7 @@ Note the mapping of the database column to the returned record's property is cas
 record(i.e., the `ID` column in the result can be mapped to the `id` property in the record). Additional column names are
 added to the returned record as in the SQL query. If the record is defined as a closed record, only defined fields in the
 record are returned or gives an error when additional columns present in the SQL query. Next, the `SELECT` query is executed
-via the `query` remote function of the client. Once the query is executed, each data record can be retrieved by iterating through
+via the `query` remote method of the client. Once the query is executed, each data record can be retrieved by iterating through
 the result set. The `stream` returned by the `SELECT` operation holds a pointer to the actual data in the database and it
 loads data from the table only when it is accessed. This stream can be iterated only once.
 
@@ -293,7 +294,7 @@ type Student record {
     string lastName
 };
 ```
-The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
+The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` method does not return `first_name` column, the field will not be populated.
 
 Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers.
 All columns of the Teachers table can be grouped to another Typed record such as `Teacher` type within the `Student` record.
@@ -345,7 +346,7 @@ int youngStudents = check dbClient->queryRow(query);
 
 #### Update data
 
-This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote function of
+This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote method of
 the client.
 
 ```ballerina
@@ -356,7 +357,7 @@ sql:ExecutionResult result = check dbClient->execute(query);
 
 #### Delete data
 
-This sample demonstrates deleting data by executing a `DELETE` statement via the `execute` remote function of
+This sample demonstrates deleting data by executing a `DELETE` statement via the `execute` remote method of
 the client.
 
 ```ballerina
@@ -368,7 +369,7 @@ sql:ExecutionResult result = check dbClient->execute(query);
 #### Batch update data
 
 This sample demonstrates how to insert multiple records with a single `INSERT` statement that is executed via the
-`batchExecute` remote function of the client. This is done by creating a `table` with multiple records and a
+`batchExecute` remote method of the client. This is done by creating a `table` with multiple records and a
 parameterized SQL query as same as the above `execute` operations.
 
 ```ballerina
@@ -389,7 +390,7 @@ sql:ExecutionResult[] result = check dbClient->batchExecute(batch);
 #### Execute SQL stored procedures
 
 This sample demonstrates how to execute a stored procedure with a single `INSERT` statement that is executed via the
-`call` remote function of the client.
+`call` remote method of the client.
 
 ```ballerina
 int uid = 10;

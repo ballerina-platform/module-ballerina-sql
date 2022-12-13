@@ -1,0 +1,44 @@
+[
+    {
+        "name": "org.hsqldb.jdbc.JDBCCommonDataSource",
+        "methods": [
+            {
+                "name": "setLoginTimeout",
+                "parameterTypes": [
+                    "int"
+                ]
+            },
+            {
+                "name": "setPassword",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            },
+            {
+                "name": "setUrl",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            },
+            {
+                "name": "setUser",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "org.hsqldb.jdbc.JDBCDataSource",
+        "queryAllPublicMethods": true,
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "org.hsqldb.jdbc.JDBCDriver"
+    }
+]
