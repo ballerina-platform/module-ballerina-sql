@@ -434,7 +434,7 @@ This repository only contains the source code for the package.
 
 ### Building the source
 
-Execute the commands below to build from source.
+Make sure the Docker daemon is running. Execute the commands below to build from source.
 
 1. To build the library:
         
