@@ -425,7 +425,8 @@ This repository only contains the source code for the package.
    * [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
    * [OpenJDK](https://adoptium.net/)
 
-2. Download and install [Docker](https://www.docker.com/get-started). Make sure the Docker daemon is running before you run tests.
+2. Download and install [Docker](https://www.docker.com/get-started).
+    > **Note**: Start the Docker daemon before running tests.
 
 3. Export your GitHub personal access token with the read package permissions as follows.
         
