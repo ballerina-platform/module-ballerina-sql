@@ -26,7 +26,9 @@ import io.ballerina.compiler.api.symbols.TypeSymbol;
 import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
+import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
+import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
 import java.sql.Types;
 import java.util.Optional;
@@ -54,6 +56,15 @@ import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_231;
  * Utils method for Compiler plugin.
  */
 public class Utils {
+
+    public static boolean hasCompilationErrors(SyntaxNodeAnalysisContext ctx) {
+        for (Diagnostic diagnostic : ctx.compilation().diagnosticResult().diagnostics()) {
+            if (diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean isSQLOutParameter(SyntaxNodeAnalysisContext ctx, ExpressionNode node) {
         Optional<TypeSymbol> objectType = ctx.semanticModel().typeOf(node);

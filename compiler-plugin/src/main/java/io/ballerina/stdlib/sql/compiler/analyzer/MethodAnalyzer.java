@@ -45,8 +45,7 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
     @Override
     public void perform(SyntaxNodeAnalysisContext ctx) {
         MethodCallExpressionNode node = (MethodCallExpressionNode) ctx.node();
-        List<Diagnostic> diagnostics = ctx.semanticModel().diagnostics();
-        if (!diagnostics.isEmpty()) {
+        if (Utils.hasCompilationErrors(ctx)) {
             return;
         }
 
