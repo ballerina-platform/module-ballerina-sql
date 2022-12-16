@@ -31,11 +31,9 @@ import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.stdlib.sql.compiler.Constants;
 import io.ballerina.stdlib.sql.compiler.Utils;
-import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
