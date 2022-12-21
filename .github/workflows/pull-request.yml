@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - 2201.[0-9]+.x
-      - type-reference-support
 
 jobs:
   ubuntu-build:
