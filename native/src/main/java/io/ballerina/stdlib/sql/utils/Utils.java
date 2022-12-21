@@ -307,9 +307,10 @@ public class Utils {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
+                Type referredType = TypeUtils.getReferredType(memberType);
                 //In case if the member type is another union type, check recursively.
-                if (isValidFieldConstraint(sqlType, memberType)) {
-                    return memberType;
+                if (isValidFieldConstraint(sqlType, referredType)) {
+                    return referredType;
                 }
             }
         } else {
