@@ -15,8 +15,9 @@ Ballerina also provides specially designed various database-specific DB connecto
 
 ### Client
 
-The database client should be created using any of the above-listed database libraries and kept open throughout
-the entirety of the application to perform the operations and functionality which are explained below.
+A database client can be created using any of the above-listed database libraries. The operations and functionality explained below can be used with the newly created client.
+
+> **Tip** : The client should be used throughout the application lifetime.
 
 #### Handle connection pools
 
@@ -34,6 +35,10 @@ connection pool handling.  For its properties and possible values, see the [`sql
                                new ("jdbc:mysql://localhost:3306/testdb", 
                                 "root", "root");
     ```
+
+   > **Tip** : Connection pooling is used to optimize opening and closing connections to the database.
+   > It can add up over time and waste precious network time. Therefore, it is best to open a limited
+   > connection pool and reuse connections according to the purpose rather than using default.
 
 2. Client-owned, unsharable connection pool
 
@@ -78,6 +83,8 @@ Or
 ```ballerina
 check dbClient.close();
 ```
+
+> **Tip** : The client has to be closed at the end of the application lifetime.
 
 ### Database operations
 
@@ -217,8 +224,9 @@ string|int? generatedKey = result.lastInsertId;
 #### Query data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
-database table and obtain the result as a stream. Once the operation is done, make sure to consume 
-all the fetched data or close the stream by invoking the `close()` operation.
+database table and obtain the result as a stream.
+
+>**Tip**: When processing the stream, make sure to consume all fetched data or close the stream.
 
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
@@ -402,6 +410,6 @@ if resultStr is stream<record{}, sql:Error?> {
 check result.close();
 ```
 
-Note that you have to invoke the `close` operation explicitly on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
+>**Note**:  Once the results are processed, invoke the `close` method on the `sql:ProcedureCallResult` to release the connection resource.
 
 >**Note:** The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
