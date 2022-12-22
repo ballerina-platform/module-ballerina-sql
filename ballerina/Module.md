@@ -15,7 +15,8 @@ Ballerina also provides specially designed various database-specific DB connecto
 
 ### Client
 
-The database client should be created using any of the above-listed database modules and once it is created, the operations and functionality explained below can be used.
+The database client should be created using any of the above-listed database libraries and kept open throughout
+the entirety of the application to perform the operations and functionality which are explained below.
 
 #### Handle connection pools
 
@@ -216,7 +217,8 @@ string|int? generatedKey = result.lastInsertId;
 #### Query data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
-database table and obtain the results.
+database table and obtain the result as a stream. Once the `query` operation is done, make sure to consume 
+all the fetched data or close the stream.
 
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
@@ -399,6 +401,6 @@ if resultStr is stream<record{}, sql:Error?> {
 }
 check result.close();
 ```
-Note that you have to invoke the close operation explicitly on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
+Note that you have to invoke the `close` operation explicitly on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
 
 >**Note:** The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.

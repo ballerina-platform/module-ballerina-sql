@@ -21,6 +21,7 @@ import ballerina/jballerina.java;
 public type Client client object {
 
     # Executes the query, which may return multiple results.
+    # Once it is done, make sure to consume all the fetched data or close all the streams.
     #
     # + sqlQuery - The SQL query
     # + rowType - The `typedesc` of the record to which the result needs to be returned
@@ -52,7 +53,8 @@ public type Client client object {
     # + return - Metadata of the query execution as an `sql:ExecutionResult[]` or an `sql:Error`
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
-    # Executes an SQL query, which calls a stored procedure. This may or may not return results.
+    # Executes an SQL query, which calls a stored procedure. This may or may not
+    # return results as a `sql:ProcedureCallResult` which should be closed after performing this operation.
     #
     # + sqlQuery - The SQL query
     # + rowTypes - `typedesc` array of the records to which the results need to be returned
