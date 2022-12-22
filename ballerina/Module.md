@@ -24,7 +24,7 @@ A database client can be created using any of the above-listed database librarie
 All database modules share the same connection pooling concept and there are three possible scenarios for
 connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).
 
-> **Tip** : Connection pooling is used to optimize opening and closing connections to the database. It can add up over time and waste precious network time. Therefore, it is best to open a limited connection pool and reuse connections according to the purpose rather than using default.
+>**Tip**: Connection pooling is used to optimize opening and closing connections to the database. However, the pool comes with an overhead. It is best to configure the connection pool properties as per the application need to get the best performance.
 
 1. Global, shareable, default connection pool
 
