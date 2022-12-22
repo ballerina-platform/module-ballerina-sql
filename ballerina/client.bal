@@ -53,7 +53,7 @@ public type Client client object {
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
     # Executes an SQL query, which calls a stored procedure. This may or may not
-    # return results. Once the results are processed, invoke the `close` method on the `sql:ProcedureCallResult`
+    # return results. Once the results are processed, invoke the `close` method on the `sql:ProcedureCallResult`.
     #
     # + sqlQuery - The SQL query
     # + rowTypes - `typedesc` array of the records to which the results need to be returned
