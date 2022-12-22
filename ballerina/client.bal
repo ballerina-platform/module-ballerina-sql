@@ -21,7 +21,7 @@ import ballerina/jballerina.java;
 public type Client client object {
 
     # Executes the query, which may return multiple results.
-    # Once it is done, make sure to consume all the fetched data or close all the streams.
+    # Once the operation is done, make sure to consume all the fetched data or close all the streams.
     #
     # + sqlQuery - The SQL query
     # + rowType - The `typedesc` of the record to which the result needs to be returned
