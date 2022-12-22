@@ -224,8 +224,8 @@ string|int? generatedKey = result.lastInsertId;
 #### Query data
 
 These samples show how to demonstrate the different usages of the `query` operation to query the
-database table and obtain the result as a stream. Once the `query` operation is done, make sure to consume
-all the fetched data or close the stream.
+database table and obtain the result as a stream. Once the operation is done, make sure to consume
+all the fetched data or close the stream by invoking the `close()` operation.
 
 This sample demonstrates querying data from a table in a database.
 First, a type is created to represent the returned result set. This record can be defined as an open or a closed record
@@ -408,6 +408,7 @@ if resultStr is stream<record{}, sql:Error?> {
 }
 check result.close();
 ```
+
 Note that you have to invoke the `close` operation explicitly on the `sql:ProcedureCallResult` to release the connection resources and avoid a connection leak as shown above.
 
 >**Note:** The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.

@@ -16,8 +16,7 @@
 
 import ballerina/jballerina.java;
 
-# Represents an SQL client.
-#
+# Represents an SQL client. It should be kept open throughout the entirety of the application to perform the operations.
 public type Client client object {
 
     # Executes the query, which may return multiple results.
