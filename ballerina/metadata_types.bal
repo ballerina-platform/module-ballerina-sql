@@ -63,7 +63,7 @@ public enum ParameterMode {
 # + name - The name of the table
 # + 'type - Whether the table is a base table or a view
 # + columns - The columns included in the table
-# + checkConstraints - Check constraints associated with the column
+# + checkConstraints - Check constraints associated with the table
 public type TableDefinition record {
     string name;
     TableType 'type;
