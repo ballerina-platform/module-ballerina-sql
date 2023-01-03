@@ -37,12 +37,10 @@ import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.stdlib.sql.compiler.Constants;
-import io.ballerina.tools.diagnostics.Diagnostic;
+import io.ballerina.stdlib.sql.compiler.Utils;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
-import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
-import java.util.List;
 import java.util.Optional;
 
 import static io.ballerina.stdlib.sql.compiler.Constants.BALLERINA;
@@ -60,12 +58,11 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
 
     @Override
     public void perform(SyntaxNodeAnalysisContext ctx) {
-        List<Diagnostic> diagnostics = ctx.semanticModel().diagnostics();
-        for (Diagnostic diagnostic : diagnostics) {
-            if (diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR) {
-                return;
-            }
+
+        if (Utils.hasCompilationErrors(ctx)) {
+            return;
         }
+
         Optional<Symbol> varSymOptional = ctx.semanticModel()
                 .symbol(ctx.node());
         if (varSymOptional.isPresent()) {
@@ -121,7 +118,7 @@ public class ConnectionPoolConfigAnalyzer implements AnalysisTask<SyntaxNodeAnal
                         break;
                     case Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME:
                         float maxConnectionTime = Float.parseFloat(getTerminalNodeValue(valueNode, "30"));
-                        if (maxConnectionTime < 30) {
+                        if (maxConnectionTime < 0 || (maxConnectionTime > 0 && maxConnectionTime < 30)) {
                             DiagnosticInfo diagnosticInfo = new DiagnosticInfo(SQL_103.getCode(), SQL_103.getMessage(),
                                     SQL_103.getSeverity());
                             ctx.reportDiagnostic(

@@ -31,6 +31,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -195,8 +196,11 @@ public class SQLDatasource {
                 conn = ((SQLTransactionContext) txContext).getConnection();
             }
         } catch (SQLException e) {
+            // The SQLException thrown here sometimes (by Hikari) does not contain adequate information to determine the
+            // actual cause of the connection failure. Hence, we would need to find and return the root cause.
+            SQLException rootSQLException = Utils.getRootSQLException(e);
             throw new SQLException("error while getting the connection for " + Constants.CONNECTOR_NAME + ". "
-                    + e.getMessage(), e.getSQLState(), e.getErrorCode());
+                + rootSQLException.getMessage(), rootSQLException.getSQLState(), rootSQLException.getErrorCode());
         }
         return conn;
     }
@@ -328,13 +332,13 @@ public class SQLDatasource {
 
                 Object connLifeTimeSec = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
-                BDecimal connLifeTime = (BDecimal) connLifeTimeSec;
-                if (connLifeTime.floatValue() < 30) {
+                double connLifeTime = ((BDecimal) connLifeTimeSec).floatValue();
+                if (connLifeTime < 0 || (connLifeTime > 0 && connLifeTime < 30)) {
                     // Here if the connection life time is minimum 30s, the default value will be used
-                    throw new ApplicationError(
-                            "ConnectionPool field 'maxConnectionLifeTime' cannot be less than 30s.");
+                    throw new ApplicationError("ConnectionPool field 'maxConnectionLifeTime' can either be 0 " +
+                            "or greater than or equal to 30.");
                 }
-                long connLifeTimeMS = Double.valueOf(connLifeTime.floatValue() * 1000).longValue();
+                long connLifeTimeMS = Double.valueOf(connLifeTime * 1000).longValue();
                 config.setMaxLifetime(connLifeTimeMS);
 
                 int minIdleConnections = sqlDatasourceParams.connectionPool

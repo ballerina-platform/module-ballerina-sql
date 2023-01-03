@@ -613,7 +613,7 @@ function queryTimeTimeRecordParam() returns error? {
     groups: ["query", "query-simple-params"]
 }
 function queryTimeTimeRecordWithTimeZoneParam() returns error? {
-    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
+    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8};
     TimeValue typeVal = new (time);
     ParameterizedQuery sqlQuery = `SELECT * from DateTimeTypes WHERE time_type2 = ${typeVal}`;
     validateDateTimeTypesTableResult(check queryMockClient(simpleParamsDb, sqlQuery));

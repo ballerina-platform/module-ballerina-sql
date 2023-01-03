@@ -231,13 +231,14 @@ public class QueryProcessor {
             throws SQLException, TypeMismatchError {
         for (Type type: describingType.getMemberTypes()) {
             try {
+                Type referredType = TypeUtils.getReferredType(type);
                 // If one of the types inside the union is a union, recursively check
-                if (type.getTag() == TypeTags.UNION_TAG) {
+                if (referredType.getTag() == TypeTags.UNION_TAG) {
                     return getUnionTypeBValue(describingType, resultSet, resultParameterProcessor);
                 }
 
                 // Attempt to convert the query result to the current type
-                return getRecordOrPrimitiveTypeBValue(type, resultSet, resultParameterProcessor);
+                return getRecordOrPrimitiveTypeBValue(referredType, resultSet, resultParameterProcessor);
             } catch (ApplicationError e) {
                 // Ignored
                 // If an ApplicationError is thrown, the type is not compatible with the query result. Hence, it is
