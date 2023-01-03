@@ -53,7 +53,7 @@ public type Client client object {
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
     # Executes an SQL query, which calls a stored procedure. This may or may not
-    # return results. Once the results are processed, invoke the `close` method on the `sql:ProcedureCallResult`.
+    # return results. Once the results are processed, the `close` method on `sql:ProcedureCallResult` must be called.
     #
     # + sqlQuery - The SQL query
     # + rowTypes - `typedesc` array of the records to which the results need to be returned
@@ -61,7 +61,8 @@ public type Client client object {
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
-    # Closes the SQL client and shuts down the connection pool.
+    # Closes the SQL client and shuts down the connection pool. The client must be closed only at the end of the
+    # application lifetime (or closed for graceful stops in a service).
     #
     # + return - Possible `sql:Error` when closing the client
     public isolated function close() returns Error?;
