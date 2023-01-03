@@ -17,10 +17,10 @@
 import ballerina/jballerina.java;
 
 # Represents an SQL client.
-#
 public type Client client object {
 
     # Executes the query, which may return multiple results.
+    # When processing the stream, make sure to consume all fetched data or close the stream.
     #
     # + sqlQuery - The SQL query
     # + rowType - The `typedesc` of the record to which the result needs to be returned
@@ -52,7 +52,8 @@ public type Client client object {
     # + return - Metadata of the query execution as an `sql:ExecutionResult[]` or an `sql:Error`
     remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns ExecutionResult[]|Error;
 
-    # Executes an SQL query, which calls a stored procedure. This may or may not return results.
+    # Executes an SQL query, which calls a stored procedure. This may or may not
+    # return results. Once the results are processed, invoke the `close` method on the `sql:ProcedureCallResult`.
     #
     # + sqlQuery - The SQL query
     # + rowTypes - `typedesc` array of the records to which the results need to be returned
@@ -60,7 +61,8 @@ public type Client client object {
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
-    # Closes the SQL client and shuts down the connection pool.
+    # Closes the SQL client and shuts down the connection pool. The client must be closed only at the end of the
+    # application lifetime (or closed for graceful stops in a service).
     #
     # + return - Possible `sql:Error` when closing the client
     public isolated function close() returns Error?;
