@@ -17,7 +17,7 @@ Ballerina also provides specially designed various database-specific DB connecto
 
 A database client can be created using any of the above-listed database libraries. The operations and functionality explained below can be used with the newly created client.
 
-> **Tip** : The client should be used throughout the application lifetime.
+> **Tip**: The client should be used throughout the application lifetime.
 
 #### Handle connection pools
 
@@ -410,7 +410,7 @@ check result.close();
 
 >**Note**: Once the results are processed, the `close` method on the `sql:ProcedureCallResult` must be called.
 
->**Note:** The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
+>**Note**: The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
 
 ## Report issues
 

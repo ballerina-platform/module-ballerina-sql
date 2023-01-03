@@ -24,7 +24,7 @@ Ballerina also provides specially designed various database-specific DB connecto
 
 A database client can be created using any of the above-listed database libraries. The operations and functionality explained below can be used with the newly created client.
 
-> **Tip** : The client should be used throughout the application lifetime.
+> **Tip**: The client should be used throughout the application lifetime.
 
 #### Handle connection pools
 
@@ -81,7 +81,7 @@ connection pool handling.  For its properties and possible values, see the [`sql
 Once all the database operations are performed, you can close the database client you have created by invoking the `close()`
 operation. This will close the corresponding connection pool if it is not shared by any other database clients.
 
-> **Note** : The client must be closed only at the end of the application lifetime (or closed for graceful stops in a service).
+> **Note**: The client must be closed only at the end of the application lifetime (or closed for graceful stops in a service).
 
 ```ballerina
 error? e = dbClient.close();
@@ -417,7 +417,7 @@ check result.close();
 
 >**Note**: Once the results are processed, the `close` method on the `sql:ProcedureCallResult` must be called.
 
->**Note:** The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
+>**Note**: The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
    
 ## Issues and projects 
 
@@ -460,7 +460,7 @@ Execute the commands below to build from source.
 
         ./gradlew clean build -Pgroups=<Comma separated groups/test cases>
 
-   **Tip:** The following groups of test cases are available.
+   **Tip**: The following groups of test cases are available.
    
    Groups | Test cases
    ---| ---
