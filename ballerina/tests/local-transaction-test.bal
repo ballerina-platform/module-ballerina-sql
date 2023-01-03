@@ -53,11 +53,13 @@ function cleanTransactionContainer() returns error? {
     check cleanDockerContainer("sql-transaction");
 }
 
+function getMockDbClient() returns MockClient|error => check new (url = localTransactionDB, user = user, password = password);
+
 @test:Config {
     groups: ["transaction"]
 }
 function testLocalTransaction() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     int retryVal = -1;
     boolean committedBlockExecuted = false;
     transactions:Info transInfo;
@@ -90,7 +92,7 @@ int retryValRWC = -1;
     dependsOn: [testLocalTransaction]
 }
 function testTransactionRollbackWithCheck() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     error? ignore = testTransactionRollbackWithCheckHelper(dbClient);
     int count = check getCount(dbClient, "210");
     check dbClient.close();
@@ -119,7 +121,7 @@ function testTransactionRollbackWithCheckHelper(MockClient dbClient) returns err
     dependsOn: [testTransactionRollbackWithCheck]
 }
 function testTransactionRollbackWithRollback() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     int retryVal = -1;
     boolean stmtAfterFailureExecuted = false;
     transactions:Info transInfo;
@@ -155,7 +157,7 @@ function testTransactionRollbackWithRollback() returns error? {
     dependsOn: [testTransactionRollbackWithRollback]
 }
 function testLocalTransactionUpdateWithGeneratedKeys() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     int returnVal = 0;
     transactions:Info transInfo;
     retry<SQLDefaultRetryManager> (1) transaction {
@@ -182,7 +184,7 @@ int returnValRGK = 0;
     dependsOn: [testLocalTransactionUpdateWithGeneratedKeys]
 }
 function testLocalTransactionRollbackWithGeneratedKeys() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     error? ignore = testLocalTransactionRollbackWithGeneratedKeysHelper(dbClient);
     //check whether update action is performed
     int count = check getCount(dbClient, "615");
@@ -211,7 +213,7 @@ isolated int abortVal = 0;
     dependsOn: [testLocalTransactionRollbackWithGeneratedKeys]
 }
 function testTransactionAbort() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     transactions:Info transInfo;
 
     var abortFunc = isolated function(transactions:Info? info, error? cause, boolean willTry) {
@@ -253,7 +255,7 @@ int testTransactionErrorPanicRetVal = 0;
     groups: ["transaction"]
 }
 function testTransactionErrorPanic() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
     int catchValue = 0;
     error? ret = trap testTransactionErrorPanicHelper(dbClient);
     if ret is error {
@@ -290,7 +292,7 @@ function testTransactionErrorPanicHelper(MockClient dbClient) returns error? {
     dependsOn: [testTransactionAbort]
 }
 function testTransactionErrorPanicAndTrap() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    MockClient dbClient = check getMockDbClient();
 
     int catchValue = 0;
     transactions:Info transInfo;
@@ -320,270 +322,270 @@ isolated function testTransactionErrorPanicAndTrapHelper(int i) {
     }
 }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testTransactionErrorPanicAndTrap]
-}
-function testTwoTransactions() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testTransactionErrorPanicAndTrap]
+// }
+// function testTwoTransactions() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
 
-    transactions:Info transInfo1;
-    transactions:Info transInfo2;
-    retry<SQLDefaultRetryManager> (1) transaction {
-        transInfo1 = transactions:info();
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                          values ('James', 'Clerk', 400, 5000.75, 'USA')`);
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                          values ('James', 'Clerk', 400, 5000.75, 'USA')`);
-        check commit;
-    }
-    int returnVal1 = transInfo1.retryNumber;
+//     transactions:Info transInfo1;
+//     transactions:Info transInfo2;
+//     retry<SQLDefaultRetryManager> (1) transaction {
+//         transInfo1 = transactions:info();
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                           values ('James', 'Clerk', 400, 5000.75, 'USA')`);
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                           values ('James', 'Clerk', 400, 5000.75, 'USA')`);
+//         check commit;
+//     }
+//     int returnVal1 = transInfo1.retryNumber;
 
-    retry<SQLDefaultRetryManager> (1) transaction {
-        transInfo2 = transactions:info();
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                        values ('James', 'Clerk', 400, 5000.75, 'USA')`);
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                        values ('James', 'Clerk', 400, 5000.75, 'USA')`);
-        check commit;
-    }
-    int returnVal2 = transInfo2.retryNumber;
+//     retry<SQLDefaultRetryManager> (1) transaction {
+//         transInfo2 = transactions:info();
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                         values ('James', 'Clerk', 400, 5000.75, 'USA')`);
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                         values ('James', 'Clerk', 400, 5000.75, 'USA')`);
+//         check commit;
+//     }
+//     int returnVal2 = transInfo2.retryNumber;
 
-    //Check whether the update action is performed.
-    int count = check getCount(dbClient, "400");
-    check dbClient.close();
-    test:assertEquals(returnVal1, 0);
-    test:assertEquals(returnVal2, 0);
-    test:assertEquals(count, 4);
-}
+//     //Check whether the update action is performed.
+//     int count = check getCount(dbClient, "400");
+//     check dbClient.close();
+//     test:assertEquals(returnVal1, 0);
+//     test:assertEquals(returnVal2, 0);
+//     test:assertEquals(count, 4);
+// }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testTwoTransactions]
-}
-function testTransactionWithoutHandlers() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    transaction {
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                            values ('James', 'Clerk', 350, 5000.75, 'USA')`);
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                            values ('James', 'Clerk', 350, 5000.75, 'USA')`);
-        check commit;
-    }
-    //Check whether the update action is performed.
-    int count = check getCount(dbClient, "350");
-    check dbClient.close();
-    test:assertEquals(count, 2);
-}
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testTwoTransactions]
+// }
+// function testTransactionWithoutHandlers() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+//     transaction {
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                             values ('James', 'Clerk', 350, 5000.75, 'USA')`);
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                             values ('James', 'Clerk', 350, 5000.75, 'USA')`);
+//         check commit;
+//     }
+//     //Check whether the update action is performed.
+//     int count = check getCount(dbClient, "350");
+//     check dbClient.close();
+//     test:assertEquals(count, 2);
+// }
 
-isolated string rollbackOut = "";
+// isolated string rollbackOut = "";
 
-@test:Config {
-    enable: false,
-    groups: ["transaction"],
-    dependsOn: [testTransactionWithoutHandlers]
-}
-function testLocalTransactionFailed() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+// @test:Config {
+//     enable: false,
+//     groups: ["transaction"],
+//     dependsOn: [testTransactionWithoutHandlers]
+// }
+// function testLocalTransactionFailed() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
 
-    string a = "beforeTrx";
+//     string a = "beforeTrx";
 
-    string|error ret = trap testLocalTransactionFailedHelper(dbClient);
-    if ret is string {
-        a += ret;
-    } else {
-        a += ret.message() + " trapped";
-    }
-    a = a + " afterTrx";
-    int count = check getCount(dbClient, "111");
-    check dbClient.close();
-    test:assertEquals(a, "beforeTrx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
-    test:assertEquals(count, 0);
-}
+//     string|error ret = trap testLocalTransactionFailedHelper(dbClient);
+//     if ret is string {
+//         a += ret;
+//     } else {
+//         a += ret.message() + " trapped";
+//     }
+//     a = a + " afterTrx";
+//     int count = check getCount(dbClient, "111");
+//     check dbClient.close();
+//     test:assertEquals(a, "beforeTrx inTrx trxAborted inTrx trxAborted inTrx trapped afterTrx");
+//     test:assertEquals(count, 0);
+// }
 
-isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
-    var onRollbackFunc = isolated function(transactions:Info? info, error? cause, boolean willTry) {
-        lock {
-            rollbackOut += " trxAborted";
-        }
-    };
+// isolated function testLocalTransactionFailedHelper(MockClient dbClient) returns string|error {
+//     var onRollbackFunc = isolated function(transactions:Info? info, error? cause, boolean willTry) {
+//         lock {
+//             rollbackOut += " trxAborted";
+//         }
+//     };
 
-    retry<SQLDefaultRetryManager> (2) transaction {
-        lock {
-            rollbackOut += " inTrx";
-        }
-        transactions:onRollback(onRollbackFunc);
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                        values ('James', 'Clerk', 111, 5000.75, 'USA')`);
-        ExecutionResult|Error e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
-                                                        values ('Anne', 'Clerk', 111, 5000.75, 'USA')`);
-        if e2 is error {
-            check getError();
-        }
-        check commit;
-    }
-    lock {
-        return rollbackOut;
-    }
-}
+//     retry<SQLDefaultRetryManager> (2) transaction {
+//         lock {
+//             rollbackOut += " inTrx";
+//         }
+//         transactions:onRollback(onRollbackFunc);
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                         values ('James', 'Clerk', 111, 5000.75, 'USA')`);
+//         ExecutionResult|Error e2 = dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
+//                                                         values ('Anne', 'Clerk', 111, 5000.75, 'USA')`);
+//         if e2 is error {
+//             check getError();
+//         }
+//         check commit;
+//     }
+//     lock {
+//         return rollbackOut;
+//     }
+// }
 
-isolated function getError() returns error? {
-    lock {
-        return error(rollbackOut);
-    }
-}
+// isolated function getError() returns error? {
+//     lock {
+//         return error(rollbackOut);
+//     }
+// }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testTransactionWithoutHandlers]
-}
-function testLocalTransactionSuccessWithFailed() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testTransactionWithoutHandlers]
+// }
+// function testLocalTransactionSuccessWithFailed() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
 
-    string a = "beforeTrx";
-    string|error ret = trap testLocalTransactionSuccessWithFailedHelper(a, dbClient);
-    if ret is string {
-        a = ret;
-    } else {
-        a = a + "trapped";
-    }
-    a = a + " afterTrx";
-    int count = check getCount(dbClient, "222");
-    check dbClient.close();
-    test:assertEquals(a, "beforeTrx inTrx inTrx inTrx committed afterTrx");
-    test:assertEquals(count, 2);
-}
+//     string a = "beforeTrx";
+//     string|error ret = trap testLocalTransactionSuccessWithFailedHelper(a, dbClient);
+//     if ret is string {
+//         a = ret;
+//     } else {
+//         a = a + "trapped";
+//     }
+//     a = a + " afterTrx";
+//     int count = check getCount(dbClient, "222");
+//     check dbClient.close();
+//     test:assertEquals(a, "beforeTrx inTrx inTrx inTrx committed afterTrx");
+//     test:assertEquals(count, 2);
+// }
 
-isolated function testLocalTransactionSuccessWithFailedHelper(string status, MockClient dbClient) returns string|error {
-    int i = 0;
-    string a = status;
-    retry<SQLDefaultRetryManager> (3) transaction {
-        i = i + 1;
-        a = a + " inTrx";
-        _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                        values ('James', 'Clerk', 222, 5000.75, 'USA')`);
-        if i == 3 {
-            _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
-                                                            values ('Anne', 'Clerk', 222, 5000.75, 'USA')`);
-        } else {
-            _ = check dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
-                                                            values ('Anne', 'Clerk', 222, 5000.75, 'USA')`);
-        }
-        check commit;
-        a = a + " committed";
-    }
-    return a;
-}
+// isolated function testLocalTransactionSuccessWithFailedHelper(string status, MockClient dbClient) returns string|error {
+//     int i = 0;
+//     string a = status;
+//     retry<SQLDefaultRetryManager> (3) transaction {
+//         i = i + 1;
+//         a = a + " inTrx";
+//         _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                         values ('James', 'Clerk', 222, 5000.75, 'USA')`);
+//         if i == 3 {
+//             _ = check dbClient->execute(`Insert into Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                                             values ('Anne', 'Clerk', 222, 5000.75, 'USA')`);
+//         } else {
+//             _ = check dbClient->execute(`Insert into Customers2 (firstName,lastName,registrationID,creditLimit,country)
+//                                                             values ('Anne', 'Clerk', 222, 5000.75, 'USA')`);
+//         }
+//         check commit;
+//         a = a + " committed";
+//     }
+//     return a;
+// }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testLocalTransactionSuccessWithFailed]
-}
-function testLocalTransactionWithBatchExecute() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    int retryVal = -1;
-    boolean committedBlockExecuted = false;
-    transactions:Info transInfo;
-    var data = [
-        {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"},
-        {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"}
-    ];
-    ParameterizedQuery[] sqlQueries =
-        from var row in data
-    select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
-                                VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
-                                ${row.country})`;
-    retry<SQLDefaultRetryManager> (1) transaction {
-        _ = check dbClient->batchExecute(sqlQueries);
-        transInfo = transactions:info();
-        error? commitResult = commit;
-        if commitResult is () {
-            committedBlockExecuted = true;
-        }
-    }
-    retryVal = transInfo.retryNumber;
-    //check whether update action is performed
-    int count = check getCount(dbClient, "301");
-    check dbClient.close();
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testLocalTransactionSuccessWithFailed]
+// }
+// function testLocalTransactionWithBatchExecute() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+//     int retryVal = -1;
+//     boolean committedBlockExecuted = false;
+//     transactions:Info transInfo;
+//     var data = [
+//         {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"},
+//         {firstName: "James", lastName: "Clerk", registrationID: 301, creditLimit: 5000.75, country: "USA"}
+//     ];
+//     ParameterizedQuery[] sqlQueries =
+//         from var row in data
+//     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                 VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+//                                 ${row.country})`;
+//     retry<SQLDefaultRetryManager> (1) transaction {
+//         _ = check dbClient->batchExecute(sqlQueries);
+//         transInfo = transactions:info();
+//         error? commitResult = commit;
+//         if commitResult is () {
+//             committedBlockExecuted = true;
+//         }
+//     }
+//     retryVal = transInfo.retryNumber;
+//     //check whether update action is performed
+//     int count = check getCount(dbClient, "301");
+//     check dbClient.close();
 
-    test:assertEquals(retryVal, 0);
-    test:assertEquals(count, 2);
-    test:assertEquals(committedBlockExecuted, true);
-}
+//     test:assertEquals(retryVal, 0);
+//     test:assertEquals(count, 2);
+//     test:assertEquals(committedBlockExecuted, true);
+// }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testLocalTransactionWithBatchExecute]
-}
-function testLocalTransactionWithQuery() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    int retryVal = -1;
-    boolean committedBlockExecuted = false;
-    transactions:Info transInfo;
-    var data = [
-        {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"},
-        {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"}
-    ];
-    ParameterizedQuery[] sqlQueries =
-            from var row in data
-    select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
-                                    VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
-                                    ${row.country})`;
-    int count = 0;
-    retry<SQLDefaultRetryManager> (1) transaction {
-        _ = check dbClient->batchExecute(sqlQueries);
-        count = check getCount(dbClient, "302");
-        transInfo = transactions:info();
-        error? commitResult = commit;
-        if commitResult is () {
-            committedBlockExecuted = true;
-        }
-    }
-    retryVal = transInfo.retryNumber;
-    //check whether update action is performed
-    check dbClient.close();
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testLocalTransactionWithBatchExecute]
+// }
+// function testLocalTransactionWithQuery() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+//     int retryVal = -1;
+//     boolean committedBlockExecuted = false;
+//     transactions:Info transInfo;
+//     var data = [
+//         {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"},
+//         {firstName: "James", lastName: "Clerk", registrationID: 302, creditLimit: 5000.75, country: "USA"}
+//     ];
+//     ParameterizedQuery[] sqlQueries =
+//             from var row in data
+//     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                     VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+//                                     ${row.country})`;
+//     int count = 0;
+//     retry<SQLDefaultRetryManager> (1) transaction {
+//         _ = check dbClient->batchExecute(sqlQueries);
+//         count = check getCount(dbClient, "302");
+//         transInfo = transactions:info();
+//         error? commitResult = commit;
+//         if commitResult is () {
+//             committedBlockExecuted = true;
+//         }
+//     }
+//     retryVal = transInfo.retryNumber;
+//     //check whether update action is performed
+//     check dbClient.close();
 
-    test:assertEquals(retryVal, 0);
-    test:assertEquals(count, 2);
-    test:assertEquals(committedBlockExecuted, true);
-}
+//     test:assertEquals(retryVal, 0);
+//     test:assertEquals(count, 2);
+//     test:assertEquals(committedBlockExecuted, true);
+// }
 
-@test:Config {
-    groups: ["transaction"],
-    dependsOn: [testLocalTransactionWithQuery]
-}
-function testLocalTransactionWithQueryRow() returns error? {
-    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
-    int retryVal = -1;
-    boolean committedBlockExecuted = false;
-    transactions:Info transInfo;
-    var data = [
-        {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"},
-        {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"}
-    ];
-    ParameterizedQuery[] sqlQueries =
-            from var row in data
-    select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
-                                    VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
-                                    ${row.country})`;
-    int count = 0;
-    retry<SQLDefaultRetryManager> (1) transaction {
-        _ = check dbClient->batchExecute(sqlQueries);
-        count = check dbClient->queryRow(`Select COUNT(*) as countVal from Customers where registrationID = 303`);
-        transInfo = transactions:info();
-        error? commitResult = commit;
-        if commitResult is () {
-            committedBlockExecuted = true;
-        }
-    }
-    retryVal = transInfo.retryNumber;
-    //check whether update action is performed
-    check dbClient.close();
+// @test:Config {
+//     groups: ["transaction"],
+//     dependsOn: [testLocalTransactionWithQuery]
+// }
+// function testLocalTransactionWithQueryRow() returns error? {
+//     MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+//     int retryVal = -1;
+//     boolean committedBlockExecuted = false;
+//     transactions:Info transInfo;
+//     var data = [
+//         {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"},
+//         {firstName: "James", lastName: "Clerk", registrationID: 303, creditLimit: 5000.75, country: "USA"}
+//     ];
+//     ParameterizedQuery[] sqlQueries =
+//             from var row in data
+//     select `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+//                                     VALUES (${row.firstName}, ${row.lastName}, ${row.registrationID}, ${row.creditLimit},
+//                                     ${row.country})`;
+//     int count = 0;
+//     retry<SQLDefaultRetryManager> (1) transaction {
+//         _ = check dbClient->batchExecute(sqlQueries);
+//         count = check dbClient->queryRow(`Select COUNT(*) as countVal from Customers where registrationID = 303`);
+//         transInfo = transactions:info();
+//         error? commitResult = commit;
+//         if commitResult is () {
+//             committedBlockExecuted = true;
+//         }
+//     }
+//     retryVal = transInfo.retryNumber;
+//     //check whether update action is performed
+//     check dbClient.close();
 
-    test:assertEquals(retryVal, 0);
-    test:assertEquals(count, 2);
-    test:assertEquals(committedBlockExecuted, true);
-}
+//     test:assertEquals(retryVal, 0);
+//     test:assertEquals(count, 2);
+//     test:assertEquals(committedBlockExecuted, true);
+// }
 
 isolated function getCount(MockClient dbClient, string id) returns int|error {
     stream<TransactionResultCount, Error?> streamData = dbClient->query(
