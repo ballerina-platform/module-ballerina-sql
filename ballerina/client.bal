@@ -61,7 +61,8 @@ public type Client client object {
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error;
 
-    # Closes the SQL client and shuts down the connection pool.
+    # Closes the SQL client and shuts down the connection pool. The client must be closed only at the end of the
+    # application lifetime (or closed for graceful stops in a service).
     #
     # + return - Possible `sql:Error` when closing the client
     public isolated function close() returns Error?;
