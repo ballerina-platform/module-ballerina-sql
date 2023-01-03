@@ -63,10 +63,12 @@ public enum ParameterMode {
 # + name - The name of the table
 # + 'type - Whether the table is a base table or a view
 # + columns - The columns included in the table
+# + checkConstraints - Check constraints associated with the column
 public type TableDefinition record {
     string name;
     TableType 'type;
     ColumnDefinition[] columns?;
+    CheckConstraint[] checkConstraints?;
 };
 
 # Represents a column in a table.
@@ -76,14 +78,12 @@ public type TableDefinition record {
 # + defaultValue - The default value of the column
 # + nullable - Whether the column is nullable
 # + referentialConstraints - Referential constraints (foreign key relationships) associated with the column
-# + checkConstraints - Check constraints associated with the column
 public type ColumnDefinition record {
     string name;
     string 'type;
     anydata? defaultValue;
     boolean nullable;
     ReferentialConstraint[] referentialConstraints?;
-    CheckConstraint[] checkConstraints?;
 };
 
 # Represents a referential constraint (foriegn key constraint).
