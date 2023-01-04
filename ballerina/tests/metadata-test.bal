@@ -134,13 +134,7 @@ function getTableInfoWithConstraintsTest() returns error? {
                 "name":"PERSONID",
                 "type":"INTEGER",
                 "defaultValue":null,
-                "nullable":false,
-                "checkConstraints": [
-                    {
-                        "name":"SYS_CT_10125",
-                        "clause":"PUBLIC.PERSON.PERSONID>100"
-                    }
-                ]
+                "nullable":false
             },
             {
                 "name":"NAME",
@@ -161,13 +155,17 @@ function getTableInfoWithConstraintsTest() returns error? {
                         "updateRule":NO_ACTION,
                         "deleteRule":NO_ACTION
                     }
-                ],
-                "checkConstraints": [
-                    {
-                        "name":"SYS_CT_10126",
-                        "clause":"PUBLIC.PERSON.COMPANYID>20"
-                    }
                 ]
+            }
+        ],
+        "checkConstraints": [
+            {
+                "name":"SYS_CT_10125",
+                "clause":"PUBLIC.PERSON.PERSONID>100"
+            },
+            {
+                "name":"SYS_CT_10126",
+                "clause":"PUBLIC.PERSON.COMPANYID>20"
             }
         ]
     });
@@ -188,13 +186,7 @@ function getTableInfoWithConstraintsTest2() returns error? {
                 "name":"PERSONID",
                 "type":"INTEGER",
                 "defaultValue":null,
-                "nullable":false,
-                "checkConstraints": [
-                    {
-                        "name":"SYS_CT_10140",
-                        "clause":"PUBLIC.PERSON2.PERSONID>100"
-                    }
-                ]
+                "nullable":false
             },
             {
                 "name":"NAME",
@@ -215,13 +207,17 @@ function getTableInfoWithConstraintsTest2() returns error? {
                         "updateRule":CASCADE,
                         "deleteRule":CASCADE
                     }
-                ],
-                "checkConstraints": [
-                    {
-                        "name":"SYS_CT_10141",
-                        "clause":"PUBLIC.PERSON2.COMPANYID>20"
-                    }
                 ]
+            }
+        ],
+        "checkConstraints": [
+            {
+                "name":"SYS_CT_10140",
+                "clause":"PUBLIC.PERSON2.PERSONID>100"
+            },
+            {
+                "name":"SYS_CT_10141",
+                "clause":"PUBLIC.PERSON2.COMPANYID>20"
             }
         ]
     });

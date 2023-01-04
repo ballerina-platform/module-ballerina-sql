@@ -192,13 +192,15 @@ isolated client class MockSchemaClient {
     private isolated function getCheckConstraints(string tableName) returns CheckConstraint[]|Error {
         CheckConstraint[] checkConstraints = [];
         stream<record {}, error?> checkConstraintStream = self.dbClient->query(`
-            SELECT DISTINCT 
+            SELECT 
                 CC.CONSTRAINT_NAME AS CONSTRAINT_NAME,
-                CC.CHECK_CLAUSE AS CHECK_CLAUSE 
-            FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS CC 
-            JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC 
-            ON CC.CONSTRAINT_SCHEMA = TC.CONSTRAINT_SCHEMA 
-            WHERE CC.CONSTRAINT_SCHEMA=${self.database} AND TC.TABLE_NAME=${tableName};
+                CC.CHECK_CLAUSE AS CHECK_CLAUSE
+            FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS CC
+            JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS CCU  
+                ON CC.CONSTRAINT_NAME = CCU.CONSTRAINT_NAME
+            WHERE 
+                CC.CONSTRAINT_SCHEMA = ${self.database}
+                AND CCU.TABLE_NAME = ${tableName}
         `);
 
         error? e = from record {} retrievedCheckConstraint in checkConstraintStream
