@@ -242,6 +242,12 @@ public class ExecuteProcessor {
                     executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
                             Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
+                if (e.getMessage().contains("The statement must be executed before any results can be obtained")) {
+                    return ErrorGenerator.getSQLDatabaseError(
+                            String.format("Error while executing batch command starting with: '%s'. " +
+                                    "The database does not support the retrieval of auto-generated keys " +
+                                    "with batch execute function.", sqlQuery), e.getErrorCode(), e.getSQLState());
+                }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
                         String.format("Error while executing batch command starting with: '%s'.", sqlQuery));
             } catch (SQLException e) {
