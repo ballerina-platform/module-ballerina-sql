@@ -14,9 +14,9 @@ on:
       native_image_options:
         description: Default native-image options
         required: false
-        default: '-J-Xmx7G'
-#  schedule:
-#    - cron: '30 18 * * *'
+        default: ''
+  schedule:
+    - cron: '30 18 * * *'
 
 jobs:
   call_stdlib_workflow:
@@ -26,5 +26,5 @@ jobs:
     with:
       lang_tag: ${{ inputs.lang_tag }}
       lang_version: ${{ inputs.lang_version }}
-      native_image_options: ${{ inputs.native_image_options }}
+      native_image_options: '-J-Xmx7G ${{ inputs.native_image_options }}'
       additional_windows_build_flags: '-x test'
