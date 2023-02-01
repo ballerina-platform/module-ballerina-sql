@@ -68,7 +68,7 @@ isolated client class MockSchemaClient {
                         result.checkConstraints = checkConstraints;
                     }
 
-                    _ = checkpanic from ColumnDefinition column in <ColumnDefinition[]>result.columns
+                    _ = from ColumnDefinition column in <ColumnDefinition[]>result.columns
                         do {
                             ReferentialConstraint[]? refConstraints = refConstraintsMap[column.name];
                             if !(refConstraints is ()) && refConstraints.length() != 0 {
