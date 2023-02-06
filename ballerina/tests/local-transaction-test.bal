@@ -585,6 +585,32 @@ function testLocalTransactionWithQueryRow() returns error? {
     test:assertEquals(committedBlockExecuted, true);
 }
 
+@test:Config {
+    groups: ["transaction"]
+}
+function testStreamConsumptionInTransaction() returns error? {
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+
+    transaction {
+        stream<record {}, error?> resultStream = dbClient->query(`
+            SELECT 1
+        `);
+        string[]|error allocations = from var data in resultStream
+            select "";
+
+        _ = check dbClient->execute(`
+            UPDATE
+                Customers
+            SET
+                firstName = 'new_name'
+            WHERE
+                customerId = 1
+        `);
+        check commit;
+        return;
+    }
+}
+
 isolated function getCount(MockClient dbClient, string id) returns int|error {
     stream<TransactionResultCount, Error?> streamData = dbClient->query(
         `Select COUNT(*) as countVal from Customers where registrationID = ${id}`);

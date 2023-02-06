@@ -469,7 +469,7 @@ public abstract class AbstractResultParameterProcessor {
 
     public BObject createRecordIterator(
             ResultSet resultSet, Statement statement, Connection connection,
-            List<ColumnDefinition> columnDefinitions, StructureType streamConstraint) {
+            List<ColumnDefinition> columnDefinitions, StructureType streamConstraint, boolean isInTrx) {
         BObject resultIterator = ValueCreator.createObjectValue(ModuleUtils.getModule(),
                 Constants.RESULT_ITERATOR_OBJECT, null, getBalStreamResultIterator());
         resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
@@ -477,6 +477,7 @@ public abstract class AbstractResultParameterProcessor {
         resultIterator.addNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD, connection);
         resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
         resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
+        resultIterator.addNativeData(Constants.IS_IN_TRX, isInTrx);
         return resultIterator;
     }
 

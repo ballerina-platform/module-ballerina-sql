@@ -53,6 +53,7 @@ import java.util.Map;
 
 import static io.ballerina.stdlib.sql.Constants.CONNECTION_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.DATABASE_CLIENT;
+import static io.ballerina.stdlib.sql.Constants.IS_IN_TRX;
 import static io.ballerina.stdlib.sql.Constants.PROCEDURE_CALL_RESULT;
 import static io.ballerina.stdlib.sql.Constants.QUERY_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIELD;
@@ -153,7 +154,7 @@ public class CallProcessor {
                     BStream streamValue = ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                             PredefinedTypes.TYPE_NULL),
                             resultParameterProcessor.createRecordIterator(resultSet, null, null, columnDefinitions,
-                                    streamConstraint));
+                                    streamConstraint, isWithinTrxBlock));
                     procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 } else {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
@@ -167,6 +168,7 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD, recordDescriptions);
                 procedureCallResult.addNativeData(RESULT_SET_TOTAL_NATIVE_DATA_FIELD, recordTypes.size());
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
+                procedureCallResult.addNativeData(IS_IN_TRX, isWithinTrxBlock);
                 return procedureCallResult;
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,

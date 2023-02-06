@@ -126,7 +126,8 @@ public class QueryProcessor {
                 List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
                 return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
                         PredefinedTypes.TYPE_NULL), resultParameterProcessor
-                        .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint));
+                        .createRecordIterator(resultSet, statement, connection, columnDefinitions, streamConstraint,
+                                isWithInTrxBlock));
             } catch (SQLException e) {
                 Utils.closeResources(isWithInTrxBlock, resultSet, statement, connection);
                 BError errorValue = ErrorGenerator.getSQLDatabaseError(e,

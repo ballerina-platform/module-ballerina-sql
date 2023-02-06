@@ -254,7 +254,7 @@ public class Utils {
     }
 
     public static Object cleanUpConnection(BObject ballerinaObject, ResultSet resultSet,
-                                           Statement statement, Connection connection) {
+                                           Statement statement, Connection connection, boolean isWithinTrxBlock) {
         if (resultSet != null) {
             try {
                 resultSet.close();
@@ -271,9 +271,7 @@ public class Utils {
                 return ErrorGenerator.getSQLDatabaseError(e, "Error while closing the result set. ");
             }
         }
-        TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!trxResourceManager.isInTransaction() ||
-                !trxResourceManager.getCurrentTransactionContext().hasTransactionBlock()) {
+        if (!isWithinTrxBlock) {
             if (connection != null) {
                 try {
                     connection.close();

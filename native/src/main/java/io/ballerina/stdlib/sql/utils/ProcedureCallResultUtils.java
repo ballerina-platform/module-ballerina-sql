@@ -90,10 +90,11 @@ public class ProcedureCallResultUtils {
                                 "returned result sets count.");
                     }
                 }
+                boolean isWithinTrxBlock = (boolean) procedureCallResult.getNativeData(Constants.IS_IN_TRX);
                 BStream streamValue = ValueCreator.createStreamValue(
                         TypeCreator.createStreamType(streamConstraint, PredefinedTypes.TYPE_NULL),
                         resultParameterProcessor.createRecordIterator(resultSet, null, null,
-                                columnDefinitions, streamConstraint));
+                                columnDefinitions, streamConstraint, isWithinTrxBlock));
                 procedureCallResult.set(QUERY_RESULT_FIELD, streamValue);
                 procedureCallResult.set(EXECUTION_RESULT_FIELD, null);
             } else {
@@ -114,6 +115,7 @@ public class ProcedureCallResultUtils {
     public static Object closeCallResult(BObject procedureCallResult) {
         Statement statement = (Statement) procedureCallResult.getNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD);
         Connection connection = (Connection) procedureCallResult.getNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD);
-        return cleanUpConnection(procedureCallResult, null, statement, connection);
+        boolean isWithinTrxBlock = (boolean) procedureCallResult.getNativeData(Constants.IS_IN_TRX);
+        return cleanUpConnection(procedureCallResult, null, statement, connection, isWithinTrxBlock);
     }
 }

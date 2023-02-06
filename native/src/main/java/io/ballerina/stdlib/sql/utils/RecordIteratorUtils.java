@@ -79,6 +79,7 @@ public class RecordIteratorUtils {
         ResultSet resultSet = (ResultSet) recordIterator.getNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD);
         Statement statement = (Statement) recordIterator.getNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD);
         Connection connection = (Connection) recordIterator.getNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD);
-        return cleanUpConnection(recordIterator, resultSet, statement, connection);
+        boolean isWithinTrxBlock = (boolean) recordIterator.getNativeData(Constants.IS_IN_TRX);
+        return cleanUpConnection(recordIterator, resultSet, statement, connection, isWithinTrxBlock);
     }
 }
