@@ -3,4 +3,4 @@ id = "sql-compiler-plugin"
 class = "io.ballerina.stdlib.sql.compiler.SQLCompilerPlugin"
 
 [[dependency]]
-path = "../compiler-plugin/build/libs/sql-compiler-plugin-1.6.1.jar"
+path = "../compiler-plugin/build/libs/sql-compiler-plugin-1.6.2-SNAPSHOT.jar"
