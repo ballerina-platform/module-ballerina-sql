@@ -54,10 +54,10 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         if (!diagnostics.isEmpty()) {
             diagnostics.stream()
                 .filter(diagnostic -> diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR)
-                .filter(diagnostic ->
+                .filter(diagnostic -> diagnostic.diagnosticInfo().code() != null && (
                         diagnostic.diagnosticInfo().code().equals(CANNOT_INFER_TYPE_FOR_PARAM.diagnosticId()) ||
                                 diagnostic.diagnosticInfo().code().equals(
-                                                    INCOMPATIBLE_TYPE_FOR_INFERRED_TYPEDESC_VALUE.diagnosticId()))
+                                                    INCOMPATIBLE_TYPE_FOR_INFERRED_TYPEDESC_VALUE.diagnosticId())))
                 .filter(diagnostic -> diagnostic.location().lineRange().equals(node.location().lineRange()))
                 .forEach(diagnostic -> addHint(ctx, node));
         }

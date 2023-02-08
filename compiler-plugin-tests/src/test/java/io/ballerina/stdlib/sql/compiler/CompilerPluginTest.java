@@ -159,4 +159,19 @@ public class CompilerPluginTest {
 
         Assert.assertEquals(availableErrors, 0);
     }
+
+    // todo Due to the bug https://github.com/ballerina-platform/ballerina-lang/issues/39541
+    // This is only reproducible with `bal build`
+    @Test
+    public void testDiagnosticsCodeNull() {
+        Package currentPackage = loadPackage("sample5");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        List<Diagnostic> errorDiagnosticsList = diagnosticResult.diagnostics().stream()
+                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR))
+                .collect(Collectors.toList());
+        long availableErrors = errorDiagnosticsList.size();
+
+        Assert.assertEquals(availableErrors, 0);
+    }
 }
