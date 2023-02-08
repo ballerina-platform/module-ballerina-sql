@@ -33,6 +33,7 @@ dependencies {
     testImplementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     testImplementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     testImplementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    testImplementation group: 'org.ballerinalang', name: 'testerina-core', version: "$ballerinaLangVersion"
 
     implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
