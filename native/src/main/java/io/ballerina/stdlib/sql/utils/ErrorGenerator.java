@@ -134,7 +134,7 @@ public class ErrorGenerator {
                 StringUtils.fromString(message), null, sqlClientErrorDetailRecord);
     }
 
-    public static BError getSQLDatabaseError(String message, int vendorCode, String sqlState) {
+    private static BError getSQLDatabaseError(String message, int vendorCode, String sqlState) {
         Map<String, Object> valueMap = new HashMap<>();
         valueMap.put(Constants.ErrorRecordFields.ERROR_CODE, vendorCode);
         valueMap.put(Constants.ErrorRecordFields.SQL_STATE, sqlState);
