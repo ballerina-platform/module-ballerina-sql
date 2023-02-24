@@ -9,7 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
+## [1.7.0] - 2023-02-20
+
+### Changed
+
 - [Remove SQL_901 diagnostic hint](https://github.com/ballerina-platform/ballerina-standard-library/issues/3609)
+- [Enable non-Hikari logs](https://github.com/ballerina-platform/ballerina-standard-library/issues/3763)
+
+## [1.6.2] - 2023-02-09
+
+### Changed
+
+- [Improve API docs based on Best practices](https://github.com/ballerina-platform/ballerina-standard-library/issues/3857)
+- [Fix SQL compiler plugins failure when the diagnostic code is null](https://github.com/ballerina-platform/ballerina-standard-library/issues/4054)
+
+## [1.6.1] - 2022-12-22
+
+### Changed
 - [Enable non-Hikari logs](https://github.com/ballerina-platform/ballerina-standard-library/issues/3763)
 
 ## [1.6.0] - 2022-11-29
