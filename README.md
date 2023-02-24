@@ -8,6 +8,7 @@ Ballerina SQL Library
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-sql.svg)](https://github.com/ballerina-platform/module-ballerina-sql/commits/master)
   [![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/sql.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsql)
 
+
 This library provides the generic interface and functionality to interact with an SQL database. The corresponding database
 clients can be created by using specific database libraries such as `mysql` or using the Java Database Connectivity
 library `jdbc`.
