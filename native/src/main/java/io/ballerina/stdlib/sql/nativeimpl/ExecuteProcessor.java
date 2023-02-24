@@ -216,7 +216,6 @@ public class ExecuteProcessor {
                     statementParameterProcessor.setParams(connection, statement, parameters.get(i));
                     statement.addBatch();
                     if ((i + 1) % batchSize == 0) {
-
                         executeBatch(statement, executionResults, isGeneratedKeys);
                         statement.clearBatch();
                     }
