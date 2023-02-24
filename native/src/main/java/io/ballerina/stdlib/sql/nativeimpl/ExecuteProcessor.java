@@ -259,11 +259,11 @@ public class ExecuteProcessor {
     }
 
     private static void executeSingleBatch(PreparedStatement statement, List<BMap<BString, Object>> executionResults,
-                                           boolean isGeneratedKeys) throws SQLException {
+                                           boolean processResultSet) throws SQLException {
         ResultSet resultSet = null;
         try {
             int[] counts = statement.executeBatch();
-            if (isGeneratedKeys) {
+            if (processResultSet) {
                 resultSet = statement.getGeneratedKeys();
             }
             for (int count : counts) {
