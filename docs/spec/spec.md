@@ -459,7 +459,8 @@ sql:ExecutionResult result = check dbClient->execute(query);
 
 ## 4.4. Batch execute
 
-`batchExecute()` remote method executes the SQL query with multiple sets of parameters in a batch.
+`batchExecute()` remote method executes the SQL query with multiple sets of parameters in a batch. 
+To optimize memory utilisation, the inputs would be executed in batch sizes of 1000. 
 ```ballerina
 # Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned
 # (not the results from the query).
