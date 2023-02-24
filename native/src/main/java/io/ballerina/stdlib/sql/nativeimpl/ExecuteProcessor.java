@@ -216,11 +216,12 @@ public class ExecuteProcessor {
                     statementParameterProcessor.setParams(connection, statement, parameters.get(i));
                     statement.addBatch();
                     if ((i + 1) % batchSize == 0) {
-                        executeBatch(statement, executionResults, isGeneratedKeys);
+                        executeSingleBatch(statement, executionResults, isGeneratedKeys);
                         statement.clearBatch();
                     }
                 }
-                executeBatch(statement, executionResults, isGeneratedKeys);
+                // Execute leftover statements if count is not multiplier of batchSize
+                executeSingleBatch(statement, executionResults, isGeneratedKeys);
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
@@ -256,8 +257,8 @@ public class ExecuteProcessor {
         return Arrays.stream(DdlKeyword.values()).anyMatch(ddlKeyword -> upperCaseQuery.startsWith(ddlKeyword.name()));
     }
 
-    private static void executeBatch(PreparedStatement statement, List<BMap<BString, Object>> executionResults,
-                                     boolean isGeneratedKeys) throws SQLException {
+    private static void executeSingleBatch(PreparedStatement statement, List<BMap<BString, Object>> executionResults,
+                                           boolean isGeneratedKeys) throws SQLException {
         ResultSet resultSet = null;
         try {
             int[] counts = statement.executeBatch();
