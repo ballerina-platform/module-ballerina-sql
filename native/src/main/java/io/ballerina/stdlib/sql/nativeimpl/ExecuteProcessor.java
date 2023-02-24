@@ -183,10 +183,11 @@ public class ExecuteProcessor {
             }
             Connection connection = null;
             PreparedStatement statement = null;
-            ResultSet resultSet = null;
+            List<ResultSet> resultSets = new ArrayList<>();
             String sqlQuery = null;
             List<Object[]> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
+            List<int[]> batchCounts = new ArrayList<>();
             try {
                 Object[] paramSQLObjects = paramSQLStrings.getValues();
                 ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[0]));
@@ -208,39 +209,47 @@ public class ExecuteProcessor {
                 } else {
                     statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
                 }
-
+                int batchSize = 1000;
+                int batchSizeCount = 0;
                 for (Object[] param : parameters) {
                     statementParameterProcessor.setParams(connection, statement, param);
                     statement.addBatch();
-                }
-
-                int[] counts = statement.executeBatch();
-
-                if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
-                    resultSet = statement.getGeneratedKeys();
-                }
-                for (int count : counts) {
-                    Map<String, Object> resultField = new HashMap<>();
-                    resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                    Object lastInsertedId = null;
-                    if (resultSet != null && resultSet.next()) {
-                        lastInsertedId = getGeneratedKeys(resultSet);
+                    if (++batchSizeCount % batchSize == 0) {
+                        executeBatch(statement, sqlDatasource, sqlQuery, resultSets, batchCounts);
+                        statement.clearBatch();
                     }
-                    resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                            Constants.EXECUTION_RESULT_RECORD, resultField));
+                }
+                executeBatch(statement, sqlDatasource, sqlQuery, resultSets, batchCounts);
+                batchSizeCount = -1;
+                for (int[] counts : batchCounts) {
+                    ResultSet resultSet = resultSets.get(++batchSizeCount);
+                    for (int count : counts) {
+                        Map<String, Object> resultField = new HashMap<>();
+                        resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                        Object lastInsertedId = null;
+
+                        if (resultSet != null && resultSet.next()) {
+                            lastInsertedId = getGeneratedKeys(resultSet);
+                        }
+                        resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
+                        executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                                Constants.EXECUTION_RESULT_RECORD, resultField));
+                    }
+                    closeResultSet(resultSet);
                 }
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
             } catch (BatchUpdateException e) {
-                int[] updateCounts = e.getUpdateCounts();
-                for (int count : updateCounts) {
-                    Map<String, Object> resultField = new HashMap<>();
-                    resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                    resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                            Constants.EXECUTION_RESULT_RECORD, resultField));
+                batchCounts.add(e.getUpdateCounts());
+                for (int[] updateCounts : batchCounts) {
+                    for (int count : updateCounts) {
+                        Map<String, Object> resultField = new HashMap<>();
+                        resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                        resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
+                        executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                                Constants.EXECUTION_RESULT_RECORD, resultField));
+                    }
                 }
                 if (e.getMessage().contains("The statement must be executed before any results can be obtained")) {
                     return ErrorGenerator.getSQLDatabaseError(
@@ -259,7 +268,7 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLError(th,
                         String.format("Error while executing batch command starting with: '%s'. ", sqlQuery));
             } finally {
-                closeResources(isWithinTrxBlock, resultSet, statement, connection);
+                closeResources(isWithinTrxBlock, null, statement, connection);
             }
         } else {
             return ErrorGenerator.getSQLApplicationError("Client is not properly initialized!");
@@ -269,6 +278,25 @@ public class ExecuteProcessor {
     private static boolean isDdlStatement(String query) {
         String upperCaseQuery = query.trim().toUpperCase(Locale.ENGLISH);
         return Arrays.stream(DdlKeyword.values()).anyMatch(ddlKeyword -> upperCaseQuery.startsWith(ddlKeyword.name()));
+    }
+
+    private static void executeBatch(PreparedStatement statement, SQLDatasource sqlDatasource, String sqlQuery,
+                                     List<ResultSet> resultSets, List<int[]> batchCounts) throws SQLException {
+        batchCounts.add(statement.executeBatch());
+        if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
+            resultSets.add(statement.getGeneratedKeys());
+        } else {
+            resultSets.add(null);
+        }
+    }
+
+    private static void closeResultSet(ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException ignored) {
+            }
+        }
     }
 
     private enum DdlKeyword {
