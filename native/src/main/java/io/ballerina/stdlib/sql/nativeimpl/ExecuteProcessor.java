@@ -276,15 +276,11 @@ public class ExecuteProcessor {
                         Constants.EXECUTION_RESULT_RECORD, resultField));
             }
         } finally {
-            closeResultSet(resultSet);
-        }
-    }
-
-    private static void closeResultSet(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException ignored) {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException ignored) {
+                }
             }
         }
     }
