@@ -212,10 +212,10 @@ public class ExecuteProcessor {
                 if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
                     processResultSet = true;
                 }
-                for (int i = 0; i < parameters.size(); i++) {
-                    statementParameterProcessor.setParams(connection, statement, parameters.get(i));
+                for (int paramIndex = 0; paramIndex < parameters.size(); paramIndex++) {
+                    statementParameterProcessor.setParams(connection, statement, parameters.get(paramIndex));
                     statement.addBatch();
-                    if ((i + 1) % batchSize == 0) {
+                    if ((paramIndex + 1) % batchSize == 0) {
                         executeSingleBatch(statement, executionResults, processResultSet);
                         statement.clearBatch();
                     }
