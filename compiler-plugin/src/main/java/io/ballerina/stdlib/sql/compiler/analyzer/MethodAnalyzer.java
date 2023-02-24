@@ -54,6 +54,7 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
         if (!diagnostics.isEmpty()) {
             diagnostics.stream()
                 .filter(diagnostic -> diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR)
+                .filter(diagnostic -> diagnostic.diagnosticInfo().code() != null)
                 .filter(diagnostic ->
                         diagnostic.diagnosticInfo().code().equals(CANNOT_INFER_TYPE_FOR_PARAM.diagnosticId()) ||
                                 diagnostic.diagnosticInfo().code().equals(
