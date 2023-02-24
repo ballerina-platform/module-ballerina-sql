@@ -186,15 +186,15 @@ public class ExecuteProcessor {
             String sqlQuery = null;
             List<Object[]> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
-            boolean isGeneratedKeys = false;
+            boolean processResultSet = false;
             int batchSize = 1000;
             try {
                 Object[] paramSQLObjects = paramSQLStrings.getValues();
                 ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[0]));
                 sqlQuery = parameterizedQuery.getSqlQuery();
                 parameters.add(parameterizedQuery.getInsertions());
-                for (int i = 1; i < paramSQLStrings.size(); i++) {
-                    parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[i]));
+                for (int paramIndex = 1; paramIndex < paramSQLStrings.size(); paramIndex++) {
+                    parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[paramIndex]));
                     if (sqlQuery.equals(parameterizedQuery.getSqlQuery())) {
                         parameters.add(parameterizedQuery.getInsertions());
                     } else {
@@ -210,18 +210,18 @@ public class ExecuteProcessor {
                     statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
                 }
                 if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
-                    isGeneratedKeys = true;
+                    processResultSet = true;
                 }
                 for (int i = 0; i < parameters.size(); i++) {
                     statementParameterProcessor.setParams(connection, statement, parameters.get(i));
                     statement.addBatch();
                     if ((i + 1) % batchSize == 0) {
-                        executeSingleBatch(statement, executionResults, isGeneratedKeys);
+                        executeSingleBatch(statement, executionResults, processResultSet);
                         statement.clearBatch();
                     }
                 }
                 // Execute leftover statements if count is not multiplier of batchSize
-                executeSingleBatch(statement, executionResults, isGeneratedKeys);
+                executeSingleBatch(statement, executionResults, processResultSet);
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
@@ -245,6 +245,7 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLError(th,
                         String.format("Error while executing batch command starting with: '%s'. ", sqlQuery));
             } finally {
+                // The result set is created and cleaned in the executeSingleBatch().
                 closeResources(isWithinTrxBlock, null, statement, connection);
             }
         } else {
