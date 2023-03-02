@@ -1,4 +1,4 @@
-Ballerina SQL Library
+Ballerina SQL Librar
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-sql/actions/workflows/build-timestamped-master.yml)
