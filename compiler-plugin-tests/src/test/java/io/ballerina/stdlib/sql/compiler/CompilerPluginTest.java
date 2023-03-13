@@ -69,25 +69,33 @@ public class CompilerPluginTest {
 
         Assert.assertEquals(availableErrors, 5);
 
-        DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionZero.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionZero.messageFormat(), SQLDiagnosticsCodes.SQL_101.getMessage());
+        for (int i = 0; i < errorDiagnosticsList.size(); i++) {
+            switch (i) {
+                case 0:
+                case 2:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_103.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_103.getMessage());
+                    break;
+                case 1:
+                case 4:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_101.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_101.getMessage());
+                    break;
 
-        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_103.getCode());
-        Assert.assertEquals(maxConnectionLifeTime.messageFormat(), SQLDiagnosticsCodes.SQL_103.getMessage());
-
-        DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
-        Assert.assertEquals(minIdleConnections.code(), SQLDiagnosticsCodes.SQL_102.getCode());
-        Assert.assertEquals(minIdleConnections.messageFormat(), SQLDiagnosticsCodes.SQL_102.getMessage());
-
-        DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionNegative.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(), SQLDiagnosticsCodes.SQL_101.getMessage());
-
-        DiagnosticInfo maxConnectionLifeTimeNegative = errorDiagnosticsList.get(4).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTimeNegative.code(), SQLDiagnosticsCodes.SQL_103.getCode());
-        Assert.assertEquals(maxConnectionLifeTimeNegative.messageFormat(), SQLDiagnosticsCodes.SQL_103.getMessage());
+                case 3:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_102.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_102.getMessage());
+                    break;
+                default:
+                    Assert.fail();
+            }
+        }
     }
 
     @Test
@@ -100,21 +108,21 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 4);
+        Assert.assertEquals(availableErrors, 29);
 
-        DiagnosticInfo charOutParameter = errorDiagnosticsList.get(0).diagnosticInfo();
+        DiagnosticInfo charOutParameter = errorDiagnosticsList.get(1).diagnosticInfo();
         Assert.assertEquals(charOutParameter.code(), SQLDiagnosticsCodes.SQL_211.getCode());
         Assert.assertEquals(charOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_211.getMessage());
 
-        DiagnosticInfo timeOutParameter = errorDiagnosticsList.get(1).diagnosticInfo();
+        DiagnosticInfo timeOutParameter = errorDiagnosticsList.get(2).diagnosticInfo();
         Assert.assertEquals(timeOutParameter.code(), SQLDiagnosticsCodes.SQL_223.getCode());
         Assert.assertEquals(timeOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_223.getMessage());
 
-        DiagnosticInfo dateOutParameter = errorDiagnosticsList.get(2).diagnosticInfo();
+        DiagnosticInfo dateOutParameter = errorDiagnosticsList.get(3).diagnosticInfo();
         Assert.assertEquals(dateOutParameter.code(), SQLDiagnosticsCodes.SQL_222.getCode());
         Assert.assertEquals(dateOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_222.getMessage());
 
-        DiagnosticInfo timeWithTimezoneOutParameter = errorDiagnosticsList.get(3).diagnosticInfo();
+        DiagnosticInfo timeWithTimezoneOutParameter = errorDiagnosticsList.get(4).diagnosticInfo();
         Assert.assertEquals(timeWithTimezoneOutParameter.code(), SQLDiagnosticsCodes.SQL_231.getCode());
         Assert.assertEquals(timeWithTimezoneOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_231.getMessage());
     }
