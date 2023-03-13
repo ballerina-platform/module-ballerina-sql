@@ -165,6 +165,6 @@ public function main() returns error? {
     int _ = check xmlOut.get(int);
 
     http:Client httpclient = check new ("adasdsasd");
-    _ = check httpclient->get("sdfsdf");
+    anydata _ = check httpclient->get("sdfsdf");
     _ = httpclient.getCookieStore();
 }
