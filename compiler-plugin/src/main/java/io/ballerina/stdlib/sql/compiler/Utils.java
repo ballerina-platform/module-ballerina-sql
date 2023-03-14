@@ -52,6 +52,9 @@ import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_231;
  */
 public class Utils {
 
+    private Utils() {
+    }
+
     public static boolean hasCompilationErrors(SyntaxNodeAnalysisContext ctx) {
         for (Diagnostic diagnostic : ctx.compilation().diagnosticResult().diagnostics()) {
             if (diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR) {
