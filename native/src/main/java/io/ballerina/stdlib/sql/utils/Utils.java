@@ -482,7 +482,8 @@ public class Utils {
         for (ColumnDefinition columnDefinition : columnDefinitions) {
             if (columnDefinition instanceof RecordColumnDefinition) {
                 RecordColumnDefinition recordColumnDef = (RecordColumnDefinition) columnDefinition;
-                BMap<BString, Object> innerRecord = ValueCreator.createMapValue(recordColumnDef.getBallerinaType());
+                BMap<BString, Object> innerRecord = ValueCreator.createRecordValue(
+                        (RecordType) recordColumnDef.getBallerinaType());
                 for (PrimitiveTypeColumnDefinition innerField : recordColumnDef.getInnerFields()) {
                     innerRecord.put(fromString(innerField.getBallerinaFieldName()),
                             Utils.getResult(resultSet, innerField.getResultSetColumnIndex(), innerField,

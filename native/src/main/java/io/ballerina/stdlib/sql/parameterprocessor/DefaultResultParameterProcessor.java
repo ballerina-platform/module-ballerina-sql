@@ -270,7 +270,8 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             return null;
         }
         Field[] internalStructFields = structType.getFields().values().toArray(new Field[0]);
-        BMap<BString, Object> struct = ValueCreator.createMapValue(structType);
+        BMap<BString, Object> struct = ValueCreator.createRecordValue(
+                (RecordType) structType);
         Object[] dataArray = structValue.getAttributes();
         if (dataArray != null) {
             if (dataArray.length != internalStructFields.length) {
