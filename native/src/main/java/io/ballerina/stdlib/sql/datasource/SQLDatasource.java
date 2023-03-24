@@ -312,7 +312,9 @@ public class SQLDatasource {
                     //It is required to set the url to the datasource property when the
                     //datasource class name is provided. Because according to hikari
                     //either jdbcUrl or datasourceClassName will be honoured.
-                    config.addDataSourceProperty(Constants.Options.URL.getValue(), sqlDatasourceParams.url);
+                    if (sqlDatasourceParams.url != null && !sqlDatasourceParams.url.contains("jdbc:interbase")) {
+                        config.addDataSourceProperty(Constants.Options.URL.getValue(), sqlDatasourceParams.url);
+                    }
                 }
                 if (sqlDatasourceParams.user != null) {
                     config.addDataSourceProperty(Constants.USERNAME, sqlDatasourceParams.user);
