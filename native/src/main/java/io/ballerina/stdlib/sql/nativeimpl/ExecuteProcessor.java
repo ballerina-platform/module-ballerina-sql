@@ -183,18 +183,18 @@ public class ExecuteProcessor {
             }
             Connection connection = null;
             PreparedStatement statement = null;
-            List<ResultSet> resultSets = new ArrayList<>();
             String sqlQuery = null;
             List<Object[]> parameters = new ArrayList<>();
             List<BMap<BString, Object>> executionResults = new ArrayList<>();
-            List<int[]> batchCounts = new ArrayList<>();
+            boolean processResultSet = false;
+            int batchSize = 1000;
             try {
                 Object[] paramSQLObjects = paramSQLStrings.getValues();
                 ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[0]));
                 sqlQuery = parameterizedQuery.getSqlQuery();
                 parameters.add(parameterizedQuery.getInsertions());
-                for (int i = 1; i < paramSQLStrings.size(); i++) {
-                    parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[i]));
+                for (int paramIndex = 1; paramIndex < paramSQLStrings.size(); paramIndex++) {
+                    parameterizedQuery = Utils.getParameterizedSQLQuery(((BObject) paramSQLObjects[paramIndex]));
                     if (sqlQuery.equals(parameterizedQuery.getSqlQuery())) {
                         parameters.add(parameterizedQuery.getInsertions());
                     } else {
@@ -209,47 +209,30 @@ public class ExecuteProcessor {
                 } else {
                     statement = connection.prepareStatement(sqlQuery, Statement.NO_GENERATED_KEYS);
                 }
-                int batchSize = 1000;
-                int batchSizeCount = 0;
-                for (Object[] param : parameters) {
-                    statementParameterProcessor.setParams(connection, statement, param);
+                if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
+                    processResultSet = true;
+                }
+                for (int paramIndex = 0; paramIndex < parameters.size(); paramIndex++) {
+                    statementParameterProcessor.setParams(connection, statement, parameters.get(paramIndex));
                     statement.addBatch();
-                    if (++batchSizeCount % batchSize == 0) {
-                        executeBatch(statement, sqlDatasource, sqlQuery, resultSets, batchCounts);
+                    if ((paramIndex + 1) % batchSize == 0) {
+                        executeSingleBatch(statement, executionResults, processResultSet);
                         statement.clearBatch();
                     }
                 }
-                executeBatch(statement, sqlDatasource, sqlQuery, resultSets, batchCounts);
-                batchSizeCount = -1;
-                for (int[] counts : batchCounts) {
-                    ResultSet resultSet = resultSets.get(++batchSizeCount);
-                    for (int count : counts) {
-                        Map<String, Object> resultField = new HashMap<>();
-                        resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                        Object lastInsertedId = null;
-
-                        if (resultSet != null && resultSet.next()) {
-                            lastInsertedId = getGeneratedKeys(resultSet);
-                        }
-                        resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
-                        executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                                Constants.EXECUTION_RESULT_RECORD, resultField));
-                    }
-                    closeResultSet(resultSet);
-                }
+                // Execute leftover statements if count is not multiplier of batchSize
+                executeSingleBatch(statement, executionResults, processResultSet);
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
             } catch (BatchUpdateException e) {
-                batchCounts.add(e.getUpdateCounts());
-                for (int[] updateCounts : batchCounts) {
-                    for (int count : updateCounts) {
-                        Map<String, Object> resultField = new HashMap<>();
-                        resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
-                        resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
-                        executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
-                                Constants.EXECUTION_RESULT_RECORD, resultField));
-                    }
+                int[] updateCounts = e.getUpdateCounts();
+                for (int count : updateCounts) {
+                    Map<String, Object> resultField = new HashMap<>();
+                    resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                    resultField.put(Constants.LAST_INSERTED_ID_FIELD, null);
+                    executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                            Constants.EXECUTION_RESULT_RECORD, resultField));
                 }
                 return ErrorGenerator.getSQLBatchExecuteError(e, executionResults,
                         String.format("Error while executing batch command starting with: '%s'.", sqlQuery));
@@ -262,6 +245,7 @@ public class ExecuteProcessor {
                 return ErrorGenerator.getSQLError(th,
                         String.format("Error while executing batch command starting with: '%s'. ", sqlQuery));
             } finally {
+                // The result set is created and cleaned in the executeSingleBatch().
                 closeResources(isWithinTrxBlock, null, statement, connection);
             }
         } else {
@@ -274,21 +258,31 @@ public class ExecuteProcessor {
         return Arrays.stream(DdlKeyword.values()).anyMatch(ddlKeyword -> upperCaseQuery.startsWith(ddlKeyword.name()));
     }
 
-    private static void executeBatch(PreparedStatement statement, SQLDatasource sqlDatasource, String sqlQuery,
-                                     List<ResultSet> resultSets, List<int[]> batchCounts) throws SQLException {
-        batchCounts.add(statement.executeBatch());
-        if (sqlDatasource.getBatchExecuteGKFlag() && !isDdlStatement(sqlQuery)) {
-            resultSets.add(statement.getGeneratedKeys());
-        } else {
-            resultSets.add(null);
-        }
-    }
-
-    private static void closeResultSet(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException ignored) {
+    private static void executeSingleBatch(PreparedStatement statement, List<BMap<BString, Object>> executionResults,
+                                           boolean processResultSet) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            int[] counts = statement.executeBatch();
+            if (processResultSet) {
+                resultSet = statement.getGeneratedKeys();
+            }
+            for (int count : counts) {
+                Object lastInsertedId = null;
+                Map<String, Object> resultField = new HashMap<>();
+                resultField.put(Constants.AFFECTED_ROW_COUNT_FIELD, count);
+                if (resultSet != null && resultSet.next()) {
+                    lastInsertedId = getGeneratedKeys(resultSet);
+                }
+                resultField.put(Constants.LAST_INSERTED_ID_FIELD, lastInsertedId);
+                executionResults.add(ValueCreator.createRecordValue(ModuleUtils.getModule(),
+                        Constants.EXECUTION_RESULT_RECORD, resultField));
+            }
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException ignored) {
+                }
             }
         }
     }

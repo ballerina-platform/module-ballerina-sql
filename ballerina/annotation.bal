@@ -21,5 +21,5 @@ public type ColumnConfig record {|
     string name;
 |};
 
-# The Annotation used to specify which database column matches the record field.
+# The Annotation used to specify which database column matches the Typed record field.
 public annotation ColumnConfig Column on record field;
