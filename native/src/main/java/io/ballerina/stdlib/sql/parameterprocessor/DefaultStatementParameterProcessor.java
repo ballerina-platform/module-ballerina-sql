@@ -21,6 +21,7 @@ package io.ballerina.stdlib.sql.parameterprocessor;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -30,6 +31,7 @@ import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.io.channels.base.Channel;
 import io.ballerina.stdlib.io.channels.base.CharacterChannel;
@@ -437,8 +439,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 }
             } else if (innerValue instanceof BObject) {
                 objectValue = (BObject) innerValue;
-                if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
-                        objectValue.getType().getPackage().toString()
+                ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(objectValue));
+                if (objectValueType.getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
+                        objectValueType.getPackage().toString()
                                 .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     try {
                         Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
@@ -689,8 +692,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             }
         } else if (value instanceof BObject) {
             BObject objectValue = (BObject) value;
-            if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
-                    objectValue.getType().getPackage().toString()
+            ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(objectValue));
+            if (objectValueType.getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
+                    objectValueType.getPackage().toString()
                             .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                 try {
                     Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
@@ -722,8 +726,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 preparedStatement.setClob(index, clob);
             } else if (value instanceof BObject) {
                 BObject objectValue = (BObject) value;
-                if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
-                        objectValue.getType().getPackage().toString()
+                ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(((BValue) objectValue).getType());
+                if (objectValueType.getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
+                        objectValueType.getPackage().toString()
                                 .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     CharacterChannel charChannel = (CharacterChannel) objectValue.getNativeData(
                             IOConstants.CHARACTER_CHANNEL_NAME);
@@ -826,19 +831,19 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     public int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = TypeUtils.getType(typedValue).getName();
         throw new DataError("Unsupported OutParameter type: " + sqlType);
     }
 
     protected int getCustomSQLType(BObject typedValue) throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = ((BValue) typedValue).getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
 
     protected void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
                                           int index, BObject typedValue)
             throws SQLException, DataError {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = ((BValue) typedValue).getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
 

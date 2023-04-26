@@ -191,7 +191,7 @@ public class CallProcessor {
             if (object instanceof BObject) {
                 BObject objectValue = (BObject) object;
                 String parameterType;
-                String objectType = objectValue.getType().getName();
+                String objectType = TypeUtils.getType(objectValue).getName();
                 if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
                     parameterType = Constants.ParameterObject.INOUT_PARAMETER;
                 } else if (objectType.endsWith("OutParameter")) {
@@ -351,7 +351,7 @@ public class CallProcessor {
     private static int getOutParameterType(BObject typedValue,
                                            AbstractStatementParameterProcessor statementParameterProcessor)
             throws ApplicationError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = TypeUtils.getType(typedValue).getName();
         int sqlTypeValue;
         switch (sqlType) {
             case Constants.OutParameterTypes.VARCHAR:
