@@ -71,6 +71,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -90,6 +92,7 @@ import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
 import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
+import static io.ballerina.stdlib.sql.Constants.HIKARI;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
 import static io.ballerina.stdlib.sql.Constants.RECORD_FIELD_ANN_PREFIX;
 import static io.ballerina.stdlib.time.util.Constants.ANALOG_GIGA;
@@ -1356,8 +1359,13 @@ public class Utils {
     }
 
     public static void disableHikariLogs() {
-        Logger hikariLogger = Logger.getLogger(Constants.HIKARI_CLASS_NAME);
-        hikariLogger.setLevel(Level.OFF);
-        LogManager.getLogManager().addLogger(hikariLogger);
+        Logger.getLogger("").setLevel(Level.OFF);
+        LogManager logManager = LogManager.getLogManager();
+        Enumeration<String> names = logManager.getLoggerNames();
+        for (String name : Collections.list(names)) {
+            if (name.contains(HIKARI)) {
+                LogManager.getLogManager().getLogger(name).setLevel(Level.OFF);
+            }
+        }
     }
 }
