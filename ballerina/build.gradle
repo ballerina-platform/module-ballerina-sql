@@ -67,13 +67,6 @@ ballerina {
     langVersion = ballerinaLangVersion
 }
 
-// TODO: Remove this task after this improvement(https://github.com/ballerina-platform/ballerina-lang/issues/38826)
-task removeTrasactionTestsForNativeTest {
-    if (project.hasProperty('balNativeTest')) {
-        delete "${project.projectDir}/tests/local-transaction-test.bal"
-    }
-}
-
 task updateTomlFiles {
     doLast {
         def newConfig = ballerinaTomlFilePlaceHolder.text.replace('@project.version@', project.version.toString())
@@ -128,4 +121,3 @@ build.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
 test.dependsOn ":${packageName}-test-utils:build"
-test.dependsOn removeTrasactionTestsForNativeTest
