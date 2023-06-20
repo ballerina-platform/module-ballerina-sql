@@ -96,14 +96,15 @@ CREATE TABLE IF NOT EXISTS MixTypes (
   double_array DOUBLE ARRAY,
   boolean_array BOOLEAN ARRAY,
   string_array VARCHAR (50) ARRAY,
+  enum_type VARCHAR(10),
   PRIMARY KEY (row_id)
 );
 
 INSERT INTO MixTypes (row_id, int_type, long_type, float_type, double_type, boolean_type, string_type, json_type, decimal_type,
-  int_array, long_array, float_array, double_array, boolean_array, string_array)
+  int_array, long_array, float_array, double_array, boolean_array, string_array, enum_type)
 VALUES (1, 1, 9223372036854774807, 123.34, 2139095039, TRUE, 'Hello', '[1, 2, 3]', 342452151425.4556, ARRAY[1, 2, 3],
   ARRAY[100000000, 200000000, 300000000], ARRAY[245.23, 5559.49, 8796.123],
-  ARRAY[245.23, 5559.49, 8796.123], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina']);
+  ARRAY[245.23, 5559.49, 8796.123], ARRAY[TRUE, FALSE, TRUE], ARRAY['Hello', 'Ballerina'], 'TYPE_2');
 
 CREATE TABLE IF NOT EXISTS DateTimeTypes(
   row_id         INTEGER NOT NULL,
