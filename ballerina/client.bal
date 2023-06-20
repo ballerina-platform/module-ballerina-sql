@@ -17,7 +17,7 @@
 import ballerina/jballerina.java;
 
 # Represents an SQL client.
-public type Client client object {
+public type Client isolated client object {
 
     # Executes the query, which may return multiple results.
     # When processing the stream, make sure to consume all fetched data or close the stream.
