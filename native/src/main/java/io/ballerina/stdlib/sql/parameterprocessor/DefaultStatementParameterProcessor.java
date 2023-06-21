@@ -757,7 +757,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     private void setDateTimeAndTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
-        BMap zoneMap = null;
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTimestamp(index, null);
         } else {
@@ -793,11 +793,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (dateMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
-                        zoneMap = (BMap) dateMap.get(StringUtils.
+                        BMap zoneMap = (BMap) dateMap.get(StringUtils.
                                 fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET));
                         zoneHours = Math.toIntExact(zoneMap.getIntValue(StringUtils.
                                 fromString(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)));
@@ -826,7 +825,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     }
                 } catch (Throwable ex) {
                     if (ex instanceof SQLFeatureNotSupportedException) {
-                        if (zoneMap != null) {
+                        if (timeZone) {
                             throw new TypeMismatchError("Unsupported type: offset of Civil is not supported by " +
                                     "this database. " + ex.getMessage());
                         } else {
@@ -1192,7 +1191,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     protected void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
-        BMap zoneMap = null;
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTime(index, null);
         } else {
@@ -1214,11 +1213,10 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (timeMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
-                        zoneMap = (BMap) timeMap.get(StringUtils.
+                        BMap zoneMap = (BMap) timeMap.get(StringUtils.
                                 fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET));
                         zoneHours = Math.toIntExact(zoneMap.getIntValue(StringUtils.
                                 fromString(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)));
@@ -1246,7 +1244,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     }
                 } catch (Throwable ex) {
                     if (ex instanceof SQLFeatureNotSupportedException) {
-                        if (zoneMap != null) {
+                        if (timeZone) {
                             throw new TypeMismatchError("Unsupported type: offset of Civil is not supported by " +
                                     "this database. " + ex.getMessage());
                         } else {
