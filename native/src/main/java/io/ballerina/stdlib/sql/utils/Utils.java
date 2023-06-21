@@ -600,8 +600,7 @@ public class Utils {
                     resultParameterProcessor.processIntResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.STRING_TAG
                         || ballerinaType.getTag() == TypeTags.ANY_TAG
-                        || ballerinaType.getTag() == TypeTags.ANYDATA_TAG
-                        || isEnumType(ballerinaType)) {
+                        || ballerinaType.getTag() == TypeTags.ANYDATA_TAG) {
                     return resultParameterProcessor.processCharResult(resultSet, columnIndex, sqlType, ballerinaType);
                 } else if (ballerinaType.getTag() == TypeTags.BOOLEAN_TAG) {
                     return resultParameterProcessor.processBooleanResult(resultSet, columnIndex, sqlType,
