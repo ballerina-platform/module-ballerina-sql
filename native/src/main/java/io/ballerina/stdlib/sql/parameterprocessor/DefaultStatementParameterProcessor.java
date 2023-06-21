@@ -826,7 +826,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 } catch (Throwable ex) {
                     if (ex instanceof SQLFeatureNotSupportedException) {
                         if (timeZone) {
-                            throw new TypeMismatchError("Unsupported type: offset of Civil is not supported by " +
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
                                     "this database. " + ex.getMessage());
                         } else {
                             throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
@@ -1245,7 +1245,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 } catch (Throwable ex) {
                     if (ex instanceof SQLFeatureNotSupportedException) {
                         if (timeZone) {
-                            throw new TypeMismatchError("Unsupported type: offset of Civil is not supported by " +
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
                                     "this database. " + ex.getMessage());
                         } else {
                             throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
