@@ -41,6 +41,7 @@ import io.ballerina.stdlib.io.utils.IOUtils;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.utils.Utils;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
@@ -55,6 +56,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -755,6 +757,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     private void setDateTimeAndTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTimestamp(index, null);
         } else {
@@ -790,7 +793,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (dateMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
@@ -821,7 +823,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     } else {
                         preparedStatement.setTimestamp(index, Timestamp.valueOf(localDateTime));
                     }
-                } catch (Throwable e) {
+                } catch (Throwable ex) {
+                    if (ex instanceof SQLFeatureNotSupportedException) {
+                        if (timeZone) {
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
+                                    "this database. " + ex.getMessage());
+                        } else {
+                            throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
+                        }
+                    }
                     throw new ConversionError("Unsupported value: " + value + " for " + sqlType);
                 }
             } else {
@@ -1181,6 +1191,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     protected void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTime(index, null);
         } else {
@@ -1202,7 +1213,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (timeMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
@@ -1232,7 +1242,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     } else {
                         preparedStatement.setTime(index, Time.valueOf(localTime));
                     }
-                } catch (Throwable e) {
+                } catch (Throwable ex) {
+                    if (ex instanceof SQLFeatureNotSupportedException) {
+                        if (timeZone) {
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
+                                    "this database. " + ex.getMessage());
+                        } else {
+                            throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
+                        }
+                    }
                     throw new ConversionError("Unsupported value: " + value + " for Time Value");
                 }
             } else {
