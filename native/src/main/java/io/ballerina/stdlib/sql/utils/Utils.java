@@ -308,6 +308,10 @@ public class Utils {
 
     private static Type validFieldConstraint(int sqlType, Type type) {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            if (isEnumType(type)) {
+                return type;
+            }
+
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
                 Type referredType = TypeUtils.getReferredType(memberType);
@@ -321,6 +325,7 @@ public class Utils {
                 return type;
             }
         }
+
         return null;
     }
 
@@ -622,6 +627,10 @@ public class Utils {
 
     private static boolean isValidFieldConstraint(int sqlType, Type type) {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            if (isEnumType(type)) {
+                return true;
+            }
+
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
                 // In case if the member type is another union type, check recursively.
@@ -630,9 +639,9 @@ public class Utils {
                 }
             }
             return false;
-        } else {
-            return isValidPrimitiveConstraint(sqlType, type);
         }
+
+        return isValidPrimitiveConstraint(sqlType, type);
     }
 
     private static Type getDefaultBallerinaType(int sqlType) {
@@ -1334,6 +1343,12 @@ public class Utils {
 
     public static boolean isSupportedRecordType(Type ballerinaType) {
         return KNOWN_RECORD_TYPES.contains(getBTypeName(ballerinaType));
+    }
+
+    public static boolean isEnumType(Type ballerinaType) {
+        return ballerinaType instanceof UnionType &&
+                ((UnionType) ballerinaType).getMemberTypes().stream().allMatch(memberType ->
+                        memberType.getTag() == TypeTags.FINITE_TYPE_TAG || memberType.getTag() == TypeTags.NULL_TAG);
     }
 
     private static BMapInitialValueEntry[] getInitialValueEntries(Map<String, Object> struct) {
