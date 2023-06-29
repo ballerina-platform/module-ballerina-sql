@@ -110,7 +110,7 @@ public class Constants {
      */
     public static class TimeRecordTypes {
 
-        private TimeRecordTypes(){
+        private TimeRecordTypes() {
         }
 
         public static final String PACKAGE_NAME = "ballerina/time";

@@ -48,4 +48,52 @@
         <Class name="io.ballerina.stdlib.sql.ParameterizedQuery"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.datasource.PoolKey"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.datasource.SQLDatasource$SQLDatasourceParams"/>
+        <Method name="setConnectionPool"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.datasource.SQLDatasource$SQLDatasourceParams"/>
+        <Method name="setOptions"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.datasource.SQLDatasource$SQLDatasourceParams"/>
+        <Method name="setPoolProperties"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor"/>
+        <Method name="getInstance"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContext"/>
+        <Method name="getConnection"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContext"/>
+        <Method name="getXAResource"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContext"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.utils.ColumnDefinition"/>
+        <Method name="getBallerinaType"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.utils.RecordColumnDefinition"/>
+        <Method name="getInnerFields"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
 </FindBugsFilter>

@@ -47,10 +47,10 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
 
 jacoco {
-    toolVersion = "0.8.6"
+    toolVersion = "0.8.10"
 }
 
 test {
@@ -75,7 +75,7 @@ test {
 jacocoTestReport {
     dependsOn test
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }
 
