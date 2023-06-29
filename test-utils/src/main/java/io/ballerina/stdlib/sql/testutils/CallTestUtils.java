@@ -29,7 +29,7 @@ import io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProce
  * Native class for test client call method.
  */
 public class CallTestUtils {
-    private CallTestUtils(){ 
+    private CallTestUtils() {
     }
     
     public static Object nativeCall(Environment env, BObject client, BObject paramSQLString, BArray recordTypes) {
