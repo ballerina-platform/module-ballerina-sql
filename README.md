@@ -429,8 +429,8 @@ This repository only contains the source code for the package.
 
 ### Set up the prerequisites
 
-1. Download and install Java SE Development Kit (JDK) version 11 (from one of the following locations).
-   * [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+1. Download and install Java SE Development Kit (JDK) version 17 (from one of the following locations).
+   * [Oracle](https://www.oracle.com/java/technologies/downloads/)
    * [OpenJDK](https://adoptium.net/)
 
 2. Download and install [Docker](https://www.docker.com/get-started).

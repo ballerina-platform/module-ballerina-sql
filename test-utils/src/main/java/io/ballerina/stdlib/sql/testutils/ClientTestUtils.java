@@ -29,7 +29,7 @@ import io.ballerina.stdlib.sql.nativeimpl.ClientProcessor;
  */
 public class ClientTestUtils {
     
-    private ClientTestUtils(){ 
+    private ClientTestUtils() {
     }
 
     public static Object createSqlClient(BObject client, BMap<BString, Object> sqlDatasourceParams,
