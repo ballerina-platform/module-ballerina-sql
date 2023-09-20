@@ -364,7 +364,7 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
 
 @test:Config {
     groups: ["procedures"],
-    dependsOn: [testCreateProcedures8]
+    dependsOn: [testCreateProcedures9]
 }
 function testCallWithInoutParams() returns error? {
 

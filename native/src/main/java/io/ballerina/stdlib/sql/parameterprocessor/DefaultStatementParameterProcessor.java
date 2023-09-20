@@ -21,6 +21,7 @@ package io.ballerina.stdlib.sql.parameterprocessor;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -30,6 +31,7 @@ import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.io.channels.base.Channel;
 import io.ballerina.stdlib.io.channels.base.CharacterChannel;
@@ -39,6 +41,7 @@ import io.ballerina.stdlib.io.utils.IOUtils;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
+import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.utils.Utils;
 import io.ballerina.stdlib.time.util.TimeValueHandler;
 
@@ -53,6 +56,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -437,8 +441,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 }
             } else if (innerValue instanceof BObject) {
                 objectValue = (BObject) innerValue;
-                if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
-                        objectValue.getType().getPackage().toString()
+                ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(objectValue));
+                if (objectValueType.getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
+                        objectValueType.getPackage().toString()
                                 .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     try {
                         Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
@@ -689,8 +694,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
             }
         } else if (value instanceof BObject) {
             BObject objectValue = (BObject) value;
-            if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
-                    objectValue.getType().getPackage().toString()
+            ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(objectValue));
+            if (objectValueType.getName().equalsIgnoreCase(Constants.READ_BYTE_CHANNEL_STRUCT) &&
+                    objectValueType.getPackage().toString()
                             .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                 try {
                     Channel byteChannel = (Channel) objectValue.getNativeData(IOConstants.BYTE_CHANNEL_NAME);
@@ -722,8 +728,9 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                 preparedStatement.setClob(index, clob);
             } else if (value instanceof BObject) {
                 BObject objectValue = (BObject) value;
-                if (objectValue.getType().getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
-                        objectValue.getType().getPackage().toString()
+                ObjectType objectValueType = (ObjectType) TypeUtils.getReferredType(((BValue) objectValue).getType());
+                if (objectValueType.getName().equalsIgnoreCase(Constants.READ_CHAR_CHANNEL_STRUCT) &&
+                        objectValueType.getPackage().toString()
                                 .equalsIgnoreCase(IOUtils.getIOPackage().toString())) {
                     CharacterChannel charChannel = (CharacterChannel) objectValue.getNativeData(
                             IOConstants.CHARACTER_CHANNEL_NAME);
@@ -750,6 +757,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     private void setDateTimeAndTimestamp(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTimestamp(index, null);
         } else {
@@ -785,7 +793,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (dateMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
@@ -816,7 +823,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     } else {
                         preparedStatement.setTimestamp(index, Timestamp.valueOf(localDateTime));
                     }
-                } catch (Throwable e) {
+                } catch (Throwable ex) {
+                    if (ex instanceof SQLFeatureNotSupportedException) {
+                        if (timeZone) {
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
+                                    "this database. " + ex.getMessage());
+                        } else {
+                            throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
+                        }
+                    }
                     throw new ConversionError("Unsupported value: " + value + " for " + sqlType);
                 }
             } else {
@@ -826,19 +841,19 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
     }
 
     public int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = TypeUtils.getType(typedValue).getName();
         throw new DataError("Unsupported OutParameter type: " + sqlType);
     }
 
     protected int getCustomSQLType(BObject typedValue) throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = ((BValue) typedValue).getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
 
     protected void setCustomSqlTypedParam(Connection connection, PreparedStatement preparedStatement,
                                           int index, BObject typedValue)
             throws SQLException, DataError {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = ((BValue) typedValue).getType().getName();
         throw new DataError("Unsupported SQL type: " + sqlType);
     }
 
@@ -1176,6 +1191,7 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
 
     protected void setTime(PreparedStatement preparedStatement, String sqlType, int index, Object value)
             throws SQLException, DataError {
+        boolean timeZone = false;
         if (value == null) {
             preparedStatement.setTime(index, null);
         } else {
@@ -1197,7 +1213,6 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     int zoneHours = 0;
                     int zoneMinutes = 0;
                     BDecimal zoneSeconds = BDecimal.valueOf(0);
-                    boolean timeZone = false;
                     if (timeMap.containsKey(StringUtils.
                             fromString(io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD_UTC_OFFSET))) {
                         timeZone = true;
@@ -1227,7 +1242,15 @@ public class DefaultStatementParameterProcessor extends AbstractStatementParamet
                     } else {
                         preparedStatement.setTime(index, Time.valueOf(localTime));
                     }
-                } catch (Throwable e) {
+                } catch (Throwable ex) {
+                    if (ex instanceof SQLFeatureNotSupportedException) {
+                        if (timeZone) {
+                            throw new TypeMismatchError("time:Civil with offset value does not support in " +
+                                    "this database. " + ex.getMessage());
+                        } else {
+                            throw new TypeMismatchError("Unsupported type: " + ex.getMessage());
+                        }
+                    }
                     throw new ConversionError("Unsupported value: " + value + " for Time Value");
                 }
             } else {

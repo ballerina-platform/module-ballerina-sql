@@ -32,7 +32,7 @@ This feature held a few setbacks. Since the user now has to keep the order even 
 
 ## Motivation
 
-The ability to map table columns to Ballerina record fields in the remote function is efficient. In typical enterprise use cases, it is typical that the user would not have control over the database schema and its naming convention.
+The ability to map table columns to Ballerina record fields in the remote method is efficient. In typical enterprise use cases, it is typical that the user would not have control over the database schema and its naming convention.
 
 With this support, the user does not need to process the return results to another record or change the query itself to change the metadata.
 
@@ -49,7 +49,7 @@ type Person record {
     string lastName
 };
 ```
-The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
+The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` method does not return `first_name` column, the field will not be populated.
 
 The annotation will be defined as,
 ```

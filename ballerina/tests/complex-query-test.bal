@@ -295,6 +295,11 @@ function testArrayRetrieval() returns error? {
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
 
+enum EnumType {
+    TYPE_1,
+    TYPE_2
+}
+
 type TestTypeData record {
     int int_type;
     int[] int_array;
@@ -305,6 +310,7 @@ type TestTypeData record {
     string[] string_array;
     boolean[] boolean_array;
     json json_type;
+    EnumType enum_type;
 };
 
 @test:Config {
@@ -314,7 +320,8 @@ function testComplexWithStructDef() returns error? {
     MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
     stream<record {}, error?> streamData = dbClient->query(`SELECT int_type, int_array, long_type, long_array,
                                                                 boolean_type, string_type, boolean_array, string_array,
-                                                                json_type from MixTypes where row_id =1`, TestTypeData);
+                                                                json_type, enum_type
+                                                                from MixTypes where row_id =1`, TestTypeData);
     record {|record {} value;|}? data = check streamData.next();
     check streamData.close();
     record {}? value = data?.value;
@@ -328,7 +335,8 @@ function testComplexWithStructDef() returns error? {
         string_type: "Hello",
         boolean_array: [true, false, true],
         string_array: ["Hello", "Ballerina"],
-        json_type: [1, 2, 3]
+        json_type: [1, 2, 3],
+        enum_type: TYPE_2
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }

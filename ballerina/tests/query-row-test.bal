@@ -567,7 +567,7 @@ function queryRecordTimeTimeRecordParam() returns error? {
     groups: ["query", "query-row"]
 }
 function queryRecordTimeTimeRecordWithTimeZoneParam() returns error? {
-    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 4, minute: 8, second: 8};
+    time:TimeOfDay time = {utcOffset: {hours: -8, minutes: 0}, hour: 20, minute: 8, second: 8};
     TimeValue typeVal = new (time);
     ParameterizedQuery sqlQuery = `SELECT * FROM DateTimeTypes WHERE time_tz_type = ${typeVal}`;
     validateDateTimeTypesTableRecordResult(check queryRecordMockClient(queryRowDb, sqlQuery));
@@ -1242,7 +1242,7 @@ function testArrayRetrievalRecord() returns error? {
 function testComplexWithStructDefRecord() returns error? {
     MockClient dbClient = check getMockClient(queryRowDb);
     record {} value = check dbClient->queryRow(`SELECT int_type, int_array, long_type, long_array, boolean_type,
-        string_type, boolean_array, string_array, json_type FROM MixTypes WHERE row_id = 1`, TestTypeData);
+        string_type, boolean_array, string_array, json_type, enum_type FROM MixTypes WHERE row_id = 1`, TestTypeData);
     check dbClient.close();
     TestTypeData mixTypesExpected = {
         int_type: 1,
@@ -1253,7 +1253,8 @@ function testComplexWithStructDefRecord() returns error? {
         string_type: "Hello",
         boolean_array: [true, false, true],
         string_array: ["Hello", "Ballerina"],
-        json_type: [1, 2, 3]
+        json_type: [1, 2, 3],
+        enum_type: TYPE_2
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }

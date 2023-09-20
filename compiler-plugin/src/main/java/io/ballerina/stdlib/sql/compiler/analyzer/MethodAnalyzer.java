@@ -31,17 +31,10 @@ import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.stdlib.sql.compiler.Constants;
 import io.ballerina.stdlib.sql.compiler.Utils;
-import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
-import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
-import java.util.List;
 import java.util.Optional;
-
-import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_901;
-import static org.ballerinalang.util.diagnostic.DiagnosticErrorCode.CANNOT_INFER_TYPE_FOR_PARAM;
-import static org.ballerinalang.util.diagnostic.DiagnosticErrorCode.INCOMPATIBLE_TYPE_FOR_INFERRED_TYPEDESC_VALUE;
 
 /**
  * Code Analyser for OutParameter get method type validations.
@@ -50,16 +43,8 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
     @Override
     public void perform(SyntaxNodeAnalysisContext ctx) {
         MethodCallExpressionNode node = (MethodCallExpressionNode) ctx.node();
-        List<Diagnostic> diagnostics = ctx.semanticModel().diagnostics();
-        if (!diagnostics.isEmpty()) {
-            diagnostics.stream()
-                .filter(diagnostic -> diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR)
-                .filter(diagnostic ->
-                        diagnostic.diagnosticInfo().code().equals(CANNOT_INFER_TYPE_FOR_PARAM.diagnosticId()) ||
-                                diagnostic.diagnosticInfo().code().equals(
-                                                    INCOMPATIBLE_TYPE_FOR_INFERRED_TYPEDESC_VALUE.diagnosticId()))
-                .filter(diagnostic -> diagnostic.location().lineRange().equals(node.location().lineRange()))
-                .forEach(diagnostic -> addHint(ctx, node));
+        if (Utils.hasCompilationErrors(ctx)) {
+            return;
         }
 
         // Get the object type to validate arguments
@@ -104,19 +89,6 @@ public class MethodAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
             ctx.reportDiagnostic(DiagnosticFactory.createDiagnostic(diagnosticsForInvalidTypes,
                     node.arguments().get(0).location()));
         }
-    }
-
-    private void addHint(SyntaxNodeAnalysisContext ctx, MethodCallExpressionNode node) {
-        if (!(Utils.isSQLOutParameter(ctx, node.expression()))) {
-            return;
-        }
-
-        if (isGetMethod(ctx, node)) {
-            return;
-        }
-
-        ctx.reportDiagnostic(DiagnosticFactory.createDiagnostic(
-                new DiagnosticInfo(SQL_901.getCode(), SQL_901.getMessage(), SQL_901.getSeverity()), node.location()));
     }
 
     private boolean isGetMethod(SyntaxNodeAnalysisContext ctx, MethodCallExpressionNode node) {

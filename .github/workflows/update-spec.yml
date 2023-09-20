@@ -9,7 +9,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/spec'
+      - 'docs/spec/**'
 
 jobs:
   update_specs:
@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get current date
         id: date

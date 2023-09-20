@@ -62,18 +62,17 @@ isolated client class MockSchemaClient {
 
                 if include is COLUMNS_WITH_CONSTRAINTS {
                     map<ReferentialConstraint[]> refConstraintsMap = check self.getReferentialConstraints(tableName);
-                    map<CheckConstraint[]> checkConstraintsMap = check self.getCheckConstraints(tableName);
+                    CheckConstraint[]? checkConstraints = check self.getCheckConstraints(tableName);
 
-                    _ = checkpanic from ColumnDefinition column in <ColumnDefinition[]>result.columns
+                    if !(checkConstraints is ()) && checkConstraints.length() != 0 {
+                        result.checkConstraints = checkConstraints;
+                    }
+
+                    _ = from ColumnDefinition column in <ColumnDefinition[]>result.columns
                         do {
                             ReferentialConstraint[]? refConstraints = refConstraintsMap[column.name];
                             if !(refConstraints is ()) && refConstraints.length() != 0 {
                                 column.referentialConstraints = refConstraints;
-                            }
-
-                            CheckConstraint[]? checkConstraints = checkConstraintsMap[column.name];
-                            if !(checkConstraints is ()) && checkConstraints.length() != 0 {
-                                column.checkConstraints = checkConstraints;
                             }
                         };     
                 }
@@ -190,13 +189,12 @@ isolated client class MockSchemaClient {
         return refConstraintsMap;
     }
 
-    private isolated function getCheckConstraints(string tableName) returns map<CheckConstraint[]>|Error {
-        map<CheckConstraint[]> checkConstraintsMap = {};
+    private isolated function getCheckConstraints(string tableName) returns CheckConstraint[]|Error {
+        CheckConstraint[] checkConstraints = [];
         stream<record {}, error?> checkConstraintStream = self.dbClient->query(`
             SELECT 
                 CC.CONSTRAINT_NAME AS CONSTRAINT_NAME,
-                CC.CHECK_CLAUSE AS CHECK_CLAUSE,
-                CCU.COLUMN_NAME AS COLUMN_NAME
+                CC.CHECK_CLAUSE AS CHECK_CLAUSE
             FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS CC
             JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS CCU  
                 ON CC.CONSTRAINT_NAME = CCU.CONSTRAINT_NAME
@@ -212,17 +210,13 @@ isolated client class MockSchemaClient {
                         name: <string>retrievedCheckConstraint["CONSTRAINT_NAME"],
                         clause: <string>retrievedCheckConstraint["CHECK_CLAUSE"]
                     };
-                    string columnName = <string>retrievedCheckConstraint["COLUMN_NAME"];
-                    if checkConstraintsMap[columnName] is () {
-                        checkConstraintsMap[columnName] = [];
-                    }
-                    checkConstraintsMap.get(columnName).push(checkConstraint);
+                    checkConstraints.push(checkConstraint);
                 }
             };
         if e is error {
             return <DataError>error(e.message());
         }
-        return checkConstraintsMap;
+        return checkConstraints;
     }
 
     private isolated function getRoutineParameters(string name) returns ParameterDefinition[]|Error {

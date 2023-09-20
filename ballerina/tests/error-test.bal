@@ -73,9 +73,8 @@ function TestInvalidDB() {
     test:assertTrue(dbClient is ApplicationError);
     ApplicationError sqlError = <ApplicationError> dbClient;
     test:assertEquals(sqlError.message(), "Error in SQL connector configuration: Failed to initialize pool: " +
-            "Connection refused (Connection refused) Caused by :Connection refused (Connection refused) Caused by " +
-            ":Connection refused (Connection refused) Caused by :Connection refused (Connection refused)",
-            sqlError.message());
+                 "Connection refused Caused by :Connection refused Caused by :Connection refused " +
+                 "Caused by :Connection refused", sqlError.message());
 }
 
 @test:Config {
@@ -321,7 +320,7 @@ function testCreateProceduresWithMissingParams() returns error? {
 
 @test:Config {
     groups: ["error"],
-    dependsOn: [testCreateProcedures1]
+    dependsOn: [testCreateProceduresWithMissingParams]
 }
 function testCreateProceduresWithParameterTypeMismatch() returns error? {
     MockClient mockClient = check getMockClient(errorDB);

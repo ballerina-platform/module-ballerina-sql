@@ -90,7 +90,7 @@ public class OutParameterProcessor {
                     Array array = (Array) value;
                     Object[] dataArray = (Object[]) array.getArray();
                     if (dataArray != null && dataArray.length != 0) {
-                        String objectType = result.getType().getName();
+                        String objectType = TypeUtils.getType(result).getName();
                         if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER) ||
                                 objectType.equals(Constants.OutParameterTypes.ARRAY)) {
                             return resultParameterProcessor.convertArrayInOutParameter(dataArray, ballerinaType);
@@ -165,13 +165,13 @@ public class OutParameterProcessor {
                 case Types.SQLXML:
                     return resultParameterProcessor.convertXml((SQLXML) value, sqlType, ballerinaType);
                 default:
-                    String objectType = result.getType().getName();
+                    String objectType = TypeUtils.getType(result).getName();
                     if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
                         Object inParamValue = result.get(Constants.ParameterObject.IN_VALUE_FIELD);
                         return resultParameterProcessor.convertCustomInOutParameter(value, inParamValue, sqlType,
                                 ballerinaType);
                     } else {
-                        String outParamObjectName = result.getType().getName();
+                        String outParamObjectName = TypeUtils.getType(result).getName();
                         return resultParameterProcessor.convertCustomOutParameter(value, outParamObjectName, sqlType,
                                 ballerinaType);
                     }

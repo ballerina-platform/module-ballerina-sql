@@ -19,6 +19,7 @@
 package io.ballerina.stdlib.sql.parameterprocessor;
 
 import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
@@ -278,9 +279,12 @@ public abstract class AbstractStatementParameterProcessor {
             }
         } catch (SQLException e) {
             String msg = e.getMessage();
-            if (msg.contains("data exception") || msg.contains("incompatible data type")) {
-                throw new DataError(String.format("Error while constructing SQL query. %s: %s",
-                        e.getMessage(), object));
+            if (msg != null) {
+                if (msg.contains("data exception") || msg.contains("incompatible data type")) {
+                    throw new DataError(String.format("Error while constructing SQL query. %s: %s",
+                            e.getMessage(), object));
+                }
+                throw e;
             }
             throw e;
         }
@@ -289,7 +293,7 @@ public abstract class AbstractStatementParameterProcessor {
     private void setSqlTypedParam(Connection connection, PreparedStatement preparedStatement, int index,
                                   BObject typedValue)
             throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = TypeUtils.getType(typedValue).getName();
         Object value = typedValue.get(Constants.TypedValueFields.VALUE);
         switch (sqlType) {
             case Constants.SqlTypes.VARCHAR:
@@ -439,7 +443,7 @@ public abstract class AbstractStatementParameterProcessor {
     }
 
     private int getSQLType(BObject typedValue) throws DataError, SQLException {
-        String sqlType = typedValue.getType().getName();
+        String sqlType = TypeUtils.getType(typedValue).getName();
         int sqlTypeValue;
         switch (sqlType) {
             case Constants.SqlTypes.VARCHAR:

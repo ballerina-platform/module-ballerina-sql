@@ -1426,7 +1426,7 @@ public class ProcedureCallResult {
     }
 
     # Updates `executionResult` or `queryResult` field with the succeeding result in the result list. This will also close the current
-    # result when called.
+    # result when called. The `close` method must be called once all the results are processed.
     #
     # + return - True if the next result is `queryResult`
     public isolated function getNextQueryResult() returns boolean|Error {
@@ -1437,6 +1437,7 @@ public class ProcedureCallResult {
     }
 
     # Releases the associated resources such as the database connection, results, etc.
+    # This method must be called once all results are processed.
     #
     # + return - An `sql:Error` if any error occurred while cleanup
     public isolated function close() returns Error? {

@@ -71,12 +71,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
@@ -87,6 +92,7 @@ import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
 import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_RECORD;
+import static io.ballerina.stdlib.sql.Constants.HIKARI;
 import static io.ballerina.stdlib.sql.Constants.LAST_INSERTED_ID_FIELD;
 import static io.ballerina.stdlib.sql.Constants.RECORD_FIELD_ANN_PREFIX;
 import static io.ballerina.stdlib.time.util.Constants.ANALOG_GIGA;
@@ -302,11 +308,16 @@ public class Utils {
 
     private static Type validFieldConstraint(int sqlType, Type type) {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            if (isEnumType(type)) {
+                return type;
+            }
+
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
+                Type referredType = TypeUtils.getReferredType(memberType);
                 //In case if the member type is another union type, check recursively.
-                if (isValidFieldConstraint(sqlType, memberType)) {
-                    return memberType;
+                if (isValidFieldConstraint(sqlType, referredType)) {
+                    return referredType;
                 }
             }
         } else {
@@ -314,6 +325,7 @@ public class Utils {
                 return type;
             }
         }
+
         return null;
     }
 
@@ -478,7 +490,8 @@ public class Utils {
         for (ColumnDefinition columnDefinition : columnDefinitions) {
             if (columnDefinition instanceof RecordColumnDefinition) {
                 RecordColumnDefinition recordColumnDef = (RecordColumnDefinition) columnDefinition;
-                BMap<BString, Object> innerRecord = ValueCreator.createMapValue(recordColumnDef.getBallerinaType());
+                BMap<BString, Object> innerRecord = ValueCreator.createRecordValue(
+                        (RecordType) recordColumnDef.getBallerinaType());
                 for (PrimitiveTypeColumnDefinition innerField : recordColumnDef.getInnerFields()) {
                     innerRecord.put(fromString(innerField.getBallerinaFieldName()),
                             Utils.getResult(resultSet, innerField.getResultSetColumnIndex(), innerField,
@@ -614,6 +627,10 @@ public class Utils {
 
     private static boolean isValidFieldConstraint(int sqlType, Type type) {
         if (type.getTag() == TypeTags.UNION_TAG && type instanceof UnionType) {
+            if (isEnumType(type)) {
+                return true;
+            }
+
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
                 // In case if the member type is another union type, check recursively.
@@ -622,9 +639,9 @@ public class Utils {
                 }
             }
             return false;
-        } else {
-            return isValidPrimitiveConstraint(sqlType, type);
         }
+
+        return isValidPrimitiveConstraint(sqlType, type);
     }
 
     private static Type getDefaultBallerinaType(int sqlType) {
@@ -1328,6 +1345,12 @@ public class Utils {
         return KNOWN_RECORD_TYPES.contains(getBTypeName(ballerinaType));
     }
 
+    public static boolean isEnumType(Type ballerinaType) {
+        return ballerinaType instanceof UnionType &&
+                ((UnionType) ballerinaType).getMemberTypes().stream().allMatch(memberType ->
+                        memberType.getTag() == TypeTags.FINITE_TYPE_TAG || memberType.getTag() == TypeTags.NULL_TAG);
+    }
+
     private static BMapInitialValueEntry[] getInitialValueEntries(Map<String, Object> struct) {
         BMapInitialValueEntry entries[] = new BMapInitialValueEntry[struct.size()];
         int i = 0;
@@ -1336,5 +1359,28 @@ public class Utils {
             i++;
         }
         return entries;
+    }
+
+    public static SQLException getRootSQLException(SQLException e) {
+        SQLException rootSQLException = e;
+        Throwable t = e.getCause();
+        while (t != null) {
+            if (t instanceof SQLException) {
+                rootSQLException = (SQLException) t;
+            }
+            t = t.getCause();
+        }
+        return rootSQLException;
+    }
+
+    public static void disableHikariLogs() {
+        Logger.getLogger("").setLevel(Level.OFF);
+        LogManager logManager = LogManager.getLogManager();
+        Enumeration<String> names = logManager.getLoggerNames();
+        for (String name : Collections.list(names)) {
+            if (name.contains(HIKARI)) {
+                LogManager.getLogManager().getLogger(name).setLevel(Level.OFF);
+            }
+        }
     }
 }

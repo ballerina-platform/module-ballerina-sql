@@ -1,0 +1,27 @@
+[
+  {
+    "name": "[Lcom.zaxxer.hikari.util.ConcurrentBag$IConcurrentBagEntry;"
+  },
+  {
+    "name": "[Ljava.sql.Statement;"
+  },
+  {
+    "name": "com.zaxxer.hikari.HikariConfig",
+    "allDeclaredFields": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "setConnectionTimeout",
+        "parameterTypes": [
+          "long"
+        ]
+      },
+      {
+        "name": "setAutoCommit",
+        "parameterTypes": [
+          "boolean"
+        ]
+      }
+    ]
+  }
+]

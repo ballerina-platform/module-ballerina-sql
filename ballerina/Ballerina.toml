@@ -1,30 +1,33 @@
 [package]
 org = "ballerina"
 name = "sql"
-version = "1.5.1"
+version = "1.11.0"
 authors = ["Ballerina"]
 keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.2.0"
+distribution = "2201.8.0"
 
-[[platform.java11.dependency]]
+[platform.java17]
+graalvmCompatible = true
+
+[[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "sql-native"
-version = "1.5.1"
-path = "../native/build/libs/sql-native-1.5.1-SNAPSHOT.jar"
+version = "1.11.0"
+path = "../native/build/libs/sql-native-1.11.0-SNAPSHOT.jar"
 
-[[platform.java11.dependency]]
-path = "../test-utils/build/libs/sql-test-utils-1.5.1-SNAPSHOT.jar"
+[[platform.java17.dependency]]
+path = "../test-utils/build/libs/sql-test-utils-1.11.0-SNAPSHOT.jar"
 scope = "testOnly"
 
-[[platform.java11.dependency]]
+[[platform.java17.dependency]]
 groupId = "com.zaxxer"
 artifactId = "HikariCP"
 version = "3.3.1"
 path = "./lib/HikariCP-3.3.1.jar"
 
-[[platform.java11.dependency]]
-path = "./lib/hsqldb-2.5.1.jar"
+[[platform.java17.dependency]]
+path = "./lib/hsqldb-2.7.1.jar"
 scope = "testOnly"

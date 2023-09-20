@@ -3,7 +3,7 @@
 _Owners_: @daneshk @niveathika  
 _Reviewers_: @daneshk  
 _Created_: 2022/01/13   
-_Updated_: 2022/07/07  
+_Updated_: 2023/03/07  
 _Edition_: Swan Lake  
 
 ## Introduction
@@ -12,7 +12,7 @@ This is the specification for the SQL standard library of [Ballerina language](h
 
 The SQL library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag. 
 
-If you have any feedback or suggestions about the library, start a discussion via a [GitHub issue](https://github.com/ballerina-platform/ballerina-standard-library/issues) or in the [Slack channel](https://ballerina.io/community/). Based on the outcome of the discussion, the specification and implementation can be updated. Community feedback is always welcome. Any accepted proposal, which affects the specification is stored under `/docs/proposals`. Proposals under discussion can be found with the label `type/proposal` in GitHub.
+If you have any feedback or suggestions about the library, start a discussion via a [GitHub issue](https://github.com/ballerina-platform/ballerina-standard-library/issues) or in the [Discord server](https://discord.gg/ballerinalang). Based on the outcome of the discussion, the specification and implementation can be updated. Community feedback is always welcome. Any accepted proposal, which affects the specification is stored under `/docs/proposals`. Proposals under discussion can be found with the label `type/proposal` in GitHub.
 
 The conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
@@ -301,7 +301,7 @@ Here the returned stream can consist of following types of records,
    
 2. Typed record  
    A ballerina record type is created to represent the returned result set. the `SELECT` query is executed
-   via the `query` remote function of the client. Once the query is executed, each data record can be retrieved by looping
+   via the `query` remote method of the client. Once the query is executed, each data record can be retrieved by looping
    the result set. The `stream` returned by the select operation holds a pointer to the actual data in the database, and it
    loads data from the table only when it is accessed. This stream can be iterated only once.
 
@@ -327,7 +327,7 @@ Here the returned stream can consist of following types of records,
    stream<Student, sql:Error?> resultStream = dbClient->query(query);
    ```
    
-   `sql:Column` annotation can be used to map database columns to record fields of different name. This annotation should be attached to record fields.
+   `sql:Column` annotation can be used to map database columns to Typed record fields of different name. This annotation should be attached to record fields.
    ```ballerina
    type Student record {
        int id;
@@ -447,7 +447,7 @@ public type ExecutionResult record {
 };
 ```
 
-This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote function of
+This sample demonstrates modifying data by executing an `UPDATE` statement via the `execute` remote method of
 the client.
 
 ```ballerina
@@ -460,6 +460,7 @@ sql:ExecutionResult result = check dbClient->execute(query);
 ## 4.4. Batch execute
 
 `batchExecute()` remote method executes the SQL query with multiple sets of parameters in a batch.
+To optimize memory utilisation, the inputs would be executed in batch sizes of 1000.
 ```ballerina
 # Executes the SQL query with multiple sets of parameters in a batch. Only the metadata of the execution is returned
 # (not the results from the query).
@@ -472,7 +473,7 @@ remote isolated function batchExecute(ParameterizedQuery[] sqlQueries) returns E
 ```
 
 This sample demonstrates how to insert multiple records with a single `INSERT` statement that is executed via the
-`batchExecute` remote function of the client. This is done by creating a `table` with multiple records and
+`batchExecute` remote method of the client. This is done by creating a `table` with multiple records and
 parameterized SQL query as same as the above `execute` operations.
 
 ```ballerina
@@ -531,7 +532,7 @@ public class ProcedureCallResult {
 Here `getNextQueryResult()` can be used to update the pointer to iterate through the returned result sets.
 
 This sample demonstrates how to execute a stored procedure with a single `INSERT` statement that is executed via the
-`call` remote function of the client.
+`call` remote method of the client.
 
 ```ballerina
 int uid = 10;

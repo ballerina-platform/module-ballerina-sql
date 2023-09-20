@@ -36,8 +36,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.ballerina.stdlib.sql.compiler.SQLDiagnosticsCodes.SQL_901;
-
 /**
  * Tests the custom SQL compiler plugin.
  */
@@ -69,27 +67,36 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 4);
+        Assert.assertEquals(availableErrors, 6);
 
-        DiagnosticInfo maxOpenConnectionZero = errorDiagnosticsList.get(0).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionZero.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionZero.messageFormat(),
-                "invalid value: expected value is greater than one");
+        for (int i = 0; i < errorDiagnosticsList.size(); i++) {
+            switch (i) {
+                case 0:
+                case 2:
+                case 5:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_103.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_103.getMessage());
+                    break;
+                case 1:
+                case 4:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_101.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_101.getMessage());
+                    break;
 
-        DiagnosticInfo maxConnectionLifeTime = errorDiagnosticsList.get(1).diagnosticInfo();
-        Assert.assertEquals(maxConnectionLifeTime.code(), SQLDiagnosticsCodes.SQL_103.getCode());
-        Assert.assertEquals(maxConnectionLifeTime.messageFormat(),
-                "invalid value: expected value is greater than or equal to 30");
-
-        DiagnosticInfo minIdleConnections = errorDiagnosticsList.get(2).diagnosticInfo();
-        Assert.assertEquals(minIdleConnections.code(), SQLDiagnosticsCodes.SQL_102.getCode());
-        Assert.assertEquals(minIdleConnections.messageFormat(),
-                "invalid value: expected value is greater than zero");
-
-        DiagnosticInfo maxOpenConnectionNegative = errorDiagnosticsList.get(3).diagnosticInfo();
-        Assert.assertEquals(maxOpenConnectionNegative.code(), SQLDiagnosticsCodes.SQL_101.getCode());
-        Assert.assertEquals(maxOpenConnectionNegative.messageFormat(),
-                "invalid value: expected value is greater than one");
+                case 3:
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().code(),
+                            SQLDiagnosticsCodes.SQL_102.getCode());
+                    Assert.assertEquals(errorDiagnosticsList.get(i).diagnosticInfo().messageFormat(),
+                            SQLDiagnosticsCodes.SQL_102.getMessage());
+                    break;
+                default:
+                    Assert.fail();
+            }
+        }
     }
 
     @Test
@@ -102,7 +109,7 @@ public class CompilerPluginTest {
                 .collect(Collectors.toList());
         long availableErrors = errorDiagnosticsList.size();
 
-        Assert.assertEquals(availableErrors, 4);
+        Assert.assertEquals(availableErrors, 28);
 
         DiagnosticInfo charOutParameter = errorDiagnosticsList.get(0).diagnosticInfo();
         Assert.assertEquals(charOutParameter.code(), SQLDiagnosticsCodes.SQL_211.getCode());
@@ -119,32 +126,6 @@ public class CompilerPluginTest {
         DiagnosticInfo timeWithTimezoneOutParameter = errorDiagnosticsList.get(3).diagnosticInfo();
         Assert.assertEquals(timeWithTimezoneOutParameter.code(), SQLDiagnosticsCodes.SQL_231.getCode());
         Assert.assertEquals(timeWithTimezoneOutParameter.messageFormat(), SQLDiagnosticsCodes.SQL_231.getMessage());
-    }
-
-    @Test
-    public void testOutParameterHint() {
-        Package currentPackage = loadPackage("sample3");
-        PackageCompilation compilation = currentPackage.getCompilation();
-        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        List<Diagnostic> errorDiagnosticsList = diagnosticResult.diagnostics().stream()
-                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.ERROR))
-                .collect(Collectors.toList());
-        long availableErrors = errorDiagnosticsList.size();
-
-        Assert.assertEquals(availableErrors, 2);
-
-        List<Diagnostic> hintDiagnosticsList = diagnosticResult.diagnostics().stream()
-                .filter(r -> r.diagnosticInfo().severity().equals(DiagnosticSeverity.HINT))
-                .collect(Collectors.toList());
-        long availableHints = hintDiagnosticsList.size();
-
-        Assert.assertEquals(availableHints, 2);
-
-        hintDiagnosticsList.forEach(diagnostic -> {
-            Assert.assertEquals(diagnostic.diagnosticInfo().code(), SQL_901.getCode());
-            Assert.assertEquals(diagnostic.diagnosticInfo().messageFormat(), SQL_901.getMessage());
-        });
-
     }
 
     @Test

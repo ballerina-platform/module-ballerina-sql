@@ -22,9 +22,9 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
+import io.ballerina.stdlib.sql.utils.Utils;
 
 import java.util.UUID;
-import java.util.logging.LogManager;
 
 /**
  * This class implements the utility methods for the clients to be used.
@@ -37,7 +37,7 @@ public class ClientProcessor {
     }
 
     public static Object close(BObject client) {
-        LogManager.getLogManager().reset();
+        Utils.disableHikariLogs();
         Object datasourceObj = client.getNativeData(Constants.DATABASE_CLIENT);
         // When an exception is thrown during database endpoint init (eg: driver not present) stop operation
         // of the endpoint is automatically called. But at this point, datasource is null therefore to handle that
@@ -60,7 +60,7 @@ public class ClientProcessor {
     public static Object createClient(BObject client, SQLDatasource.SQLDatasourceParams sqlDatasourceParams,
                                       boolean executeGKFlag, boolean batchExecuteGKFlag) {
         try {
-            LogManager.getLogManager().reset();
+            Utils.disableHikariLogs();
             SQLDatasource sqlDatasource = SQLDatasource.retrieveDatasource(sqlDatasourceParams, executeGKFlag,
                     batchExecuteGKFlag);
             client.addNativeData(Constants.DATABASE_CLIENT, sqlDatasource);
