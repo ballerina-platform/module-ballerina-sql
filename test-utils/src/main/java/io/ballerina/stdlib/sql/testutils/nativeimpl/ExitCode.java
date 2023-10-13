@@ -27,7 +27,9 @@ import io.ballerina.stdlib.sql.testutils.utils.OSUtils;
  *
  * @since 0.6.0
  */
-public class ExitCode {
+public final class ExitCode {
+
+    private ExitCode() {}
 
     public static Object exitCode(BObject objVal) {
         Process process = OSUtils.processFromObject(objVal);

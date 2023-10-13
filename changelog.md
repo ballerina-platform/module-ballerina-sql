@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Support retrieval of enum types](https://github.com/ballerina-platform/ballerina-standard-library/issues/4588)
+- [Make some of the Java classes proper utility classes](https://github.com/ballerina-platform/ballerina-standard-library/issues/4921)
 
 ## [1.9.0] - 2023-06-01
 

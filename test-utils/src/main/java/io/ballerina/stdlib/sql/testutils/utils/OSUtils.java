@@ -30,7 +30,9 @@ import java.io.IOException;
 /**
  * @since 0.6.0
  */
-public class OSUtils {
+public final class OSUtils {
+
+    private OSUtils() {}
 
     private static final BString UNKNOWN_MESSAGE = StringUtils.fromString("Unknown Error");
 
