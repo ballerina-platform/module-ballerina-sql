@@ -36,7 +36,6 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.exception.DataError;
@@ -115,11 +114,10 @@ public class QueryProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(paramSQLString);
-                sqlQuery = parameterizedQuery.getSqlQuery();
+                sqlQuery = Utils.getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
+                statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
                 RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(
                         ((BTypedesc) recordType).getDescribingType());
@@ -172,7 +170,8 @@ public class QueryProcessor {
     }
 
     private static Object nativeQueryRowExecutable(
-            BObject client, BObject paramSQLString, BTypedesc ballerinaType,
+            BObject client, BObject paramSQLString,
+            BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
             TransactionResourceManager trxResourceManager) {
@@ -189,11 +188,10 @@ public class QueryProcessor {
             ResultSet resultSet = null;
             String sqlQuery = null;
             try {
-                ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(paramSQLString);
-                sqlQuery = parameterizedQuery.getSqlQuery();
+                sqlQuery = Utils.getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareStatement(sqlQuery);
-                statementParameterProcessor.setParams(connection, statement, parameterizedQuery.getInsertions());
+                statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
                 if (!resultSet.next()) {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");

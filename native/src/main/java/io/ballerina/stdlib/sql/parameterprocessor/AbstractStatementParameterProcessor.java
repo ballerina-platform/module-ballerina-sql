@@ -197,10 +197,11 @@ public abstract class AbstractStatementParameterProcessor {
     protected abstract int setCustomBOpenRecord(Connection connection, PreparedStatement preparedStatement, int index,
                                                 Object value, boolean returnType) throws DataError, SQLException;
 
-    public void setParams(Connection connection, PreparedStatement preparedStatement,
-                          Object[] insertions) throws DataError, SQLException {
-        for (int i = 0; i < insertions.length; i++) {
-            Object object = insertions[i];
+    public void setParams(Connection connection, PreparedStatement preparedStatement, BObject paramString)
+            throws DataError, SQLException {
+        BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
+        for (int i = 0; i < arrayValue.size(); i++) {
+            Object object = arrayValue.get(i);
             int index = i + 1;
             setSQLValueParam(connection, preparedStatement, index, object, false);
         }
