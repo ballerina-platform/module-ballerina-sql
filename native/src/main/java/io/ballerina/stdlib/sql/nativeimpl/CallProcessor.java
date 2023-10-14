@@ -32,7 +32,6 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcessor;
@@ -62,6 +61,7 @@ import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FI
 import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
 import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
+import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
 
 /**
@@ -121,13 +121,12 @@ public class CallProcessor {
             ResultSet resultSet;
             String sqlQuery = null;
             try {
-                ParameterizedQuery parameterizedQuery = Utils.getParameterizedSQLQuery(paramSQLString);
-                sqlQuery = parameterizedQuery.getSqlQuery();
+                sqlQuery = getSqlQuery(paramSQLString);
                 connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
-                setCallParameters(connection, statement, parameterizedQuery.getInsertions(), outputParamTypes,
+                setCallParameters(connection, statement, paramSQLString, outputParamTypes,
                         statementParameterProcessor);
 
                 boolean resultType = statement.execute();
@@ -159,7 +158,7 @@ public class CallProcessor {
                     updateProcedureCallExecutionResult(statement, procedureCallResult);
                 }
 
-                populateOutParameters(statement, parameterizedQuery.getInsertions(), outputParamTypes,
+                populateOutParameters(statement, paramSQLString, outputParamTypes,
                         resultParameterProcessor);
 
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
@@ -182,11 +181,12 @@ public class CallProcessor {
     }
 
     private static void setCallParameters(Connection connection, CallableStatement statement,
-                                          Object[] insertions, HashMap<Integer, Integer> outputParamTypes,
+                                          BObject paramString, HashMap<Integer, Integer> outputParamTypes,
                                           AbstractStatementParameterProcessor statementParameterProcessor)
             throws SQLException, ApplicationError {
-        for (int i = 0; i < insertions.length; i++) {
-            Object object = insertions[i];
+        BArray arrayValue = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
+        for (int i = 0; i < arrayValue.size(); i++) {
+            Object object = arrayValue.get(i);
             int index = i + 1;
             if (object instanceof BObject) {
                 BObject objectValue = (BObject) object;
@@ -225,19 +225,20 @@ public class CallProcessor {
         }
     }
 
-    private static void populateOutParameters(CallableStatement statement, Object[] insertions,
+    private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                               HashMap<Integer, Integer> outputParamTypes,
                                               AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;
         }
+        BArray arrayValue = paramSQLString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
 
         for (Map.Entry<Integer, Integer> entry : outputParamTypes.entrySet()) {
             int paramIndex = entry.getKey();
             int sqlType = entry.getValue();
 
-            BObject parameter = (BObject) insertions[paramIndex - 1];
+            BObject parameter = (BObject) arrayValue.get(paramIndex - 1);
             parameter.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, sqlType);
 
             Object result;
