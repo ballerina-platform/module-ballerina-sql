@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
+## [1.8.0] - 2023-04-10
+
+### Changed
 - [Improve documentation regard `sql:Column` annotation](https://github.com/ballerina-platform/ballerina-standard-library/issues/4134)
 - [Handle null error messages from underlying drivers](https://github.com/ballerina-platform/ballerina-standard-library/issues/4200)
+- [Make `sql:Client` isolated](https://github.com/ballerina-platform/ballerina-standard-library/issues/4455)
 
 ## [1.7.1] - 2023-03-09
 
