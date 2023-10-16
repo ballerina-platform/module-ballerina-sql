@@ -11,10 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
 
+## [1.11.1] - 2023-10-16
+
+### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
 ## [1.11.0] - 2023-09-18
 
 ### Added
 - Support for Java17
+
+## [1.10.1] - 2023-10-16
+
+### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
 
 ## [1.10.0] - 2023-06-30
 
@@ -24,10 +34,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Fix failure for unsupported time type](https://github.com/ballerina-platform/ballerina-standard-library/issues/4531)
 
+## [1.9.1] - 2023-10-16
+
+### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
 ## [1.9.0] - 2023-06-01
 
 ### Changed
 - Add GraalVM support
+
+## [1.8.1] - 2023-10-16
+
+### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
 
 ## [1.8.0] - 2023-04-10
 
