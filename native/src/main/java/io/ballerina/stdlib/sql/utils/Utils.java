@@ -41,7 +41,6 @@ import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
-import io.ballerina.stdlib.sql.ParameterizedQuery;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.exception.ConversionError;
 import io.ballerina.stdlib.sql.exception.DataError;
@@ -85,7 +84,6 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.sql.Constants.AFFECTED_ROW_COUNT_FIELD;
 import static io.ballerina.stdlib.sql.Constants.ANNON_RECORD_TYPE_NAME;
 import static io.ballerina.stdlib.sql.Constants.ANN_COLUMN_NAME_FIELD;
-import static io.ballerina.stdlib.sql.Constants.BACKTICK;
 import static io.ballerina.stdlib.sql.Constants.COLUMN_ANN_NAME;
 import static io.ballerina.stdlib.sql.Constants.DEFAULT_STREAM_CONSTRAINT_NAME;
 import static io.ballerina.stdlib.sql.Constants.EXECUTION_RESULT_FIELD;
@@ -155,23 +153,16 @@ public class Utils {
         }
     }
 
-    public static ParameterizedQuery getParameterizedSQLQuery(BObject paramString) {
+    public static String getSqlQuery(BObject paramString) {
+        BArray stringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
         StringBuilder sqlQuery = new StringBuilder();
-        List<Object> insertions = new ArrayList<>();
-
-        BArray bStringsArray = paramString.getArrayValue(Constants.ParameterizedQueryFields.STRINGS);
-        BArray bInsertions = paramString.getArrayValue(Constants.ParameterizedQueryFields.INSERTIONS);
-        for (int i = 0; i < bInsertions.size(); i++) {
-            if (bInsertions.get(i) instanceof BString && bInsertions.getBString(i).getValue().equals(BACKTICK)) {
-                sqlQuery.append(bStringsArray.getBString(i).getValue()).append(BACKTICK);
-            } else {
-                insertions.add(bInsertions.get(i));
-                sqlQuery.append(bStringsArray.getBString(i).getValue()).append(" ? ");
+        for (int i = 0; i < stringsArray.size(); i++) {
+            if (i > 0) {
+                sqlQuery.append(" ? ");
             }
+            sqlQuery.append(stringsArray.get(i).toString());
         }
-        sqlQuery.append(bStringsArray.getBString(bInsertions.size()));
-
-        return new ParameterizedQuery(sqlQuery.toString(), insertions.toArray());
+        return sqlQuery.toString();
     }
 
     public static DataError throwInvalidParameterError(Object value, String sqlType) {
