@@ -39,15 +39,6 @@
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Match>
 
-    <!-- Here the insertions in the ParameterisedQuery cannot be copied since they are linked to ballerina objects -->
-    <Match>
-        <Class name="io.ballerina.stdlib.sql.ParameterizedQuery"/>
-        <Bug pattern="EI_EXPOSE_REP"/>
-    </Match>
-    <Match>
-        <Class name="io.ballerina.stdlib.sql.ParameterizedQuery"/>
-        <Bug pattern="EI_EXPOSE_REP2"/>
-    </Match>
     <Match>
         <Class name="io.ballerina.stdlib.sql.datasource.PoolKey"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
