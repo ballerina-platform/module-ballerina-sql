@@ -9,9 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
+## [1.11.0] - 2023-09-18
+
+### Added
+- Support for Java17
+
+## [1.10.0] - 2023-06-30
+
+### Added
 - [Support retrieval of enum types](https://github.com/ballerina-platform/ballerina-standard-library/issues/4588)
 
+### Changed
+- [Fix failure for unsupported time type](https://github.com/ballerina-platform/ballerina-standard-library/issues/4531)
+
 ## [1.9.0] - 2023-06-01
+
+### Changed
+- Add GraalVM support
+
+## [1.8.0] - 2023-04-10
 
 ### Changed
 - [Improve documentation regard `sql:Column` annotation](https://github.com/ballerina-platform/ballerina-standard-library/issues/4134)
