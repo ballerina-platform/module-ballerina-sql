@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.8.0-20230908-135700-74a59dff"
+distribution-version = "2201.8.0"
 
 [[package]]
 org = "ballerina"
@@ -300,7 +300,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "sql"
-version = "1.11.0"
+version = "1.11.1"
 dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
