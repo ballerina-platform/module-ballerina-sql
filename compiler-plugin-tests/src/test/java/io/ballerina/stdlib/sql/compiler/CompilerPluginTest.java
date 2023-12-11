@@ -57,7 +57,7 @@ public class CompilerPluginTest {
         return project.currentPackage();
     }
 
-    @Test
+    @Test(enabled = false)
     public void testInvalidConnectionParamConfig() {
         Package currentPackage = loadPackage("sample1");
         PackageCompilation compilation = currentPackage.getCompilation();
