@@ -614,25 +614,25 @@ function insertIntoArrayTable3() returns error? {
     groups: ["execute", "execute-params"]
 }
 function insertIntoArrayTable4() returns error? {
-    SmallIntArrayValue paraSmallint = new ([]);
-    IntegerArrayValue paraInt = new ([]);
-    BigIntArrayValue paraLong = new ([]);
-    FloatArrayValue paraFloat = new (<int?[]>[]);
-    RealArrayValue paraReal = new (<int?[]>[]);
-    DecimalArrayValue paraDecimal = new (<int?[]>[]);
-    NumericArrayValue paraNumeric = new (<int?[]>[]);
-    DoubleArrayValue paraDouble = new (<int?[]>[]);
-    CharArrayValue paraChar = new ([]);
-    VarcharArrayValue paraVarchar = new ([]);
-    NVarcharArrayValue paraNVarchar = new ([]);
+    SmallIntArrayValue paraSmallint = new ();
+    IntegerArrayValue paraInt = new ();
+    BigIntArrayValue paraLong = new ();
+    FloatArrayValue paraFloat = new ();
+    RealArrayValue paraReal = new ();
+    DecimalArrayValue paraDecimal = new ();
+    NumericArrayValue paraNumeric = new ();
+    DoubleArrayValue paraDouble = new ();
+    CharArrayValue paraChar = new ();
+    VarcharArrayValue paraVarchar = new ();
+    NVarcharArrayValue paraNVarchar = new ();
     string?[] paraString = [];
-    BooleanArrayValue paraBool = new ([]);
-    DateArrayValue paraDate = new (<string?[]>[]);
-    TimeArrayValue paraTime = new (<string?[]>[]);
-    DateTimeArrayValue paraDatetime = new (<string?[]>[]);
-    TimestampArrayValue paraTimestamp = new (<string?[]>[]);
-    BinaryArrayValue paraBinary = new (<byte[]?[]>[]);
-    VarBinaryArrayValue paraVarBinary = new (<byte[]?[]>[]);
+    BooleanArrayValue paraBool = new ();
+    DateArrayValue paraDate = new ();
+    TimeArrayValue paraTime = new ();
+    DateTimeArrayValue paraDatetime = new ();
+    TimestampArrayValue paraTimestamp = new ();
+    BinaryArrayValue paraBinary = new ();
+    VarBinaryArrayValue paraVarBinary = new ();
     byte[]?[] paraBlob = [];
     int rowId = 8;
 
