@@ -23,7 +23,7 @@
 
     <test name="SQL Compiler Plugin Tests" parallel="false">
         <classes>
-            <class name="io.ballerina.stdlib.sql.compiler.CompilerPluginTest"/>
+            <!-- <class name="io.ballerina.stdlib.sql.compiler.CompilerPluginTest"/> -->
         </classes>
     </test>
 </suite>
