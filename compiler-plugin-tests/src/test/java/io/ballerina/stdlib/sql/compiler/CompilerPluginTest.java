@@ -70,7 +70,7 @@ public class CompilerPluginTest {
         Assert.assertEquals(availableErrors, 1);
     }
 
-    @Test(enabled = false)
+    @Test
     public void testInvalidConnectionParamConfig() {
         Package currentPackage = loadPackage("sample1");
         PackageCompilation compilation = currentPackage.getCompilation();
