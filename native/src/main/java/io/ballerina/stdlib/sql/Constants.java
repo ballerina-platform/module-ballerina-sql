@@ -297,6 +297,7 @@ public final class Constants {
         public static final String BOOLEAN = "BooleanOutParameter";
         public static final String BOOLEAN_ARRAY = "BooleanArrayOutParameter";
         public static final String REF = "RefOutParameter";
+        public static final String REF_CURSOR = "CursorOutParameter";
         public static final String STRUCT = "StructOutParameter";
         public static final String XML = "XMLOutParameter";
     }

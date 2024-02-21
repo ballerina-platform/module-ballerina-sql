@@ -334,6 +334,7 @@ public class CallProcessor {
                     result = resultParameterProcessor.processBoolean(statement, paramIndex);
                     break;
                 case Types.REF:
+                case Types.REF_CURSOR:
                     result = resultParameterProcessor.processRef(statement, paramIndex);
                     break;
                 case Types.STRUCT:
@@ -461,6 +462,9 @@ public class CallProcessor {
                 break;
             case Constants.OutParameterTypes.REF:
                 sqlTypeValue = Types.REF;
+                break;
+            case Constants.OutParameterTypes.REF_CURSOR:
+                sqlTypeValue = Types.REF_CURSOR;
                 break;
             case Constants.OutParameterTypes.STRUCT:
                 sqlTypeValue = Types.STRUCT;

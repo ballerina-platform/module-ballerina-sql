@@ -19,9 +19,11 @@
 package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
@@ -35,6 +37,7 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
+import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -61,8 +64,20 @@ public class OutParameterProcessor {
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "OutParameter");
     }
 
+    public static BStream getOutCursorValue(BObject result, BTypedesc typeDesc) {
+        return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
+    }
+
     public static Object getInOutParameterValue(BObject result, BTypedesc typeDesc) {
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "InOutParameter");
+    }
+
+    public static BStream get(BObject result, Object recordType,
+                              AbstractResultParameterProcessor resultParameterProcessor) {
+        Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
+        RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(
+                ((BTypedesc) recordType).getDescribingType());
+        return resultParameterProcessor.convertCursorValue((ResultSet) value, streamConstraint);
     }
 
     public static Object get(BObject result, BTypedesc typeDesc,
