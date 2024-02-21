@@ -1321,7 +1321,7 @@ public distinct class XMLOutParameter {
     } external;
 }
 
-# Represents the generic OUT Cursor Parameters in `sql:ParameterizedCallQuery`.
+# Represents the Cursor Out Parameters in `sql:ParameterizedCallQuery`.
 public class CursorOutParameter {
 
     # Parses returned SQL result set values to a ballerina stream value.
