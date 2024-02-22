@@ -52,7 +52,7 @@ import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionRe
  * This class provides functionality for the `ProcedureCallResult` to iterate through the sql result sets.
  */
 public class ProcedureCallResultUtils {
-    public ProcedureCallResultUtils() {
+    private ProcedureCallResultUtils() {
     }
 
     public static Object getNextQueryResult(BObject procedureCallResult) {
