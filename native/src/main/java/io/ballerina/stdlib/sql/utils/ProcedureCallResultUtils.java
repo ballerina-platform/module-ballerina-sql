@@ -114,6 +114,17 @@ public class ProcedureCallResultUtils {
     public static Object closeCallResult(BObject procedureCallResult) {
         Statement statement = (Statement) procedureCallResult.getNativeData(Constants.STATEMENT_NATIVE_DATA_FIELD);
         Connection connection = (Connection) procedureCallResult.getNativeData(Constants.CONNECTION_NATIVE_DATA_FIELD);
+        // This is to clean up the result set attached to the ref cursor out parameter.
+        // This is to avoid the result set to be open after the call result is closed.
+        Object resultSet = procedureCallResult.getNativeData(Constants.REF_CURSOR_VALUE_NATIVE_DATA);
+        if (resultSet instanceof ResultSet) {
+            try {
+                ((ResultSet) resultSet).close();
+                procedureCallResult.addNativeData(Constants.REF_CURSOR_VALUE_NATIVE_DATA, null);
+            } catch (SQLException e) {
+                return ErrorGenerator.getSQLDatabaseError(e, "Error when closing the result set.");
+            }
+        }
         return cleanUpConnection(procedureCallResult, null, statement, connection);
     }
 }

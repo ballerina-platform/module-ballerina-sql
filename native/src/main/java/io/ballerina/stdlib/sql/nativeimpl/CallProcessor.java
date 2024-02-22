@@ -159,7 +159,7 @@ public class CallProcessor {
                 }
 
                 populateOutParameters(statement, paramSQLString, outputParamTypes,
-                        resultParameterProcessor);
+                        resultParameterProcessor, procedureCallResult);
 
                 procedureCallResult.addNativeData(STATEMENT_NATIVE_DATA_FIELD, statement);
                 procedureCallResult.addNativeData(CONNECTION_NATIVE_DATA_FIELD, connection);
@@ -227,7 +227,8 @@ public class CallProcessor {
 
     private static void populateOutParameters(CallableStatement statement, BObject paramSQLString,
                                               HashMap<Integer, Integer> outputParamTypes,
-                                              AbstractResultParameterProcessor resultParameterProcessor)
+                                              AbstractResultParameterProcessor resultParameterProcessor,
+                                              BObject procedureCallResult)
             throws SQLException, ApplicationError {
         if (outputParamTypes.size() == 0) {
             return;
@@ -334,7 +335,11 @@ public class CallProcessor {
                     result = resultParameterProcessor.processBoolean(statement, paramIndex);
                     break;
                 case Types.REF:
+                case Types.REF_CURSOR:
                     result = resultParameterProcessor.processRef(statement, paramIndex);
+                    // This is to clean up the result set attached to the ref cursor out parameter
+                    // when procedure call result is closed.
+                    procedureCallResult.addNativeData(Constants.REF_CURSOR_VALUE_NATIVE_DATA, result);
                     break;
                 case Types.STRUCT:
                     result = resultParameterProcessor.processStruct(statement, paramIndex);
@@ -461,6 +466,9 @@ public class CallProcessor {
                 break;
             case Constants.OutParameterTypes.REF:
                 sqlTypeValue = Types.REF;
+                break;
+            case Constants.OutParameterTypes.REF_CURSOR:
+                sqlTypeValue = Types.REF_CURSOR;
                 break;
             case Constants.OutParameterTypes.STRUCT:
                 sqlTypeValue = Types.STRUCT;

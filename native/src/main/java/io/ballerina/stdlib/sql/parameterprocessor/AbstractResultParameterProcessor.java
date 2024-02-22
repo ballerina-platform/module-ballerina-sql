@@ -19,12 +19,14 @@ package io.ballerina.stdlib.sql.parameterprocessor;
 
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.JsonUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ConversionError;
@@ -115,6 +117,8 @@ public abstract class AbstractResultParameterProcessor {
     public abstract Object convertBinary(Object value, int sqlType, Type ballerinaType) throws DataError, SQLException;
 
     public abstract Object convertStruct(Struct value, int sqlType, Type type) throws DataError, SQLException;
+
+    public abstract BStream convertCursorValue(ResultSet value, RecordType recordType);
 
     public abstract Object convertXml(SQLXML value, int sqlType, Type type) throws DataError, SQLException;
 
