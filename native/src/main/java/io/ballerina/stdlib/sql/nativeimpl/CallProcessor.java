@@ -337,7 +337,8 @@ public class CallProcessor {
                 case Types.REF:
                 case Types.REF_CURSOR:
                     result = resultParameterProcessor.processRef(statement, paramIndex);
-                    // This is to clean up the result set attached to the ref cursor out parameter when procedure call result is closed.
+                    // This is to clean up the result set attached to the ref cursor out parameter
+                    // when procedure call result is closed.
                     procedureCallResult.addNativeData(Constants.REF_CURSOR_VALUE_NATIVE_DATA, result);
                     break;
                 case Types.STRUCT:
