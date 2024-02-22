@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [Support retrieval of enum types](https://github.com/ballerina-platform/ballerina-standard-library/issues/4588)
+- [Make some of the Java classes proper utility classes](https://github.com/ballerina-platform/ballerina-standard-library/issues/4921)
 
 ### Changed
 - [Fix failure for unsupported time type](https://github.com/ballerina-platform/ballerina-standard-library/issues/4531)

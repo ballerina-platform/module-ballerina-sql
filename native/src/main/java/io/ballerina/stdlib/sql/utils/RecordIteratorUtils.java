@@ -37,7 +37,7 @@ import static io.ballerina.stdlib.sql.utils.Utils.cleanUpConnection;
  * @since 1.2.0
  */
 public class RecordIteratorUtils {
-    public RecordIteratorUtils() {
+    private RecordIteratorUtils() {
     }
 
     public static Object nextResult(BObject recordIterator) {
