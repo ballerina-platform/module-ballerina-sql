@@ -56,6 +56,7 @@ public final class Constants {
     public static final String STATEMENT_NATIVE_DATA_FIELD = "Statement";
     public static final String COLUMN_DEFINITIONS_DATA_FIELD = "ColumnDefinition";
     public static final String RECORD_TYPE_DATA_FIELD = "recordType";
+    public static final String REF_CURSOR_VALUE_NATIVE_DATA = "RefCursorValue";
 
     public static final String PROCEDURE_CALL_RESULT = "ProcedureCallResult";
     public static final String TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD = "TypeDescription";
