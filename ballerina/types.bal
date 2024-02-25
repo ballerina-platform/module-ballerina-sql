@@ -1326,7 +1326,7 @@ public class CursorOutParameter {
 
     # Parses returned SQL result set values to a ballerina stream value.
     #
-    # + typeDesc - The `typedesc` of the record to which the result needs to be returned
+    # + rowType - The `typedesc` of the record to which the result needs to be returned
     # + return - Stream of records in the `rowType` type
     public isolated function get(typedesc<record {}> rowType = <>) returns stream <rowType, Error?> = @java:Method {
         'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
