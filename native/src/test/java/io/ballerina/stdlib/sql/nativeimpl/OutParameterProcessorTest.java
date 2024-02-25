@@ -89,4 +89,14 @@ public class OutParameterProcessorTest {
         BMap<BString, Object> map = (BMap<BString, Object>) obj;
         assertEquals(map.get(fromString("value1")), false);
     }
+
+    @Test
+    void getRefCursorTest()  {
+        BObject object = TestUtils.getMockObject("REF_CURSOR");
+        object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 2012);
+        object.addNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA, null);
+
+        assertNull(OutParameterProcessor.get(object, TestUtils.getBTypedesc(TestUtils.getStringStructRecord()),
+                DefaultResultParameterProcessor.getInstance()));
+    }
 }
