@@ -585,6 +585,40 @@ function testLocalTransactionWithQueryRow() returns error? {
     test:assertEquals(committedBlockExecuted, true);
 }
 
+type Customer1 record {
+    int customerId;
+    string firstName;
+};
+
+@test:Config {
+    groups: ["transaction"]
+}
+function testLocalTransactionWithStartAction() returns error? {
+    string|int? lastInsertId;
+    transaction {
+        future<error|string|int?> result = start callTransactionBranch();
+        lastInsertId = check wait result;
+        check commit;
+    }
+
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    Customer1|error result = dbClient->queryRow(`SELECT * FROM Customers WHERE customerId = ${lastInsertId}`);
+    check dbClient.close();
+    if result is error {
+       test:assertFail(result.message());
+    }
+
+    test:assertEquals(result.firstName, "Ellis");
+}
+
+transactional function callTransactionBranch() returns error|string|int? {
+    MockClient dbClient = check new (url = localTransactionDB, user = user, password = password);
+    ParameterizedQuery query = `INSERT INTO Customers (firstName,lastName,registrationID,creditLimit,country)
+                                    VALUES ('Ellis', 'Smith', 555, 5000.75, 'USA')`;
+    ExecutionResult execResult = check dbClient->execute(query);
+    return execResult.lastInsertId;
+}
+
 isolated function getCount(MockClient dbClient, string id) returns int|error {
     stream<TransactionResultCount, Error?> streamData = dbClient->query(
         `Select COUNT(*) as countVal from Customers where registrationID = ${id}`);
