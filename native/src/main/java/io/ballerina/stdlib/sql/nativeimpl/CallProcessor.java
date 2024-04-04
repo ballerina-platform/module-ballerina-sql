@@ -194,6 +194,8 @@ public class CallProcessor {
                 String objectType = TypeUtils.getType(objectValue).getName();
                 if (objectType.equals(Constants.ParameterObject.INOUT_PARAMETER)) {
                     parameterType = Constants.ParameterObject.INOUT_PARAMETER;
+                } else if (objectType.endsWith("InOutParameter")) {
+                    parameterType = Constants.ParameterObject.INOUT_PARAMETER;
                 } else if (objectType.endsWith("OutParameter")) {
                     parameterType = Constants.ParameterObject.OUT_PARAMETER;
                 } else {
@@ -205,7 +207,7 @@ public class CallProcessor {
                     case Constants.ParameterObject.INOUT_PARAMETER:
                         Object innerObject = objectValue.get(Constants.ParameterObject.IN_VALUE_FIELD);
                         sqlType = statementParameterProcessor.setSQLValueParam(connection, statement,
-                                index, innerObject, true);
+                                index, innerObject, true, objectType);
                         outputParamTypes.put(index, sqlType);
                         statement.registerOutParameter(index, sqlType);
                         break;
@@ -216,11 +218,11 @@ public class CallProcessor {
                         break;
                     default:
                         statementParameterProcessor.setSQLValueParam(connection, statement, index,
-                                object, false);
+                                object, false, "");
                 }
             } else {
                 statementParameterProcessor.setSQLValueParam(connection, statement, index, object,
-                        false);
+                        false, "");
             }
         }
     }

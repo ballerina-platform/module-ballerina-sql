@@ -1352,8 +1352,27 @@ public class InOutParameter {
     } external;
 }
 
+# Represents a Cursor InOut Parameter in `sql:ParameterizedCallQuery`.
+public class CursorInOutParameter {
+    Value 'in;
+
+    // value should be stream<record{}, sql:error>
+    public isolated function init() {
+        self.'in = ();
+    }
+
+    # Gets the cursor value.
+    #
+    # + rowType - The `typedesc` of the record to which the result needs to be returned
+    # + return - The cursor stream of records in the `rowType` type
+    public isolated function get(typedesc<record {}> rowType = <>) returns stream <rowType, Error?> = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutCursorValue"
+    } external;
+}
+
 # Generic type that can be passed to `sql:ParameterizedCallQuery` to indicate procedure/function parameters.
-public type Parameter Value|InOutParameter|OutParameter|CursorOutParameter;
+public type Parameter Value|InOutParameter|OutParameter|CursorOutParameter|CursorInOutParameter;
 
 # The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`
 # such as `` `The sql:ParameterizedQuery is ${variable_name}` ``.

@@ -203,14 +203,18 @@ public abstract class AbstractStatementParameterProcessor {
         for (int i = 0; i < arrayValue.size(); i++) {
             Object object = arrayValue.get(i);
             int index = i + 1;
-            setSQLValueParam(connection, preparedStatement, index, object, false);
+            setSQLValueParam(connection, preparedStatement, index, object, false, "");
         }
     }
 
     public int setSQLValueParam(Connection connection, PreparedStatement preparedStatement, int index, Object object,
-                                boolean returnType) throws DataError, SQLException {
+                                boolean returnType, String objectType) throws DataError, SQLException {
         try {
             if (object == null) {
+                if (objectType.equals("CursorInOutParameter")) {
+                    preparedStatement.setObject(index, null);
+                    return Types.REF_CURSOR;
+                }
                 preparedStatement.setNull(index, Types.NULL);
                 return Types.NULL;
             } else if (object instanceof BString) {
