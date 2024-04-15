@@ -44,7 +44,6 @@ import io.ballerina.stdlib.sql.parameterprocessor.AbstractResultParameterProcess
 import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProcessor;
 import io.ballerina.stdlib.sql.utils.ColumnDefinition;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
-import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 
@@ -55,6 +54,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
+import static io.ballerina.stdlib.sql.utils.Utils.getErrorStream;
 
 /**
  * This class provides the query processing implementation which executes sql queries.
@@ -264,17 +264,6 @@ public class QueryProcessor {
 
         PrimitiveTypeColumnDefinition definition = Utils.getColumnDefinition(resultSet, 1, type);
         return createValue(resultSet, 1, definition, resultParameterProcessor);
-    }
-
-    private static BStream getErrorStream(Object recordType, BError errorValue) {
-        return ValueCreator.createStreamValue(
-                TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
-                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
-    }
-
-    private static BObject createRecordIterator(BError errorValue) {
-        return ValueCreator.createObjectValue(ModuleUtils.getModule(), Constants.RESULT_ITERATOR_OBJECT,
-                errorValue, null);
     }
 
     public static BMap<BString, Object> createRecord(ResultSet resultSet, List<ColumnDefinition> columnDefinitions,

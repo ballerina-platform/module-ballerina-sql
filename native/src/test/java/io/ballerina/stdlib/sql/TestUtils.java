@@ -73,7 +73,9 @@ import javax.transaction.xa.Xid;
 /**
  * TestUtils class for testing ballerina native classes/methods.
  */
-public class TestUtils {
+public final class TestUtils {
+
+    private TestUtils() {}
 
     /**
      * ExtendedColumnDefinition Class for test utils.

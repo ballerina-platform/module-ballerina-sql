@@ -1321,6 +1321,19 @@ public distinct class XMLOutParameter {
     } external;
 }
 
+# Represents the Cursor Out Parameters in `sql:ParameterizedCallQuery`.
+public class CursorOutParameter {
+
+    # Parses returned SQL result set values to a ballerina stream value.
+    #
+    # + rowType - The `typedesc` of the record to which the result needs to be returned
+    # + return - Stream of records in the `rowType` type
+    public isolated function get(typedesc<record {}> rowType = <>) returns stream <rowType, Error?> = @java:Method {
+        'class: "io.ballerina.stdlib.sql.nativeimpl.OutParameterProcessor",
+        name: "getOutCursorValue"
+    } external;
+};
+
 # Represents SQL InOutParameter in `sql:ParameterizedCallQuery`.
 public class InOutParameter {
     Value 'in;
@@ -1340,7 +1353,7 @@ public class InOutParameter {
 }
 
 # Generic type that can be passed to `sql:ParameterizedCallQuery` to indicate procedure/function parameters.
-public type Parameter Value|InOutParameter|OutParameter;
+public type Parameter Value|InOutParameter|OutParameter|CursorOutParameter;
 
 # The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`
 # such as `` `The sql:ParameterizedQuery is ${variable_name}` ``.

@@ -30,15 +30,21 @@ import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.utils.XmlUtils;
 import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BXml;
 import io.ballerina.stdlib.sql.Constants;
+import io.ballerina.stdlib.sql.exception.ApplicationError;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.exception.FieldMismatchError;
 import io.ballerina.stdlib.sql.exception.TypeMismatchError;
 import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
+import io.ballerina.stdlib.sql.utils.ColumnDefinition;
+import io.ballerina.stdlib.sql.utils.ErrorGenerator;
+import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 import io.ballerina.stdlib.sql.utils.Utils;
 
@@ -62,6 +68,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
+import static io.ballerina.stdlib.sql.utils.Utils.getErrorStream;
 
 /**
  * This class implements methods required convert SQL types into ballerina types and
@@ -323,6 +330,30 @@ public class DefaultResultParameterProcessor extends AbstractResultParameterProc
             }
         }
         return struct;
+    }
+
+    public BStream convertCursorValue(ResultSet resultSet, RecordType streamConstraint) {
+        if (resultSet == null) {
+            return null;
+        }
+        try {
+            List<ColumnDefinition> columnDefinitions = Utils.getColumnDefinitions(resultSet, streamConstraint);
+            BObject resultIterator = ValueCreator.createObjectValue(ModuleUtils.getModule(),
+                    Constants.RESULT_ITERATOR_OBJECT, null, getBalStreamResultIterator());
+            resultIterator.addNativeData(Constants.RESULT_SET_NATIVE_DATA_FIELD, resultSet);
+            resultIterator.addNativeData(Constants.COLUMN_DEFINITIONS_DATA_FIELD, columnDefinitions);
+            resultIterator.addNativeData(Constants.RECORD_TYPE_DATA_FIELD, streamConstraint);
+            return ValueCreator.createStreamValue(TypeCreator.createStreamType(streamConstraint,
+                    PredefinedTypes.TYPE_NULL),
+                    resultIterator);
+        } catch (ApplicationError applicationError) {
+            BError errorValue = ErrorGenerator.getSQLApplicationError(applicationError);
+            return getErrorStream(streamConstraint, errorValue);
+        } catch (SQLException sqlException) {
+            BError errorValue = ErrorGenerator.getSQLDatabaseError(sqlException,
+                    "Error while retrieving column definition from result set.");
+            return getErrorStream(streamConstraint, errorValue);
+        }
     }
 
     @Override

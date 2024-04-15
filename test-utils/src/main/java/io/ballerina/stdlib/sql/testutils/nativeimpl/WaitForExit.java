@@ -27,7 +27,9 @@ import io.ballerina.stdlib.sql.testutils.utils.OSUtils;
  *
  * @since 0.6.0
  */
-public class WaitForExit {
+public final class WaitForExit {
+
+    private WaitForExit() {}
 
     public static Object waitForExit(BObject objVal) {
         Process process = OSUtils.processFromObject(objVal);

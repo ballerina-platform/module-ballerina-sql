@@ -36,7 +36,9 @@ import java.util.stream.Collectors;
  *
  * @since 0.6.0
  */
-public class Exec {
+public final class Exec {
+
+    private Exec() {}
 
     public static Object exec(BString command, BMap<BString, BString> env, Object dir, BString[] args) {
         List<String> commandList = new ArrayList<>();

@@ -37,7 +37,9 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BMapInitialValueEntry;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
@@ -1373,5 +1375,16 @@ public class Utils {
                 LogManager.getLogManager().getLogger(name).setLevel(Level.OFF);
             }
         }
+    }
+
+    public static BStream getErrorStream(Object recordType, BError errorValue) {
+        return ValueCreator.createStreamValue(
+                TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
+                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
+    }
+
+    private static BObject createRecordIterator(BError errorValue) {
+        return ValueCreator.createObjectValue(ModuleUtils.getModule(), Constants.RESULT_ITERATOR_OBJECT,
+                errorValue, null);
     }
 }
