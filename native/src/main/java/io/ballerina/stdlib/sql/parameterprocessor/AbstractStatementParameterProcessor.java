@@ -211,6 +211,8 @@ public abstract class AbstractStatementParameterProcessor {
                                 boolean returnType) throws DataError, SQLException {
         try {
             if (object == null) {
+                // If the value is null, we need to set the correct SQL type for the null value
+                // https://github.com/ballerina-platform/ballerina-library/issues/6562
                 preparedStatement.setNull(index, Types.NULL);
                 return Types.NULL;
             } else if (object instanceof BString) {
