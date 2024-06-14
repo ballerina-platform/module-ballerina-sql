@@ -77,10 +77,9 @@ public class QueryProcessor {
      * @param resultParameterProcessor    post-processor of the result
      * @return result stream or error
      */
-    public static BStream nativeQuery(
-            Environment env, BObject client, BObject paramSQLString, Object recordType,
-            AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
+    public static BStream nativeQuery(Environment env, BObject client, BObject paramSQLString, Object recordType,
+                                      AbstractStatementParameterProcessor statementParameterProcessor,
+                                      AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
         boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
         boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
@@ -173,7 +172,8 @@ public class QueryProcessor {
             BObject client, BObject paramSQLString,
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock, TransactionLocalContext currentTrxContext, boolean trxManagerEnabled) {
+            AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
+            TransactionLocalContext currentTrxContext, boolean trxManagerEnabled) {
         Type describingType = TypeUtils.getReferredType(ballerinaType.getDescribingType());
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
