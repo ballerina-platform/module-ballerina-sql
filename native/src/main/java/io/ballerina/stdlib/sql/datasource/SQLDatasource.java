@@ -158,8 +158,9 @@ public class SQLDatasource {
         return sqlDatasourceToBeReturned;
     }
 
-    public static Connection getConnection(boolean isInTrx, TransactionResourceManager trxResourceManager,
-                                           BObject client, SQLDatasource datasource) throws SQLException {
+    public static Connection getConnection(boolean isInTrx, BObject client, SQLDatasource datasource,
+                                           TransactionLocalContext transactionLocalContext,
+                                           boolean trxManagerEnabled) throws SQLException {
         Connection conn;
         try {
             if (!isInTrx) {
@@ -167,12 +168,11 @@ public class SQLDatasource {
             }
             String connectorId = (String) client.getNativeData(Constants.SQL_CONNECTOR_TRANSACTION_ID);
             boolean isXAConnection = datasource.isXADataSource();
-            TransactionLocalContext transactionLocalContext = trxResourceManager.getCurrentTransactionContext();
             String globalTxId = transactionLocalContext.getGlobalTransactionId();
             String currentTxBlockId = transactionLocalContext.getCurrentTransactionBlockId();
             BallerinaTransactionContext txContext = transactionLocalContext.getTransactionContext(connectorId);
             if (txContext == null) {
-                if (isXAConnection && !trxResourceManager.getTransactionManagerEnabled()) {
+                if (isXAConnection && trxManagerEnabled) {
                     XAConnection xaConn = datasource.getXAConnection();
                     XAResource xaResource = xaConn.getXAResource();
                     TransactionResourceManager.getInstance()
