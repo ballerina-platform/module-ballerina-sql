@@ -63,6 +63,7 @@ import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
 import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
+import static io.ballerina.stdlib.sql.utils.Utils.closeResources;
 
 /**
  * This class holds the utility methods involved with executing the call statements.
@@ -116,9 +117,9 @@ public class CallProcessor {
                 return ErrorGenerator.getSQLApplicationError(
                         "SQL Client is already closed, hence further operations are not allowed");
             }
-            Connection connection;
-            CallableStatement statement;
-            ResultSet resultSet;
+            Connection connection = null;
+            CallableStatement statement = null;
+            ResultSet resultSet = null;
             String sqlQuery = null;
             try {
                 sqlQuery = getSqlQuery(paramSQLString);
@@ -168,11 +169,14 @@ public class CallProcessor {
                 procedureCallResult.addNativeData(RESULT_SET_COUNT_NATIVE_DATA_FIELD, resultSetCount);
                 return procedureCallResult;
             } catch (SQLException e) {
+                closeResources(isWithinTrxBlock, resultSet, statement, connection);
                 return ErrorGenerator.getSQLDatabaseError(e,
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
             } catch (ApplicationError e) {
+                closeResources(isWithinTrxBlock, resultSet, statement, connection);
                 return ErrorGenerator.getSQLApplicationError(e);
             } catch (Throwable th) {
+                closeResources(isWithinTrxBlock, resultSet, statement, connection);
                 return ErrorGenerator.getSQLError(th, String.format("Error while executing SQL query: %s. ", sqlQuery));
             }
         } else {

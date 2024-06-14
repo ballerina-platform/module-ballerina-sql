@@ -7,10 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+## [1.13.1] - 2024-06-12
+
+### Changed
+- [Clean resources after procedure call failure](https://github.com/ballerina-platform/ballerina-library/issues/6626)
+
+## [1.13.0] - 2024-02-05
+
+### Added
+- Support for 2201.9.0 distribution
+
+## [1.12.1] - 2024-06-12
+
+### Changed
+- [Clean resources after procedure call failure](https://github.com/ballerina-platform/ballerina-library/issues/6626)
+
+## [1.12.0] - 2024-02-05
+
+### Added
 - Support for Cursor based result set retrieval in procedure calls
 
 ### Changed
 - [Revert Accept escaped backtick as insertions in parameterised query](https://github.com/ballerina-platform/ballerina-standard-library/issues/2056)
+
+## [1.11.2] - 2024-06-12
+
+### Changed
+- [Clean resources after procedure call failure](https://github.com/ballerina-platform/ballerina-library/issues/6626)
 
 ## [1.11.1] - 2023-10-16
 
