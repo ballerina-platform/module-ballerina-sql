@@ -172,7 +172,7 @@ public class SQLDatasource {
             String currentTxBlockId = transactionLocalContext.getCurrentTransactionBlockId();
             BallerinaTransactionContext txContext = transactionLocalContext.getTransactionContext(connectorId);
             if (txContext == null) {
-                if (isXAConnection && trxManagerEnabled) {
+                if (isXAConnection && !trxManagerEnabled) {
                     XAConnection xaConn = datasource.getXAConnection();
                     XAResource xaResource = xaConn.getXAResource();
                     TransactionResourceManager.getInstance()
