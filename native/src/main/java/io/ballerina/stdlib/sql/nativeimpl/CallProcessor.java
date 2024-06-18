@@ -30,6 +30,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
+import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
@@ -89,27 +90,24 @@ public class CallProcessor {
                                     AbstractStatementParameterProcessor statementParameterProcessor,
                                     AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
-            Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(() -> {
-                Object resultStream =
-                        nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
-                                resultParameterProcessor, false, null);
-                balFuture.complete(resultStream);
-            });
-        } else {
-            return nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
-                    resultParameterProcessor, true, trxResourceManager);
-        }
+        boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
+        boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
+        TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
+        Future balFuture = env.markAsync();
+        SQL_EXECUTOR_SERVICE.execute(() -> {
+            Object resultStream =
+                    nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
+                            resultParameterProcessor, withinTrxBlock, currentTrxContext, trxManagerEnabled);
+            balFuture.complete(resultStream);
+        });
         return null;
-
     }
 
     private static Object nativeCallExecutable(BObject client, BObject paramSQLString, BArray recordTypes,
                                                AbstractStatementParameterProcessor statementParameterProcessor,
                                                AbstractResultParameterProcessor resultParameterProcessor,
-                                               boolean isWithinTrxBlock,
-                                               TransactionResourceManager trxResourceManager) {
+                                               boolean isWithinTrxBlock, TransactionLocalContext currentTrxContext,
+                                               boolean trxManagerEnabled) {
         Object dbClient = client.getNativeData(DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -123,7 +121,8 @@ public class CallProcessor {
             String sqlQuery = null;
             try {
                 sqlQuery = getSqlQuery(paramSQLString);
-                connection = SQLDatasource.getConnection(isWithinTrxBlock, trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithinTrxBlock, client, sqlDatasource, currentTrxContext,
+                        trxManagerEnabled);
                 statement = connection.prepareCall(sqlQuery);
 
                 HashMap<Integer, Integer> outputParamTypes = new HashMap<>();
