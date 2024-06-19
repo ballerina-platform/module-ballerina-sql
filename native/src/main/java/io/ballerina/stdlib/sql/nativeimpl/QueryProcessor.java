@@ -34,6 +34,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
+import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.datasource.SQLDatasource;
@@ -76,31 +77,28 @@ public class QueryProcessor {
      * @param resultParameterProcessor    post-processor of the result
      * @return result stream or error
      */
-    public static BStream nativeQuery(
-            Environment env, BObject client, BObject paramSQLString, Object recordType,
-            AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor) {
+    public static BStream nativeQuery(Environment env, BObject client, BObject paramSQLString, Object recordType,
+                                      AbstractStatementParameterProcessor statementParameterProcessor,
+                                      AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
-            Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(() -> {
-                BStream resultStream =
-                        nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
-                                resultParameterProcessor, false, null);
-                balFuture.complete(resultStream);
-            });
-        } else {
-            return nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
-                    resultParameterProcessor, true, trxResourceManager);
-        }
+        boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
+        boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
+        TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
+        Future balFuture = env.markAsync();
+        SQL_EXECUTOR_SERVICE.execute(() -> {
+            BStream resultStream =
+                    nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
+                            resultParameterProcessor, withinTrxBlock, currentTrxContext, trxManagerEnabled);
+            balFuture.complete(resultStream);
+        });
         return null;
     }
 
-    private static BStream nativeQueryExecutable(
-            BObject client, BObject paramSQLString, Object recordType,
-            AbstractStatementParameterProcessor statementParameterProcessor,
-            AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
-            TransactionResourceManager trxResourceManager) {
+    private static BStream nativeQueryExecutable(BObject client, BObject paramSQLString, Object recordType,
+                                                 AbstractStatementParameterProcessor statementParameterProcessor,
+                                                 AbstractResultParameterProcessor resultParameterProcessor,
+                                                 boolean isWithInTrxBlock, TransactionLocalContext currentTrxContext,
+                                                 boolean trxManagerEnabled) {
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -115,7 +113,8 @@ public class QueryProcessor {
             String sqlQuery = null;
             try {
                 sqlQuery = Utils.getSqlQuery(paramSQLString);
-                connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithInTrxBlock, client, sqlDatasource,
+                        currentTrxContext, trxManagerEnabled);
                 statement = connection.prepareStatement(sqlQuery);
                 statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
@@ -154,18 +153,18 @@ public class QueryProcessor {
                                         AbstractStatementParameterProcessor statementParameterProcessor,
                                         AbstractResultParameterProcessor resultParameterProcessor) {
         TransactionResourceManager trxResourceManager = TransactionResourceManager.getInstance();
-        if (!Utils.isWithinTrxBlock(trxResourceManager)) {
-            Future balFuture = env.markAsync();
-            SQL_EXECUTOR_SERVICE.execute(() -> {
-                Object resultStream =
-                        nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
-                                resultParameterProcessor, false, null);
-                balFuture.complete(resultStream);
-            });
-        } else {
-            return nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
-                    resultParameterProcessor, true, trxResourceManager);
-        }
+        boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
+        boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
+        TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
+        Future balFuture = env.markAsync();
+        SQL_EXECUTOR_SERVICE.execute(() -> {
+            Object resultStream =
+                    nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
+                            resultParameterProcessor, withinTrxBlock, currentTrxContext,
+                            trxManagerEnabled);
+            balFuture.complete(resultStream);
+        });
+
         return null;
     }
 
@@ -174,7 +173,7 @@ public class QueryProcessor {
             BTypedesc ballerinaType,
             AbstractStatementParameterProcessor statementParameterProcessor,
             AbstractResultParameterProcessor resultParameterProcessor, boolean isWithInTrxBlock,
-            TransactionResourceManager trxResourceManager) {
+            TransactionLocalContext currentTrxContext, boolean trxManagerEnabled) {
         Type describingType = TypeUtils.getReferredType(ballerinaType.getDescribingType());
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
@@ -189,7 +188,8 @@ public class QueryProcessor {
             String sqlQuery = null;
             try {
                 sqlQuery = Utils.getSqlQuery(paramSQLString);
-                connection = SQLDatasource.getConnection(isWithInTrxBlock, trxResourceManager, client, sqlDatasource);
+                connection = SQLDatasource.getConnection(isWithInTrxBlock, client, sqlDatasource,
+                        currentTrxContext, trxManagerEnabled);
                 statement = connection.prepareStatement(sqlQuery);
                 statementParameterProcessor.setParams(connection, statement, paramSQLString);
                 resultSet = statement.executeQuery();
