@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
+## [1.13.2] - 2024-06-19
+
+### Changed
 - [Run database queries inside transaction block as non blocking query](https://github.com/ballerina-platform/ballerina-library/issues/6641)
 
 ## [1.13.1] - 2024-06-12
