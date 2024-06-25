@@ -236,6 +236,18 @@ public class SQLDatasource {
     private static SQLDatasource createAndInitDatasource(SQLDatasource.SQLDatasourceParams sqlDatasourceParams) {
         SQLDatasource newSqlDatasource = new SQLDatasource(sqlDatasourceParams);
         newSqlDatasource.incrementClientCounter();
+        // add new datasource to the recovery manager to be recovered if needed during crash recovery
+        try {
+            XAConnection xaConn = newSqlDatasource.getXAConnection();
+            if (xaConn == null) {
+                return newSqlDatasource;
+            }
+            XAResource xaResource = xaConn.getXAResource();
+            TransactionResourceManager.getInstance().getRecoveryManager().addXAResourceToRecover(xaResource);
+        } catch (SQLException e) {
+            throw ErrorGenerator.getSQLDatabaseError(e,
+                    "error while verifying the connection for " + Constants.CONNECTOR_NAME + ", ");
+        }
         return newSqlDatasource;
     }
 
@@ -246,7 +258,7 @@ public class SQLDatasource {
         return hikariDataSource.getConnection();
     }
 
-    private XAConnection getXAConnection() throws SQLException {
+    public XAConnection getXAConnection() throws SQLException {
         if (isXADataSource()) {
             return xaDataSource.getXAConnection();
         }
