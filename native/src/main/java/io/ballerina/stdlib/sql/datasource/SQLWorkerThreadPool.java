@@ -34,7 +34,7 @@ public class SQLWorkerThreadPool {
     private SQLWorkerThreadPool() {
     }
 
-    static final int MAX_POOL_SIZE = Integer.parseInt(System.getProperty(Constants.BALLERINA_MAX_POOL_SIZE, "50"));
+    static final int MAX_POOL_SIZE = Integer.parseInt(System.getProperty(Constants.BALLERINA_SQL_MAX_POOL_SIZE, "50"));
 
     // This is similar to cachedThreadPool util from Executors.newCachedThreadPool(..); but with upper cap on threads
     public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, MAX_POOL_SIZE,
