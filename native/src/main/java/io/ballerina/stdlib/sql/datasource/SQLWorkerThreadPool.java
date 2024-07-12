@@ -18,13 +18,13 @@
 
 package io.ballerina.stdlib.sql.datasource;
 
-import io.ballerina.stdlib.sql.Constants;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static io.ballerina.stdlib.sql.Constants.BALLERINA_SQL_MAX_POOL_SIZE;
 
 /**
  * Class to hold the static cachedThreadPool for SQL.
@@ -34,7 +34,10 @@ public class SQLWorkerThreadPool {
     private SQLWorkerThreadPool() {
     }
 
-    static final int MAX_POOL_SIZE = Integer.parseInt(System.getProperty(Constants.BALLERINA_SQL_MAX_POOL_SIZE, "50"));
+    static final int MAX_POOL_SIZE = Integer.parseInt(
+            System.getenv(BALLERINA_SQL_MAX_POOL_SIZE) != null ?
+                    System.getenv(BALLERINA_SQL_MAX_POOL_SIZE) : "50"
+    );
 
     // This is similar to cachedThreadPool util from Executors.newCachedThreadPool(..); but with upper cap on threads
     public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, MAX_POOL_SIZE,
