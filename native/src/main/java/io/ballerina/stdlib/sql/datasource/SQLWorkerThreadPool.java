@@ -32,8 +32,11 @@ public class SQLWorkerThreadPool {
     private SQLWorkerThreadPool() {
     }
 
+    // Read the pool size from a system property, defaulting to 50 if not set
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("BALLERINA_SQL_THREAD_POOL_SIZE", "50"));
+
     // This is similar to cachedThreadPool util from Executors.newCachedThreadPool(..); but with upper cap on threads
-    public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, 50,
+    public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, POOL_SIZE,
             60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new SQLThreadFactory());
 
     static class SQLThreadFactory implements ThreadFactory {
