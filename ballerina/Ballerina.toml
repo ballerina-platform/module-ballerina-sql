@@ -1,13 +1,13 @@
 [package]
 org = "ballerina"
 name = "sql"
-version = "1.13.3"
+version = "1.14.0"
 authors = ["Ballerina"]
 keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.9.0"
+distribution = "2201.10.0"
 
 [platform.java17]
 graalvmCompatible = true
@@ -15,11 +15,11 @@ graalvmCompatible = true
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "sql-native"
-version = "1.13.3"
-path = "../native/build/libs/sql-native-1.13.3-SNAPSHOT.jar"
+version = "1.14.0"
+path = "../native/build/libs/sql-native-1.14.0-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
-path = "../test-utils/build/libs/sql-test-utils-1.13.3-SNAPSHOT.jar"
+path = "../test-utils/build/libs/sql-test-utils-1.14.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -31,15 +31,3 @@ path = "./lib/HikariCP-3.3.1.jar"
 [[platform.java17.dependency]]
 path = "./lib/hsqldb-2.7.1.jar"
 scope = "testOnly"
-
-#[[platform.java17.dependency]]
-#groupId = "org.apache.logging.log4j"
-#artifactId = "log4j-core"
-#version = "2.17.1"
-#path = "./lib/log4j-core-2.17.1.jar"
-#
-#[[platform.java17.dependency]]
-#groupId = "org.apache.logging.log4j"
-#artifactId = "log4j-slf4j-impl"
-#version = "2.17.1"
-#path = "./lib/log4j-slf4j-impl-2.17.1.jar"
