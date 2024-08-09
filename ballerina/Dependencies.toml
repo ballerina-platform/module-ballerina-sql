@@ -118,7 +118,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "jwt"
-version = "3.0.0"
+version = "2.13.0"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "cache"},
