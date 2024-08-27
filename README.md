@@ -13,7 +13,7 @@ clients can be created by using specific database libraries such as `mysql` or u
 library `jdbc`.
 
 ### List of database libraries
-Ballerina now has the [`jdbc` library](https://docs.central.ballerina.io/ballerinax/java.jdbc/latest) as the generic DB connector library to connect to any relational database by simply providing the JDBC URL and the other related properties.
+Ballerina now has the [`jdbc` library](https://docs.central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector library to connect to any relational database by simply providing the JDBC URL and the other related properties.
 
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
 * [`MySQL` library](https://central.ballerina.io/ballerinax/mysql)
@@ -30,7 +30,7 @@ A database client can be created using any of the above-listed database librarie
 #### Handle connection pools
 
 All database libraries share the same connection pooling concept and there are three possible scenarios for
-connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).
+connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest#ConnectionPool).
 
 > **Note**: Connection pooling is used to optimize opening and closing connections to the database. However, the pool comes with an overhead. It is best to configure the connection pool properties as per the application need to get the best performance.
 
@@ -512,6 +512,6 @@ All contributors are encouraged to read the [Ballerina code of conduct](https://
 ## Useful links
 
 * For more information go to the [`sql` library](https://lib.ballerina.io/ballerina/sql/latest).
-* For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/mysql-init-options.html).
+* For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/#database-access).
 * Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.

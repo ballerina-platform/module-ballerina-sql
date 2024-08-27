@@ -5,7 +5,7 @@ clients can be created by using specific database modules such as `mysql` or usi
 module `jdbc`.
 
 ### List of database modules
-Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc/latest) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
+Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
 
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
 * [`MySQL` module](https://central.ballerina.io/ballerinax/mysql)
@@ -22,7 +22,7 @@ A database client can be created using any of the above-listed database librarie
 #### Handle connection pools
 
 All database modules share the same connection pooling concept and there are three possible scenarios for
-connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest/records/ConnectionPool).
+connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest#ConnectionPool).
 
 > **Note**: Connection pooling is used to optimize opening and closing connections to the database. However, the pool comes with an overhead. It is best to configure the connection pool properties as per the application need to get the best performance.
 
