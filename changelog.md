@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [1.14.0] - 2024-08-20
+
+### Added
+- Support for 2201.10.0 distribution
+- Make maximum sql pool size configurable
+
 ## [1.13.2] - 2024-06-19
 
 ### Changed
