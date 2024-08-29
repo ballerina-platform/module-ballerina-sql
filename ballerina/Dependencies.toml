@@ -302,7 +302,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "sql"
-version = "1.14.0"
+version = "1.14.1"
 dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
