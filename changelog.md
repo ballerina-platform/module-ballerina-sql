@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [1.14.1] - 2024-08-29
+
+### Changed
+- [Fix API doc links](https://github.com/ballerina-platform/ballerina-dev-website/issues/8671)
+
 ## [1.14.0] - 2024-08-20
 
 ### Added
