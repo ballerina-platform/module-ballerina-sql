@@ -19,7 +19,7 @@
 package io.ballerina.stdlib.sql.datasource;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +34,7 @@ public class SQLWorkerThreadPool {
 
     // This is similar to cachedThreadPool util from Executors.newCachedThreadPool(..); but with upper cap on threads
     public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, 50,
-            60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new SQLThreadFactory());
+            60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new SQLThreadFactory());
 
     static class SQLThreadFactory implements ThreadFactory {
         @Override
