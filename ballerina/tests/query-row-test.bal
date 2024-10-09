@@ -1652,6 +1652,35 @@ function queryRowEmptyTest2() returns error? {
     test:assertEquals(result, expectedAlbum);
 }
 
+@test:Config {
+    groups: ["query", "query-row"]
+}
+function loadTestQueryRow() returns error? {
+    MockClient dbClient = check getMockClient(queryRowDb);
+    int strandCount = 60;
+    future<Album3|error>[] futures = [];
+    foreach int i in 0 ... strandCount {
+        future<Album3|error> 'future = start queryAlbum3(dbClient);
+        futures.push('future);
+    }
+    Album3 expectedAlbum = {
+        id: "2",
+        name: "Lemonade",
+        artist: (),
+        price: 20.0
+    };
+    foreach int i in 0 ... strandCount {
+        Album3 album = check wait futures.pop();
+        test:assertEquals(album, expectedAlbum);
+    }
+    check dbClient.close();
+}
+
+isolated function queryAlbum3(MockClient dbClient) returns Album3|error {
+    Album3 result = check dbClient->queryRow(`SELECT * FROM Album WHERE id_test = 2`);
+    return result;
+}
+
 isolated function validateDataTableRecordResult(record {}? returnData) {
     decimal decimalVal = 23.45;
     if returnData is () {
