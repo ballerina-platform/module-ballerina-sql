@@ -69,7 +69,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.12.0"
+version = "2.12.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "auth"},
@@ -302,7 +302,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "sql"
-version = "1.14.1"
+version = "1.14.2"
 dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
