@@ -64,7 +64,7 @@ public class OutParameterProcessor {
     public static Object getOutParameterValue(BObject result, BTypedesc typeDesc) {
         try {
             CallProcessor.populateOutParameter(result);
-        } catch (Throwable e) {
+        } catch (SQLException | ApplicationError e) {
             return ErrorGenerator.getSQLError(e, "Failed to read OUT parameter value.");
         }
 
@@ -74,7 +74,7 @@ public class OutParameterProcessor {
     public static BStream getOutCursorValue(BObject result, BTypedesc typeDesc) {
         try {
             CallProcessor.populateOutParameter(result);
-        } catch (Throwable e) {
+        } catch (SQLException | ApplicationError e) {
             return getErrorStream(typeDesc,
                     ErrorGenerator.getSQLError(e, "Failed to read parameter value."));
         }
@@ -84,7 +84,7 @@ public class OutParameterProcessor {
     public static Object getInOutParameterValue(BObject result, BTypedesc typeDesc) {
         try {
             CallProcessor.populateOutParameter(result);
-        } catch (Throwable e) {
+        } catch (SQLException | ApplicationError e) {
             return ErrorGenerator.getSQLError(e, "Failed to read INOUT parameter value.");
         }
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "InOutParameter");
