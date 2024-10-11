@@ -48,6 +48,7 @@ import java.sql.Types;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
+import static io.ballerina.stdlib.sql.utils.Utils.getErrorStream;
 import static io.ballerina.stdlib.sql.utils.Utils.getString;
 
 /**
@@ -61,14 +62,31 @@ public class OutParameterProcessor {
     }
 
     public static Object getOutParameterValue(BObject result, BTypedesc typeDesc) {
+        try {
+            CallProcessor.populateOutParameter(result);
+        } catch (Throwable e) {
+            return ErrorGenerator.getSQLError(e, "Failed to read OUT parameter value.");
+        }
+
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "OutParameter");
     }
 
     public static BStream getOutCursorValue(BObject result, BTypedesc typeDesc) {
+        try {
+            CallProcessor.populateOutParameter(result);
+        } catch (Throwable e) {
+            return getErrorStream(typeDesc,
+                    ErrorGenerator.getSQLError(e, "Failed to read parameter value."));
+        }
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
     }
 
     public static Object getInOutParameterValue(BObject result, BTypedesc typeDesc) {
+        try {
+            CallProcessor.populateOutParameter(result);
+        } catch (Throwable e) {
+            return ErrorGenerator.getSQLError(e, "Failed to read INOUT parameter value.");
+        }
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "InOutParameter");
     }
 
@@ -81,7 +99,7 @@ public class OutParameterProcessor {
     }
 
     public static Object get(BObject result, BTypedesc typeDesc,
-                              AbstractResultParameterProcessor resultParameterProcessor, String parameterType) {
+                             AbstractResultParameterProcessor resultParameterProcessor, String parameterType) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
         Type ballerinaType = TypeUtils.getReferredType(typeDesc.getDescribingType());

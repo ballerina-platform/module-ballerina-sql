@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- [Fix stored procedure call having output parameter failing with result set closed error](https://github.com/ballerina-platform/ballerina-library/issues/7255)
+
+## [1.12.0] - 2024-02-25
+
 ### Added
 - Support for Cursor based result set retrieval in procedure calls
 
