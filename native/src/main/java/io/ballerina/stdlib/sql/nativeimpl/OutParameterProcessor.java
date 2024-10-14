@@ -104,114 +104,49 @@ public class OutParameterProcessor {
         BObject procedureCallResult = (BObject) parameter.getNativeData(PROCEDURE_CALL_RESULT);
         AbstractResultParameterProcessor resultParameterProcessor = (AbstractResultParameterProcessor) parameter
                 .getNativeData(RESULT_PARAMETER_PROCESSOR);
-        Object result;
-        switch (sqlType) {
-            case Types.CHAR:
-                result = resultParameterProcessor.processChar(statement, paramIndex);
-                break;
-            case Types.VARCHAR:
-                result = resultParameterProcessor.processVarchar(statement, paramIndex);
-                break;
-            case Types.LONGVARCHAR:
-                result = resultParameterProcessor.processLongVarchar(statement, paramIndex);
-                break;
-            case Types.NCHAR:
-                result = resultParameterProcessor.processNChar(statement, paramIndex);
-                break;
-            case Types.NVARCHAR:
-                result = resultParameterProcessor.processNVarchar(statement, paramIndex);
-                break;
-            case Types.LONGNVARCHAR:
-                result = resultParameterProcessor.processLongNVarchar(statement, paramIndex);
-                break;
-            case Types.BINARY:
-                result = resultParameterProcessor.processBinary(statement, paramIndex);
-                break;
-            case Types.VARBINARY:
-                result = resultParameterProcessor.processVarBinary(statement, paramIndex);
-                break;
-            case Types.LONGVARBINARY:
-                result = resultParameterProcessor.processLongVarBinary(statement, paramIndex);
-                break;
-            case Types.BLOB:
-                result = resultParameterProcessor.processBlob(statement, paramIndex);
-                break;
-            case Types.CLOB:
-                result = resultParameterProcessor.processClob(statement, paramIndex);
-                break;
-            case Types.NCLOB:
-                result = resultParameterProcessor.processNClob(statement, paramIndex);
-                break;
-            case Types.DATE:
-                result = resultParameterProcessor.processDate(statement, paramIndex);
-                break;
-            case Types.TIME:
-                result = resultParameterProcessor.processTime(statement, paramIndex);
-                break;
-            case Types.TIME_WITH_TIMEZONE:
-                result = resultParameterProcessor.processTimeWithTimeZone(statement, paramIndex);
-                break;
-            case Types.TIMESTAMP:
-                result = resultParameterProcessor.processTimestamp(statement, paramIndex);
-                break;
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-                result = resultParameterProcessor.processTimestampWithTimeZone(statement, paramIndex);
-                break;
-            case Types.ARRAY:
-                result = resultParameterProcessor.processArray(statement, paramIndex);
-                break;
-            case Types.ROWID:
-                result = resultParameterProcessor.processRowID(statement, paramIndex);
-                break;
-            case Types.TINYINT:
-                result = resultParameterProcessor.processTinyInt(statement, paramIndex);
-                break;
-            case Types.SMALLINT:
-                result = resultParameterProcessor.processSmallInt(statement, paramIndex);
-                break;
-            case Types.INTEGER:
-                result = resultParameterProcessor.processInteger(statement, paramIndex);
-                break;
-            case Types.BIGINT:
-                result = resultParameterProcessor.processBigInt(statement, paramIndex);
-                break;
-            case Types.REAL:
-                result = resultParameterProcessor.processReal(statement, paramIndex);
-                break;
-            case Types.FLOAT:
-                result = resultParameterProcessor.processFloat(statement, paramIndex);
-                break;
-            case Types.DOUBLE:
-                result = resultParameterProcessor.processDouble(statement, paramIndex);
-                break;
-            case Types.NUMERIC:
-                result = resultParameterProcessor.processNumeric(statement, paramIndex);
-                break;
-            case Types.DECIMAL:
-                result = resultParameterProcessor.processDecimal(statement, paramIndex);
-                break;
-            case Types.BIT:
-                result = resultParameterProcessor.processBit(statement, paramIndex);
-                break;
-            case Types.BOOLEAN:
-                result = resultParameterProcessor.processBoolean(statement, paramIndex);
-                break;
-            case Types.REF:
-            case Types.REF_CURSOR:
-                result = resultParameterProcessor.processRef(statement, paramIndex);
+        Object result = switch (sqlType) {
+            case Types.CHAR -> resultParameterProcessor.processChar(statement, paramIndex);
+            case Types.VARCHAR -> resultParameterProcessor.processVarchar(statement, paramIndex);
+            case Types.LONGVARCHAR -> resultParameterProcessor.processLongVarchar(statement, paramIndex);
+            case Types.NCHAR -> resultParameterProcessor.processNChar(statement, paramIndex);
+            case Types.NVARCHAR -> resultParameterProcessor.processNVarchar(statement, paramIndex);
+            case Types.LONGNVARCHAR -> resultParameterProcessor.processLongNVarchar(statement, paramIndex);
+            case Types.BINARY -> resultParameterProcessor.processBinary(statement, paramIndex);
+            case Types.VARBINARY -> resultParameterProcessor.processVarBinary(statement, paramIndex);
+            case Types.LONGVARBINARY -> resultParameterProcessor.processLongVarBinary(statement, paramIndex);
+            case Types.BLOB -> resultParameterProcessor.processBlob(statement, paramIndex);
+            case Types.CLOB -> resultParameterProcessor.processClob(statement, paramIndex);
+            case Types.NCLOB -> resultParameterProcessor.processNClob(statement, paramIndex);
+            case Types.DATE -> resultParameterProcessor.processDate(statement, paramIndex);
+            case Types.TIME -> resultParameterProcessor.processTime(statement, paramIndex);
+            case Types.TIME_WITH_TIMEZONE -> resultParameterProcessor.processTimeWithTimeZone(statement, paramIndex);
+            case Types.TIMESTAMP -> resultParameterProcessor.processTimestamp(statement, paramIndex);
+            case Types.TIMESTAMP_WITH_TIMEZONE ->
+                    resultParameterProcessor.processTimestampWithTimeZone(statement, paramIndex);
+            case Types.ARRAY -> resultParameterProcessor.processArray(statement, paramIndex);
+            case Types.ROWID -> resultParameterProcessor.processRowID(statement, paramIndex);
+            case Types.TINYINT -> resultParameterProcessor.processTinyInt(statement, paramIndex);
+            case Types.SMALLINT -> resultParameterProcessor.processSmallInt(statement, paramIndex);
+            case Types.INTEGER -> resultParameterProcessor.processInteger(statement, paramIndex);
+            case Types.BIGINT -> resultParameterProcessor.processBigInt(statement, paramIndex);
+            case Types.REAL -> resultParameterProcessor.processReal(statement, paramIndex);
+            case Types.FLOAT -> resultParameterProcessor.processFloat(statement, paramIndex);
+            case Types.DOUBLE -> resultParameterProcessor.processDouble(statement, paramIndex);
+            case Types.NUMERIC -> resultParameterProcessor.processNumeric(statement, paramIndex);
+            case Types.DECIMAL -> resultParameterProcessor.processDecimal(statement, paramIndex);
+            case Types.BIT -> resultParameterProcessor.processBit(statement, paramIndex);
+            case Types.BOOLEAN -> resultParameterProcessor.processBoolean(statement, paramIndex);
+            case Types.REF, Types.REF_CURSOR -> {
+                Object output = resultParameterProcessor.processRef(statement, paramIndex);
                 // This is to clean up the result set attached to the ref cursor out parameter
                 // when procedure call result is closed.
-                procedureCallResult.addNativeData(REF_CURSOR_VALUE_NATIVE_DATA, result);
-                break;
-            case Types.STRUCT:
-                result = resultParameterProcessor.processStruct(statement, paramIndex);
-                break;
-            case Types.SQLXML:
-                result = resultParameterProcessor.processXML(statement, paramIndex);
-                break;
-            default:
-                result = resultParameterProcessor.processCustomOutParameters(statement, paramIndex, sqlType);
-        }
+                procedureCallResult.addNativeData(REF_CURSOR_VALUE_NATIVE_DATA, output);
+                yield output;
+            }
+            case Types.STRUCT -> resultParameterProcessor.processStruct(statement, paramIndex);
+            case Types.SQLXML -> resultParameterProcessor.processXML(statement, paramIndex);
+            default -> resultParameterProcessor.processCustomOutParameters(statement, paramIndex, sqlType);
+        };
         parameter.addNativeData(ParameterObject.VALUE_NATIVE_DATA, result);
     }
 
