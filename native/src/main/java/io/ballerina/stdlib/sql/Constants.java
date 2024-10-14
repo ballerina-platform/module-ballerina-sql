@@ -75,6 +75,9 @@ public final class Constants {
     public static final String READ_BYTE_CHANNEL_STRUCT = "ReadableByteChannel";
     public static final String READ_CHAR_CHANNEL_STRUCT = "ReadableCharacterChannel";
 
+    public static final String RESULT_PARAMETER_PROCESSOR = "ResultParameterProcessor";
+    public static final String PARAMETER_INDEX_META_DATA = "parameterIndex";
+
     public static final String USERNAME = "user";
     public static final String PASSWORD = "password";
 

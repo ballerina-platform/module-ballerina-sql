@@ -130,15 +130,16 @@ function testCallWithStringTypesOutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithOutParams(${paraID}, ${paraVarchar},
                             ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
     test:assertEquals(paraCharmax.get(string), "test1     ", "3rd out parameter of procedure did not match.");
     test:assertEquals(paraChar.get(string), "a", "4th out parameter of procedure did not match.");
     test:assertEquals(paraCharactermax.get(string), "test2     ", "5th out parameter of procedure did not match.");
     test:assertEquals(paraCharacter.get(string), "b", "6th out parameter of procedure did not match.");
     test:assertEquals(paraNvarcharmax.get(string), "test3", "7th out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -162,9 +163,8 @@ function testCallWithNumericTypesOutParams() returns error? {
                         ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                         ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     decimal paraDecimalVal = 1234.56;
 
     test:assertEquals(paraInt.get(int), 2147483647, "2nd out parameter of procedure did not match.");
@@ -177,6 +177,8 @@ function testCallWithNumericTypesOutParams() returns error? {
     test:assertTrue((check paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
     test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -200,9 +202,8 @@ function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
                         ${paraBigInt}, ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                         ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     test:assertEquals(paraInt.get(int), 0, "2nd out parameter of procedure did not match.");
     test:assertEquals(paraBigInt.get(int), 0, "3rd out parameter of procedure did not match.");
     test:assertEquals(paraSmallInt.get(int), 0, "4th out parameter of procedure did not match.");
@@ -213,6 +214,8 @@ function testCallWithNumericTypesOutParamsForInvalidInValue() returns error? {
     test:assertTrue((check paraFloat.get(float)) >= 0.0, "9th out parameter of procedure did not match.");
     test:assertTrue((check paraReal.get(float)) >= 0.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 0.0, "11th out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -231,15 +234,16 @@ function testCallWithStringTypesInoutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithInoutParams(${paraID}, ${paraVarchar},
                              ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     test:assertEquals(paraVarchar.get(string), "test0", "2nd out parameter of procedure did not match.");
     test:assertEquals(paraCharmax.get(string), "test1     ", "3rd out parameter of procedure did not match.");
     test:assertEquals(paraChar.get(string), "a", "4th out parameter of procedure did not match.");
     test:assertEquals(paraCharactermax.get(string), "test2     ", "5th out parameter of procedure did not match.");
     test:assertEquals(paraCharacter.get(string), "b", "6th out parameter of procedure did not match.");
     test:assertEquals(paraNvarcharmax.get(string), "test3", "7th out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -265,9 +269,8 @@ function testCallWithNumericTypesInoutParams() returns error? {
                                 ${paraSmallInt}, ${paraTinyInt}, ${paraBit}, ${paraDecimal}, ${paraNumeric},
                                  ${paraFloat}, ${paraReal}, ${paraDouble})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     decimal paraDecimalVal = 1234.56;
 
     test:assertEquals(paraInt.get(int), 2147483647, "2nd out parameter of procedure did not match.");
@@ -280,6 +283,8 @@ function testCallWithNumericTypesInoutParams() returns error? {
     test:assertTrue((check paraFloat.get(float)) > 1234.0, "9th out parameter of procedure did not match.");
     test:assertTrue((check paraReal.get(float)) > 1234.0, "10th out parameter of procedure did not match.");
     test:assertEquals(paraDouble.get(float), 1234.56, "11th out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -350,9 +355,8 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
         ${paraTimestamp}, ${paraIntArray}, ${paraStrArray}, ${paraFloArray}, ${paraDecArray}, ${paraBooArray}, ${paraByteArray},
         ${paraEmptyArray})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     string clobType = "very long text";
     byte[] varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
     time:Civil dateTimeRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
@@ -360,6 +364,8 @@ function testCallWithAllTypesInoutParamsAsObjectValues() returns error? {
     test:assertEquals(paraClob.get(string), clobType, "Clob out parameter of procedure did not match.");
     test:assertEquals(paraVarBinary.get(byte), varBinaryType, "VarBinary out parameter of procedure did not match.");
     test:assertEquals(paraDateTime.get(time:Civil), dateTimeRecord, "DateTime out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -437,8 +443,8 @@ function testCallWithInoutParams() returns error? {
         ${paraTimestamp}, ${paraIntArray}, ${paraStrArray}, ${paraFloArray}, ${paraDecArray}, ${paraBooArray}, ${paraByteArray},
         ${paraEmptyArray})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     decimal[] decimalArray = [245, 5559, 8796];
     byte[][] byteArray = [[119, 115, 111, 50, 32, 98, 97, 108, 108, 101, 114, 105, 110, 97, 32, 98, 108, 111, 98, 32, 116, 101, 115, 116, 46]];
     test:assertEquals(paraIntArray.get(IntArray), [1, 2, 3], "Int array out parameter of procedure did not match.");
@@ -452,6 +458,8 @@ function testCallWithInoutParams() returns error? {
     "of procedure did not match.");
     test:assertEquals(paraByteArray.get(ByteArray), byteArray, "Byte array out parameter of " +
     "procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -462,7 +470,8 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
     IntegerValue paraID = new (1);
 
     ParameterizedCallQuery callProcedureQuery = `call SelectNumericDataWithInoutParams(${paraID})`;
-    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult|error ret = dbClient->call(callProcedureQuery);
     test:assertTrue(ret is error);
 
     if ret is DatabaseError {
@@ -490,13 +499,15 @@ function testCallWithDateTimeTypesWithOutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
                                     ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     test:assertEquals(paraDate.get(string), "2017-05-23", "Date out parameter of procedure did not match.");
     test:assertEquals(paraTime.get(string), "14:15:23", "Time out parameter of procedure did not match.");
     test:assertEquals(paraTimeWithTz.get(string), "16:33:55+06:30", "Time out parameter of procedure did not match.");
     test:assertEquals(paraTimestamp.get(string), "2017-01-25 16:33:55.0", "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(string), "2017-01-25T16:33:55-08:00", "Date Time out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -515,9 +526,8 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectDateTimeDataWithOutParams(${paraID}, ${paraDate},
                                     ${paraTime}, ${paraDateTime}, ${paraTimeWithTz}, ${paraTimestamp}, ${paraTimestampWithTz})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     time:Date dateRecord = {year: 2017, month: 5, day: 23};
     time:TimeOfDay timeRecord = {hour: 14, minute: 15, second: 23};
     time:Civil timestampRecord = {year: 2017, month: 1, day: 25, hour: 16, minute: 33, second: 55};
@@ -539,6 +549,8 @@ function testCallWithDateTimeTypeRecordsWithOutParams() returns error? {
     test:assertEquals(paraTimeWithTz.get(time:TimeOfDay), timeWithTzRecord, "Time with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestamp.get(time:Civil), timestampRecord, "Timestamp out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecord, "Timestamp with Timezone out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -551,9 +563,8 @@ function testCallWithTimestampTZRetrievalWithOutParams() returns error? {
 
     ParameterizedCallQuery callProcedureQuery = `call SelectTimestampTZWithOutParams(${paraID}, ${paraTimestampWithTz})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     string timestampWithTzRecordString = "2017-01-25T16:33:55-08:00";
     time:Civil timestampWithTzRecordCivil = {
         utcOffset: {hours: -8, minutes: 0},
@@ -570,6 +581,8 @@ function testCallWithTimestampTZRetrievalWithOutParams() returns error? {
     test:assertEquals(paraTimestampWithTz.get(string), timestampWithTzRecordString, "Timestamp with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Civil), timestampWithTzRecordCivil, "Timestamp with Timezone out parameter of procedure did not match.");
     test:assertEquals(paraTimestampWithTz.get(time:Utc), timestampWithTzRecordUtc, "Timestamp with Timezone out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -588,9 +601,8 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
                                     ${paraVarBinary}, ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
 
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     string clobType = "very long text";
     byte[] varBinaryType = "77736f322062616c6c6572696e612062696e61727920746573742e".toBytes();
     int[] int_array = [1, 2, 3];
@@ -603,6 +615,8 @@ function testCallWithOtherDataTypesWithOutParams() returns error? {
     test:assertEquals(paraBoolean.get(boolean), true, "Boolean out parameter of procedure did not match.");
     test:assertEquals(paraIntArray.get(IntArray), int_array, "Int array out parameter of procedure did not match.");
     test:assertEquals(paraStringArray.get(StringArray), string_array, "String array out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 distinct class RandomOutParameter {
@@ -629,7 +643,8 @@ function testCallWithOtherDataTypesWithInvalidOutParams() returns error? {
     ParameterizedCallQuery callProcedureQuery = `call SelectOtherDataTypesWithOutParams(${paraID}, ${paraClob},
                                     ${paraVarBinary} , ${paraIntArray}, ${paraStringArray}, ${paraBinary}, ${paraBoolean})`;
 
-    ProcedureCallResult|error ret = getProcedureCallResultFromMockClient(callProcedureQuery);
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult|error ret = dbClient->call(callProcedureQuery);
     test:assertTrue(ret is error);
 }
 
@@ -1059,15 +1074,13 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
             END
         `;
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
-
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
     ParameterizedCallQuery callProcedureQuery = `call SelectArrayDataWithInoutParams(${rowId}, ${smallint_array},
                                     ${int_array}, ${real_array}, ${numeric_array}, ${nvarchar_array}, ${long_array},
                                     ${float_array}, ${double_array}, ${decimal_array}, ${boolean_array},
                                     ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                     ${timestamp_array}, ${datetime_array})`;
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     int[] smallIntArray = [12, 232];
     int[] intArray = [1, 2, 3];
     float[] floatArray = [199.33, 2399.1];
@@ -1080,6 +1093,8 @@ function testCallWithAllArrayTypesInoutParamsAsObjectValues() returns error? {
     test:assertEquals(numeric_array.get(FloatArray), numericArray, "Numeric array out parameter of procedure did not match.");
     test:assertEquals(nvarchar_array.get(StringArray), nVarcharArray, "Nvarchar array out parameter of procedure did not match.");
     test:assertEquals(datetime_array.get(CivilArray), civilArray, "Nvarchar array out parameter of procedure did not match.");
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -1164,14 +1179,11 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
                                     ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                     ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
                                     ${timestamp_tz_array}, ${binary_array})`;
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
-
     MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     stream<record {}, error?> streamData = dbClient->query(`SELECT * FROM ProArrayTypes WHERE row_id = 1`);
     _ = check streamData.next();
     check streamData.close();
-    check dbClient.close();
 
     int[] smallIntArray = [12, 232];
     int[] intArray = [1, 2, 3];
@@ -1276,6 +1288,8 @@ function testCallWithAllArrayTypesOutParamsAsObjectValues() returns error? {
     test:assertEquals(binary_array.get(ByteArray), binaryArray, "Timestamp with timezone array out parameter of " +
     "procedure did not match.");
     test:assertFalse((binary_array.get(StringArray) is Error));
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -1311,8 +1325,8 @@ function negativeOutParamsTest() returns error? {
                                         ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                         ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
                                         ${timestamp_tz_array}, ${binary_array})`;
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     byte[][]|Error result = smallint_array.get(ByteArray);
     if result is TypeMismatchError {
         test:assertEquals(result.message(),
@@ -1472,7 +1486,8 @@ function negativeOutParamsTest() returns error? {
     } else {
         test:assertFail("Result is not mismatch");
     }
-
+    check ret.close();
+    check dbClient.close();
 }
 
 @test:Config {
@@ -1508,8 +1523,9 @@ function unionTypeOutParamsTest() returns error? {
                                         ${char_array}, ${varchar_array}, ${string_array}, ${date_array}, ${time_array},
                                         ${timestamp_array}, ${datetime_array}, ${bit_array}, ${time_tz_array},
                                         ${timestamp_tz_array}, ${binary_array})`;
-    ProcedureCallResult ret = check getProcedureCallResultFromMockClient(callProcedureQuery);
-    check ret.close();
+
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
     byte[][]|string|Error result = smallint_array.get();
     if result is ApplicationError {
         test:assertEquals(result.message(), "OutParameter 'get' function does not support union return type.",
@@ -1517,13 +1533,8 @@ function unionTypeOutParamsTest() returns error? {
     } else {
         test:assertFail("Result is not ApplicationError");
     }
-}
-
-function getProcedureCallResultFromMockClient(ParameterizedCallQuery sqlQuery) returns ProcedureCallResult|error {
-    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
-    ProcedureCallResult result = check dbClient->call(sqlQuery);
+    check ret.close();
     check dbClient.close();
-    return result;
 }
 
 function createSqlProcedure(ParameterizedQuery sqlQuery) returns ExecutionResult|Error {
@@ -1546,4 +1557,50 @@ isolated function validateProcedureResult(ExecutionResult result, int rowCount, 
             test:assertFail("The last insert id should be an integer found type '" + lastInsertIdVal.toString());
         }
     }
+}
+
+@test:Config {
+    groups: ["procedures"]
+}
+function testOutParameterReturingErrorWhenResultIsClosed() returns error? {
+    IntegerValue paraID = new (1);
+    VarcharOutParameter paraVarchar = new;
+    CharOutParameter paraCharmax = new;
+    CharOutParameter paraChar = new;
+    CharOutParameter paraCharactermax = new;
+    CharOutParameter paraCharacter = new;
+    NVarcharOutParameter paraNvarcharmax = new;
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithOutParams(${paraID}, ${paraVarchar},
+                            ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
+    check ret.close();
+    string|Error err = paraVarchar.get(string);
+    test:assertTrue(err is Error);
+    test:assertTrue((<Error>err).message().startsWith("Failed to read OUT parameter value."));
+    check dbClient.close();
+}
+
+@test:Config {
+    groups: ["procedures"]
+}
+function testInOutParameterReturingErrorWhenResultIsClosed() returns error? {
+    IntegerValue paraID = new (1);
+    InOutParameter paraVarchar = new ("test varchar");
+    InOutParameter paraCharmax = new ("test char");
+    InOutParameter paraChar = new ("T");
+    InOutParameter paraCharactermax = new ("test c_max");
+    InOutParameter paraCharacter = new ("C");
+    InOutParameter paraNvarcharmax = new ("test_nchar");
+
+    ParameterizedCallQuery callProcedureQuery = `call SelectStringDataWithInoutParams(${paraID}, ${paraVarchar},
+                             ${paraCharmax}, ${paraChar}, ${paraCharactermax}, ${paraCharacter}, ${paraNvarcharmax})`;
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    ProcedureCallResult ret = check dbClient->call(callProcedureQuery);
+    check ret.close();
+    string|Error err = paraVarchar.get(string);
+    test:assertTrue(err is Error);
+    test:assertTrue((<Error>err).message().startsWith("Failed to read INOUT parameter value."));
+    check dbClient.close();
 }

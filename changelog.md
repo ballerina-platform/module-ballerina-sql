@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Fix strand hanging when strand count exceeds BALLERINA_SQL_MAX_POOL_SIZE](https://github.com/ballerina-platform/ballerina-library/issues/7244)
+- [Fix stored procedure call having output parameter failing with result set closed error](https://github.com/ballerina-platform/ballerina-library/issues/7255)
+
 
 ## [1.14.1] - 2024-08-29
 
