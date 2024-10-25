@@ -19,7 +19,6 @@
 package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
@@ -54,7 +53,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.getErrorStream;
 
 /**
@@ -84,14 +82,9 @@ public class QueryProcessor {
         boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
         boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
         TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
-        Future balFuture = env.markAsync();
-        SQL_EXECUTOR_SERVICE.execute(() -> {
-            BStream resultStream =
-                    nativeQueryExecutable(client, paramSQLString, recordType, statementParameterProcessor,
-                            resultParameterProcessor, withinTrxBlock, currentTrxContext, trxManagerEnabled);
-            balFuture.complete(resultStream);
-        });
-        return null;
+        return env.yieldAndRun(() -> nativeQueryExecutable(client, paramSQLString, recordType,
+                statementParameterProcessor, resultParameterProcessor, withinTrxBlock,
+                currentTrxContext, trxManagerEnabled));
     }
 
     private static BStream nativeQueryExecutable(BObject client, BObject paramSQLString, Object recordType,
@@ -156,16 +149,9 @@ public class QueryProcessor {
         boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
         boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
         TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
-        Future balFuture = env.markAsync();
-        SQL_EXECUTOR_SERVICE.execute(() -> {
-            Object resultStream =
-                    nativeQueryRowExecutable(client, paramSQLString, bTypedesc, statementParameterProcessor,
-                            resultParameterProcessor, withinTrxBlock, currentTrxContext,
-                            trxManagerEnabled);
-            balFuture.complete(resultStream);
-        });
-
-        return null;
+        return env.yieldAndRun(() -> nativeQueryRowExecutable(client, paramSQLString, bTypedesc,
+                statementParameterProcessor, resultParameterProcessor, withinTrxBlock,
+                currentTrxContext, trxManagerEnabled));
     }
 
     private static Object nativeQueryRowExecutable(

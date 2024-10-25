@@ -7,27 +7,27 @@ keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.10.0"
+distribution = "2201.10.0-20241019-091600-89e54c08"
 
-[platform.java17]
+[platform.java21]
 graalvmCompatible = true
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "sql-native"
 version = "@toml.version@"
 path = "../native/build/libs/sql-native-@project.version@.jar"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 path = "../test-utils/build/libs/sql-test-utils-@project.version@.jar"
 scope = "testOnly"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "com.zaxxer"
 artifactId = "HikariCP"
 version = "@hikkaricp.lib.version@"
 path = "./lib/HikariCP-@hikkaricp.lib.version@.jar"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 path = "./lib/hsqldb-@hsql.connector.version@.jar"
 scope = "testOnly"
