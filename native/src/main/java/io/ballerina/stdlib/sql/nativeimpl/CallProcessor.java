@@ -19,7 +19,6 @@
 package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -61,7 +60,6 @@ import static io.ballerina.stdlib.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIE
 import static io.ballerina.stdlib.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
-import static io.ballerina.stdlib.sql.datasource.SQLWorkerThreadPool.SQL_EXECUTOR_SERVICE;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
 import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
@@ -95,14 +93,9 @@ public class CallProcessor {
         boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
         boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
         TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
-        Future balFuture = env.markAsync();
-        SQL_EXECUTOR_SERVICE.execute(() -> {
-            Object resultStream =
-                    nativeCallExecutable(client, paramSQLString, recordTypes, statementParameterProcessor,
-                            resultParameterProcessor, withinTrxBlock, currentTrxContext, trxManagerEnabled);
-            balFuture.complete(resultStream);
-        });
-        return null;
+        return env.yieldAndRun(() -> nativeCallExecutable(client, paramSQLString, recordTypes,
+                statementParameterProcessor, resultParameterProcessor, withinTrxBlock,
+                currentTrxContext, trxManagerEnabled));
     }
 
     private static Object nativeCallExecutable(BObject client, BObject paramSQLString, BArray recordTypes,
