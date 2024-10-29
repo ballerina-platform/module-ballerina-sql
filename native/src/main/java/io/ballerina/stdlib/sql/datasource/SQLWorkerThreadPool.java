@@ -20,6 +20,7 @@ package io.ballerina.stdlib.sql.datasource;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,8 @@ public class SQLWorkerThreadPool {
 
     // This is similar to cachedThreadPool util from Executors.newCachedThreadPool(..); but with upper cap on threads
     public static final ExecutorService SQL_EXECUTOR_SERVICE = new ThreadPoolExecutor(0, 50,
-            60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new SQLThreadFactory());
+            60L, TimeUnit.SECONDS, new BlockingTaskQueue(), new SQLThreadFactory(),
+            new RetryTaskRejectionPolicy());
 
     static class SQLThreadFactory implements ThreadFactory {
         @Override
@@ -42,6 +44,33 @@ public class SQLWorkerThreadPool {
             Thread ballerinaSql = new Thread(r);
             ballerinaSql.setName("bal-sql-thread");
             return ballerinaSql;
+        }
+    }
+
+    static class BlockingTaskQueue extends LinkedBlockingQueue<Runnable> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean offer(Runnable task) {
+            // By returning false, we signal the ThreadPoolExecutor to bypass this queue and attempt to
+            // spawn a new thread if it hasn't reached the maximum pool size. This approach favors creating
+            // new threads over queuing tasks, thereby enabling more aggressive parallelism.
+            return false;
+        }
+
+        public void retryTask(Runnable task) {
+            if (!super.offer(task)) {
+                throw new IllegalStateException("Falied to requeue task: " + task);
+            }
+        }
+    }
+
+    static class RetryTaskRejectionPolicy implements RejectedExecutionHandler {
+        @Override
+        public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
+            if (executor.getQueue() instanceof BlockingTaskQueue cbq) {
+                cbq.retryTask(task);
+            }
         }
     }
 }
