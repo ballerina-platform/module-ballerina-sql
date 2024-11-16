@@ -19,9 +19,9 @@
 package io.ballerina.stdlib.sql.nativeimpl;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.types.StructureType;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
@@ -60,11 +60,11 @@ import static io.ballerina.stdlib.sql.Constants.RESULT_SET_COUNT_NATIVE_DATA_FIE
 import static io.ballerina.stdlib.sql.Constants.RESULT_SET_TOTAL_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
 import static io.ballerina.stdlib.sql.Constants.TYPE_DESCRIPTIONS_NATIVE_DATA_FIELD;
+import static io.ballerina.stdlib.sql.utils.Utils.closeResources;
 import static io.ballerina.stdlib.sql.utils.Utils.getColumnDefinitions;
 import static io.ballerina.stdlib.sql.utils.Utils.getDefaultStreamConstraint;
 import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
 import static io.ballerina.stdlib.sql.utils.Utils.updateProcedureCallExecutionResult;
-import static io.ballerina.stdlib.sql.utils.Utils.closeResources;
 
 /**
  * This class holds the utility methods involved with executing the call statements.

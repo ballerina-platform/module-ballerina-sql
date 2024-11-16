@@ -18,9 +18,9 @@
 
 package io.ballerina.stdlib.sql.nativeimpl;
 
-import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.TypeTags;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
