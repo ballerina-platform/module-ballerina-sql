@@ -50,3 +50,6 @@ gradle-app.setting
 .project
 .settings
 .vscode
+
+# cache
+.cache
