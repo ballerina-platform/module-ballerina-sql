@@ -19,11 +19,11 @@
 package io.ballerina.stdlib.sql;
 
 import io.ballerina.runtime.api.Module;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.IntersectionType;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
@@ -36,10 +36,10 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.api.values.BValue;
-import io.ballerina.runtime.internal.IteratorUtils;
 import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.types.BField;
 import io.ballerina.runtime.internal.types.BRecordType;
+import io.ballerina.runtime.internal.utils.IteratorUtils;
 import io.ballerina.runtime.internal.values.BmpStringValue;
 import io.ballerina.stdlib.sql.utils.PrimitiveTypeColumnDefinition;
 

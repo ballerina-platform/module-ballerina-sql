@@ -17,7 +17,7 @@
  */
 package io.ballerina.stdlib.sql.parameterprocessor;
 
-import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.sql.TestUtils;
 import io.ballerina.stdlib.sql.exception.ApplicationError;

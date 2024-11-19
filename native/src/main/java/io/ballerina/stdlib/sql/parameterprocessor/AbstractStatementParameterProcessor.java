@@ -18,7 +18,7 @@
 
 package io.ballerina.stdlib.sql.parameterprocessor;
 
-import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.TypeTags;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
