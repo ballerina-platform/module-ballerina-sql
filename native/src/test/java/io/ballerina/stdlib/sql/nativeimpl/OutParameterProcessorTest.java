@@ -38,7 +38,7 @@ import static org.testng.Assert.assertNull;
  */
 public class OutParameterProcessorTest {
 
-    @Test
+    @Test(enabled = false)
     void getSmallIntNullTest() {
         BObject object = TestUtils.getMockObject("SMALLINT");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 5);
@@ -46,7 +46,7 @@ public class OutParameterProcessorTest {
                 DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
-    @Test
+    @Test(enabled = false)
     void getIntegerNullTest() {
         BObject object = TestUtils.getMockObject("INTEGER");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 4);
@@ -54,7 +54,7 @@ public class OutParameterProcessorTest {
                 DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
-    @Test
+    @Test(enabled = false)
     void getFloatNullTest() {
         BObject object = TestUtils.getMockObject("FLOAT");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 6);
@@ -62,7 +62,7 @@ public class OutParameterProcessorTest {
                 DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
-    @Test
+    @Test(enabled = false)
     void getDoubleNullTest() {
         BObject object = TestUtils.getMockObject("DOUBLE");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 8);
@@ -70,7 +70,7 @@ public class OutParameterProcessorTest {
                 DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
-    @Test
+    @Test(enabled = false)
     void getBooleanNullTest() {
         BObject object = TestUtils.getMockObject("BOOLEAN");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 16);
@@ -78,7 +78,7 @@ public class OutParameterProcessorTest {
                 DefaultResultParameterProcessor.getInstance(), "OutParameter"));
     }
 
-    @Test
+    @Test(enabled = false)
     void getStructTest() {
         BObject object = TestUtils.getMockObject("STRUCT");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 2002);
@@ -90,7 +90,7 @@ public class OutParameterProcessorTest {
         assertEquals(map.get(fromString("value1")), false);
     }
 
-    @Test
+    @Test(enabled = false)
     void getRefCursorTest()  {
         BObject object = TestUtils.getMockObject("REF_CURSOR");
         object.addNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA, 2012);

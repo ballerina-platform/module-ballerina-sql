@@ -93,9 +93,9 @@ public class CallProcessor {
         boolean withinTrxBlock = Utils.isWithinTrxBlock(trxResourceManager);
         boolean trxManagerEnabled = trxResourceManager.getTransactionManagerEnabled();
         TransactionLocalContext currentTrxContext = trxResourceManager.getCurrentTransactionContext();
-        return nativeCallExecutable(client, paramSQLString, recordTypes,
+        return env.yieldAndRun(() -> nativeCallExecutable(client, paramSQLString, recordTypes,
                 statementParameterProcessor, resultParameterProcessor, withinTrxBlock,
-                currentTrxContext, trxManagerEnabled);
+                currentTrxContext, trxManagerEnabled));
     }
 
     private static Object nativeCallExecutable(BObject client, BObject paramSQLString, BArray recordTypes,
