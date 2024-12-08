@@ -1578,7 +1578,7 @@ function testOutParameterReturingErrorWhenResultIsClosed() returns error? {
     check ret.close();
     string|Error err = paraVarchar.get(string);
     test:assertTrue(err is Error);
-    test:assertTrue((<Error>err).message().startsWith("Failed to read OUT parameter value."));
+    test:assertTrue((<Error>err).message().startsWith("Failed to read parameter value."));
     check dbClient.close();
 }
 
@@ -1601,6 +1601,6 @@ function testInOutParameterReturingErrorWhenResultIsClosed() returns error? {
     check ret.close();
     string|Error err = paraVarchar.get(string);
     test:assertTrue(err is Error);
-    test:assertTrue((<Error>err).message().startsWith("Failed to read INOUT parameter value."));
+    test:assertTrue((<Error>err).message().startsWith("Failed to read parameter value."));
     check dbClient.close();
 }
