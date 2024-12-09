@@ -51,7 +51,6 @@ import java.time.OffsetTime;
 
 import static io.ballerina.stdlib.sql.Constants.PARAMETER_INDEX_META_DATA;
 import static io.ballerina.stdlib.sql.Constants.PROCEDURE_CALL_RESULT;
-import static io.ballerina.stdlib.sql.Constants.ParameterObject;
 import static io.ballerina.stdlib.sql.Constants.REF_CURSOR_VALUE_NATIVE_DATA;
 import static io.ballerina.stdlib.sql.Constants.RESULT_PARAMETER_PROCESSOR;
 import static io.ballerina.stdlib.sql.Constants.STATEMENT_NATIVE_DATA_FIELD;
@@ -69,35 +68,18 @@ public class OutParameterProcessor {
     }
 
     public static Object getOutParameterValue(BObject result, BTypedesc typeDesc) {
-        try {
-            populateOutParameter(result);
-        } catch (SQLException | ApplicationError e) {
-            return ErrorGenerator.getSQLError(e, "Failed to read OUT parameter value.");
-        }
-
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "OutParameter");
     }
 
     public static BStream getOutCursorValue(BObject result, BTypedesc typeDesc) {
-        try {
-            populateOutParameter(result);
-        } catch (SQLException | ApplicationError e) {
-            return getErrorStream(typeDesc,
-                    ErrorGenerator.getSQLError(e, "Failed to read parameter value."));
-        }
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance());
     }
 
     public static Object getInOutParameterValue(BObject result, BTypedesc typeDesc) {
-        try {
-            populateOutParameter(result);
-        } catch (SQLException | ApplicationError e) {
-            return ErrorGenerator.getSQLError(e, "Failed to read INOUT parameter value.");
-        }
         return get(result, typeDesc, DefaultResultParameterProcessor.getInstance(), "InOutParameter");
     }
 
-    private static void populateOutParameter(BObject parameter) throws SQLException, ApplicationError {
+    private static Object populateOutParameter(BObject parameter) throws SQLException, ApplicationError {
         int paramIndex = (int) parameter.getNativeData(PARAMETER_INDEX_META_DATA);
         int sqlType = (int) parameter.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
         CallableStatement statement = (CallableStatement) parameter.getNativeData(STATEMENT_NATIVE_DATA_FIELD);
@@ -147,12 +129,18 @@ public class OutParameterProcessor {
             case Types.SQLXML -> resultParameterProcessor.processXML(statement, paramIndex);
             default -> resultParameterProcessor.processCustomOutParameters(statement, paramIndex, sqlType);
         };
-        parameter.addNativeData(ParameterObject.VALUE_NATIVE_DATA, result);
+        return result;
     }
 
     public static BStream get(BObject result, Object recordType,
                               AbstractResultParameterProcessor resultParameterProcessor) {
-        Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
+        Object value;
+        try {
+            value = populateOutParameter(result);
+        } catch (SQLException | ApplicationError e) {
+            return getErrorStream(recordType,
+                    ErrorGenerator.getSQLError(e, "Failed to read parameter value."));
+        }
         RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(
                 ((BTypedesc) recordType).getDescribingType());
         return resultParameterProcessor.convertCursorValue((ResultSet) value, streamConstraint);
@@ -161,7 +149,12 @@ public class OutParameterProcessor {
     public static Object get(BObject result, BTypedesc typeDesc,
                               AbstractResultParameterProcessor resultParameterProcessor, String parameterType) {
         int sqlType = (int) result.getNativeData(Constants.ParameterObject.SQL_TYPE_NATIVE_DATA);
-        Object value = result.getNativeData(Constants.ParameterObject.VALUE_NATIVE_DATA);
+        Object value;
+        try {
+            value = populateOutParameter(result);
+        } catch (SQLException | ApplicationError e) {
+            return ErrorGenerator.getSQLError(e, "Failed to read parameter value.");
+        }
         Type ballerinaType = TypeUtils.getReferredType(typeDesc.getDescribingType());
         try {
             if (ballerinaType.getTag() == TypeTags.UNION_TAG) {
