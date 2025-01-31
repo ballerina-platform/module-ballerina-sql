@@ -16,7 +16,7 @@
  */
 
 plugins {
-    id "com.github.spotbugs-base"
+    id "com.github.spotbugs"
     id "com.github.johnrengelman.shadow"
     id "de.undercouch.download"
     id "net.researchgate.release"
@@ -63,9 +63,14 @@ subprojects {
     configurations {
         externalJars
         ballerinaStdLibs
+        jbalTools
     }
 
     dependencies {
+        /* JBallerina Tools */
+        jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+            transitive = false
+        }
 
         ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:os-ballerina:${stdlibOsVersion}"
