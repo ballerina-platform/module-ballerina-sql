@@ -1145,12 +1145,12 @@ public final class TestUtils {
 
                     @Override
                     public boolean hasNext() {
-                        return iterator.hasNext();
+                        return false;
                     }
 
                     @Override
                     public Object next() {
-                        return iterator.next();
+                        return null;
                     }
                 };
             }
@@ -1330,12 +1330,12 @@ public final class TestUtils {
 
                     @Override
                     public boolean hasNext() {
-                        return iterator.hasNext();
+                        return false;
                     }
 
                     @Override
                     public Object next() {
-                        return iterator.next();
+                        return null;
                     }
                 };
             }
