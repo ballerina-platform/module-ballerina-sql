@@ -62,6 +62,7 @@ import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1136,6 +1137,23 @@ public final class TestUtils {
             public Type getType() {
                 return type;
             }
+
+            @Override
+            public Iterator<?> getJavaIterator() {
+                BIterator<?> iterator = getIterator();
+                return new Iterator<>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return false;
+                    }
+
+                    @Override
+                    public Object next() {
+                        return null;
+                    }
+                };
+            }
         };
     }
 
@@ -1303,6 +1321,23 @@ public final class TestUtils {
             @Override
             public Type getType() {
                 return TestUtils.getBooleanStructRecord();
+            }
+
+            @Override
+            public Iterator<?> getJavaIterator() {
+                BIterator<?> iterator = getIterator();
+                return new Iterator<>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return false;
+                    }
+
+                    @Override
+                    public Object next() {
+                        return null;
+                    }
+                };
             }
         };
     }
