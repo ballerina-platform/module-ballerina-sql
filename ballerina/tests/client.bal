@@ -24,13 +24,13 @@ isolated client class MockClient {
         map<anydata>? options = (), ConnectionPool? connectionPool = (),
         map<anydata>? connectionPoolOptions = ()) returns Error? {
         SQLParams sqlParams = {
-            url: url,
-            user: user,
-            password: password,
-            datasourceName: datasourceName,
-            options: options,
-            connectionPool: connectionPool,
-            connectionPoolOptions: connectionPoolOptions
+            url,
+            user,
+            password,
+            datasourceName,
+            options,
+            connectionPool,
+            connectionPoolOptions
         };
         return createSqlClient(self, sqlParams, getGlobalConnectionPool());
     }
@@ -47,8 +47,7 @@ isolated client class MockClient {
         name: "nativeQueryRow"
     } external;
 
-    remote isolated function execute(ParameterizedQuery sqlQuery)
-    returns ExecutionResult|Error = @java:Method {
+    remote isolated function execute(ParameterizedQuery sqlQuery) returns ExecutionResult|Error = @java:Method {
         'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils",
         name: "nativeExecute"
     } external;

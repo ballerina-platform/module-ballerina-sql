@@ -30,16 +30,6 @@ string user = "test";
 string password = "";
 string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
-@test:BeforeSuite
-isolated function beforeSuite() {
-    io:println("Test suite initiated");
-}
-
-@test:AfterSuite {}
-isolated function afterSuite() {
-    io:println("Test suite finished");
-}
-
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
         string scriptName) returns error? {
     os:Process result = check os:exec({

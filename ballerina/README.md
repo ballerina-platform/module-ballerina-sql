@@ -1,13 +1,17 @@
 ## Overview
 
-This module provides the generic interface and functionality to interact with an SQL database. The corresponding database
-clients can be created by using specific database modules such as `mysql` or using the Java Database Connectivity
-module `jdbc`.
+This module provides the generic interface and functionality to interact with an SQL database. The corresponding
+database clients can be created by using specific database modules such as `mysql` or using the Java Database
+Connectivity module `jdbc`.
 
 ### List of database modules
-Ballerina now has the [`jdbc` module](https://docs.central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector module to connect to any relational database by simply providing the JDBC URL and the other related properties.
 
-Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
+Ballerina now has the [`jdbc` module](https://central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector
+module to connect to any relational database by simply providing the JDBC URL and the other related properties.
+
+Ballerina also provides specially designed various database-specific DB connectors so that you can work with different
+databases, and you can access their DB-specific functionalities.
+
 * [`MySQL` module](https://central.ballerina.io/ballerinax/mysql)
 * [`PostgreSQL` module](https://central.ballerina.io/ballerinax/postgresql)
 * [`MSSQL` module](https://central.ballerina.io/ballerinax/mssql)
@@ -21,52 +25,40 @@ A database client can be created using any of the above-listed database librarie
 
 #### Handle connection pools
 
-All database modules share the same connection pooling concept and there are three possible scenarios for
-connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest#ConnectionPool).
+All database libraries share the same connection pooling concept and there are three possible scenarios for connection
+pool handling. For its properties and possible values, see the
+[`sql:ConnectionPool`](https://central.ballerina.io/ballerina/sql/latest#ConnectionPool).
 
 > **Note**: Connection pooling is used to optimize opening and closing connections to the database. However, the pool comes with an overhead. It is best to configure the connection pool properties as per the application need to get the best performance.
 
 1. Global, shareable, default connection pool
 
-   If you do not provide the `poolOptions` field when creating the database client, a globally-shareable pool will be
-   created for your database unless a connection pool matching with the properties you provided already exists.
-   The `jdbc` module sample below shows how the global connection pool is used.
+   If you do not provide the `poolOptions` field when creating the database client, a globally-shareable pool will be created for your database unless a connection pool matching with the properties you provided already exists. The `jdbc` library sample below shows how the global connection pool is used.
 
     ```ballerina
-    jdbc:Client|sql:Error dbClient = 
-                               new ("jdbc:mysql://localhost:3306/testdb", 
-                                "root", "root");
+    jdbc:Client|sql:Error dbClient = new ("jdbc:mysql://localhost:3306/testdb", "root", "root");
     ```
 
 2. Client-owned, unsharable connection pool
 
-   If you define the `connectionPool` field inline when creating the database client with the `sql:ConnectionPool` type,
-   an unsharable connection pool will be created. The `jdbc` module sample below shows how the global
-   connection pool is used.
+   If you define the `connectionPool` field inline when creating the database client with the `sql:ConnectionPool` type, an unsharable connection pool will be created. The `jdbc` library sample below shows how the global connection pool is used.
 
     ```ballerina
-    jdbc:Client|sql:Error dbClient = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = { maxOpenConnections: 5 });
+    jdbc:Client|sql:Error dbClient = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = { maxOpenConnections: 5 });
     ```
 
 3. Local, shareable connection pool
 
    If you create a record of the `sql:ConnectionPool` type and reuse that in the configuration of multiple clients,
-   a shared connection pool will be created for each set of clients that connects to the same database instance with the same set of properties. The `jdbc` module sample below shows how the global connection pool is used.
+   a shared connection pool will be created for each set of clients that connects to the same database instance with the
+   same set of properties. The `jdbc` library sample below shows how the global connection pool is used.
 
     ```ballerina
     sql:ConnectionPool connPool = {maxOpenConnections: 5};
-    
-    jdbc:Client|sql:Error dbClient1 =       
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
-    jdbc:Client|sql:Error dbClient2 = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
-    jdbc:Client|sql:Error dbClient3 = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
+
+    jdbc:Client|sql:Error dbClient1 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient2 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient3 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
     ```
 
 #### Close the client
@@ -86,7 +78,7 @@ check dbClient.close();
 
 ### Database operations
 
-Once the client is created, database operations can be executed through that client. This module defines the interface
+Once the client is created, database operations can be executed through that client. This library defines the interface
 and generic properties that are shared among multiple database clients. It also supports querying, inserting, deleting,
 updating, and batch updating data.
 
@@ -98,8 +90,7 @@ You can create a query with constant or dynamic input data as follows.
 *Query with constant values*
 
 ```ballerina
-sql:ParameterizedQuery query = `SELECT * FROM students 
-                                WHERE id < 10 AND age > 12`;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < 10 AND age > 12`;
 ```
 
 *Query with dynamic values*
@@ -107,8 +98,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 ```ballerina
 int[] ids = [10, 50];
 int age = 12;
-sql:ParameterizedQuery query = `SELECT * FROM students 
-                                WHERE id < ${ids[0]} AND age > ${age}`;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${ids[0]} AND age > ${age}`;
 ```
 
 Moreover, the SQL package has `sql:queryConcat()` and `sql:arrayFlattenQuery()` util functions which make it easier
@@ -129,7 +119,7 @@ The query with the `IN` operator can be created using the `sql:ParameterizedQuer
 
 ```ballerina
 int[] ids = [1, 2, 3];
-sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable
                                 WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
 ```
 
@@ -137,8 +127,8 @@ The util function `sql:arrayFlattenQuery()` is introduced to make the array flat
 
 ```ballerina
 int[] ids = [1, 2];
-sql:ParameterizedQuery sqlQuery = 
-                         sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
+sql:ParameterizedQuery sqlQuery =
+                         sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`,
                                           sql:arrayFlattenQuery(ids), `)`);
 ```
 
@@ -149,14 +139,14 @@ The `CREATE` statement is executed via the `execute` remote method of the client
 
 ```ballerina
 // Create the ‘Students’ table with the ‘id’, 'name', and ‘age’ fields.
-sql:ExecutionResult result = 
+sql:ExecutionResult result =
                 check dbClient->execute(`CREATE TABLE student (
                                            id INT AUTO_INCREMENT,
-                                           age INT, 
-                                           name VARCHAR(255), 
+                                           age INT,
+                                           name VARCHAR(255),
                                            PRIMARY KEY (id)
                                          )`);
-// A value of the sql:ExecutionResult type is returned for 'result'. 
+// A value of the sql:ExecutionResult type is returned for 'result'.
 ```
 
 #### Insert data
@@ -246,7 +236,7 @@ type Student record {
     string name;
 };
 
-// Select the data from the database table. The query parameters are passed 
+// Select the data from the database table. The query parameters are passed
 // directly. Similar to the `execute` samples, parameters can be passed as
 // sub types of `sql:TypedValue` as well.
 int id = 10;
@@ -267,8 +257,8 @@ the above sample can be modified as follows with an open record type as the retu
 type will be the same as how the column is defined in the database.
 
 ```ballerina
-// Select the data from the database table. The query parameters are passed 
-// directly. Similar to the `execute` samples, parameters can be passed as 
+// Select the data from the database table. The query parameters are passed
+// directly. Similar to the `execute` samples, parameters can be passed as
 // sub types of `sql:TypedValue` as well.
 int id = 10;
 int age = 12;
@@ -277,7 +267,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<record{}, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-check from record{} student in resultStream 
+check from record{} student in resultStream
     do {
         // Can perform operations using the record 'student'.
         io:println("Student name: ", student.value["name"]);
@@ -294,9 +284,9 @@ type Student record {
     string lastName
 };
 ```
-The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` function does not return `first_name` column, the field will not be populated.
+The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` method does not return `first_name` column, the field will not be populated.
 
-Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers. 
+Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers.
 All columns of the `Teachers` table can be grouped to another Typed record such as `Teacher` type within the `Student` record.
 
 ```ballerina
@@ -396,7 +386,7 @@ This sample demonstrates how to execute a stored procedure with a single `INSERT
 int uid = 10;
 sql:IntegerOutParameter insertId = new;
 
-sql:ProcedureCallResult result = 
+sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
@@ -407,6 +397,7 @@ if resultStr is stream<record{}, sql:Error?> {
 }
 check result.close();
 ```
+
 >**Note**: Once the results are processed, the `close` method on the `sql:ProcedureCallResult` must be called.
 
 >**Note**: The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.

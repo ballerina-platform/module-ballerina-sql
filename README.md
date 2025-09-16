@@ -13,7 +13,7 @@ clients can be created by using specific database libraries such as `mysql` or u
 library `jdbc`.
 
 ### List of database libraries
-Ballerina now has the [`jdbc` library](https://docs.central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector library to connect to any relational database by simply providing the JDBC URL and the other related properties.
+Ballerina now has the [`jdbc` library](https://central.ballerina.io/ballerinax/java.jdbc) as the generic DB connector library to connect to any relational database by simply providing the JDBC URL and the other related properties.
 
 Ballerina also provides specially designed various database-specific DB connectors so that you can work with different databases, and you can access their DB-specific functionalities.
 * [`MySQL` library](https://central.ballerina.io/ballerinax/mysql)
@@ -29,8 +29,7 @@ A database client can be created using any of the above-listed database librarie
 
 #### Handle connection pools
 
-All database libraries share the same connection pooling concept and there are three possible scenarios for
-connection pool handling.  For its properties and possible values, see the [`sql:ConnectionPool`](https://docs.central.ballerina.io/ballerina/sql/latest#ConnectionPool).
+All database libraries share the same connection pooling concept and there are three possible scenarios for connection pool handling. For its properties and possible values, see the [`sql:ConnectionPool`](https://central.ballerina.io/ballerina/sql/latest#ConnectionPool).
 
 > **Note**: Connection pooling is used to optimize opening and closing connections to the database. However, the pool comes with an overhead. It is best to configure the connection pool properties as per the application need to get the best performance.
 
@@ -41,9 +40,7 @@ connection pool handling.  For its properties and possible values, see the [`sql
    The `jdbc` library sample below shows how the global connection pool is used.
 
     ```ballerina
-    jdbc:Client|sql:Error dbClient = 
-                               new ("jdbc:mysql://localhost:3306/testdb", 
-                                "root", "root");
+    jdbc:Client|sql:Error dbClient = new ("jdbc:mysql://localhost:3306/testdb", "root", "root");
     ```
 
 2. Client-owned, unsharable connection pool
@@ -53,9 +50,7 @@ connection pool handling.  For its properties and possible values, see the [`sql
    connection pool is used.
 
     ```ballerina
-    jdbc:Client|sql:Error dbClient = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = { maxOpenConnections: 5 });
+    jdbc:Client|sql:Error dbClient = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = { maxOpenConnections: 5 });
     ```
 
 3. Local, shareable connection pool
@@ -65,16 +60,10 @@ connection pool handling.  For its properties and possible values, see the [`sql
 
     ```ballerina
     sql:ConnectionPool connPool = {maxOpenConnections: 5};
-    
-    jdbc:Client|sql:Error dbClient1 =       
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
-    jdbc:Client|sql:Error dbClient2 = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
-    jdbc:Client|sql:Error dbClient3 = 
-                            new (url = "jdbc:mysql://localhost:3306/testdb",
-                            connectionPool = connPool);
+
+    jdbc:Client|sql:Error dbClient1 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient2 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
+    jdbc:Client|sql:Error dbClient3 = new (url = "jdbc:mysql://localhost:3306/testdb", connectionPool = connPool);
     ```
 
 #### Close the client
@@ -106,8 +95,7 @@ You can create a query with constant or dynamic input data as follows.
 *Query with constant values*
 
 ```ballerina
-sql:ParameterizedQuery query = `SELECT * FROM students 
-                                WHERE id < 10 AND age > 12`;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < 10 AND age > 12`;
 ```
 
 *Query with dynamic values*
@@ -115,8 +103,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 ```ballerina
 int[] ids = [10, 50];
 int age = 12;
-sql:ParameterizedQuery query = `SELECT * FROM students 
-                                WHERE id < ${ids[0]} AND age > ${age}`;
+sql:ParameterizedQuery query = `SELECT * FROM students WHERE id < ${ids[0]} AND age > ${age}`;
 ```
 
 Moreover, the SQL package has `sql:queryConcat()` and `sql:arrayFlattenQuery()` util functions which make it easier
@@ -137,7 +124,7 @@ The query with the `IN` operator can be created using the `sql:ParameterizedQuer
 
 ```ballerina
 int[] ids = [1, 2, 3];
-sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable 
+sql:ParameterizedQuery query = `SELECT count(*) as total FROM DataTable
                                 WHERE row_id in (${ids[0]}, ${ids[1]}, ${ids[2]})`;
 ```
 
@@ -145,8 +132,8 @@ The util function `sql:arrayFlattenQuery()` is introduced to make the array flat
 
 ```ballerina
 int[] ids = [1, 2];
-sql:ParameterizedQuery sqlQuery = 
-                         sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`, 
+sql:ParameterizedQuery sqlQuery =
+                         sql:queryConcat(`SELECT * FROM DataTable WHERE id IN (`,
                                           sql:arrayFlattenQuery(ids), `)`);
 ```
 
@@ -157,14 +144,14 @@ The `CREATE` statement is executed via the `execute` remote method of the client
 
 ```ballerina
 // Create the ‘Students’ table with the ‘id’, 'name', and ‘age’ fields.
-sql:ExecutionResult result = 
+sql:ExecutionResult result =
                 check dbClient->execute(`CREATE TABLE student (
                                            id INT AUTO_INCREMENT,
-                                           age INT, 
-                                           name VARCHAR(255), 
+                                           age INT,
+                                           name VARCHAR(255),
                                            PRIMARY KEY (id)
                                          )`);
-// A value of the sql:ExecutionResult type is returned for 'result'. 
+// A value of the sql:ExecutionResult type is returned for 'result'.
 ```
 
 #### Insert data
@@ -207,7 +194,7 @@ sql:ParameterizedQuery query = `INSERT INTO student(age, name)
 sql:ExecutionResult result = check dbClient->execute(query);
 ```
 
-#### Insert data with auto-generated Keys
+#### Insert data with auto-generated keys
 
 This sample demonstrates inserting data while returning the auto-generated keys. It achieves this by using the
 `execute` remote method to execute the `INSERT` statement.
@@ -254,7 +241,7 @@ type Student record {
     string name;
 };
 
-// Select the data from the database table. The query parameters are passed 
+// Select the data from the database table. The query parameters are passed
 // directly. Similar to the `execute` samples, parameters can be passed as
 // sub types of `sql:TypedValue` as well.
 int id = 10;
@@ -275,8 +262,8 @@ the above sample can be modified as follows with an open record type as the retu
 type will be the same as how the column is defined in the database.
 
 ```ballerina
-// Select the data from the database table. The query parameters are passed 
-// directly. Similar to the `execute` samples, parameters can be passed as 
+// Select the data from the database table. The query parameters are passed
+// directly. Similar to the `execute` samples, parameters can be passed as
 // sub types of `sql:TypedValue` as well.
 int id = 10;
 int age = 12;
@@ -285,7 +272,7 @@ sql:ParameterizedQuery query = `SELECT * FROM students
 stream<record{}, sql:Error?> resultStream = dbClient->query(query);
 
 // Iterating the returned table.
-check from record{} student in resultStream 
+check from record{} student in resultStream
     do {
         // Can perform operations using the record 'student'.
         io:println("Student name: ", student.value["name"]);
@@ -404,7 +391,7 @@ This sample demonstrates how to execute a stored procedure with a single `INSERT
 int uid = 10;
 sql:IntegerOutParameter insertId = new;
 
-sql:ProcedureCallResult result = 
+sql:ProcedureCallResult result =
                          check dbClient->call(`call InsertPerson(${uid}, ${insertId})`);
 stream<record{}, sql:Error?>? resultStr = result.queryResult;
 if resultStr is stream<record{}, sql:Error?> {
@@ -415,13 +402,14 @@ if resultStr is stream<record{}, sql:Error?> {
 }
 check result.close();
 ```
+
 >**Note**: Once the results are processed, the `close` method on the `sql:ProcedureCallResult` must be called.
 
 >**Note**: The default thread pool size used in Ballerina is: `the number of processors available * 2`. You can configure the thread pool size by using the `BALLERINA_MAX_POOL_SIZE` environment variable.
-   
-## Issues and projects 
 
-Issues and Projects tabs are disabled for this repository as this is part of the Ballerina standard library. To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina standard library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library). 
+## Issues and projects
+
+Issues and Projects tabs are disabled for this repository as this is part of the Ballerina standard library. To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina standard library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library).
 
 This repository only contains the source code for the package.
 
@@ -437,16 +425,18 @@ This repository only contains the source code for the package.
     > **Note**: Start the Docker daemon before running tests.
 
 3. Export your GitHub personal access token with the read package permissions as follows.
-        
-        export packageUser=<Username>
+
+  ```
+export packageUser=<Username>
         export packagePAT=<Personal access token>
+```
 
 ### Building the source
 
 Execute the commands below to build from source.
 
 1. To build the library:
-        
+
         ./gradlew clean build
 
 2. To run the integration tests:
@@ -462,16 +452,16 @@ Execute the commands below to build from source.
         ./gradlew clean build -Pgroups=<Comma separated groups/test cases>
 
    **Tip:** The following groups of test cases are available.
-   
-   Groups | Test cases
-   ---| ---
-   connection | connection
-   pool | pool
-   transaction | transaction
-   execute | execute-basic <br> execute-params
-   batch-execute | batch-execute 
-   query | query-simple-params <br> query-numeric-params <br> query-complex-params <br> query-row
-   error | error
+
+    | Groups        | Test cases                                                                                 |
+    |---------------|---------------------------------------------------------------------------------------------|
+    | connection    | connection                                                                                  |
+    | pool          | pool                                                                                        |
+    | transaction   | transaction                                                                                 |
+    | execute       | execute-basic <br> execute-params                                                           |
+    | batch-execute | batch-execute                                                                               |
+    | query         | query-simple-params <br> query-numeric-params <br> query-complex-params <br> query-row      |
+    | error         | error                                                                                       |
 
 5. To disable some specific test groups:
 
@@ -488,20 +478,20 @@ Execute the commands below to build from source.
         ./gradlew clean test -PbalJavaDebug=<port>
 
 8. Publish ZIP artifact to the local `.m2` repository:
-   
+
         ./gradlew clean build publishToMavenLocal
-   
+
 9. Publish the generated artifacts to the local Ballerina central repository:
-   
+
         ./gradlew clean build -PpublishToLocalCentral=true
-   
+
 10. Publish the generated artifacts to the Ballerina central repository:
-   
+
         ./gradlew clean build -PpublishToCentral=true
 
 ## Contributing to Ballerina
 
-As an open source project, Ballerina welcomes contributions from the community. 
+As an open source project, Ballerina welcomes contributions from the community.
 
 For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
 
@@ -512,6 +502,6 @@ All contributors are encouraged to read the [Ballerina code of conduct](https://
 ## Useful links
 
 * For more information go to the [`sql` library](https://lib.ballerina.io/ballerina/sql/latest).
-* For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/#database-access).
+* For example, demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/#database-access).
 * Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
