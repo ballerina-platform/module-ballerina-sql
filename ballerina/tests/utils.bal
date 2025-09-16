@@ -14,11 +14,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/file;
+import ballerina/io;
 import ballerina/lang.runtime as runtime;
+import ballerina/os;
 import ballerina/test;
-import ballerina/jballerina.java;
+
+const decimal DOCKER_START_TIMEOUT = 20;
+const int DOCKER_RETRY_COUNT = 15;
+const decimal DOCKER_RETRY_DELAY = 5;
 
 string scriptPath = check file:getAbsolutePath("tests/resources/sql");
 
@@ -28,7 +32,6 @@ string urlPrefix = "jdbc:hsqldb:hsql://localhost:";
 
 @test:BeforeSuite
 isolated function beforeSuite() {
-    setModuleForTest();
     io:println("Test suite initiated");
 }
 
@@ -39,45 +42,70 @@ isolated function afterSuite() {
 
 function initializeDockerContainer(string containerName, string dbAlias, string port, string resFolder,
         string scriptName) returns error? {
-    int exitCode = 1;
-    Process result = check exec("docker", {}, scriptPath, "run", "--rm",
-        "-d", "--name", containerName,
-        "-e", "HSQLDB_DATABASE_ALIAS=" + dbAlias,
-        "-e", "HSQLDB_USER=test",
-        "-v", check file:joinPath(scriptPath, resFolder) + ":/scripts",
-        "-p", port + ":9001", "kaneeldias/hsqldb");
-    _ = check result.waitForExit();
-    exitCode = check result.exitCode();
-    test:assertEquals(exitCode, 0, "Docker container '" + containerName + "' failed to start");
-    io:println("Docker container for Database '" + dbAlias + "' created.");
-    runtime:sleep(20);
+    os:Process result = check os:exec({
+                                          value: "docker",
+                                          arguments: [
+                                              "run",
+                                              "--rm",
+                                              "-d",
+                                              "--name",
+                                              containerName,
+                                              "-e",
+                                              "HSQLDB_DATABASE_ALIAS=" + dbAlias,
+                                              "-e",
+                                              "HSQLDB_USER=test",
+                                              "-v",
+                                              check file:joinPath(scriptPath, resFolder) + ":/scripts",
+                                              "-p",
+                                              port + ":9001",
+                                              "kaneeldias/hsqldb"
+                                          ]
+                                      });
+    int exitCode = check result.waitForExit();
+    if exitCode > 0 {
+        return error(string `Docker container '${containerName}' failed to start`);
+    }
+    io:println(string `Docker container for Database '${dbAlias}' created.`);
+    runtime:sleep(DOCKER_START_TIMEOUT);
 
     int counter = 0;
-    exitCode = 1;
-    while (exitCode > 0 && counter < 12) {
-        runtime:sleep(5);
-        result = check exec(
-            "docker", {}, scriptPath, "exec", containerName,
-            "java", "-jar", "/opt/hsqldb/sqltool.jar",
-            "--autoCommit",
-            "--inlineRc", "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=",
-            "/scripts/" + scriptName
-        );
-        _ = check result.waitForExit();
-        exitCode = check result.exitCode();
+    while counter < DOCKER_RETRY_COUNT {
+        result = check os:exec({
+                                   value: "docker",
+                                   arguments: [
+                                       "exec",
+                                       containerName,
+                                       "java",
+                                       "-jar",
+                                       "/opt/hsqldb/sqltool.jar",
+                                       "--autoCommit",
+                                       "--inlineRc",
+                                       "url=" + urlPrefix + "9001/" + dbAlias + ",user=test,password=",
+                                       "/scripts/" + scriptName
+                                   ]
+                               });
+        exitCode = check result.waitForExit();
+        if exitCode == 0 {
+            break;
+        }
         counter = counter + 1;
+        runtime:sleep(DOCKER_RETRY_DELAY);
     }
-    test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' health test exceeded timeout!");
-    io:println("Docker container for Database '" + dbAlias + "' initialised with the script.");
+    test:assertExactEquals(exitCode, 0, string `Docker container '${containerName}' health test exceeded timeout!`);
+    io:println(string `Docker container for Database '${dbAlias}' initialized with the script.`);
 }
 
 function cleanDockerContainer(string containerName) returns error? {
-    Process result = check exec("docker", {}, scriptPath, "stop", containerName);
-    _ = check result.waitForExit();
-
-    int exitCode = check result.exitCode();
-    test:assertExactEquals(exitCode, 0, "Docker container '" + containerName + "' stop failed!");
-    io:println("Cleaned docker container '" + containerName + "'.");
+    os:Process result = check os:exec({
+                                          value: "docker",
+                                          arguments: [
+                                              "stop",
+                                              containerName
+                                          ]
+                                      });
+    int exitCode = check result.waitForExit();
+    test:assertExactEquals(exitCode, 0, string `Docker container '${containerName}' stop failed!`);
+    io:println(string `Cleaned docker container '${containerName}'.`);
 }
 
 isolated function getByteColumnChannel() returns io:ReadableByteChannel|error {
@@ -126,14 +154,3 @@ returns record {}|error {
     check dbClient.close();
     return resultRecord;
 }
-
-function exec(string command, map<string> env = {},
-                    string? dir = (), string... args) returns Process|error = @java:Method {
-    name: "exec",
-    'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.Exec"
-} external;
-
-isolated function setModuleForTest() = @java:Method {
-    name: "setModule",
-    'class: "io.ballerina.stdlib.sql.testutils.nativeimpl.ModuleUtils"
-} external;
