@@ -331,8 +331,8 @@ public class SQLDatasource {
                 }
                 config.setMaximumPoolSize(maxOpenConn);
 
-                double connLifeTimeSec = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
+                double connLifeTimeSec = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
                 if (connLifeTimeSec < 0 || (connLifeTimeSec > 0 && connLifeTimeSec < 30)) {
                     // Here, if the connection lifetime is lesser than 30s, the default value will be used
                     throw new ApplicationError("ConnectionPool field 'maxConnectionLifeTime' can either be 0 " +
@@ -349,8 +349,8 @@ public class SQLDatasource {
                 config.setMinimumIdle(minIdleConnections);
 
                 // Connection timeout
-                double connectionTimeout = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.CONNECTION_TIMEOUT);
+                double connectionTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.CONNECTION_TIMEOUT);
                 if (connectionTimeout < 0) {
                     throw new ApplicationError("ConnectionPool field 'connectionTimeout' cannot be negative.");
                 }
@@ -358,8 +358,8 @@ public class SQLDatasource {
                 config.setConnectionTimeout(connectionTimeoutMS);
 
                 // Idle timeout
-                double idleTimeout = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.IDLE_TIMEOUT);
+                double idleTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.IDLE_TIMEOUT);
                 if (idleTimeout < 0) {
                     throw new ApplicationError("ConnectionPool field 'idleTimeout' cannot be negative.");
                 }
@@ -367,8 +367,8 @@ public class SQLDatasource {
                 config.setIdleTimeout(idleTimeoutMS);
 
                 // Validation timeout
-                double validationTimeout = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.VALIDATION_TIMEOUT);
+                double validationTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.VALIDATION_TIMEOUT);
                 if (validationTimeout < 0) {
                     throw new ApplicationError("ConnectionPool field 'validationTimeout' cannot be negative.");
                 }
@@ -376,8 +376,8 @@ public class SQLDatasource {
                 config.setValidationTimeout(validationTimeoutMS);
 
                 // Leak detection threshold
-                double leakDetectionThreshold = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.LEAK_DETECTION_THRESHOLD);
+                double leakDetectionThreshold = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.LEAK_DETECTION_THRESHOLD);
                 if (leakDetectionThreshold < 0) {
                     throw new ApplicationError("ConnectionPool field 'leakDetectionThreshold' cannot be negative.");
                 }
@@ -385,8 +385,8 @@ public class SQLDatasource {
                 config.setLeakDetectionThreshold(leakDetectionThresholdMS);
 
                 // Keep alive time (only supported in HikariCP 4.0+)
-                double keepAliveTime = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.KEEP_ALIVE_TIME);
+                double keepAliveTime = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.KEEP_ALIVE_TIME);
                 if (keepAliveTime < 0) {
                     throw new ApplicationError("ConnectionPool field 'keepAliveTime' cannot be negative.");
                 }
@@ -394,31 +394,30 @@ public class SQLDatasource {
                 config.setKeepaliveTime(keepAliveTimeMS);
 
                 // Pool name
-                Object poolName = sqlDatasourceParams.connectionPool
+                Object connectionPoolName = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.POOL_NAME);
-                if (poolName != null) {
-                    config.setPoolName(poolName.toString());
+                if (connectionPoolName instanceof BString poolName) {
+                    config.setPoolName(poolName.getValue());
                 }
 
                 // Initialization fail timeout
-                double initializationFailTimeout = sqlDatasourceParams.connectionPool
-                        .getFloatValue(Constants.ConnectionPool.INITIALIZATION_FAIL_TIMEOUT);
+                double initializationFailTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
+                        Constants.ConnectionPool.INITIALIZATION_FAIL_TIMEOUT);
                 long initializationFailTimeoutMS = (long) (initializationFailTimeout * 1000);
                 config.setInitializationFailTimeout(initializationFailTimeoutMS);
 
                 // Transaction isolation
                 Object transactionIsolation = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.TRANSACTION_ISOLATION);
-                if (transactionIsolation != null) {
-                    String isolationLevel = transactionIsolation.toString();
-                    config.setTransactionIsolation(isolationLevel);
+                if (transactionIsolation instanceof BString isolation) {
+                    config.setTransactionIsolation(isolation.getValue());
                 }
 
                 // Connection test query
                 Object connectionTestQuery = sqlDatasourceParams.connectionPool
                         .get(Constants.ConnectionPool.CONNECTION_TEST_QUERY);
-                if (connectionTestQuery != null) {
-                    config.setConnectionTestQuery(connectionTestQuery.toString());
+                if (connectionTestQuery instanceof BString testQuery) {
+                    config.setConnectionTestQuery(testQuery.getValue());
                 }
 
                 // Connection init SQL
@@ -433,7 +432,7 @@ public class SQLDatasource {
                             if (i > 0) {
                                 sqlBuilder.append("; ");
                             }
-                            sqlBuilder.append(sqlArray.get(i).toString());
+                            sqlBuilder.append(((BString) sqlArray.get(i)).getValue());
                         }
                         config.setConnectionInitSql(sqlBuilder.toString());
                     }
@@ -604,5 +603,13 @@ public class SQLDatasource {
             this.poolProperties = properties;
             return this;
         }
+    }
+
+    private double getDoubleFromBDecimal(BMap<BString, Object> map, BString key) {
+        Object value = map.get(key);
+        if (value instanceof BDecimal) {
+            return ((BDecimal) value).floatValue();
+        }
+        return 0;
     }
 }

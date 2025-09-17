@@ -53,7 +53,7 @@ function initializeDockerContainer(string containerName, string dbAlias, string 
                                       });
     int exitCode = check result.waitForExit();
     if exitCode > 0 {
-        return error(string `Docker container '${containerName}' failed to start`);
+        return error(string `Docker container '${containerName}' failed to start. Exit code: ${exitCode}`);
     }
     io:println(string `Docker container for Database '${dbAlias}' created.`);
     runtime:sleep(DOCKER_START_TIMEOUT);
