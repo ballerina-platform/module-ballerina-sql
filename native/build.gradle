@@ -37,7 +37,7 @@ dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
     implementation group: 'io.ballerina.stdlib', name: 'io-native', version: "${stdlibIoVersion}"
     implementation group: 'io.ballerina.stdlib', name: 'time-native', version: "${stdlibTimeVersion}"
-    implementation group: 'com.zaxxer', name: 'HikariCP', version: "${hikkariLibVersion}"
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: "${hikariLibVersion}"
     implementation group: 'com.atomikos', name: 'transactions-jdbc', version: "${atomikosLibVersion}"
 
     implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"

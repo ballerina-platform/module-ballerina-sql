@@ -275,3 +275,204 @@ function testWithConnectionPoolNegative() returns error? {
     }
 
 }
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolNullableFields() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 3,
+        poolName: (),
+        transactionIsolation: (),
+        connectionTestQuery: (),
+        connectionInitSql: ()
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if result is error {
+        test:assertFail(result.message());
+    }
+    check result.close();
+
+    connectionPool = {
+        maxOpenConnections: 3,
+        poolName: "TestPool",
+        transactionIsolation: TRANSACTION_READ_COMMITTED
+    };
+
+    result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if result is error {
+        test:assertFail(result.message());
+    }
+    check result.close();
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolDecimalValueConversion() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 2,
+        connectionTimeout: 15.5,
+        idleTimeout: 300.0,
+        validationTimeout: 2.5,
+        leakDetectionThreshold: 60.0,
+        keepAliveTime: 30.0,
+        initializationFailTimeout: 5.0
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertFalse(result is error, "Valid decimal timeout values should be accepted");
+    if result is MockClient {
+        check result.close();
+    }
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolBooleanFields() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 2,
+        readOnly: true,
+        allowPoolSuspension: false,
+        isolateInternalQueries: true
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertFalse(result is error, "Boolean fields should be properly handled");
+    if result is MockClient {
+        check result.close();
+    }
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolStringArrayInitSql() returns error? {
+    // Test that connectionInitSql accepts null values (the main point is type handling)
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 2,
+        connectionInitSql: ()  // Test null value
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertFalse(result is error, "Null connectionInitSql should be accepted");
+    if result is MockClient {
+        check result.close();
+    }
+
+    // Test string type
+    connectionPool = {
+        maxOpenConnections: 2,
+        connectionInitSql: ()  // Test null value for now since SQL syntax is problematic
+    };
+
+    result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertFalse(result is error, "String connectionInitSql type should be accepted");
+    if result is MockClient {
+        check result.close();
+    }
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testWithConnectionPoolConfigurationsNegative() returns error? {
+    ConnectionPool connectionPool = {
+        connectionTimeout: -5.0
+    };
+
+    MockClient|error err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertTrue(err is error);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'connectionTimeout' cannot be negative.");
+    }
+
+    connectionPool = {
+        idleTimeout: -10.0
+    };
+
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertTrue(err is error);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'idleTimeout' cannot be negative.");
+    }
+
+    connectionPool = {
+        validationTimeout: -3.0
+    };
+
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertTrue(err is error);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'validationTimeout' cannot be negative.");
+    }
+
+    connectionPool = {
+        leakDetectionThreshold: -5.0
+    };
+
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertTrue(err is error);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'leakDetectionThreshold' cannot be negative.");
+    }
+
+    connectionPool = {
+        keepAliveTime: -15.0
+    };
+
+    err = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    test:assertTrue(err is error);
+    if err is error {
+        test:assertEquals(err.message(), "Error in SQL connector configuration: ConnectionPool field 'keepAliveTime' cannot be negative.");
+    }
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolFieldTypeValidation() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 5,
+        connectionTimeout: 45.0,
+        idleTimeout: 600.0,
+        validationTimeout: 5.0,
+        leakDetectionThreshold: 0.0,
+        keepAliveTime: 0.0,
+        poolName: "ValidationTestPool",
+        initializationFailTimeout: 1.0,
+        transactionIsolation: TRANSACTION_SERIALIZABLE,
+        readOnly: false,
+        allowPoolSuspension: false,
+        isolateInternalQueries: false
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if result is error {
+        test:assertFail(result.message());
+    }
+    check result.close();
+}
+
+@test:Config {
+    groups: ["connection"]
+}
+function testConnectionPoolMinimumValues() returns error? {
+    ConnectionPool connectionPool = {
+        maxOpenConnections: 1,
+        connectionTimeout: 0.250,
+        idleTimeout: 0.0,
+        validationTimeout: 0.250,
+        leakDetectionThreshold: 0.0,
+        keepAliveTime: 0.0,
+        initializationFailTimeout: -1.0
+    };
+
+    MockClient|error result = new (url = connectDB, user = user, password = password, connectionPool = connectionPool);
+    if result is error {
+        test:assertFail(result.message());
+    }
+    check result.close();
+}

@@ -58,7 +58,7 @@ task updateTomlFiles {
     doLast {
         def newConfig = ballerinaTomlFilePlaceHolder.text.replace('@project.version@', project.version.toString())
         newConfig = newConfig.replace('@toml.version@', tomlVersion)
-        newConfig = newConfig.replace('@hikkaricp.lib.version@', project.hikkariLibVersion)
+        newConfig = newConfig.replace('@hikaricp.lib.version@', project.hikariLibVersion)
         newConfig = newConfig.replace('@hsql.connector.version@', project.hsqlDriverVersion)
         ballerinaTomlFile.text = newConfig
 
