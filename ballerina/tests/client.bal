@@ -37,18 +37,18 @@ isolated client class MockClient {
 
     remote isolated function query(ParameterizedQuery sqlQuery, typedesc<record {}> rowType = <>)
     returns stream<rowType, Error?> = @java:Method {
-        'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.TestUtils",
         name: "nativeQuery"
     } external;
 
     remote isolated function queryRow(ParameterizedQuery sqlQuery, typedesc<anydata> returnType = <>)
     returns returnType|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.testutils.QueryTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.TestUtils",
         name: "nativeQueryRow"
     } external;
 
     remote isolated function execute(ParameterizedQuery sqlQuery) returns ExecutionResult|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.TestUtils",
         name: "nativeExecute"
     } external;
 
@@ -61,12 +61,12 @@ isolated client class MockClient {
 
     remote isolated function call(ParameterizedCallQuery sqlQuery, typedesc<record {}>[] rowTypes = [])
     returns ProcedureCallResult|Error = @java:Method {
-        'class: "io.ballerina.stdlib.sql.testutils.CallTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.TestUtils",
         name: "nativeCall"
     } external;
 
     public isolated function close() returns Error? = @java:Method {
-        'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils",
+        'class: "io.ballerina.stdlib.sql.testutils.TestUtils",
         name: "close"
     } external;
 }
@@ -83,10 +83,10 @@ type SQLParams record {|
 
 function createSqlClient(Client sqlClient, SQLParams sqlParams, ConnectionPool globalConnPool)
 returns Error? = @java:Method {
-    'class: "io.ballerina.stdlib.sql.testutils.ClientTestUtils"
+    'class: "io.ballerina.stdlib.sql.testutils.TestUtils"
 } external;
 
 isolated function nativeBatchExecute(Client sqlClient, ParameterizedQuery[] sqlQueries)
 returns ExecutionResult[]|Error = @java:Method {
-    'class: "io.ballerina.stdlib.sql.testutils.ExecuteTestUtils"
+    'class: "io.ballerina.stdlib.sql.testutils.TestUtils"
 } external;

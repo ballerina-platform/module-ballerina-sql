@@ -427,9 +427,9 @@ This repository only contains the source code for the package.
 3. Export your GitHub personal access token with the read package permissions as follows.
 
   ```
-export packageUser=<Username>
-        export packagePAT=<Personal access token>
-```
+  export packageUser=<Username>
+  export packagePAT=<Personal access token>
+  ```
 
 ### Building the source
 
