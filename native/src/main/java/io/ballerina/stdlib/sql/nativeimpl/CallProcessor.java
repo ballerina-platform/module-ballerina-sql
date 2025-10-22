@@ -310,9 +310,9 @@ public class CallProcessor {
             case Constants.OutParameterTypes.CLOB:
             case Constants.OutParameterTypes.NCLOB:
                 if (typedValue instanceof BString) {
-                    sqlTypeValue = Types.CLOB;
-                } else {
                     sqlTypeValue = Types.LONGVARCHAR;
+                } else {
+                    sqlTypeValue = Types.CLOB;
                 }
                 break;
             case Constants.OutParameterTypes.DATE:
