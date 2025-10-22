@@ -95,6 +95,19 @@ public final class Constants {
         public static final BString MAX_CONNECTION_LIFE_TIME = fromString(
                 "maxConnectionLifeTime");
         public static final BString MIN_IDLE_CONNECTIONS = fromString("minIdleConnections");
+        public static final BString CONNECTION_TIMEOUT = fromString("connectionTimeout");
+        public static final BString IDLE_TIMEOUT = fromString("idleTimeout");
+        public static final BString VALIDATION_TIMEOUT = fromString("validationTimeout");
+        public static final BString LEAK_DETECTION_THRESHOLD = fromString("leakDetectionThreshold");
+        public static final BString KEEP_ALIVE_TIME = fromString("keepAliveTime");
+        public static final BString POOL_NAME = fromString("poolName");
+        public static final BString INITIALIZATION_FAIL_TIMEOUT = fromString("initializationFailTimeout");
+        public static final BString TRANSACTION_ISOLATION = fromString("transactionIsolation");
+        public static final BString CONNECTION_TEST_QUERY = fromString("connectionTestQuery");
+        public static final BString CONNECTION_INIT_SQL = fromString("connectionInitSql");
+        public static final BString READ_ONLY = fromString("readOnly");
+        public static final BString ALLOW_POOL_SUSPENSION = fromString("allowPoolSuspension");
+        public static final BString ISOLATE_INTERNAL_QUERIES = fromString("isolateInternalQueries");
     }
 
     /**
