@@ -26,6 +26,9 @@ import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.semtype.BasicTypeBitSet;
+import io.ballerina.runtime.api.types.semtype.Context;
+import io.ballerina.runtime.api.types.semtype.SemType;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BFuture;
 import io.ballerina.runtime.api.values.BInitialValueEntry;
@@ -62,8 +65,8 @@ import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -109,6 +112,26 @@ public final class TestUtils {
             @Override
             public ObjectType getType() {
                 return TypeCreator.createObjectType(name, emptyModule, 0);
+            }
+
+            @Override
+            public SemType widenedType(Context cx) {
+                return BObject.super.widenedType(cx);
+            }
+
+            @Override
+            public Optional<SemType> inherentTypeOf(Context cx) {
+                return BObject.super.inherentTypeOf(cx);
+            }
+
+            @Override
+            public BasicTypeBitSet getBasicType() {
+                return BObject.super.getBasicType();
+            }
+
+            @Override
+            public Type getOriginalType() {
+                return BObject.super.getOriginalType();
             }
 
             @Override
@@ -894,6 +917,11 @@ public final class TestUtils {
             }
 
             @Override
+            public String informalStringValue(BLink parent) {
+                return BTypedesc.super.informalStringValue(parent);
+            }
+
+            @Override
             public String expressionStringValue(BLink bLink) {
                 return null;
             }
@@ -901,6 +929,21 @@ public final class TestUtils {
             @Override
             public Type getType() {
                 return null;
+            }
+
+            @Override
+            public SemType widenedType(Context cx) {
+                return BTypedesc.super.widenedType(cx);
+            }
+
+            @Override
+            public Optional<SemType> inherentTypeOf(Context cx) {
+                return BTypedesc.super.inherentTypeOf(cx);
+            }
+
+            @Override
+            public BasicTypeBitSet getBasicType() {
+                return BTypedesc.super.getBasicType();
             }
         };
     }
@@ -1138,22 +1181,6 @@ public final class TestUtils {
                 return type;
             }
 
-            @Override
-            public Iterator<?> getJavaIterator() {
-                BIterator<?> iterator = getIterator();
-                return new Iterator<>() {
-
-                    @Override
-                    public boolean hasNext() {
-                        return false;
-                    }
-
-                    @Override
-                    public Object next() {
-                        return null;
-                    }
-                };
-            }
         };
     }
 
@@ -1323,22 +1350,6 @@ public final class TestUtils {
                 return TestUtils.getBooleanStructRecord();
             }
 
-            @Override
-            public Iterator<?> getJavaIterator() {
-                BIterator<?> iterator = getIterator();
-                return new Iterator<>() {
-
-                    @Override
-                    public boolean hasNext() {
-                        return false;
-                    }
-
-                    @Override
-                    public Object next() {
-                        return null;
-                    }
-                };
-            }
         };
     }
 }
