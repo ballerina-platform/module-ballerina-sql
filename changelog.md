@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.17.1] 2025-10-23
+
 ### Changed
 - [Fix the CLOB retrieval issue as out parameter in OracleDB stored procedure calls](https://github.com/ballerina-platform/ballerina-library/issues/8386)
 
