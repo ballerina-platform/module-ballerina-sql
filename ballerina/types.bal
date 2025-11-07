@@ -1358,6 +1358,9 @@ public type Parameter Value|InOutParameter|OutParameter|CursorOutParameter;
 # The object constructed through backtick surrounded strings. Dynamic parameters of `sql:Parameter` type can be indicated using `${<variable name>}`
 # such as `` `The sql:ParameterizedQuery is ${variable_name}` ``.
 # This validates the parameter types during the query execution.
+# Identifiers like table names or column names cannot be changed dynamically through parameters. In scenarios where dynamic identifiers are required,
+# queries can be safely constructed using string interpolation. This restriction is intentional and consistent across all major database APIs,
+# as allowing identifier parameterization could compromise query integrity, reduce cross-database compatibility, and increase the risk of SQL injection attacks.
 #
 # + strings - The separated parts of the SQL query
 # + insertions - The values of the parameters that should be filled in between the parts

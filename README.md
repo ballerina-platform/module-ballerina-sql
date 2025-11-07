@@ -116,7 +116,7 @@ The `sql:ParameterizedQuery` follows the same standard. It does not support para
 
 When dynamic identifiers are required, queries can be constructed using string interpolation. This approach enables identifiers to be inserted dynamically at runtime but bypasses the built-in safety guarantees of `sql:ParameterizedQuery` and should therefore be used with caution.
 
-The following example demonstrates how to dynamically include an identifier, such as a table name, using string interpolation. If the provided table name is validated successfully, a dynamic SQL statement is constructed with the table name embedded in the query. Finally, the query is assigned to a ParameterizedQuery object for execution.
+The following example demonstrates how to dynamically include an identifier, such as a table name, using string interpolation. If the provided table name is validated successfully, a dynamic SQL statement is constructed with the table name embedded in the query. Finally, the query is assigned to a `sql:ParameterizedQuery` object for execution.
 
 ```bal
 import ballerina/sql;
