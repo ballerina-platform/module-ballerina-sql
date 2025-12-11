@@ -34,6 +34,8 @@ import io.ballerina.stdlib.sql.parameterprocessor.AbstractStatementParameterProc
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.ModuleUtils;
 import io.ballerina.stdlib.sql.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
@@ -59,6 +61,8 @@ import static io.ballerina.stdlib.sql.utils.Utils.getSqlQuery;
  * @since 0.5.6
  */
 public class ExecuteProcessor {
+    private static final Logger log = LoggerFactory.getLogger(ExecuteProcessor.class);
+
     private ExecuteProcessor() {
     }
 
@@ -159,6 +163,7 @@ public class ExecuteProcessor {
                                                        boolean isWithinTrxBlock,
                                                        TransactionLocalContext currentTrxContext,
                                                        boolean trxManagerEnabled) {
+        log.info("Start yield native batch executable");
         Object dbClient = client.getNativeData(Constants.DATABASE_CLIENT);
         if (dbClient != null) {
             SQLDatasource sqlDatasource = (SQLDatasource) dbClient;
@@ -209,6 +214,7 @@ public class ExecuteProcessor {
                 }
                 // Execute leftover statements if count is not multiplier of batchSize
                 executeSingleBatch(statement, executionResults, processResultSet);
+                log.info("End yield native batch executable");
                 return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
                         TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));

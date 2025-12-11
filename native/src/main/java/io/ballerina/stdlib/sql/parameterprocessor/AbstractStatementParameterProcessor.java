@@ -372,12 +372,20 @@ public abstract class AbstractStatementParameterProcessor {
                 setDoubleArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.NUMERIC:
+                if (value == null) {
+                    preparedStatement.setBigDecimal(index, null);
+                    break;
+                }
                 setNumeric(preparedStatement, sqlType, index, value);
                 break;
             case Constants.SqlTypes.NUMERIC_ARRAY:
                 setNumericArray(connection, preparedStatement, index, value);
                 break;
             case Constants.SqlTypes.DECIMAL:
+                if (value == null) {
+                    preparedStatement.setNull(index, Types.NUMERIC);
+                    break;
+                }
                 setDecimal(preparedStatement, sqlType, index, value);
                 break;
             case Constants.SqlTypes.DECIMAL_ARRAY:
