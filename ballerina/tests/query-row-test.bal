@@ -726,7 +726,7 @@ function queryRecordNoCheckNegative() returns error? {
     record {}|error queryResult = dbClient->queryRow(sqlQuery);
     check dbClient.close();
     if queryResult is error {
-        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id =  ? ]."),
+        test:assertTrue(queryResult.message().endsWith("user lacks privilege or object not found: INVALID_COLUMN_NAME in statement [SELECT row_id, invalid_column_name FROM DataTable WHERE row_id = ?]."),
                         "Incorrect error message");
     } else {
         test:assertFail("Expected error when querying with invalid column name.");

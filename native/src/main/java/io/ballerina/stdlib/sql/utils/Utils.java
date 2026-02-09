@@ -163,7 +163,7 @@ public class Utils {
         StringBuilder sqlQuery = new StringBuilder();
         for (int i = 0; i < stringsArray.size(); i++) {
             if (i > 0) {
-                sqlQuery.append(" ? ");
+                sqlQuery.append("?");
             }
             sqlQuery.append(stringsArray.get(i).toString());
         }
