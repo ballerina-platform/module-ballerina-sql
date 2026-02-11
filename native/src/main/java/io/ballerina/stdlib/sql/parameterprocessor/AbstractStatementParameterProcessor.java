@@ -30,6 +30,7 @@ import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.DataError;
 import io.ballerina.stdlib.sql.exception.UnsupportedTypeError;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -44,6 +45,22 @@ import java.sql.Types;
 public abstract class AbstractStatementParameterProcessor {
 
     public abstract int getCustomOutParameterType(BObject typedValue) throws DataError, SQLException;
+
+    /**
+     * Registers an OUT parameter for a callable statement. Subclasses can override this method to provide
+     * database-specific registration logic (e.g., Oracle STRUCT types that require a type name).
+     *
+     * @param statement  the callable statement
+     * @param index      the parameter index
+     * @param typedValue the Ballerina OUT parameter object
+     * @param sqlType    the SQL type code
+     * @throws SQLException if a database access error occurs
+     * @throws DataError    if a data processing error occurs
+     */
+    public void registerOutParameter(CallableStatement statement, int index, BObject typedValue, int sqlType)
+            throws SQLException, DataError {
+        statement.registerOutParameter(index, sqlType);
+    }
 
     protected abstract int getCustomSQLType(BObject typedValue) throws DataError, SQLException;
 
