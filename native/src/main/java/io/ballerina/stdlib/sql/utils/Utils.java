@@ -98,7 +98,8 @@ import static io.ballerina.stdlib.sql.Constants.RECORD_FIELD_ANN_PREFIX;
 import static io.ballerina.stdlib.time.util.Constants.ANALOG_GIGA;
 
 /**
- * This class has the utility methods to process and convert the SQL types into ballerina types,
+ * This class has the utility methods to process and convert the SQL types into
+ * ballerina types,
  * and other shared utility methods.
  *
  * @since 1.2.0
@@ -135,7 +136,7 @@ public class Utils {
     }
 
     public static void closeResources(boolean isWithinTrxBlock, ResultSet resultSet, Statement statement,
-                                      Connection connection) {
+            Connection connection) {
         if (resultSet != null) {
             try {
                 resultSet.close();
@@ -163,7 +164,7 @@ public class Utils {
         StringBuilder sqlQuery = new StringBuilder();
         for (int i = 0; i < stringsArray.size(); i++) {
             if (i > 0) {
-                sqlQuery.append("?");
+                sqlQuery.append(" ? ");
             }
             sqlQuery.append(stringsArray.get(i).toString());
         }
@@ -250,7 +251,7 @@ public class Utils {
     }
 
     public static Object cleanUpConnection(BObject ballerinaObject, ResultSet resultSet,
-                                           Statement statement, Connection connection) {
+            Statement statement, Connection connection) {
         if (resultSet != null) {
             try {
                 resultSet.close();
@@ -308,7 +309,7 @@ public class Utils {
             UnionType bUnionType = (UnionType) type;
             for (Type memberType : bUnionType.getMemberTypes()) {
                 Type referredType = TypeUtils.getReferredType(memberType);
-                //In case if the member type is another union type, check recursively.
+                // In case if the member type is another union type, check recursively.
                 if (isValidFieldConstraint(sqlType, referredType)) {
                     return referredType;
                 }
@@ -411,8 +412,7 @@ public class Utils {
                     String loggedColumnName = groupedColumnKey.toUpperCase(Locale.getDefault()) + "." +
                             columnMetadata.getColumnName();
                     innerRecordFields.add(
-                            generateColumnDefinition(columnMetadata, recordFieldType, loggedColumnName)
-                    );
+                            generateColumnDefinition(columnMetadata, recordFieldType, loggedColumnName));
                 }
                 columnDefs.add(new RecordColumnDefinition(groupedColDefs.getKey(), recordFieldType, innerRecordFields));
             }
@@ -421,14 +421,14 @@ public class Utils {
     }
 
     private static PrimitiveTypeColumnDefinition generateColumnDefinition(SQLColumnMetadata metadata,
-                                                                          StructureType streamConstraint,
-                                                                          String logColumnName)
+            StructureType streamConstraint,
+            String logColumnName)
             throws ApplicationError {
         String ballerinaFieldName = null;
         Type ballerinaType = null;
         for (Map.Entry<String, Field> field : streamConstraint.getFields().entrySet()) {
             String fieldName = field.getKey();
-            //Get sql:Column annotation name if present
+            // Get sql:Column annotation name if present
             String annotatedDBColName = getAnnotatedColumnName(streamConstraint, fieldName);
             if (annotatedDBColName != null) {
                 fieldName = annotatedDBColName;
@@ -475,9 +475,9 @@ public class Utils {
     }
 
     public static BMap<BString, Object> createBallerinaRecord(RecordType recordConstraint,
-                                                              AbstractResultParameterProcessor resultParameterProcessor,
-                                                              ResultSet resultSet,
-                                                              List<ColumnDefinition> columnDefinitions)
+            AbstractResultParameterProcessor resultParameterProcessor,
+            ResultSet resultSet,
+            List<ColumnDefinition> columnDefinitions)
             throws SQLException, DataError {
         Map<String, Object> struct = new HashMap<>();
         for (ColumnDefinition columnDefinition : columnDefinitions) {
@@ -496,7 +496,8 @@ public class Utils {
                 struct.put(columnDefinition.getBallerinaFieldName(), Utils.getResult(resultSet,
                         definition.getResultSetColumnIndex(), definition, resultParameterProcessor));
             }
-            // Not possible to reach the final else since there is only two types of Column Definition
+            // Not possible to reach the final else since there is only two types of Column
+            // Definition
         }
 
         try {
@@ -517,7 +518,7 @@ public class Utils {
     }
 
     public static Object getResult(ResultSet resultSet, int columnIndex, PrimitiveTypeColumnDefinition columnDefinition,
-                                   AbstractResultParameterProcessor resultParameterProcessor)
+            AbstractResultParameterProcessor resultParameterProcessor)
             throws SQLException, DataError {
         int sqlType = columnDefinition.getSqlType();
         Type ballerinaType = columnDefinition.getBallerinaType();
@@ -753,12 +754,14 @@ public class Utils {
             case Types.SQLXML:
                 return tag == TypeTags.XML_TAG;
             default:
-                // If user is passing the intended type variable for the sql types, then it will use
+                // If user is passing the intended type variable for the sql types, then it will
+                // use
                 // those types to resolve the result.
                 return tag == TypeTags.ANY_TAG ||
                         tag == TypeTags.ANYDATA_TAG ||
                         (tag == TypeTags.ARRAY_TAG &&
-                                ((ArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG) ||
+                                ((ArrayType) type).getElementType().getTag() == TypeTags.BYTE_TAG)
+                        ||
                         tag == TypeTags.STRING_TAG ||
                         tag == TypeTags.INT_TAG ||
                         tag == TypeTags.BOOLEAN_TAG ||
@@ -792,15 +795,13 @@ public class Utils {
         BMap<BString, Object> timeMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD);
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_HOUR), timeObj.getHour());
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_MINUTE), timeObj.getMinute());
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR), timeObj.getHour());
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE), timeObj.getMinute());
         BigDecimal second = new BigDecimal(timeObj.getSecond());
         second = second.add(new BigDecimal(timeObj.getNano())
                 .divide(ANALOG_GIGA, MathContext.DECIMAL128));
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND),
+                ValueCreator.createDecimalValue(second));
         return timeMap;
     }
 
@@ -808,15 +809,14 @@ public class Utils {
         BMap<BString, Object> timeMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD);
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_HOUR), offsetTime.getHour());
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_MINUTE), offsetTime.getMinute());
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR), offsetTime.getHour());
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE),
+                offsetTime.getMinute());
         BigDecimal second = new BigDecimal(offsetTime.getSecond());
         second = second.add(new BigDecimal(offsetTime.getNano()).divide(ANALOG_GIGA,
                 MathContext.DECIMAL128));
-        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        timeMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND),
+                ValueCreator.createDecimalValue(second));
         Map<String, Integer> zoneInfo = TimeValueHandler
                 .zoneOffsetMapFromString(offsetTime.getOffset().toString());
         BMap<BString, Object> zoneMap = ValueCreator.createRecordValue(
@@ -866,15 +866,15 @@ public class Utils {
         civilMap.put(fromString(
                 io.ballerina.stdlib.time.util.Constants.DATE_RECORD_DAY),
                 dateTimeObj.getDayOfMonth());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_HOUR), dateTimeObj.getHour());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_MINUTE), dateTimeObj.getMinute());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR),
+                dateTimeObj.getHour());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE),
+                dateTimeObj.getMinute());
         BigDecimal second = new BigDecimal(dateTimeObj.getSecond());
         second = second.add(new BigDecimal(dateTimeObj.getNano())
                 .divide(ANALOG_GIGA, MathContext.DECIMAL128));
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND),
+                ValueCreator.createDecimalValue(second));
         return civilMap;
     }
 
@@ -882,28 +882,26 @@ public class Utils {
         BMap<BString, Object> civilMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.CIVIL_RECORD);
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .DATE_RECORD_YEAR), offsetDateTime.getYear());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .DATE_RECORD_MONTH), offsetDateTime.getMonthValue());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .DATE_RECORD_DAY), offsetDateTime.getDayOfMonth());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_HOUR), offsetDateTime.getHour());
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_MINUTE), offsetDateTime.getMinute());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.DATE_RECORD_YEAR), offsetDateTime.getYear());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.DATE_RECORD_MONTH),
+                offsetDateTime.getMonthValue());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.DATE_RECORD_DAY),
+                offsetDateTime.getDayOfMonth());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_HOUR),
+                offsetDateTime.getHour());
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_MINUTE),
+                offsetDateTime.getMinute());
         BigDecimal second = new BigDecimal(offsetDateTime.getSecond());
         second = second.add(new BigDecimal(offsetDateTime.getNano()).divide(ANALOG_GIGA,
                 MathContext.DECIMAL128));
-        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants
-                .TIME_OF_DAY_RECORD_SECOND), ValueCreator.createDecimalValue(second));
+        civilMap.put(fromString(io.ballerina.stdlib.time.util.Constants.TIME_OF_DAY_RECORD_SECOND),
+                ValueCreator.createDecimalValue(second));
         Map<String, Integer> zoneInfo = TimeValueHandler
                 .zoneOffsetMapFromString(offsetDateTime.getOffset().toString());
         BMap<BString, Object> zoneMap = ValueCreator.createRecordValue(
                 io.ballerina.stdlib.time.util.ModuleUtils.getModule(),
                 io.ballerina.stdlib.time.util.Constants.READABLE_ZONE_OFFSET_RECORD);
-        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)
-                != null) {
+        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR) != null) {
             zoneMap.put(fromString(
                     io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR),
                     zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR)
@@ -912,8 +910,7 @@ public class Utils {
             zoneMap.put(fromString(
                     io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_HOUR), 0);
         }
-        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE)
-                != null) {
+        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE) != null) {
             zoneMap.put(fromString(
                     io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE),
                     zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE)
@@ -922,8 +919,7 @@ public class Utils {
             zoneMap.put(fromString(
                     io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_MINUTE), 0);
         }
-        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)
-                != null) {
+        if (zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND) != null) {
             zoneMap.put(fromString(
                     io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND),
                     zoneInfo.get(io.ballerina.stdlib.time.util.Constants.ZONE_OFFSET_RECORD_SECOND)
@@ -1113,7 +1109,7 @@ public class Utils {
     }
 
     public static Object toFloatArray(Object[] dataArray, String objectTypeName,
-                                      Type ballerinaType) throws TypeMismatchError {
+            Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.INTEGER)) {
             BArray intDataArray = ValueCreator.createArrayValue(INT_ARRAY);
@@ -1134,7 +1130,7 @@ public class Utils {
     }
 
     public static Object toNumericArray(Object[] dataArray, String objectTypeName,
-                                        Type ballerinaType) throws TypeMismatchError {
+            Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -1151,7 +1147,7 @@ public class Utils {
     }
 
     public static Object toTimestampArray(Object[] dataArray, String objectTypeName,
-                                          Type ballerinaType) throws TypeMismatchError {
+            Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -1163,7 +1159,7 @@ public class Utils {
     }
 
     public static Object toBinaryArray(Object[] dataArray, String objectTypeName,
-                                       Type ballerinaType) throws TypeMismatchError {
+            Type ballerinaType) throws TypeMismatchError {
         String name = ballerinaType.toString();
         if (name.equalsIgnoreCase(Constants.ArrayTypes.STRING)) {
             return createStringArray(dataArray);
@@ -1340,8 +1336,9 @@ public class Utils {
 
     public static boolean isEnumType(Type ballerinaType) {
         return ballerinaType instanceof UnionType &&
-                ((UnionType) ballerinaType).getMemberTypes().stream().allMatch(memberType ->
-                        memberType.getTag() == TypeTags.FINITE_TYPE_TAG || memberType.getTag() == TypeTags.NULL_TAG);
+                ((UnionType) ballerinaType).getMemberTypes().stream()
+                        .allMatch(memberType -> memberType.getTag() == TypeTags.FINITE_TYPE_TAG
+                                || memberType.getTag() == TypeTags.NULL_TAG);
     }
 
     private static BMapInitialValueEntry[] getInitialValueEntries(Map<String, Object> struct) {
@@ -1380,7 +1377,8 @@ public class Utils {
     public static BStream getErrorStream(Object recordType, BError errorValue) {
         return ValueCreator.createStreamValue(
                 TypeCreator.createStreamType(((BTypedesc) recordType).getDescribingType(),
-                        PredefinedTypes.TYPE_NULL), createRecordIterator(errorValue));
+                        PredefinedTypes.TYPE_NULL),
+                createRecordIterator(errorValue));
     }
 
     private static BObject createRecordIterator(BError errorValue) {

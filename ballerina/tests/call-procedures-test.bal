@@ -476,8 +476,8 @@ function testErroneousCallWithNumericTypesInoutParams() returns error? {
 
     if ret is DatabaseError {
         test:assertTrue(ret.message().startsWith("Error while executing SQL query: call " +
-        "SelectNumericDataWithInoutParams(?). user lacks privilege or object not found in statement " +
-        "[call SelectNumericDataWithInoutParams(?)]."));
+        "SelectNumericDataWithInoutParams( ? ). user lacks privilege or object not found in statement " +
+        "[call SelectNumericDataWithInoutParams( ? )]."));
     } else {
         test:assertFail("DatabaseError Error expected.");
     }
