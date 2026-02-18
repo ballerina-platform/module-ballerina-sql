@@ -754,8 +754,7 @@ public class Utils {
             case Types.SQLXML:
                 return tag == TypeTags.XML_TAG;
             default:
-                // If user is passing the intended type variable for the sql types, then it will
-                // use
+                // If user is passing the intended type variable for the sql types, then it will use
                 // those types to resolve the result.
                 return tag == TypeTags.ANY_TAG ||
                         tag == TypeTags.ANYDATA_TAG ||
