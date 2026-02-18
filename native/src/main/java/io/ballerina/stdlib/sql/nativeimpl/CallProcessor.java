@@ -205,12 +205,14 @@ public class CallProcessor {
                         sqlType = statementParameterProcessor.setSQLValueParam(connection, statement,
                                 index, innerObject, true);
                         outputParamTypes.put(index, sqlType);
-                        statement.registerOutParameter(index, sqlType);
+                        statementParameterProcessor.registerOutParameter(statement, index,
+                                objectValue, sqlType);
                         break;
                     case Constants.ParameterObject.OUT_PARAMETER:
                         sqlType = getOutParameterType(objectValue, statementParameterProcessor);
                         outputParamTypes.put(index, sqlType);
-                        statement.registerOutParameter(index, sqlType);
+                        statementParameterProcessor.registerOutParameter(statement, index,
+                                objectValue, sqlType);
                         break;
                     default:
                         statementParameterProcessor.setSQLValueParam(connection, statement, index,

@@ -870,6 +870,135 @@ function testCreateProcedures9() returns error? {
     validateProcedureResult(check createSqlProcedure(createProcedure), 0, ());
 }
 
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateProcedures9]
+}
+function testCreateFunctions1() returns error? {
+    ParameterizedQuery createFunction = `
+        CREATE FUNCTION GetStringById(p_id INTEGER)
+            RETURNS VARCHAR(255)
+            READS SQL DATA
+            BEGIN ATOMIC
+                DECLARE result VARCHAR(255);
+                SELECT varchar_type INTO result FROM StringTypes WHERE id = p_id;
+                RETURN result;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createFunction), 0, ());
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateFunctions1]
+}
+function testCreateFunctions2() returns error? {
+    ParameterizedQuery createFunction = `
+        CREATE FUNCTION GetIntById(p_id INTEGER)
+            RETURNS INTEGER
+            READS SQL DATA
+            BEGIN ATOMIC
+                DECLARE result INTEGER;
+                SELECT int_type INTO result FROM NumericTypes WHERE id = p_id;
+                RETURN result;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createFunction), 0, ());
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateFunctions2]
+}
+function testCreateFunctions3() returns error? {
+    ParameterizedQuery createFunction = `
+        CREATE FUNCTION GetDoubleById(p_id INTEGER)
+            RETURNS DOUBLE
+            READS SQL DATA
+            BEGIN ATOMIC
+                DECLARE result DOUBLE;
+                SELECT double_type INTO result FROM NumericTypes WHERE id = p_id;
+                RETURN result;
+            END
+        `;
+    validateProcedureResult(check createSqlProcedure(createFunction), 0, ());
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateFunctions1]
+}
+function testCallStringFunction() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    int id = 1;
+    ProcedureCallResult ret = check dbClient->call(`{call GetStringById(${id})}`);
+    stream<record {}, Error?>? result = ret.queryResult;
+    test:assertTrue(result is stream<record {}, Error?>, "Query result should not be nil.");
+    record {}? returnData = ();
+    if result is stream<record {}, Error?> {
+        check from record {} data in result
+            do {
+                returnData = data;
+            };
+    }
+    test:assertTrue(returnData is record {}, "Result should not be nil.");
+    if returnData is record {} {
+        test:assertEquals(returnData.entries().toArray()[0][1], "test0", "Function return value did not match.");
+    }
+    check ret.close();
+    check dbClient.close();
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateFunctions2]
+}
+function testCallIntegerFunction() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    int id = 1;
+    ProcedureCallResult ret = check dbClient->call(`{call GetIntById(${id})}`);
+    stream<record {}, Error?>? result = ret.queryResult;
+    test:assertTrue(result is stream<record {}, Error?>, "Query result should not be nil.");
+    record {}? returnData = ();
+    if result is stream<record {}, Error?> {
+        check from record {} data in result
+            do {
+                returnData = data;
+            };
+    }
+    test:assertTrue(returnData is record {}, "Result should not be nil.");
+    if returnData is record {} {
+        test:assertEquals(returnData.entries().toArray()[0][1], 2147483647, "Function return value did not match.");
+    }
+    check ret.close();
+    check dbClient.close();
+}
+
+@test:Config {
+    groups: ["procedures"],
+    dependsOn: [testCreateFunctions3]
+}
+function testCallDoubleFunction() returns error? {
+    MockClient dbClient = check new (url = proceduresDB, user = user, password = password);
+    int id = 1;
+    ProcedureCallResult ret = check dbClient->call(`{call GetDoubleById(${id})}`);
+    stream<record {}, Error?>? result = ret.queryResult;
+    test:assertTrue(result is stream<record {}, Error?>, "Query result should not be nil.");
+    record {}? returnData = ();
+    if result is stream<record {}, Error?> {
+        check from record {} data in result
+            do {
+                returnData = data;
+            };
+    }
+    test:assertTrue(returnData is record {}, "Result should not be nil.");
+    if returnData is record {} {
+        test:assertEquals(returnData.entries().toArray()[0][1], 1234.56, "Function return value did not match.");
+    }
+    check ret.close();
+    check dbClient.close();
+}
+
 type Person record {
     int id;
     string name;
