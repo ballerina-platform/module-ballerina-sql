@@ -99,4 +99,21 @@
         <Class name="io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessor"/>
         <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
     </Match>
+    <!-- Observability catch blocks intentionally swallow exceptions — metric failures
+         must never crash the connection pool or interrupt SQL operations -->
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.observability.ObservabilityUtils"/>
+        <Or>
+            <Bug pattern="DE_MIGHT_IGNORE"/>
+            <Bug pattern="REC_CATCH_EXCEPTION"/>
+        </Or>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.observability.SqlMetricsTrackerFactory"/>
+        <Bug pattern="DE_MIGHT_IGNORE"/>
+    </Match>
+    <Match>
+        <Class name="io.ballerina.stdlib.sql.observability.SqlMetricsTracker"/>
+        <Bug pattern="DE_MIGHT_IGNORE"/>
+    </Match>
 </FindBugsFilter>

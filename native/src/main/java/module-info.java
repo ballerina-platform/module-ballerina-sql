@@ -31,4 +31,5 @@ module io.ballerina.stdlib.sql {
     exports io.ballerina.stdlib.sql.nativeimpl;
     exports io.ballerina.stdlib.sql.parameterprocessor;
     exports io.ballerina.stdlib.sql.utils;
+    exports io.ballerina.stdlib.sql.observability;
 }

@@ -26,11 +26,14 @@ import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.transactions.BallerinaTransactionContext;
 import io.ballerina.runtime.transactions.TransactionLocalContext;
 import io.ballerina.runtime.transactions.TransactionResourceManager;
 import io.ballerina.stdlib.sql.Constants;
 import io.ballerina.stdlib.sql.exception.ApplicationError;
+import io.ballerina.stdlib.sql.observability.ObservabilityUtils;
+import io.ballerina.stdlib.sql.observability.SqlMetricsTrackerFactory;
 import io.ballerina.stdlib.sql.transaction.SQLTransactionContext;
 import io.ballerina.stdlib.sql.utils.ErrorGenerator;
 import io.ballerina.stdlib.sql.utils.Utils;
@@ -64,9 +67,25 @@ public class SQLDatasource {
     private XADataSource xaDataSource;
     private boolean executeGKFlag;
     private boolean batchExecuteGKFlag;
+    private String metricPoolName;
     private static final String POOL_MAP_KEY = UUID.randomUUID().toString();
 
     private SQLDatasource(SQLDatasourceParams sqlDatasourceParams) {
+        String userPoolName = null;
+        if (sqlDatasourceParams.connectionPool != null) {
+            Object poolNameVal = sqlDatasourceParams.connectionPool
+                    .get(Constants.ConnectionPool.POOL_NAME);
+            if (poolNameVal instanceof BString bStr) {
+                userPoolName = bStr.getValue();
+            }
+        }
+        if (userPoolName != null) {
+            userPoolName = userPoolName.trim();
+        }
+        if (userPoolName != null && userPoolName.isEmpty()) {
+            userPoolName = null;
+        }
+        this.metricPoolName = ObservabilityUtils.generatePoolName(userPoolName);
 
         Connection connection = null;
         try {
@@ -81,7 +100,7 @@ public class SQLDatasource {
                     return;
                 }
             }
-            hikariDataSource = buildNonXADataSource(sqlDatasourceParams);
+            hikariDataSource = buildNonXADataSource(sqlDatasourceParams, userPoolName);
             if (hikariDataSource.isWrapperFor(XADataSource.class)) {
                 xaConn = true;
                 xaDataSource = hikariDataSource.unwrap(XADataSource.class);
@@ -295,7 +314,8 @@ public class SQLDatasource {
         mutex.lock();
     }
 
-    private HikariDataSource buildNonXADataSource(SQLDatasourceParams sqlDatasourceParams) {
+    private HikariDataSource buildNonXADataSource(SQLDatasourceParams sqlDatasourceParams,
+                                                    String userPoolName) {
         try {
             HikariDataSource hikariDataSource;
             HikariConfig config;
@@ -393,13 +413,6 @@ public class SQLDatasource {
                 long keepAliveTimeMS = (long) (keepAliveTime * 1000);
                 config.setKeepaliveTime(keepAliveTimeMS);
 
-                // Pool name
-                Object connectionPoolName = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.POOL_NAME);
-                if (connectionPoolName instanceof BString poolName) {
-                    config.setPoolName(poolName.getValue());
-                }
-
                 // Initialization fail timeout
                 double initializationFailTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
                         Constants.ConnectionPool.INITIALIZATION_FAIL_TIMEOUT);
@@ -459,7 +472,27 @@ public class SQLDatasource {
                         config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
                 );
             }
-            hikariDataSource = new HikariDataSource(config);
+            if (userPoolName != null) {
+                config.setPoolName(userPoolName);
+            }
+            boolean metricsEnabled = ObserveUtils.isMetricsEnabled();
+            if (metricsEnabled) {
+                config.setMetricsTrackerFactory(
+                        new SqlMetricsTrackerFactory(this.metricPoolName));
+            }
+            long initStart = metricsEnabled ? System.nanoTime() : 0;
+            try {
+                hikariDataSource = new HikariDataSource(config);
+                if (metricsEnabled) {
+                    ObservabilityUtils.recordPoolInitTime(this.metricPoolName,
+                            (System.nanoTime() - initStart) / 1_000_000_000.0);
+                }
+            } catch (Exception e) {
+                if (metricsEnabled) {
+                    ObservabilityUtils.unregisterPoolMetrics(this.metricPoolName);
+                }
+                throw e;
+            }
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return hikariDataSource;
         } catch (Throwable t) {
@@ -548,6 +581,10 @@ public class SQLDatasource {
 
     public boolean getBatchExecuteGKFlag() {
         return this.batchExecuteGKFlag;
+    }
+
+    public String getPoolName() {
+        return this.metricPoolName;
     }
 
     /**

@@ -183,12 +183,15 @@ public class QueryProcessor {
                     return ErrorGenerator.getNoRowsError("Query did not retrieve any rows.");
                 }
 
+                Object result;
                 if (describingType.getTag() == TypeTags.UNION_TAG) {
-                    return getUnionTypeBValue((UnionType) describingType, resultSet, resultParameterProcessor);
+                    result = getUnionTypeBValue((UnionType) describingType, resultSet,
+                            resultParameterProcessor);
+                } else {
+                    result = getRecordOrPrimitiveTypeBValue(describingType, resultSet,
+                            resultParameterProcessor);
                 }
-
-                // Return-type is either a record or a primitive
-                return getRecordOrPrimitiveTypeBValue(describingType, resultSet, resultParameterProcessor);
+                return result;
             } catch (SQLException e) {
                 return ErrorGenerator.getSQLDatabaseError(e,
                         String.format("Error while executing SQL query: %s. ", sqlQuery));
