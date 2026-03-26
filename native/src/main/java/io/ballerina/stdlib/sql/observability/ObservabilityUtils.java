@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2026, WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,10 +25,12 @@ import io.ballerina.runtime.observability.metrics.Gauge;
 import io.ballerina.runtime.observability.metrics.MetricRegistry;
 import io.ballerina.runtime.observability.metrics.StatisticConfig;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_CONN_ACQUISITION;
@@ -57,6 +59,10 @@ import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRI
 import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_UTILIZATION_RATIO;
 import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.MILLIS_TO_SECONDS;
 import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.NANOS_TO_SECONDS;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_HOST;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_NAME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_PORT;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_URL;
 import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_POOL_NAME;
 
 /**
@@ -109,11 +115,13 @@ public final class ObservabilityUtils {
     // ---- Pool name generation ----
 
     /**
-     * Generate a pool name for metric tagging. Uses the user-configured name if provided
-     * (after sanitization), otherwise generates a random UUID.
+     * Generate a pool name for metric tagging. Uses the user-configured name
+     * if provided (after sanitization), otherwise returns {@code null} to signal
+     * that the caller should read back HikariCP's auto-generated name after
+     * pool creation.
      *
      * @param userConfiguredPoolName the user-configured pool name, or null
-     * @return a non-empty pool name suitable for use as a metric tag value
+     * @return a sanitized pool name, or null if naming must be deferred to HikariCP
      */
     public static String generatePoolName(String userConfiguredPoolName) {
         if (userConfiguredPoolName != null) {
@@ -131,7 +139,108 @@ public final class ObservabilityUtils {
                 return sanitized;
             }
         }
-        return UUID.randomUUID().toString();
+        return null;
+    }
+
+    /**
+     * Parse a JDBC URL into structured components for metric tagging.
+     * Extracts host, port, database name, and reconstructs a safe URL
+     * (no credentials, no query params). Handles double-scheme URLs
+     * (e.g., {@code jdbc:hsqldb:hsql://host:port/db}).
+     *
+     * @param jdbcUrl the JDBC connection URL
+     * @return parsed components, or {@link JdbcUrlInfo#EMPTY} if unparseable
+     */
+    static JdbcUrlInfo parseJdbcUrl(String jdbcUrl) {
+        if (jdbcUrl == null || jdbcUrl.isEmpty()) {
+            return JdbcUrlInfo.EMPTY;
+        }
+        try {
+            // Strip "jdbc:" prefix
+            String stripped = jdbcUrl.length() > 5
+                    ? jdbcUrl.substring(5) : jdbcUrl;
+            URI uri = new URI(stripped);
+            String host = uri.getHost();
+
+            // Double-scheme fallback for URLs like "hsqldb:hsql://localhost:9001/mydb".
+            // After stripping "jdbc:", the remaining "hsqldb:hsql://..." is opaque.
+            // Find "://" and re-parse from just before the "//" onward.
+            if (host == null) {
+                int schemeEnd = stripped.indexOf("://");
+                if (schemeEnd > 0) {
+                    uri = new URI(stripped.substring(schemeEnd + 1));
+                    host = uri.getHost();
+                }
+            }
+
+            if (host == null || host.isEmpty()) {
+                return JdbcUrlInfo.EMPTY;
+            }
+
+            int port = uri.getPort();
+            String portStr = port > 0 ? String.valueOf(port) : "";
+
+            String path = uri.getPath();
+            String db = (path != null && path.startsWith("/"))
+                    ? path.substring(1) : "";
+
+            String safeUrl = reconstructSafeUrl(jdbcUrl, host, port, db);
+
+            return new JdbcUrlInfo(host, portStr, db, safeUrl);
+        } catch (Exception e) {
+            return JdbcUrlInfo.EMPTY;
+        }
+    }
+
+    /**
+     * Reconstruct a safe JDBC URL from parsed components. Uses the scheme
+     * prefix from the original URL (everything before {@code ://}) and
+     * appends only parsed host, port, and database — no credentials,
+     * no query parameters.
+     */
+    private static String reconstructSafeUrl(String jdbcUrl, String host,
+                                             int port, String db) {
+        int schemeEnd = jdbcUrl.indexOf("://");
+        if (schemeEnd < 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(
+                jdbcUrl.substring(0, schemeEnd));
+        sb.append("://").append(host);
+        if (port > 0) {
+            sb.append(":").append(port);
+        }
+        if (!db.isEmpty()) {
+            sb.append("/").append(db);
+        }
+        return sb.toString();
+    }
+
+
+    // ---- Tag helpers ----
+
+    /**
+     * Build the tag map for a metric. Always includes {@code pool_name}.
+     * Conditionally includes {@code db_host}, {@code db_port},
+     * {@code db_name}, and {@code db_url} when URL parsing succeeded.
+     */
+    private static Map<String, String> buildTags(String poolName,
+                                                 JdbcUrlInfo urlInfo) {
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put(TAG_POOL_NAME, poolName);
+        if (!urlInfo.isEmpty()) {
+            tags.put(TAG_DB_HOST, urlInfo.host());
+            if (!urlInfo.port().isEmpty()) {
+                tags.put(TAG_DB_PORT, urlInfo.port());
+            }
+            if (!urlInfo.dbName().isEmpty()) {
+                tags.put(TAG_DB_NAME, urlInfo.dbName());
+            }
+            if (!urlInfo.safeUrl().isEmpty()) {
+                tags.put(TAG_DB_URL, urlInfo.safeUrl());
+            }
+        }
+        return tags;
     }
 
     // ---- Pool health metric registration and teardown ----
@@ -143,32 +252,35 @@ public final class ObservabilityUtils {
      *
      * @param poolStats the HikariCP pool statistics object
      * @param poolName  the pool name for metric tagging
+     * @param urlInfo   parsed JDBC URL components for supplementary tags
      */
     public static void registerPoolMetrics(PoolStats poolStats,
-                                           String poolName) {
+                                           String poolName,
+                                           JdbcUrlInfo urlInfo) {
         try {
+            Map<String, String> tags = buildTags(poolName, urlInfo);
             List<Gauge> gauges = new ArrayList<>();
             gauges.add(Gauge.builder(METRIC_POOL_ACTIVE_CONNECTIONS)
                     .description(DESC_POOL_ACTIVE)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_IDLE_CONNECTIONS)
                     .description(DESC_POOL_IDLE)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_TOTAL_CONNECTIONS)
                     .description(DESC_POOL_TOTAL)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_PENDING_REQUESTS)
                     .description(DESC_POOL_PENDING)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_MAX_CONNECTIONS)
                     .description(DESC_POOL_MAX)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_MIN_CONNECTIONS)
                     .description(DESC_POOL_MIN)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
             gauges.add(Gauge.builder(METRIC_POOL_UTILIZATION_RATIO)
                     .description(DESC_POOL_UTILIZATION)
-                    .tag(TAG_POOL_NAME, poolName).register());
+                    .tags(tags).register());
 
             poolGaugeRegistry.put(poolName, gauges);
             poolStatsRegistry.put(poolName, poolStats);
@@ -210,13 +322,16 @@ public final class ObservabilityUtils {
      * Creates a Gauge set once after pool creation.
      *
      * @param poolName the pool name for metric tagging
+     * @param jdbcUrl  the JDBC URL for supplementary tags
      * @param seconds  initialization time in seconds
      */
-    public static void recordPoolInitTime(String poolName, double seconds) {
+    public static void recordPoolInitTime(String poolName, String jdbcUrl,
+                                          double seconds) {
         try {
+            JdbcUrlInfo urlInfo = parseJdbcUrl(jdbcUrl);
             Gauge gauge = Gauge.builder(METRIC_POOL_INIT_TIME)
                     .description(DESC_POOL_INIT_TIME)
-                    .tag(TAG_POOL_NAME, poolName)
+                    .tags(buildTags(poolName, urlInfo))
                     .register();
             gauge.setValue(seconds);
             initTimeGauges.put(poolName, gauge);
@@ -283,15 +398,17 @@ public final class ObservabilityUtils {
      *
      * @param poolName           pool name for metric tagging
      * @param elapsedAcquiredNanos time in nanoseconds
+     * @param urlInfo            parsed JDBC URL components for supplementary tags
      */
     static void recordConnectionAcquisitionTime(String poolName,
-                                                long elapsedAcquiredNanos) {
+                                                long elapsedAcquiredNanos,
+                                                JdbcUrlInfo urlInfo) {
         try {
             String key = METRIC_CONNECTION_ACQUISITION_TIME + ":" + poolName;
             gaugeCache.computeIfAbsent(key, k ->
                     Gauge.builder(METRIC_CONNECTION_ACQUISITION_TIME)
                             .description(DESC_CONN_ACQUISITION)
-                            .tag(TAG_POOL_NAME, poolName)
+                            .tags(buildTags(poolName, urlInfo))
                             .summarize(STATISTIC_CONFIG)
                             .register()
             ).setValue(elapsedAcquiredNanos / NANOS_TO_SECONDS);
@@ -305,15 +422,17 @@ public final class ObservabilityUtils {
      *
      * @param poolName            pool name for metric tagging
      * @param elapsedBorrowedMillis time in milliseconds
+     * @param urlInfo             parsed JDBC URL components for supplementary tags
      */
     static void recordConnectionUsageTime(String poolName,
-                                          long elapsedBorrowedMillis) {
+                                          long elapsedBorrowedMillis,
+                                          JdbcUrlInfo urlInfo) {
         try {
             String key = METRIC_CONNECTION_USAGE_TIME + ":" + poolName;
             gaugeCache.computeIfAbsent(key, k ->
                     Gauge.builder(METRIC_CONNECTION_USAGE_TIME)
                             .description(DESC_CONN_USAGE)
-                            .tag(TAG_POOL_NAME, poolName)
+                            .tags(buildTags(poolName, urlInfo))
                             .summarize(STATISTIC_CONFIG)
                             .register()
             ).setValue(elapsedBorrowedMillis / MILLIS_TO_SECONDS);
@@ -327,15 +446,17 @@ public final class ObservabilityUtils {
      *
      * @param poolName               pool name for metric tagging
      * @param connectionCreatedMillis time in milliseconds
+     * @param urlInfo                parsed JDBC URL components for supplementary tags
      */
     static void recordConnectionCreationTime(String poolName,
-                                             long connectionCreatedMillis) {
+                                             long connectionCreatedMillis,
+                                             JdbcUrlInfo urlInfo) {
         try {
             String key = METRIC_CONNECTION_CREATION_TIME + ":" + poolName;
             gaugeCache.computeIfAbsent(key, k ->
                     Gauge.builder(METRIC_CONNECTION_CREATION_TIME)
                             .description(DESC_CONN_CREATION)
-                            .tag(TAG_POOL_NAME, poolName)
+                            .tags(buildTags(poolName, urlInfo))
                             .summarize(STATISTIC_CONFIG)
                             .register()
             ).setValue(connectionCreatedMillis / MILLIS_TO_SECONDS);
@@ -348,14 +469,16 @@ public final class ObservabilityUtils {
      * Increment the connection timeout counter.
      *
      * @param poolName pool name for metric tagging
+     * @param urlInfo  parsed JDBC URL components for supplementary tags
      */
-    static void recordConnectionTimeout(String poolName) {
+    static void recordConnectionTimeout(String poolName,
+                                        JdbcUrlInfo urlInfo) {
         try {
             String key = METRIC_CONNECTION_TIMEOUT_TOTAL + ":" + poolName;
             counterCache.computeIfAbsent(key, k ->
                     Counter.builder(METRIC_CONNECTION_TIMEOUT_TOTAL)
                             .description(DESC_CONN_TIMEOUT)
-                            .tag(TAG_POOL_NAME, poolName)
+                            .tags(buildTags(poolName, urlInfo))
                             .register()
             ).increment();
         } catch (Exception e) {
@@ -381,9 +504,10 @@ public final class ObservabilityUtils {
     /**
      * Check if a cache key belongs to a given pool.
      * Keys follow the format "metricName:poolName[:operation[:errorClass]]".
-     * UUID names contain only hex and dashes. User names are sanitized to
-     * {@code [a-zA-Z0-9._-]}. Neither contains ':', so colon-delimited
-     * matching is safe.
+     * URL-derived names go through the same sanitization regex as user names,
+     * and HikariCP auto-generated names (e.g., "HikariPool-1") use only
+     * alphanumeric characters and hyphens. None of these contain ':', so
+     * colon-delimited matching is safe.
      */
     private static boolean isForPool(String key, String poolName) {
         return key.contains(":" + poolName + ":")

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2026, WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,10 @@ public final class ObservabilityConstants {
 
     // Tag keys
     public static final String TAG_POOL_NAME = "pool_name";
+    public static final String TAG_DB_HOST = "db_host";
+    public static final String TAG_DB_PORT = "db_port";
+    public static final String TAG_DB_NAME = "db_name";
+    public static final String TAG_DB_URL = "db_url";
 
     // Pool health metric names (Gauges)
     public static final String METRIC_POOL_ACTIVE_CONNECTIONS =

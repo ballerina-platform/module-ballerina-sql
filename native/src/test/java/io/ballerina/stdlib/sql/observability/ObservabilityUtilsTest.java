@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2026, WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +21,9 @@ package io.ballerina.stdlib.sql.observability;
 import com.zaxxer.hikari.metrics.PoolStats;
 import org.testng.annotations.Test;
 
-import java.util.UUID;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -39,75 +37,178 @@ public class ObservabilityUtilsTest {
 
     @Test
     void testGeneratePoolNameUserConfigured() {
-        String result = ObservabilityUtils.generatePoolName("MyPool");
-        assertEquals(result, "MyPool");
-    }
-
-    @Test
-    void testGeneratePoolNameNullInput() {
-        String result = ObservabilityUtils.generatePoolName(null);
-        assertValidUuid(result);
-    }
-
-    @Test
-    void testGeneratePoolNameEmptyInput() {
-        String result = ObservabilityUtils.generatePoolName("");
-        assertValidUuid(result);
-    }
-
-    @Test
-    void testGeneratePoolNameUniqueness() {
-        String first = ObservabilityUtils.generatePoolName(null);
-        String second = ObservabilityUtils.generatePoolName(null);
-        assertNotEquals(first, second,
-                "Two calls with no user name must produce different UUIDs");
-    }
-
-    @Test
-    void testGeneratePoolNameWhitespaceOnly() {
-        String result = ObservabilityUtils.generatePoolName("   ");
-        assertValidUuid(result);
+        assertEquals(ObservabilityUtils.generatePoolName("MyPool"),
+                "MyPool");
     }
 
     @Test
     void testGeneratePoolNameWithColons() {
-        String result = ObservabilityUtils.generatePoolName("my:pool:name");
-        assertEquals(result, "my-pool-name");
+        assertEquals(ObservabilityUtils.generatePoolName("my:pool:name"),
+                "my-pool-name");
     }
 
     @Test
     void testGeneratePoolNameSpecialCharacters() {
-        String result = ObservabilityUtils.generatePoolName("my pool/test;drop");
-        assertEquals(result, "my-pool-test-drop");
-    }
-
-    @Test
-    void testGeneratePoolNameUuidFormat() {
-        String result = ObservabilityUtils.generatePoolName(null);
-        assertFalse(result.contains(":"),
-                "UUID must not contain colons");
-        assertEquals(result.length(), 36,
-                "UUID must be 36 characters (8-4-4-4-12)");
-    }
-
-    @Test
-    void testGeneratePoolNameAllColons() {
-        // ":::" → sanitized to "---" → collapsed to "-" → stripped → ""
-        // → falls through to UUID
-        String result = ObservabilityUtils.generatePoolName(":::");
-        assertValidUuid(result);
+        assertEquals(
+                ObservabilityUtils.generatePoolName("my pool/test;drop"),
+                "my-pool-test-drop");
     }
 
     @Test
     void testGeneratePoolNameDotsAndUnderscores() {
-        String result = ObservabilityUtils.generatePoolName("my_pool.v2");
-        assertEquals(result, "my_pool.v2");
+        assertEquals(ObservabilityUtils.generatePoolName("my_pool.v2"),
+                "my_pool.v2");
     }
 
     @Test
     void testGeneratePoolNameMixedValidInvalid() {
-        String result = ObservabilityUtils.generatePoolName("pool@host:5432/db");
-        assertEquals(result, "pool-host-5432-db");
+        assertEquals(
+                ObservabilityUtils.generatePoolName("pool@host:5432/db"),
+                "pool-host-5432-db");
+    }
+
+    @Test
+    void testGeneratePoolNameNull() {
+        assertNull(ObservabilityUtils.generatePoolName(null));
+    }
+
+    @Test
+    void testGeneratePoolNameEmpty() {
+        assertNull(ObservabilityUtils.generatePoolName(""));
+    }
+
+    @Test
+    void testGeneratePoolNameWhitespaceOnly() {
+        assertNull(ObservabilityUtils.generatePoolName("   "));
+    }
+
+    @Test
+    void testGeneratePoolNameAllColons() {
+        // ":::" sanitizes to empty -> null
+        assertNull(ObservabilityUtils.generatePoolName(":::"));
+    }
+
+    // ---- parseJdbcUrl tests ----
+
+    @Test
+    void testParseJdbcUrlPostgres() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:postgresql://localhost:5432/mydb");
+        assertFalse(info.isEmpty());
+        assertEquals(info.host(), "localhost");
+        assertEquals(info.port(), "5432");
+        assertEquals(info.dbName(), "mydb");
+        assertEquals(info.safeUrl(),
+                "jdbc:postgresql://localhost:5432/mydb");
+    }
+
+    @Test
+    void testParseJdbcUrlMysqlNoPort() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:mysql://dbhost/orders");
+        assertEquals(info.host(), "dbhost");
+        assertEquals(info.port(), "");
+        assertEquals(info.dbName(), "orders");
+        assertEquals(info.safeUrl(), "jdbc:mysql://dbhost/orders");
+    }
+
+    @Test
+    void testParseJdbcUrlCredentialsStripped() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:postgresql://user:pass@db.prod:5432/app");
+        assertEquals(info.host(), "db.prod");
+        assertEquals(info.port(), "5432");
+        assertEquals(info.dbName(), "app");
+        assertEquals(info.safeUrl(),
+                "jdbc:postgresql://db.prod:5432/app");
+        assertFalse(info.safeUrl().contains("user"),
+                "safeUrl must not contain credentials");
+        assertFalse(info.safeUrl().contains("pass"),
+                "safeUrl must not contain credentials");
+    }
+
+    @Test
+    void testParseJdbcUrlQueryParamsStripped() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:mysql://host:3306/db?password=secret&useSSL=false");
+        assertEquals(info.host(), "host");
+        assertEquals(info.port(), "3306");
+        assertEquals(info.dbName(), "db");
+        assertEquals(info.safeUrl(), "jdbc:mysql://host:3306/db");
+        assertFalse(info.safeUrl().contains("password"),
+                "safeUrl must not contain query params");
+    }
+
+    @Test
+    void testParseJdbcUrlHsqldbDoubleScheme() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:hsqldb:hsql://localhost:9001/mydb");
+        assertEquals(info.host(), "localhost");
+        assertEquals(info.port(), "9001");
+        assertEquals(info.dbName(), "mydb");
+        assertEquals(info.safeUrl(),
+                "jdbc:hsqldb:hsql://localhost:9001/mydb");
+    }
+
+    @Test
+    void testParseJdbcUrlNoPath() {
+        JdbcUrlInfo info = ObservabilityUtils.parseJdbcUrl(
+                "jdbc:postgresql://localhost:5432");
+        assertEquals(info.host(), "localhost");
+        assertEquals(info.port(), "5432");
+        assertEquals(info.dbName(), "");
+        assertEquals(info.safeUrl(),
+                "jdbc:postgresql://localhost:5432");
+    }
+
+    @Test
+    void testParseJdbcUrlOracle() {
+        assertTrue(ObservabilityUtils.parseJdbcUrl(
+                "jdbc:oracle:thin:@host:1521:SID").isEmpty());
+    }
+
+    @Test
+    void testParseJdbcUrlSqlServer() {
+        assertTrue(ObservabilityUtils.parseJdbcUrl(
+                "jdbc:sqlserver://host:1433;databaseName=mydb").isEmpty());
+    }
+
+    @Test
+    void testParseJdbcUrlH2Embedded() {
+        assertTrue(ObservabilityUtils.parseJdbcUrl(
+                "jdbc:h2:mem:testdb").isEmpty());
+    }
+
+    @Test
+    void testParseJdbcUrlNull() {
+        assertTrue(ObservabilityUtils.parseJdbcUrl(null).isEmpty());
+    }
+
+    @Test
+    void testParseJdbcUrlEmpty() {
+        assertTrue(ObservabilityUtils.parseJdbcUrl("").isEmpty());
+    }
+
+    // ---- Factory deferred resolution tests ----
+
+    @Test
+    void testFactoryWithNullMetricPoolName() {
+        SqlMetricsTrackerFactory factory =
+                new SqlMetricsTrackerFactory(null, null);
+        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
+        factory.create("HikariPool-1", stats);
+        assertEquals(factory.getRegisteredPoolName(), "HikariPool-1");
+        ObservabilityUtils.unregisterPoolMetrics("HikariPool-1");
+    }
+
+    @Test
+    void testFactoryWithNonNullMetricPoolName() {
+        SqlMetricsTrackerFactory factory =
+                new SqlMetricsTrackerFactory("my-pool", null);
+        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
+        factory.create("HikariPool-1", stats);
+        assertEquals(factory.getRegisteredPoolName(), "my-pool");
+        ObservabilityUtils.unregisterPoolMetrics("my-pool");
     }
 
     // ---- Safety guard tests ----
@@ -115,7 +216,8 @@ public class ObservabilityUtilsTest {
     @Test
     void testUnregisterEmptyPoolNameGuard() {
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        ObservabilityUtils.registerPoolMetrics(stats, "survivor-pool-1");
+        ObservabilityUtils.registerPoolMetrics(stats, "survivor-pool-1",
+                JdbcUrlInfo.EMPTY);
         ObservabilityUtils.unregisterPoolMetrics("");
         assertTrue(ObservabilityUtils.hasRegisteredMetrics("survivor-pool-1"),
                 "Empty poolName unregister must not affect other pools");
@@ -125,7 +227,8 @@ public class ObservabilityUtilsTest {
     @Test
     void testUnregisterNullPoolNameGuard() {
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        ObservabilityUtils.registerPoolMetrics(stats, "survivor-pool-2");
+        ObservabilityUtils.registerPoolMetrics(stats, "survivor-pool-2",
+                JdbcUrlInfo.EMPTY);
         ObservabilityUtils.unregisterPoolMetrics(null);
         assertTrue(ObservabilityUtils.hasRegisteredMetrics("survivor-pool-2"),
                 "Null poolName unregister must not affect other pools");
@@ -135,7 +238,8 @@ public class ObservabilityUtilsTest {
     @Test
     void testUnregisterDoubleCallIdempotent() {
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        ObservabilityUtils.registerPoolMetrics(stats, "double-unreg-pool");
+        ObservabilityUtils.registerPoolMetrics(stats, "double-unreg-pool",
+                JdbcUrlInfo.EMPTY);
         ObservabilityUtils.unregisterPoolMetrics("double-unreg-pool");
         ObservabilityUtils.unregisterPoolMetrics("double-unreg-pool");
     }
@@ -145,7 +249,8 @@ public class ObservabilityUtilsTest {
     @Test
     void testRegisterAndRefreshPoolMetrics() {
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        ObservabilityUtils.registerPoolMetrics(stats, "test-register-pool");
+        ObservabilityUtils.registerPoolMetrics(stats, "test-register-pool",
+                JdbcUrlInfo.EMPTY);
         ObservabilityUtils.unregisterPoolMetrics("test-register-pool");
     }
 
@@ -161,14 +266,6 @@ public class ObservabilityUtilsTest {
     }
 
     // ---- Helpers ----
-
-    private static void assertValidUuid(String value) {
-        try {
-            UUID.fromString(value);
-        } catch (IllegalArgumentException e) {
-            throw new AssertionError("Expected valid UUID but got: " + value, e);
-        }
-    }
 
     private static PoolStats createMockPoolStats(int active, int idle,
                                                   int total, int pending,

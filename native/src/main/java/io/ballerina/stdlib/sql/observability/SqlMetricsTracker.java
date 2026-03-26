@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2026, WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,35 +32,37 @@ import com.zaxxer.hikari.metrics.IMetricsTracker;
 public class SqlMetricsTracker implements IMetricsTracker {
 
     private final String poolName;
+    private final JdbcUrlInfo urlInfo;
 
-    SqlMetricsTracker(String poolName) {
+    SqlMetricsTracker(String poolName, JdbcUrlInfo urlInfo) {
         this.poolName = poolName;
+        this.urlInfo = urlInfo;
     }
 
     @Override
     public void recordConnectionAcquiredNanos(long elapsedAcquiredNanos) {
         ObservabilityUtils.recordConnectionAcquisitionTime(
-                poolName, elapsedAcquiredNanos);
+                poolName, elapsedAcquiredNanos, urlInfo);
         ObservabilityUtils.refreshPoolState(poolName);
     }
 
     @Override
     public void recordConnectionUsageMillis(long elapsedBorrowedMillis) {
         ObservabilityUtils.recordConnectionUsageTime(
-                poolName, elapsedBorrowedMillis);
+                poolName, elapsedBorrowedMillis, urlInfo);
         ObservabilityUtils.refreshPoolState(poolName);
     }
 
     @Override
     public void recordConnectionCreatedMillis(long connectionCreatedMillis) {
         ObservabilityUtils.recordConnectionCreationTime(
-                poolName, connectionCreatedMillis);
+                poolName, connectionCreatedMillis, urlInfo);
         ObservabilityUtils.refreshPoolState(poolName);
     }
 
     @Override
     public void recordConnectionTimeout() {
-        ObservabilityUtils.recordConnectionTimeout(poolName);
+        ObservabilityUtils.recordConnectionTimeout(poolName, urlInfo);
         ObservabilityUtils.refreshPoolState(poolName);
     }
 

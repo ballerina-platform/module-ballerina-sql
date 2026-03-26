@@ -209,10 +209,9 @@ public class ExecuteProcessor {
                 }
                 // Execute leftover statements if count is not multiplier of batchSize
                 executeSingleBatch(statement, executionResults, processResultSet);
-                Object resultArray = ValueCreator.createArrayValue(executionResults.toArray(),
-                        TypeCreator.createArrayType(TypeCreator.createRecordType(
+                return ValueCreator.createArrayValue(executionResults.toArray(), TypeCreator.createArrayType(
+                        TypeCreator.createRecordType(
                                 Constants.EXECUTION_RESULT_RECORD, ModuleUtils.getModule(), 0, false, 0)));
-                return resultArray;
             } catch (BatchUpdateException e) {
                 int[] updateCounts = e.getUpdateCounts();
                 for (int count : updateCounts) {

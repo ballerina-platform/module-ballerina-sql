@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2026, WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,18 +34,36 @@ import com.zaxxer.hikari.metrics.PoolStats;
 public class SqlMetricsTrackerFactory implements MetricsTrackerFactory {
 
     private final String metricPoolName;
+    private final String jdbcUrl;
+    private String registeredPoolName;
 
-    public SqlMetricsTrackerFactory(String metricPoolName) {
+    public SqlMetricsTrackerFactory(String metricPoolName, String jdbcUrl) {
         this.metricPoolName = metricPoolName;
+        this.jdbcUrl = jdbcUrl;
     }
 
     @Override
     public IMetricsTracker create(String poolName, PoolStats poolStats) {
+        String effectiveName = (metricPoolName != null)
+                ? metricPoolName : poolName;
+        this.registeredPoolName = effectiveName;
+        JdbcUrlInfo urlInfo = ObservabilityUtils.parseJdbcUrl(this.jdbcUrl);
         try {
-            ObservabilityUtils.registerPoolMetrics(poolStats, metricPoolName);
+            ObservabilityUtils.registerPoolMetrics(poolStats, effectiveName,
+                    urlInfo);
         } catch (Exception e) {
             // Silently swallow — pool must start even if metrics registration fails
         }
-        return new SqlMetricsTracker(metricPoolName);
+        return new SqlMetricsTracker(effectiveName, urlInfo);
+    }
+
+    /**
+     * Return the pool name resolved during {@link #create}. When
+     * {@code metricPoolName} was null, this is HikariCP's auto-generated name.
+     *
+     * @return the resolved pool name, or null if {@code create()} has not been called
+     */
+    public String getRegisteredPoolName() {
+        return registeredPoolName;
     }
 }
