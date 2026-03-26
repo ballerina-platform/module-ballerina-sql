@@ -23,6 +23,7 @@ import io.ballerina.runtime.observability.metrics.Counter;
 import io.ballerina.runtime.observability.metrics.DefaultMetricRegistry;
 import io.ballerina.runtime.observability.metrics.Gauge;
 import io.ballerina.runtime.observability.metrics.MetricRegistry;
+import io.ballerina.runtime.observability.metrics.PolledGauge;
 import io.ballerina.runtime.observability.metrics.StatisticConfig;
 
 import java.net.URI;
@@ -92,12 +93,8 @@ public final class ObservabilityUtils {
             .buckets(5)
             .build();
 
-    // Pool health Gauges (keyed by pool name, for cleanup)
-    private static final ConcurrentHashMap<String, List<Gauge>> poolGaugeRegistry =
-            new ConcurrentHashMap<>();
-
-    // PoolStats objects stored for push-based gauge refresh
-    private static final ConcurrentHashMap<String, PoolStats> poolStatsRegistry =
+    // Pool health PolledGauges (keyed by pool name, for cleanup)
+    private static final ConcurrentHashMap<String, List<PolledGauge>> poolGaugeRegistry =
             new ConcurrentHashMap<>();
 
     // Init time Gauge per pool (set once, cleaned up with pool)
@@ -246,9 +243,10 @@ public final class ObservabilityUtils {
     // ---- Pool health metric registration and teardown ----
 
     /**
-     * Register pool health Gauges and store the PoolStats reference for push-based refresh.
+     * Register pool health PolledGauges that read values on Prometheus scrape.
      * Called by {@link SqlMetricsTrackerFactory#create} when HikariCP starts a pool.
-     * Values are updated on every connection event via {@link #refreshPoolState(String)}.
+     * Values are pulled from the {@link PoolStats} object on each scrape — zero
+     * overhead between scrapes.
      *
      * @param poolStats the HikariCP pool statistics object
      * @param poolName  the pool name for metric tagging
@@ -259,59 +257,36 @@ public final class ObservabilityUtils {
                                            JdbcUrlInfo urlInfo) {
         try {
             Map<String, String> tags = buildTags(poolName, urlInfo);
-            List<Gauge> gauges = new ArrayList<>();
-            gauges.add(Gauge.builder(METRIC_POOL_ACTIVE_CONNECTIONS)
-                    .description(DESC_POOL_ACTIVE)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_IDLE_CONNECTIONS)
-                    .description(DESC_POOL_IDLE)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_TOTAL_CONNECTIONS)
-                    .description(DESC_POOL_TOTAL)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_PENDING_REQUESTS)
-                    .description(DESC_POOL_PENDING)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_MAX_CONNECTIONS)
-                    .description(DESC_POOL_MAX)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_MIN_CONNECTIONS)
-                    .description(DESC_POOL_MIN)
-                    .tags(tags).register());
-            gauges.add(Gauge.builder(METRIC_POOL_UTILIZATION_RATIO)
+            List<PolledGauge> gauges = new ArrayList<>();
+            gauges.add(PolledGauge.builder(METRIC_POOL_ACTIVE_CONNECTIONS,
+                    poolStats, PoolStats::getActiveConnections)
+                    .description(DESC_POOL_ACTIVE).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_IDLE_CONNECTIONS,
+                    poolStats, PoolStats::getIdleConnections)
+                    .description(DESC_POOL_IDLE).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_TOTAL_CONNECTIONS,
+                    poolStats, PoolStats::getTotalConnections)
+                    .description(DESC_POOL_TOTAL).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_PENDING_REQUESTS,
+                    poolStats, PoolStats::getPendingThreads)
+                    .description(DESC_POOL_PENDING).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_MAX_CONNECTIONS,
+                    poolStats, PoolStats::getMaxConnections)
+                    .description(DESC_POOL_MAX).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_MIN_CONNECTIONS,
+                    poolStats, PoolStats::getMinConnections)
+                    .description(DESC_POOL_MIN).tags(tags).register());
+            gauges.add(PolledGauge.builder(METRIC_POOL_UTILIZATION_RATIO,
+                    poolStats, stats -> {
+                        int max = stats.getMaxConnections();
+                        return max > 0
+                                ? (double) stats.getActiveConnections()
+                                / max : 0.0;
+                    })
                     .description(DESC_POOL_UTILIZATION)
                     .tags(tags).register());
 
             poolGaugeRegistry.put(poolName, gauges);
-            poolStatsRegistry.put(poolName, poolStats);
-            refreshPoolState(poolName);
-        } catch (Exception e) {
-            // Silently swallow — observability failures must never affect pool operations
-        }
-    }
-
-    /**
-     * Refresh pool health gauge values from the stored PoolStats.
-     * Called from MetricsTracker callbacks on every connection event.
-     *
-     * @param poolName the pool name whose gauges should be refreshed
-     */
-    static void refreshPoolState(String poolName) {
-        try {
-            List<Gauge> gauges = poolGaugeRegistry.get(poolName);
-            PoolStats stats = poolStatsRegistry.get(poolName);
-            if (gauges == null || stats == null || gauges.size() < 7) {
-                return;
-            }
-            gauges.get(0).setValue(stats.getActiveConnections());
-            gauges.get(1).setValue(stats.getIdleConnections());
-            gauges.get(2).setValue(stats.getTotalConnections());
-            gauges.get(3).setValue(stats.getPendingThreads());
-            gauges.get(4).setValue(stats.getMaxConnections());
-            gauges.get(5).setValue(stats.getMinConnections());
-            int max = stats.getMaxConnections();
-            gauges.get(6).setValue(max > 0
-                    ? (double) stats.getActiveConnections() / max : 0.0);
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -354,14 +329,13 @@ public final class ObservabilityUtils {
             }
             MetricRegistry registry = DefaultMetricRegistry.getInstance();
 
-            // Pool health Gauges
-            List<Gauge> poolGauges = poolGaugeRegistry.remove(poolName);
+            // Pool health PolledGauges
+            List<PolledGauge> poolGauges = poolGaugeRegistry.remove(poolName);
             if (poolGauges != null) {
-                for (Gauge gauge : poolGauges) {
+                for (PolledGauge gauge : poolGauges) {
                     registry.unregister(gauge);
                 }
             }
-            poolStatsRegistry.remove(poolName);
 
             // Init time Gauge
             Gauge initGauge = initTimeGauges.remove(poolName);
