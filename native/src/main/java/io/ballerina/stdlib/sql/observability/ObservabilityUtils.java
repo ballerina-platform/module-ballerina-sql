@@ -109,6 +109,12 @@ public final class ObservabilityUtils {
     private static final ConcurrentHashMap<String, Counter> counterCache =
             new ConcurrentHashMap<>();
 
+    // Strong reference to PoolStats to prevent GC while PolledGauges are registered.
+    // PolledGauge uses WeakReference for its state object; without this,
+    // the PoolStats passed by HikariCP would be collected after factory creation.
+    private static final ConcurrentHashMap<String, PoolStats> poolStatsRetainer =
+            new ConcurrentHashMap<>();
+
     // ---- Pool name generation ----
 
     /**
@@ -287,6 +293,7 @@ public final class ObservabilityUtils {
                     .tags(tags).register());
 
             poolGaugeRegistry.put(poolName, gauges);
+            poolStatsRetainer.put(poolName, poolStats);
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -331,6 +338,7 @@ public final class ObservabilityUtils {
 
             // Pool health PolledGauges
             List<PolledGauge> poolGauges = poolGaugeRegistry.remove(poolName);
+            poolStatsRetainer.remove(poolName);
             if (poolGauges != null) {
                 for (PolledGauge gauge : poolGauges) {
                     registry.unregister(gauge);
@@ -471,6 +479,38 @@ public final class ObservabilityUtils {
      */
     static boolean hasRegisteredMetrics(String poolName) {
         return poolGaugeRegistry.containsKey(poolName);
+    }
+
+    /**
+     * Return the list of pool health PolledGauges for a pool.
+     * Package-private — used by tests to verify gauge count.
+     */
+    static List<PolledGauge> getPoolGauges(String poolName) {
+        return poolGaugeRegistry.get(poolName);
+    }
+
+    /**
+     * Return a cached connection event Gauge by metric name and pool name.
+     * Package-private — used by tests to verify gauge creation and values.
+     */
+    static Gauge getCachedGauge(String metricName, String poolName) {
+        return gaugeCache.get(metricName + ":" + poolName);
+    }
+
+    /**
+     * Return a cached event Counter by metric name and pool name.
+     * Package-private — used by tests to verify counter creation.
+     */
+    static Counter getCachedCounter(String metricName, String poolName) {
+        return counterCache.get(metricName + ":" + poolName);
+    }
+
+    /**
+     * Return the init time Gauge for a pool.
+     * Package-private — used by tests to verify init time recording.
+     */
+    static Gauge getInitTimeGauge(String poolName) {
+        return initTimeGauges.get(poolName);
     }
 
     // ---- Private helpers ----

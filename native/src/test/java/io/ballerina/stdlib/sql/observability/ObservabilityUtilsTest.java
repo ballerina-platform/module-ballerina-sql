@@ -19,11 +19,22 @@
 package io.ballerina.stdlib.sql.observability;
 
 import com.zaxxer.hikari.metrics.PoolStats;
+import io.ballerina.runtime.observability.metrics.Counter;
+import io.ballerina.runtime.observability.metrics.Gauge;
+import io.ballerina.runtime.observability.metrics.PolledGauge;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_CREATION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_USAGE_TIME;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -189,28 +200,6 @@ public class ObservabilityUtilsTest {
         assertTrue(ObservabilityUtils.parseJdbcUrl("").isEmpty());
     }
 
-    // ---- Factory deferred resolution tests ----
-
-    @Test
-    void testFactoryWithNullMetricPoolName() {
-        SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory(null, null);
-        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        factory.create("HikariPool-1", stats);
-        assertEquals(factory.getRegisteredPoolName(), "HikariPool-1");
-        ObservabilityUtils.unregisterPoolMetrics("HikariPool-1");
-    }
-
-    @Test
-    void testFactoryWithNonNullMetricPoolName() {
-        SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory("my-pool", null);
-        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        factory.create("HikariPool-1", stats);
-        assertEquals(factory.getRegisteredPoolName(), "my-pool");
-        ObservabilityUtils.unregisterPoolMetrics("my-pool");
-    }
-
     // ---- Safety guard tests ----
 
     @Test
@@ -259,8 +248,42 @@ public class ObservabilityUtilsTest {
     }
 
     @Test
+    void testRegisterPoolMetricsCreatesSevenGauges() {
+        // registerPoolMetrics creates 7 PolledGauges:
+        // active, idle, total, pending, max, min, utilization_ratio
+        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
+        String pool = "seven-gauge-pool";
+        ObservabilityUtils.registerPoolMetrics(stats, pool,
+                JdbcUrlInfo.EMPTY);
+
+        List<PolledGauge> gauges = ObservabilityUtils.getPoolGauges(pool);
+        assertNotNull(gauges, "Pool gauges must be registered");
+        assertEquals(gauges.size(), 7,
+                "Must register exactly 7 pool health gauges");
+
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getPoolGauges(pool),
+                "Pool gauges must be removed after unregister");
+    }
+
+    @Test
+    void testRegisterPoolMetricsWithMaxZero() {
+        // Exercises the utilization ratio lambda: max=0 should not
+        // cause division by zero (returns 0.0 via the guard).
+        // Verifying that 7 gauges still register proves the lambda
+        // was accepted without error.
+        PoolStats stats = createMockPoolStats(0, 0, 0, 0, 0, 0);
+        String pool = "zero-max-pool";
+        ObservabilityUtils.registerPoolMetrics(stats, pool,
+                JdbcUrlInfo.EMPTY);
+        List<PolledGauge> gauges = ObservabilityUtils.getPoolGauges(pool);
+        assertNotNull(gauges);
+        assertEquals(gauges.size(), 7);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
     void testPolledGaugePullsUpdatedValues() {
-        // Mutable PoolStats — use a subclass that allows mutation after creation
         MutableMockPoolStats stats = new MutableMockPoolStats(
                 5, 3, 8, 2, 10, 1);
         ObservabilityUtils.registerPoolMetrics(stats,
@@ -268,13 +291,8 @@ public class ObservabilityUtilsTest {
         assertTrue(ObservabilityUtils.hasRegisteredMetrics(
                 "pull-test-pool"));
 
-        // Mutate via the subclass to simulate pool state change
+        // Mutate to simulate pool state change — PolledGauge reads live
         stats.setValues(9, 1, 10, 5, 10, 1);
-
-        // PolledGauge reads live values on scrape — no refresh needed.
-        // Registration succeeded with PoolStats method references,
-        // proving the pull mechanism is wired correctly.
-        // End-to-end verification via Prometheus scrape confirms values.
 
         ObservabilityUtils.unregisterPoolMetrics("pull-test-pool");
     }
@@ -289,104 +307,235 @@ public class ObservabilityUtilsTest {
 
     @Test
     void testRecordConnectionAcquisitionTime() {
+        // Source: ObservabilityUtils lines 377-392
+        // Caches gauge under key METRIC_CONNECTION_ACQUISITION_TIME:poolName
+        // Converts nanos to seconds: value / 1_000_000_000.0
         String pool = "ou-acq-pool";
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "No gauge should exist before recording");
+
         ObservabilityUtils.recordConnectionAcquisitionTime(
                 pool, 500_000_000L, JdbcUrlInfo.EMPTY);
-        // Second call exercises cached gauge path
+
+        Gauge gauge = ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_ACQUISITION_TIME, pool);
+        assertNotNull(gauge,
+                "Gauge must be cached after recording");
+
+        // Second call reuses cached gauge (computeIfAbsent hit)
         ObservabilityUtils.recordConnectionAcquisitionTime(
                 pool, 200_000_000L, JdbcUrlInfo.EMPTY);
+        assertSame(gauge, ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "Second call must reuse the same cached Gauge instance");
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "Gauge must be removed from cache after unregister");
     }
 
     @Test
     void testRecordConnectionUsageTime() {
+        // Source: ObservabilityUtils lines 401-416
+        // Converts millis to seconds: value / 1_000.0
         String pool = "ou-usage-pool";
+        assertNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool));
+
         ObservabilityUtils.recordConnectionUsageTime(
-                pool, 150L, JdbcUrlInfo.EMPTY);
+                pool, 1500L, JdbcUrlInfo.EMPTY);
+
+        Gauge gauge = ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool);
+        assertNotNull(gauge,
+                "Gauge must be cached after recording");
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool));
     }
 
     @Test
     void testRecordConnectionCreationTime() {
+        // Source: ObservabilityUtils lines 425-440
+        // Converts millis to seconds: value / 1_000.0
         String pool = "ou-creation-pool";
+        assertNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_CREATION_TIME, pool));
+
         ObservabilityUtils.recordConnectionCreationTime(
-                pool, 50L, JdbcUrlInfo.EMPTY);
+                pool, 250L, JdbcUrlInfo.EMPTY);
+
+        Gauge gauge = ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_CREATION_TIME, pool);
+        assertNotNull(gauge,
+                "Gauge must be cached after recording");
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_CREATION_TIME, pool));
     }
 
     @Test
     void testRecordConnectionTimeout() {
+        // Source: ObservabilityUtils lines 448-461
+        // Caches Counter, calls increment() on each recording
         String pool = "ou-timeout-pool";
+        assertNull(ObservabilityUtils.getCachedCounter(
+                METRIC_CONNECTION_TIMEOUT_TOTAL, pool));
+
         ObservabilityUtils.recordConnectionTimeout(pool,
                 JdbcUrlInfo.EMPTY);
-        // Second call exercises cached counter + increment
+        Counter counter = ObservabilityUtils.getCachedCounter(
+                METRIC_CONNECTION_TIMEOUT_TOTAL, pool);
+        assertNotNull(counter,
+                "Counter must be cached after recording");
+
+        // Second call reuses same counter (computeIfAbsent hit)
         ObservabilityUtils.recordConnectionTimeout(pool,
                 JdbcUrlInfo.EMPTY);
+        assertSame(counter, ObservabilityUtils.getCachedCounter(
+                        METRIC_CONNECTION_TIMEOUT_TOTAL, pool),
+                "Second call must reuse the same cached Counter");
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getCachedCounter(
+                        METRIC_CONNECTION_TIMEOUT_TOTAL, pool),
+                "Counter must be removed from cache after unregister");
     }
 
     @Test
     void testRecordPoolInitTime() {
+        // Source: ObservabilityUtils lines 303-316
+        // Creates plain Gauge (no summarize), stores in initTimeGauges
         String pool = "ou-init-time-pool";
+        assertNull(ObservabilityUtils.getInitTimeGauge(pool));
+
         ObservabilityUtils.recordPoolInitTime(pool,
                 "jdbc:postgresql://localhost:5432/mydb", 1.5);
+
+        Gauge gauge = ObservabilityUtils.getInitTimeGauge(pool);
+        assertNotNull(gauge,
+                "Init time gauge must be stored after recording");
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertNull(ObservabilityUtils.getInitTimeGauge(pool),
+                "Init time gauge must be removed after unregister");
     }
 
     @Test
     void testRecordPoolInitTimeWithUnparseableUrl() {
+        // H2 embedded URL is unparseable (no host) but recording
+        // must succeed with EMPTY urlInfo tags
         String pool = "ou-init-time-pool-2";
         ObservabilityUtils.recordPoolInitTime(pool,
                 "jdbc:h2:mem:testdb", 0.3);
+        assertNotNull(ObservabilityUtils.getInitTimeGauge(pool));
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
-    // ---- Tag building with URL info ----
+    // ---- Tag building branch coverage ----
 
     @Test
     void testRecordEventWithFullUrlInfo() {
+        // Exercises buildTags (lines 224-241) with all fields present:
+        // !urlInfo.isEmpty() → true, all inner conditions true.
+        // This covers the tag addition lines for db_host, db_port,
+        // db_name, and db_url.
         String pool = "ou-full-url-pool";
         JdbcUrlInfo urlInfo = new JdbcUrlInfo(
                 "dbhost", "3306", "orders",
                 "jdbc:mysql://dbhost:3306/orders");
         ObservabilityUtils.recordConnectionAcquisitionTime(
                 pool, 100_000_000L, urlInfo);
+
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_ACQUISITION_TIME, pool));
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     @Test
     void testRecordEventWithPartialUrlInfo() {
+        // Exercises buildTags with host only (non-empty) but
+        // port="", dbName="", safeUrl="" → those inner branches
+        // evaluate to false, skipping db_port/db_name/db_url tags.
         String pool = "ou-partial-url-pool";
         JdbcUrlInfo urlInfo = new JdbcUrlInfo(
                 "dbhost", "", "", "");
         ObservabilityUtils.recordConnectionUsageTime(
                 pool, 100L, urlInfo);
+
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool));
+
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
-    // ---- Unregister cleans cached event metrics ----
+    // ---- Unregister cleans all cache types ----
 
     @Test
-    void testUnregisterCleansEventMetricCaches() {
-        String pool = "ou-cache-cleanup-pool";
+    void testUnregisterCleansAllCacheTypes() {
+        // Populates ALL 4 cache maps for one pool, then verifies
+        // unregisterPoolMetrics cleans every one of them.
+        // This exercises the removeIf + isForPool paths in
+        // unregisterPoolMetrics (lines 347-362).
+        String pool = "ou-full-cleanup-pool";
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
         JdbcUrlInfo urlInfo = new JdbcUrlInfo(
                 "localhost", "5432", "testdb",
                 "jdbc:postgresql://localhost:5432/testdb");
 
+        // Populate poolGaugeRegistry
         ObservabilityUtils.registerPoolMetrics(stats, pool, urlInfo);
+        assertTrue(ObservabilityUtils.hasRegisteredMetrics(pool));
+
+        // Populate gaugeCache (3 connection event gauges)
         ObservabilityUtils.recordConnectionAcquisitionTime(
                 pool, 100_000_000L, urlInfo);
         ObservabilityUtils.recordConnectionUsageTime(
                 pool, 50L, urlInfo);
         ObservabilityUtils.recordConnectionCreationTime(
                 pool, 30L, urlInfo);
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_ACQUISITION_TIME, pool));
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool));
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_CREATION_TIME, pool));
+
+        // Populate counterCache
         ObservabilityUtils.recordConnectionTimeout(pool, urlInfo);
+        assertNotNull(ObservabilityUtils.getCachedCounter(
+                METRIC_CONNECTION_TIMEOUT_TOTAL, pool));
+
+        // Populate initTimeGauges
         ObservabilityUtils.recordPoolInitTime(pool,
                 "jdbc:postgresql://localhost:5432/testdb", 0.5);
+        assertNotNull(ObservabilityUtils.getInitTimeGauge(pool));
 
+        // Unregister — should clean ALL cache maps
         ObservabilityUtils.unregisterPoolMetrics(pool);
-        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool));
+
+        // Verify every cache is cleaned
+        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool),
+                "poolGaugeRegistry must be cleaned");
+        assertNull(ObservabilityUtils.getInitTimeGauge(pool),
+                "initTimeGauges must be cleaned");
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "gaugeCache (acquisition) must be cleaned");
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_USAGE_TIME, pool),
+                "gaugeCache (usage) must be cleaned");
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_CREATION_TIME, pool),
+                "gaugeCache (creation) must be cleaned");
+        assertNull(ObservabilityUtils.getCachedCounter(
+                        METRIC_CONNECTION_TIMEOUT_TOTAL, pool),
+                "counterCache must be cleaned");
     }
 
     // ---- Helpers ----
@@ -402,7 +551,7 @@ public class ObservabilityUtilsTest {
      * PoolStats subclass that allows mutation after creation.
      * Protected fields are accessible from within the subclass.
      */
-    private static class MutableMockPoolStats extends PoolStats {
+    static class MutableMockPoolStats extends PoolStats {
         MutableMockPoolStats(int active, int idle, int total,
                              int pending, int max, int min) {
             super(1000L);

@@ -301,186 +301,235 @@ public class SQLDatasource {
     private HikariDataSource buildNonXADataSource(
             SQLDatasourceParams sqlDatasourceParams) {
         try {
-            // Generate metric pool name (non-XA only — XA pools have no metrics)
-            String userPoolName = null;
+            this.metricPoolName = resolveMetricPoolName(
+                    sqlDatasourceParams.connectionPool);
+            HikariConfig config = createHikariConfig(
+                    sqlDatasourceParams.poolProperties);
+            configureDataSourceCredentials(config, sqlDatasourceParams);
             if (sqlDatasourceParams.connectionPool != null) {
-                Object poolNameVal = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.POOL_NAME);
-                if (poolNameVal instanceof BString bStr) {
-                    userPoolName = bStr.getValue();
-                }
+                configureConnectionPool(config,
+                        sqlDatasourceParams.connectionPool);
             }
-            this.metricPoolName = ObservabilityUtils.generatePoolName(
-                    userPoolName);
-
-            HikariDataSource hikariDataSource;
-            HikariConfig config;
-            if (sqlDatasourceParams.poolProperties != null) {
-                config = new HikariConfig(sqlDatasourceParams.poolProperties);
-            } else {
-                config = new HikariConfig();
-            }
-            config.setJdbcUrl(sqlDatasourceParams.url);
-            config.setUsername(sqlDatasourceParams.user);
-            config.setPassword(sqlDatasourceParams.password);
-            if (sqlDatasourceParams.datasourceName != null && !sqlDatasourceParams.datasourceName.isEmpty()) {
-                if (sqlDatasourceParams.options == null || !sqlDatasourceParams.options
-                        .containsKey(Constants.Options.URL)) {
-                    // It is required to set the url to the datasource property when the
-                    // datasource class name is provided. Because according to Hikari,
-                    // either jdbcUrl or datasourceClassName will be honored.
-                    config.addDataSourceProperty(Constants.Options.URL.getValue(), sqlDatasourceParams.url);
-                }
-                if (sqlDatasourceParams.user != null) {
-                    config.addDataSourceProperty(Constants.USERNAME, sqlDatasourceParams.user);
-                }
-                if (sqlDatasourceParams.password != null) {
-                    config.addDataSourceProperty(Constants.PASSWORD, sqlDatasourceParams.password);
-                }
-            }
-            config.setDataSourceClassName(sqlDatasourceParams.datasourceName);
-            if (sqlDatasourceParams.connectionPool != null) {
-                int maxOpenConn = sqlDatasourceParams.connectionPool.
-                        getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS).intValue();
-                if (maxOpenConn < 1) {
-                    throw new ApplicationError("ConnectionPool field 'maxOpenConnections' cannot be less than one.");
-                }
-                config.setMaximumPoolSize(maxOpenConn);
-
-                double connLifeTimeSec = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
-                if (connLifeTimeSec < 0 || (connLifeTimeSec > 0 && connLifeTimeSec < 30)) {
-                    // Here, if the connection lifetime is lesser than 30s, the default value will be used
-                    throw new ApplicationError("ConnectionPool field 'maxConnectionLifeTime' can either be 0 " +
-                            "or greater than or equal to 30.");
-                }
-                long connLifeTimeMS = (long) (connLifeTimeSec * 1000);
-                config.setMaxLifetime(connLifeTimeMS);
-
-                int minIdleConnections = sqlDatasourceParams.connectionPool
-                        .getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS).intValue();
-                if (minIdleConnections < 0) {
-                    throw new ApplicationError("ConnectionPool field 'minIdleConnections' cannot be negative.");
-                }
-                config.setMinimumIdle(minIdleConnections);
-
-                // Connection timeout
-                double connectionTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.CONNECTION_TIMEOUT);
-                if (connectionTimeout < 0) {
-                    throw new ApplicationError("ConnectionPool field 'connectionTimeout' cannot be negative.");
-                }
-                long connectionTimeoutMS = (long) (connectionTimeout * 1000);
-                config.setConnectionTimeout(connectionTimeoutMS);
-
-                // Idle timeout
-                double idleTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.IDLE_TIMEOUT);
-                if (idleTimeout < 0) {
-                    throw new ApplicationError("ConnectionPool field 'idleTimeout' cannot be negative.");
-                }
-                long idleTimeoutMS = (long) (idleTimeout * 1000);
-                config.setIdleTimeout(idleTimeoutMS);
-
-                // Validation timeout
-                double validationTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.VALIDATION_TIMEOUT);
-                if (validationTimeout < 0) {
-                    throw new ApplicationError("ConnectionPool field 'validationTimeout' cannot be negative.");
-                }
-                long validationTimeoutMS = (long) (validationTimeout * 1000);
-                config.setValidationTimeout(validationTimeoutMS);
-
-                // Leak detection threshold
-                double leakDetectionThreshold = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.LEAK_DETECTION_THRESHOLD);
-                if (leakDetectionThreshold < 0) {
-                    throw new ApplicationError("ConnectionPool field 'leakDetectionThreshold' cannot be negative.");
-                }
-                long leakDetectionThresholdMS = (long) (leakDetectionThreshold * 1000);
-                config.setLeakDetectionThreshold(leakDetectionThresholdMS);
-
-                // Keep alive time (only supported in HikariCP 4.0+)
-                double keepAliveTime = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.KEEP_ALIVE_TIME);
-                if (keepAliveTime < 0) {
-                    throw new ApplicationError("ConnectionPool field 'keepAliveTime' cannot be negative.");
-                }
-                long keepAliveTimeMS = (long) (keepAliveTime * 1000);
-                config.setKeepaliveTime(keepAliveTimeMS);
-
-                // Pool name
-                Object connectionPoolName = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.POOL_NAME);
-                if (connectionPoolName instanceof BString poolName) {
-                    config.setPoolName(poolName.getValue());
-                }
-
-                // Initialization fail timeout
-                double initializationFailTimeout = getDoubleFromBDecimal(sqlDatasourceParams.connectionPool,
-                        Constants.ConnectionPool.INITIALIZATION_FAIL_TIMEOUT);
-                long initializationFailTimeoutMS = (long) (initializationFailTimeout * 1000);
-                config.setInitializationFailTimeout(initializationFailTimeoutMS);
-
-                // Transaction isolation
-                Object transactionIsolation = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.TRANSACTION_ISOLATION);
-                if (transactionIsolation instanceof BString isolation) {
-                    config.setTransactionIsolation(isolation.getValue());
-                }
-
-                // Connection test query
-                Object connectionTestQuery = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.CONNECTION_TEST_QUERY);
-                if (connectionTestQuery instanceof BString testQuery) {
-                    config.setConnectionTestQuery(testQuery.getValue());
-                }
-
-                // Connection init SQL
-                Object connectionInitSql = sqlDatasourceParams.connectionPool
-                        .get(Constants.ConnectionPool.CONNECTION_INIT_SQL);
-                if (connectionInitSql != null) {
-                    if (connectionInitSql instanceof BString sqlString) {
-                        config.setConnectionInitSql(sqlString.getValue());
-                    } else if (connectionInitSql instanceof BArray sqlArray) {
-                        StringBuilder sqlBuilder = new StringBuilder();
-                        for (int i = 0; i < sqlArray.size(); i++) {
-                            if (i > 0) {
-                                sqlBuilder.append("; ");
-                            }
-                            sqlBuilder.append(((BString) sqlArray.get(i)).getValue());
-                        }
-                        config.setConnectionInitSql(sqlBuilder.toString());
-                    }
-                }
-
-                // Read only
-                boolean readOnly = sqlDatasourceParams.connectionPool
-                        .getBooleanValue(Constants.ConnectionPool.READ_ONLY);
-                config.setReadOnly(readOnly);
-
-                // Allow pool suspension
-                boolean allowPoolSuspension = sqlDatasourceParams.connectionPool
-                        .getBooleanValue(Constants.ConnectionPool.ALLOW_POOL_SUSPENSION);
-                config.setAllowPoolSuspension(allowPoolSuspension);
-
-                // Isolate internal queries
-                boolean isolateInternalQueries = sqlDatasourceParams.connectionPool
-                        .getBooleanValue(Constants.ConnectionPool.ISOLATE_INTERNAL_QUERIES);
-                config.setIsolateInternalQueries(isolateInternalQueries);
-            }
-            if (sqlDatasourceParams.options != null) {
-                BMap<BString, Object> optionMap = (BMap<BString, Object>) sqlDatasourceParams.options;
-                optionMap.entrySet().forEach(entry ->
-                        config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
-                );
-            }
-            hikariDataSource = createInstrumentedPool(config,
+            applyDriverOptions(config, sqlDatasourceParams.options);
+            HikariDataSource ds = createInstrumentedPool(config,
                     sqlDatasourceParams.url);
-            Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
-            return hikariDataSource;
+            Runtime.getRuntime().addShutdownHook(
+                    new Thread(this::closeConnectionPool));
+            return ds;
         } catch (Throwable t) {
             throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
+        }
+    }
+
+    private String resolveMetricPoolName(BMap connectionPool) {
+        String userPoolName = null;
+        if (connectionPool != null) {
+            Object poolNameVal = connectionPool
+                    .get(Constants.ConnectionPool.POOL_NAME);
+            if (poolNameVal instanceof BString bStr) {
+                userPoolName = bStr.getValue();
+            }
+        }
+        return ObservabilityUtils.generatePoolName(userPoolName);
+    }
+
+    private HikariConfig createHikariConfig(Properties poolProperties) {
+        if (poolProperties != null) {
+            return new HikariConfig(poolProperties);
+        }
+        return new HikariConfig();
+    }
+
+    private void configureDataSourceCredentials(HikariConfig config,
+            SQLDatasourceParams params) {
+        config.setJdbcUrl(params.url);
+        config.setUsername(params.user);
+        config.setPassword(params.password);
+        if (params.datasourceName != null
+                && !params.datasourceName.isEmpty()) {
+            if (params.options == null || !params.options
+                    .containsKey(Constants.Options.URL)) {
+                // It is required to set the url to the datasource property
+                // when the datasource class name is provided. Because
+                // according to Hikari, either jdbcUrl or
+                // datasourceClassName will be honored.
+                config.addDataSourceProperty(
+                        Constants.Options.URL.getValue(), params.url);
+            }
+            if (params.user != null) {
+                config.addDataSourceProperty(
+                        Constants.USERNAME, params.user);
+            }
+            if (params.password != null) {
+                config.addDataSourceProperty(
+                        Constants.PASSWORD, params.password);
+            }
+        }
+        config.setDataSourceClassName(params.datasourceName);
+    }
+
+    private void configureConnectionPool(HikariConfig config,
+            BMap connectionPool) throws ApplicationError {
+        configurePoolSizing(config, connectionPool);
+        configurePoolTimeouts(config, connectionPool);
+        configurePoolBehavior(config, connectionPool);
+    }
+
+    private void configurePoolSizing(HikariConfig config,
+            BMap connectionPool) throws ApplicationError {
+        int maxOpenConn = connectionPool
+                .getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS)
+                .intValue();
+        if (maxOpenConn < 1) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'maxOpenConnections' "
+                    + "cannot be less than one.");
+        }
+        config.setMaximumPoolSize(maxOpenConn);
+
+        double connLifeTimeSec = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.MAX_CONNECTION_LIFE_TIME);
+        if (connLifeTimeSec < 0
+                || (connLifeTimeSec > 0 && connLifeTimeSec < 30)) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'maxConnectionLifeTime' "
+                    + "can either be 0 or greater than or equal to 30.");
+        }
+        long connLifeTimeMS = (long) (connLifeTimeSec * 1000);
+        config.setMaxLifetime(connLifeTimeMS);
+
+        int minIdleConnections = connectionPool
+                .getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS)
+                .intValue();
+        if (minIdleConnections < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'minIdleConnections' "
+                    + "cannot be negative.");
+        }
+        config.setMinimumIdle(minIdleConnections);
+    }
+
+    private void configurePoolTimeouts(HikariConfig config,
+            BMap connectionPool) throws ApplicationError {
+        double connectionTimeout = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.CONNECTION_TIMEOUT);
+        if (connectionTimeout < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'connectionTimeout' "
+                    + "cannot be negative.");
+        }
+        long connectionTimeoutMS = (long) (connectionTimeout * 1000);
+        config.setConnectionTimeout(connectionTimeoutMS);
+
+        double idleTimeout = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.IDLE_TIMEOUT);
+        if (idleTimeout < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'idleTimeout' "
+                    + "cannot be negative.");
+        }
+        long idleTimeoutMS = (long) (idleTimeout * 1000);
+        config.setIdleTimeout(idleTimeoutMS);
+
+        double validationTimeout = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.VALIDATION_TIMEOUT);
+        if (validationTimeout < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'validationTimeout' "
+                    + "cannot be negative.");
+        }
+        long validationTimeoutMS = (long) (validationTimeout * 1000);
+        config.setValidationTimeout(validationTimeoutMS);
+
+        double leakDetectionThreshold = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.LEAK_DETECTION_THRESHOLD);
+        if (leakDetectionThreshold < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'leakDetectionThreshold' "
+                    + "cannot be negative.");
+        }
+        long leakDetectionThresholdMS =
+                (long) (leakDetectionThreshold * 1000);
+        config.setLeakDetectionThreshold(leakDetectionThresholdMS);
+
+        double keepAliveTime = getDoubleFromBDecimal(connectionPool,
+                Constants.ConnectionPool.KEEP_ALIVE_TIME);
+        if (keepAliveTime < 0) {
+            throw new ApplicationError(
+                    "ConnectionPool field 'keepAliveTime' "
+                    + "cannot be negative.");
+        }
+        long keepAliveTimeMS = (long) (keepAliveTime * 1000);
+        config.setKeepaliveTime(keepAliveTimeMS);
+    }
+
+    private void configurePoolBehavior(HikariConfig config,
+            BMap connectionPool) {
+        Object connectionPoolName = connectionPool
+                .get(Constants.ConnectionPool.POOL_NAME);
+        if (connectionPoolName instanceof BString poolName) {
+            config.setPoolName(poolName.getValue());
+        }
+
+        double initializationFailTimeout = getDoubleFromBDecimal(
+                connectionPool,
+                Constants.ConnectionPool.INITIALIZATION_FAIL_TIMEOUT);
+        long initializationFailTimeoutMS =
+                (long) (initializationFailTimeout * 1000);
+        config.setInitializationFailTimeout(initializationFailTimeoutMS);
+
+        Object transactionIsolation = connectionPool
+                .get(Constants.ConnectionPool.TRANSACTION_ISOLATION);
+        if (transactionIsolation instanceof BString isolation) {
+            config.setTransactionIsolation(isolation.getValue());
+        }
+
+        Object connectionTestQuery = connectionPool
+                .get(Constants.ConnectionPool.CONNECTION_TEST_QUERY);
+        if (connectionTestQuery instanceof BString testQuery) {
+            config.setConnectionTestQuery(testQuery.getValue());
+        }
+
+        Object connectionInitSql = connectionPool
+                .get(Constants.ConnectionPool.CONNECTION_INIT_SQL);
+        if (connectionInitSql instanceof BString sqlString) {
+            config.setConnectionInitSql(sqlString.getValue());
+        } else if (connectionInitSql instanceof BArray sqlArray) {
+            StringBuilder sqlBuilder = new StringBuilder();
+            for (int i = 0; i < sqlArray.size(); i++) {
+                if (i > 0) {
+                    sqlBuilder.append("; ");
+                }
+                sqlBuilder.append(
+                        ((BString) sqlArray.get(i)).getValue());
+            }
+            config.setConnectionInitSql(sqlBuilder.toString());
+        }
+
+        boolean readOnly = connectionPool
+                .getBooleanValue(Constants.ConnectionPool.READ_ONLY);
+        config.setReadOnly(readOnly);
+
+        boolean allowPoolSuspension = connectionPool
+                .getBooleanValue(
+                        Constants.ConnectionPool.ALLOW_POOL_SUSPENSION);
+        config.setAllowPoolSuspension(allowPoolSuspension);
+
+        boolean isolateInternalQueries = connectionPool
+                .getBooleanValue(
+                        Constants.ConnectionPool.ISOLATE_INTERNAL_QUERIES);
+        config.setIsolateInternalQueries(isolateInternalQueries);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void applyDriverOptions(HikariConfig config, BMap options) {
+        if (options != null) {
+            BMap<BString, Object> optionMap =
+                    (BMap<BString, Object>) options;
+            optionMap.entrySet().forEach(entry ->
+                    config.addDataSourceProperty(
+                            entry.getKey().getValue(),
+                            entry.getValue()));
         }
     }
 
