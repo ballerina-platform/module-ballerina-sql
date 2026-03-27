@@ -131,7 +131,7 @@ public final class ObservabilityUtils {
             String sanitized = userConfiguredPoolName
                     .replaceAll("[^a-zA-Z0-9._-]", "-")
                     .replaceAll("-{2,}", "-")
-                    .replaceAll("^-|-$", "");
+                    .replaceAll("(^-)|(-$)", "");
             if (!sanitized.isEmpty()) {
                 return sanitized;
             }

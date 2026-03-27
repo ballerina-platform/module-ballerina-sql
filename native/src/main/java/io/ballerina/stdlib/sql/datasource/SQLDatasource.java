@@ -71,17 +71,6 @@ public class SQLDatasource {
     private static final String POOL_MAP_KEY = UUID.randomUUID().toString();
 
     private SQLDatasource(SQLDatasourceParams sqlDatasourceParams) {
-        String userPoolName = null;
-        if (sqlDatasourceParams.connectionPool != null) {
-            Object poolNameVal = sqlDatasourceParams.connectionPool
-                    .get(Constants.ConnectionPool.POOL_NAME);
-            if (poolNameVal instanceof BString bStr) {
-                userPoolName = bStr.getValue();
-            }
-        }
-        this.metricPoolName = ObservabilityUtils.generatePoolName(
-                userPoolName);
-
         Connection connection = null;
         try {
             if (sqlDatasourceParams.datasourceName != null && !sqlDatasourceParams.datasourceName.isEmpty() &&
@@ -312,6 +301,18 @@ public class SQLDatasource {
     private HikariDataSource buildNonXADataSource(
             SQLDatasourceParams sqlDatasourceParams) {
         try {
+            // Generate metric pool name (non-XA only — XA pools have no metrics)
+            String userPoolName = null;
+            if (sqlDatasourceParams.connectionPool != null) {
+                Object poolNameVal = sqlDatasourceParams.connectionPool
+                        .get(Constants.ConnectionPool.POOL_NAME);
+                if (poolNameVal instanceof BString bStr) {
+                    userPoolName = bStr.getValue();
+                }
+            }
+            this.metricPoolName = ObservabilityUtils.generatePoolName(
+                    userPoolName);
+
             HikariDataSource hikariDataSource;
             HikariConfig config;
             if (sqlDatasourceParams.poolProperties != null) {
@@ -474,54 +475,63 @@ public class SQLDatasource {
                         config.addDataSourceProperty(entry.getKey().getValue(), entry.getValue())
                 );
             }
-            boolean metricsEnabled = ObserveUtils.isMetricsEnabled();
-            SqlMetricsTrackerFactory metricsFactory = null;
-            if (metricsEnabled) {
-                metricsFactory = new SqlMetricsTrackerFactory(
-                        this.metricPoolName,
-                        sqlDatasourceParams.url);
-                config.setMetricsTrackerFactory(metricsFactory);
-            }
-            long initStart = metricsEnabled ? System.nanoTime() : 0;
-            try {
-                hikariDataSource = new HikariDataSource(config);
-                // Resolve metricPoolName from HikariCP if we deferred naming
-                if (this.metricPoolName == null) {
-                    if (metricsFactory != null
-                            && metricsFactory.getRegisteredPoolName()
-                            != null) {
-                        this.metricPoolName =
-                                metricsFactory.getRegisteredPoolName();
-                    } else {
-                        this.metricPoolName =
-                                hikariDataSource.getPoolName();
-                    }
-                }
-                if (metricsEnabled) {
-                    ObservabilityUtils.recordPoolInitTime(
-                            this.metricPoolName,
-                            sqlDatasourceParams.url,
-                            (System.nanoTime() - initStart)
-                                    / 1_000_000_000.0);
-                }
-            } catch (Exception e) {
-                if (metricsEnabled) {
-                    String cleanupName = this.metricPoolName;
-                    if (cleanupName == null && metricsFactory != null) {
-                        cleanupName =
-                                metricsFactory.getRegisteredPoolName();
-                    }
-                    if (cleanupName != null) {
-                        ObservabilityUtils.unregisterPoolMetrics(
-                                cleanupName);
-                    }
-                }
-                throw e;
-            }
+            hikariDataSource = createInstrumentedPool(config,
+                    sqlDatasourceParams.url);
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return hikariDataSource;
         } catch (Throwable t) {
             throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
+        }
+    }
+
+    /**
+     * Create a HikariDataSource from the given config, instrument it with
+     * observability metrics if enabled, and resolve the metric pool name.
+     * On failure, any registered metrics are cleaned up before rethrowing.
+     */
+    private HikariDataSource createInstrumentedPool(HikariConfig config,
+                                                    String jdbcUrl) {
+        boolean metricsEnabled = ObserveUtils.isMetricsEnabled();
+        SqlMetricsTrackerFactory metricsFactory = null;
+        if (metricsEnabled) {
+            metricsFactory = new SqlMetricsTrackerFactory(
+                    this.metricPoolName, jdbcUrl);
+            config.setMetricsTrackerFactory(metricsFactory);
+        }
+        long initStart = metricsEnabled ? System.nanoTime() : 0;
+        try {
+            HikariDataSource ds = new HikariDataSource(config);
+            // Resolve metricPoolName from HikariCP if we deferred naming
+            if (this.metricPoolName == null) {
+                if (metricsFactory != null
+                        && metricsFactory.getRegisteredPoolName()
+                        != null) {
+                    this.metricPoolName =
+                            metricsFactory.getRegisteredPoolName();
+                } else {
+                    this.metricPoolName = ds.getPoolName();
+                }
+            }
+            if (metricsEnabled) {
+                ObservabilityUtils.recordPoolInitTime(
+                        this.metricPoolName, jdbcUrl,
+                        (System.nanoTime() - initStart)
+                                / 1_000_000_000.0);
+            }
+            return ds;
+        } catch (Exception e) {
+            if (metricsEnabled) {
+                String cleanupName = this.metricPoolName;
+                if (cleanupName == null && metricsFactory != null) {
+                    cleanupName =
+                            metricsFactory.getRegisteredPoolName();
+                }
+                if (cleanupName != null) {
+                    ObservabilityUtils.unregisterPoolMetrics(
+                            cleanupName);
+                }
+            }
+            throw e;
         }
     }
 
@@ -608,6 +618,13 @@ public class SQLDatasource {
         return this.batchExecuteGKFlag;
     }
 
+    /**
+     * Return the metric pool name for observability tagging.
+     * Only set for non-XA (HikariCP) pools — XA pools have no metrics
+     * and this returns {@code null}.
+     *
+     * @return the pool name, or null for XA pools
+     */
     public String getPoolName() {
         return this.metricPoolName;
     }

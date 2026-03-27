@@ -317,6 +317,7 @@ public class ObservabilityUtilsTest {
 
         @Override
         protected void update() {
+            // No-op — test seeds fixed values directly
         }
     }
 }

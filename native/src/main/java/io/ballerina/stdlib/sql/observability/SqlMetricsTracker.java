@@ -33,6 +33,7 @@ public class SqlMetricsTracker implements IMetricsTracker {
 
     private final String poolName;
     private final JdbcUrlInfo urlInfo;
+    private volatile boolean closed;
 
     SqlMetricsTracker(String poolName, JdbcUrlInfo urlInfo) {
         this.poolName = poolName;
@@ -41,29 +42,42 @@ public class SqlMetricsTracker implements IMetricsTracker {
 
     @Override
     public void recordConnectionAcquiredNanos(long elapsedAcquiredNanos) {
+        if (closed) {
+            return;
+        }
         ObservabilityUtils.recordConnectionAcquisitionTime(
                 poolName, elapsedAcquiredNanos, urlInfo);
     }
 
     @Override
     public void recordConnectionUsageMillis(long elapsedBorrowedMillis) {
+        if (closed) {
+            return;
+        }
         ObservabilityUtils.recordConnectionUsageTime(
                 poolName, elapsedBorrowedMillis, urlInfo);
     }
 
     @Override
     public void recordConnectionCreatedMillis(long connectionCreatedMillis) {
+        if (closed) {
+            return;
+        }
         ObservabilityUtils.recordConnectionCreationTime(
                 poolName, connectionCreatedMillis, urlInfo);
     }
 
     @Override
     public void recordConnectionTimeout() {
+        if (closed) {
+            return;
+        }
         ObservabilityUtils.recordConnectionTimeout(poolName, urlInfo);
     }
 
     @Override
     public void close() {
+        closed = true;
         try {
             ObservabilityUtils.unregisterPoolMetrics(poolName);
         } catch (Exception e) {
