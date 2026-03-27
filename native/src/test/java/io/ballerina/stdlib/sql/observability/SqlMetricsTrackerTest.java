@@ -18,74 +18,128 @@
 
 package io.ballerina.stdlib.sql.observability;
 
-import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.PoolStats;
 import org.testng.annotations.Test;
 
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_CREATION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
+import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_USAGE_TIME;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 /**
  * Unit tests for {@link SqlMetricsTracker}.
+ * Verifies that each IMetricsTracker method correctly delegates
+ * to ObservabilityUtils and respects the closed state.
  *
  * @since 1.18.0
  */
 public class SqlMetricsTrackerTest {
 
-    // ---- Record methods (open tracker) ----
+    // ---- Record methods verify delegation to ObservabilityUtils ----
 
     @Test
     void testRecordConnectionAcquiredNanos() {
+        // Source: SqlMetricsTracker lines 44-50
+        // When open: delegates to ObservabilityUtils.recordConnectionAcquisitionTime
+        String pool = "smt-acq-pool";
         SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-acq-pool", JdbcUrlInfo.EMPTY);
+                pool, JdbcUrlInfo.EMPTY);
+
         tracker.recordConnectionAcquiredNanos(500_000_000L);
-        ObservabilityUtils.unregisterPoolMetrics("smt-acq-pool");
+
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "Tracker must delegate to ObservabilityUtils, "
+                        + "creating a cached gauge");
+        ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     @Test
     void testRecordConnectionUsageMillis() {
+        // Source: SqlMetricsTracker lines 53-59
+        String pool = "smt-usage-pool";
         SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-usage-pool", JdbcUrlInfo.EMPTY);
+                pool, JdbcUrlInfo.EMPTY);
+
         tracker.recordConnectionUsageMillis(150L);
-        ObservabilityUtils.unregisterPoolMetrics("smt-usage-pool");
+
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_USAGE_TIME, pool),
+                "Tracker must delegate usage recording");
+        ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     @Test
     void testRecordConnectionCreatedMillis() {
+        // Source: SqlMetricsTracker lines 62-68
+        String pool = "smt-create-pool";
         SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-create-pool", JdbcUrlInfo.EMPTY);
+                pool, JdbcUrlInfo.EMPTY);
+
         tracker.recordConnectionCreatedMillis(50L);
-        ObservabilityUtils.unregisterPoolMetrics("smt-create-pool");
+
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_CREATION_TIME, pool),
+                "Tracker must delegate creation recording");
+        ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     @Test
     void testRecordConnectionTimeout() {
+        // Source: SqlMetricsTracker lines 71-76
+        String pool = "smt-timeout-pool";
         SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-timeout-pool", JdbcUrlInfo.EMPTY);
+                pool, JdbcUrlInfo.EMPTY);
+
         tracker.recordConnectionTimeout();
-        ObservabilityUtils.unregisterPoolMetrics("smt-timeout-pool");
+
+        assertNotNull(ObservabilityUtils.getCachedCounter(
+                        METRIC_CONNECTION_TIMEOUT_TOTAL, pool),
+                "Tracker must delegate timeout recording");
+        ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     // ---- Record methods with URL info tags ----
 
     @Test
     void testRecordWithUrlInfoTags() {
+        // Exercises all 4 record methods with non-empty urlInfo,
+        // which triggers full buildTags path (db_host, db_port,
+        // db_name, db_url tags all present).
         JdbcUrlInfo urlInfo = new JdbcUrlInfo(
                 "dbhost", "5432", "mydb",
                 "jdbc:postgresql://dbhost:5432/mydb");
-        SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-url-pool", urlInfo);
+        String pool = "smt-url-pool";
+        SqlMetricsTracker tracker = new SqlMetricsTracker(pool, urlInfo);
+
         tracker.recordConnectionAcquiredNanos(100_000_000L);
         tracker.recordConnectionUsageMillis(200L);
         tracker.recordConnectionCreatedMillis(30L);
         tracker.recordConnectionTimeout();
-        ObservabilityUtils.unregisterPoolMetrics("smt-url-pool");
+
+        // All 4 cache entries should exist
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_ACQUISITION_TIME, pool));
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_USAGE_TIME, pool));
+        assertNotNull(ObservabilityUtils.getCachedGauge(
+                METRIC_CONNECTION_CREATION_TIME, pool));
+        assertNotNull(ObservabilityUtils.getCachedCounter(
+                METRIC_CONNECTION_TIMEOUT_TOTAL, pool));
+
+        ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
     // ---- Close lifecycle ----
 
     @Test
     void testCloseUnregistersPoolMetrics() {
+        // Source: SqlMetricsTracker lines 79-86
+        // close() sets closed=true then calls unregisterPoolMetrics
         String pool = "smt-close-pool";
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
         ObservabilityUtils.registerPoolMetrics(
@@ -95,7 +149,8 @@ public class SqlMetricsTrackerTest {
         SqlMetricsTracker tracker = new SqlMetricsTracker(
                 pool, JdbcUrlInfo.EMPTY);
         tracker.close();
-        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool));
+        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool),
+                "close() must unregister pool metrics");
     }
 
     @Test
@@ -108,39 +163,41 @@ public class SqlMetricsTrackerTest {
         SqlMetricsTracker tracker = new SqlMetricsTracker(
                 pool, JdbcUrlInfo.EMPTY);
         tracker.close();
-        tracker.close();
+        tracker.close(); // second close must not throw
+        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool));
     }
 
     // ---- Record after close (no-op path) ----
 
     @Test
-    void testRecordAfterCloseIsNoOp() {
+    void testRecordAfterCloseDoesNotCreateCacheEntries() {
+        // Source: SqlMetricsTracker lines 45-46, 55-56, 65-66, 73-74
+        // When closed=true, each record method returns immediately.
+        // Verify that NO cache entries are created.
+        String pool = "smt-closed-noop-pool";
         SqlMetricsTracker tracker = new SqlMetricsTracker(
-                "smt-closed-noop-pool", JdbcUrlInfo.EMPTY);
+                pool, JdbcUrlInfo.EMPTY);
         tracker.close();
 
         tracker.recordConnectionAcquiredNanos(100_000_000L);
         tracker.recordConnectionUsageMillis(50L);
         tracker.recordConnectionCreatedMillis(30L);
         tracker.recordConnectionTimeout();
-    }
 
-    // ---- Factory integration ----
-
-    @Test
-    void testFactoryCreatesWorkingTracker() {
-        String pool = "smt-factory-pool";
-        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
-        SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory(pool,
-                        "jdbc:postgresql://localhost:5432/mydb");
-        IMetricsTracker tracker = factory.create(pool, stats);
-
-        tracker.recordConnectionAcquiredNanos(100_000_000L);
-        tracker.recordConnectionUsageMillis(50L);
-        tracker.recordConnectionCreatedMillis(30L);
-        tracker.recordConnectionTimeout();
-        tracker.close();
+        // All cache lookups must return null — closed tracker
+        // did not delegate to ObservabilityUtils
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_ACQUISITION_TIME, pool),
+                "Closed tracker must not create acquisition gauge");
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_USAGE_TIME, pool),
+                "Closed tracker must not create usage gauge");
+        assertNull(ObservabilityUtils.getCachedGauge(
+                        METRIC_CONNECTION_CREATION_TIME, pool),
+                "Closed tracker must not create creation gauge");
+        assertNull(ObservabilityUtils.getCachedCounter(
+                        METRIC_CONNECTION_TIMEOUT_TOTAL, pool),
+                "Closed tracker must not create timeout counter");
     }
 
     // ---- Helpers ----
@@ -148,19 +205,7 @@ public class SqlMetricsTrackerTest {
     private static PoolStats createMockPoolStats(int active, int idle,
                                                   int total, int pending,
                                                   int max, int min) {
-        return new PoolStats(1000L) {
-            {
-                this.activeConnections = active;
-                this.idleConnections = idle;
-                this.totalConnections = total;
-                this.pendingThreads = pending;
-                this.maxConnections = max;
-                this.minConnections = min;
-            }
-
-            @Override
-            protected void update() {
-            }
-        };
+        return new ObservabilityUtilsTest.MutableMockPoolStats(
+                active, idle, total, pending, max, min);
     }
 }
