@@ -30,6 +30,7 @@
             <class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContextTest"/>
             <class name="io.ballerina.stdlib.sql.utils.UtilsTest"/>
             <class name="io.ballerina.stdlib.sql.observability.ObservabilityUtilsTest"/>
+            <class name="io.ballerina.stdlib.sql.observability.SqlMetricsTrackerTest"/>
         </classes>
     </test>
 </suite>

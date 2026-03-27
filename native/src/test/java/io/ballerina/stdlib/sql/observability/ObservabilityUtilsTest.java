@@ -285,6 +285,110 @@ public class ObservabilityUtilsTest {
         ObservabilityUtils.unregisterPoolMetrics("never-registered");
     }
 
+    // ---- Connection event recording tests ----
+
+    @Test
+    void testRecordConnectionAcquisitionTime() {
+        String pool = "ou-acq-pool";
+        ObservabilityUtils.recordConnectionAcquisitionTime(
+                pool, 500_000_000L, JdbcUrlInfo.EMPTY);
+        // Second call exercises cached gauge path
+        ObservabilityUtils.recordConnectionAcquisitionTime(
+                pool, 200_000_000L, JdbcUrlInfo.EMPTY);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordConnectionUsageTime() {
+        String pool = "ou-usage-pool";
+        ObservabilityUtils.recordConnectionUsageTime(
+                pool, 150L, JdbcUrlInfo.EMPTY);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordConnectionCreationTime() {
+        String pool = "ou-creation-pool";
+        ObservabilityUtils.recordConnectionCreationTime(
+                pool, 50L, JdbcUrlInfo.EMPTY);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordConnectionTimeout() {
+        String pool = "ou-timeout-pool";
+        ObservabilityUtils.recordConnectionTimeout(pool,
+                JdbcUrlInfo.EMPTY);
+        // Second call exercises cached counter + increment
+        ObservabilityUtils.recordConnectionTimeout(pool,
+                JdbcUrlInfo.EMPTY);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordPoolInitTime() {
+        String pool = "ou-init-time-pool";
+        ObservabilityUtils.recordPoolInitTime(pool,
+                "jdbc:postgresql://localhost:5432/mydb", 1.5);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordPoolInitTimeWithUnparseableUrl() {
+        String pool = "ou-init-time-pool-2";
+        ObservabilityUtils.recordPoolInitTime(pool,
+                "jdbc:h2:mem:testdb", 0.3);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    // ---- Tag building with URL info ----
+
+    @Test
+    void testRecordEventWithFullUrlInfo() {
+        String pool = "ou-full-url-pool";
+        JdbcUrlInfo urlInfo = new JdbcUrlInfo(
+                "dbhost", "3306", "orders",
+                "jdbc:mysql://dbhost:3306/orders");
+        ObservabilityUtils.recordConnectionAcquisitionTime(
+                pool, 100_000_000L, urlInfo);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    @Test
+    void testRecordEventWithPartialUrlInfo() {
+        String pool = "ou-partial-url-pool";
+        JdbcUrlInfo urlInfo = new JdbcUrlInfo(
+                "dbhost", "", "", "");
+        ObservabilityUtils.recordConnectionUsageTime(
+                pool, 100L, urlInfo);
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+    }
+
+    // ---- Unregister cleans cached event metrics ----
+
+    @Test
+    void testUnregisterCleansEventMetricCaches() {
+        String pool = "ou-cache-cleanup-pool";
+        PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
+        JdbcUrlInfo urlInfo = new JdbcUrlInfo(
+                "localhost", "5432", "testdb",
+                "jdbc:postgresql://localhost:5432/testdb");
+
+        ObservabilityUtils.registerPoolMetrics(stats, pool, urlInfo);
+        ObservabilityUtils.recordConnectionAcquisitionTime(
+                pool, 100_000_000L, urlInfo);
+        ObservabilityUtils.recordConnectionUsageTime(
+                pool, 50L, urlInfo);
+        ObservabilityUtils.recordConnectionCreationTime(
+                pool, 30L, urlInfo);
+        ObservabilityUtils.recordConnectionTimeout(pool, urlInfo);
+        ObservabilityUtils.recordPoolInitTime(pool,
+                "jdbc:postgresql://localhost:5432/testdb", 0.5);
+
+        ObservabilityUtils.unregisterPoolMetrics(pool);
+        assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool));
+    }
+
     // ---- Helpers ----
 
     private static PoolStats createMockPoolStats(int active, int idle,
