@@ -22,8 +22,8 @@ import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.PoolStats;
 import org.testng.annotations.Test;
 
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_ACQUISITION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_TIMEOUT_TOTAL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;

@@ -26,10 +26,10 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_CREATION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_USAGE_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_ACQUISITION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_CREATION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_TIMEOUT_TOTAL;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_USAGE_TIME;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;

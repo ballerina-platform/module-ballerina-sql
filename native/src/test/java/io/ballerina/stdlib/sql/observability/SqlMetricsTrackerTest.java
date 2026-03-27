@@ -21,10 +21,10 @@ package io.ballerina.stdlib.sql.observability;
 import com.zaxxer.hikari.metrics.PoolStats;
 import org.testng.annotations.Test;
 
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_CREATION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_USAGE_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_ACQUISITION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_CREATION_TIME;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_TIMEOUT_TOTAL;
+import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_USAGE_TIME;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;

@@ -34,38 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_CONN_ACQUISITION;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_CONN_CREATION;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_CONN_TIMEOUT;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_CONN_USAGE;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_ACTIVE;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_IDLE;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_INIT_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_MAX;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_MIN;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_PENDING;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_TOTAL;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.DESC_POOL_UTILIZATION;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_ACQUISITION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_CREATION_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_TIMEOUT_TOTAL;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_CONNECTION_USAGE_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_ACTIVE_CONNECTIONS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_IDLE_CONNECTIONS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_INIT_TIME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_MAX_CONNECTIONS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_MIN_CONNECTIONS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_PENDING_REQUESTS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_TOTAL_CONNECTIONS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.METRIC_POOL_UTILIZATION_RATIO;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.MILLIS_TO_SECONDS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.NANOS_TO_SECONDS;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_HOST;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_NAME;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_PORT;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_DB_URL;
-import static io.ballerina.stdlib.sql.observability.ObservabilityConstants.TAG_POOL_NAME;
-
 /**
  * Utility methods for SQL observability metric registration, reporting, and lifecycle management.
  * <p>
@@ -114,6 +82,45 @@ public final class ObservabilityUtils {
     // the PoolStats passed by HikariCP would be collected after factory creation.
     private static final ConcurrentHashMap<String, PoolStats> poolStatsRetainer =
             new ConcurrentHashMap<>();
+
+    // ---- Metric name constants (package-private for test access) ----
+
+    static final String METRIC_POOL_ACTIVE_CONNECTIONS = "sql_pool_active_connections";
+    static final String METRIC_POOL_IDLE_CONNECTIONS = "sql_pool_idle_connections";
+    static final String METRIC_POOL_TOTAL_CONNECTIONS = "sql_pool_total_connections";
+    static final String METRIC_POOL_PENDING_REQUESTS = "sql_pool_pending_requests";
+    static final String METRIC_POOL_MAX_CONNECTIONS = "sql_pool_max_connections";
+    static final String METRIC_POOL_MIN_CONNECTIONS = "sql_pool_min_connections";
+    static final String METRIC_POOL_UTILIZATION_RATIO = "sql_pool_utilization_ratio";
+    static final String METRIC_POOL_INIT_TIME = "sql_pool_initialization_time_seconds";
+    static final String METRIC_CONNECTION_ACQUISITION_TIME = "sql_connection_acquisition_time_seconds";
+    static final String METRIC_CONNECTION_USAGE_TIME = "sql_connection_usage_time_seconds";
+    static final String METRIC_CONNECTION_CREATION_TIME = "sql_connection_creation_time_seconds";
+    static final String METRIC_CONNECTION_TIMEOUT_TOTAL = "sql_connection_timeout_total";
+
+    // ---- Private constants ----
+
+    private static final String TAG_POOL_NAME = "pool_name";
+    private static final String TAG_DB_HOST = "db_host";
+    private static final String TAG_DB_PORT = "db_port";
+    private static final String TAG_DB_NAME = "db_name";
+    private static final String TAG_DB_URL = "db_url";
+
+    private static final String DESC_POOL_ACTIVE = "Connections currently borrowed from pool";
+    private static final String DESC_POOL_IDLE = "Connections available in pool";
+    private static final String DESC_POOL_TOTAL = "Active + idle (total pool size)";
+    private static final String DESC_POOL_PENDING = "Application threads waiting for a connection";
+    private static final String DESC_POOL_MAX = "Configured maximum pool size";
+    private static final String DESC_POOL_MIN = "Configured minimum idle connections";
+    private static final String DESC_POOL_UTILIZATION = "Active / max connection utilization ratio";
+    private static final String DESC_POOL_INIT_TIME = "Time taken to initialize the connection pool in seconds";
+    private static final String DESC_CONN_ACQUISITION = "Time a thread waited to get a connection from the pool";
+    private static final String DESC_CONN_USAGE = "Time a connection was held before being returned";
+    private static final String DESC_CONN_CREATION = "Time to create a new physical connection";
+    private static final String DESC_CONN_TIMEOUT = "Connection acquisitions that timed out";
+
+    private static final double NANOS_TO_SECONDS = 1_000_000_000.0;
+    private static final double MILLIS_TO_SECONDS = 1_000.0;
 
     // ---- Pool name generation ----
 
