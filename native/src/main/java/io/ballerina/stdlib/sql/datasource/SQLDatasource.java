@@ -673,6 +673,7 @@ public class SQLDatasource {
      * and this returns {@code null}.
      *
      * @return the pool name, or null for XA pools
+     * @since 1.18.0
      */
     public String getPoolName() {
         return this.metricPoolName;

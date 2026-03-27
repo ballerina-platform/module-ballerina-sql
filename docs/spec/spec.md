@@ -3,7 +3,7 @@
 _Authors_: @daneshk @niveathika @ThisaruGuruge \
 _Reviewers_: @daneshk \
 _Created_: 2022/01/13 \
-_Updated_: 2025/11/07 \
+_Updated_: 2026/03/27 \
 _Edition_: Swan Lake
 
 ## Introduction
@@ -37,6 +37,10 @@ The conforming implementation of the specification is released and included in t
    5.2. [Metadata types](#52-metadata-types)
    5.3. [Metadata methods](#53-metadata-methods)
 6. [Errors](#6-errors)
+7. [Observability](#7-observability)
+   7.1. [Pool health metrics](#71-pool-health-metrics)
+   7.2. [Connection event metrics](#72-connection-event-metrics)
+   7.3. [Metric tags](#73-metric-tags)
 
 # 1. Overview
 
@@ -1027,3 +1031,62 @@ public type BatchExecuteErrorDetail record {
     ExecutionResult[] executionResults;
 };
 ```
+
+# 7. Observability
+
+When Ballerina observability is enabled, the SQL module automatically exposes connection pool metrics via the
+Ballerina observe module. Metrics are emitted in Prometheus exposition format and require no application code changes.
+Observability is enabled by adding the following to `Config.toml`:
+
+```toml
+[ballerina.observe]
+metricsEnabled = true
+metricsReporter = "prometheus"
+```
+
+Metrics are available at the default Prometheus endpoint (`http://localhost:9797/metrics`). All metrics are
+scoped to non-XA (HikariCP) connection pools. XA pools managed by Atomikos do not emit metrics.
+
+## 7.1. Pool health metrics
+
+Pool health metrics are polled on each Prometheus scrape (zero overhead between scrapes). These reflect the
+real-time state of the connection pool.
+
+| Metric name | Type | Description |
+|---|---|---|
+| `sql_pool_active_connections` | Gauge | Connections currently borrowed from the pool |
+| `sql_pool_idle_connections` | Gauge | Connections available in the pool |
+| `sql_pool_total_connections` | Gauge | Active + idle (total pool size) |
+| `sql_pool_pending_requests` | Gauge | Application threads waiting for a connection |
+| `sql_pool_max_connections` | Gauge | Configured maximum pool size |
+| `sql_pool_min_connections` | Gauge | Configured minimum idle connections |
+| `sql_pool_utilization_ratio` | Gauge | Active / max connection utilization ratio (0.0 – 1.0) |
+| `sql_pool_initialization_time_seconds` | Gauge | Time taken to initialize the connection pool |
+
+## 7.2. Connection event metrics
+
+Connection event metrics are recorded on every connection lifecycle event via HikariCP's `IMetricsTracker`
+callbacks. Timing metrics include percentile summaries (p50, p75, p95, p99) over a 10-minute rolling window.
+
+| Metric name | Type | Description |
+|---|---|---|
+| `sql_connection_acquisition_time_seconds` | Summary | Time a thread waited to get a connection from the pool |
+| `sql_connection_usage_time_seconds` | Summary | Time a connection was held before being returned |
+| `sql_connection_creation_time_seconds` | Summary | Time to create a new physical connection |
+| `sql_connection_timeout_total` | Counter | Connection acquisitions that timed out |
+
+## 7.3. Metric tags
+
+All metrics include the following tags for identification and filtering:
+
+| Tag | Description | Always present |
+|---|---|---|
+| `pool_name` | Pool name (user-configured or HikariCP auto-generated) | Yes |
+| `db_host` | Database hostname parsed from the JDBC URL | When URL is parseable |
+| `db_port` | Database port parsed from the JDBC URL | When port is present |
+| `db_name` | Database name parsed from the JDBC URL path | When path is present |
+| `db_url` | Safe JDBC URL (credentials and query parameters stripped) | When URL is parseable |
+
+The `pool_name` tag can be set via the `poolName` field in the HikariCP `options` map passed during client
+initialization. If not set, HikariCP assigns an auto-generated name (e.g., `HikariPool-1`). Special characters
+in user-configured pool names are replaced with hyphens.
