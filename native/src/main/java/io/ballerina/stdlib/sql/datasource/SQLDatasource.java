@@ -679,7 +679,7 @@ public class SQLDatasource {
         private BMap connectionPool = null;
         private BMap options;
         private Properties poolProperties;
-        private Map<String, String> metricsTags;
+        private Map<String, String> metricsTags = Map.of();
 
         public SQLDatasourceParams() {
         }
@@ -733,7 +733,7 @@ public class SQLDatasource {
          * @since 1.18.0
          */
         public SQLDatasourceParams setMetricsTags(Map<String, String> metricsTags) {
-            this.metricsTags = metricsTags;
+            this.metricsTags = Map.copyOf(metricsTags);
             return this;
         }
     }

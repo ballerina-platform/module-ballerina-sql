@@ -42,7 +42,7 @@ public class SqlMetricsTrackerFactory implements MetricsTrackerFactory {
     public SqlMetricsTrackerFactory(String metricPoolName,
                                     Map<String, String> metricsTags) {
         this.metricPoolName = metricPoolName;
-        this.metricsTags = metricsTags;
+        this.metricsTags = Map.copyOf(metricsTags);
     }
 
     @Override
