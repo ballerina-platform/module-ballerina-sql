@@ -20,6 +20,8 @@ package io.ballerina.stdlib.sql.observability;
 
 import com.zaxxer.hikari.metrics.IMetricsTracker;
 
+import java.util.Map;
+
 /**
  * HikariCP IMetricsTracker that records connection event metrics via ObservabilityUtils.
  * <p>
@@ -32,12 +34,12 @@ import com.zaxxer.hikari.metrics.IMetricsTracker;
 public class SqlMetricsTracker implements IMetricsTracker {
 
     private final String poolName;
-    private final JdbcUrlInfo urlInfo;
+    private final Map<String, String> metricsTags;
     private volatile boolean closed;
 
-    SqlMetricsTracker(String poolName, JdbcUrlInfo urlInfo) {
+    SqlMetricsTracker(String poolName, Map<String, String> metricsTags) {
         this.poolName = poolName;
-        this.urlInfo = urlInfo;
+        this.metricsTags = metricsTags;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class SqlMetricsTracker implements IMetricsTracker {
             return;
         }
         ObservabilityUtils.recordConnectionAcquisitionTime(
-                poolName, elapsedAcquiredNanos, urlInfo);
+                poolName, elapsedAcquiredNanos, metricsTags);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class SqlMetricsTracker implements IMetricsTracker {
             return;
         }
         ObservabilityUtils.recordConnectionUsageTime(
-                poolName, elapsedBorrowedMillis, urlInfo);
+                poolName, elapsedBorrowedMillis, metricsTags);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class SqlMetricsTracker implements IMetricsTracker {
             return;
         }
         ObservabilityUtils.recordConnectionCreationTime(
-                poolName, connectionCreatedMillis, urlInfo);
+                poolName, connectionCreatedMillis, metricsTags);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class SqlMetricsTracker implements IMetricsTracker {
         if (closed) {
             return;
         }
-        ObservabilityUtils.recordConnectionTimeout(poolName, urlInfo);
+        ObservabilityUtils.recordConnectionTimeout(poolName, metricsTags);
     }
 
     @Override

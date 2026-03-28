@@ -22,6 +22,8 @@ import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.PoolStats;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_ACQUISITION_TIME;
 import static io.ballerina.stdlib.sql.observability.ObservabilityUtils.METRIC_CONNECTION_TIMEOUT_TOTAL;
 import static org.testng.Assert.assertEquals;
@@ -38,25 +40,25 @@ import static org.testng.Assert.assertTrue;
  */
 public class SqlMetricsTrackerFactoryTest {
 
+    private static final Map<String, String> SAMPLE_TAGS = Map.of(
+            ObservabilityUtils.TAG_DB_HOST, "localhost",
+            ObservabilityUtils.TAG_DB_PORT, "5432",
+            ObservabilityUtils.TAG_DB_NAME, "testdb");
+
     // ---- Name resolution ----
 
     @Test
     void testGetRegisteredPoolNameBeforeCreate() {
-        // Source: SqlMetricsTrackerFactory line 38
-        // registeredPoolName is null until create() is called
         SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory("my-pool", null);
+                new SqlMetricsTrackerFactory("my-pool", Map.of());
         assertNull(factory.getRegisteredPoolName(),
                 "Must return null before create() is called");
     }
 
     @Test
     void testCreateWithNullMetricPoolNameUsesHikariName() {
-        // Source: SqlMetricsTrackerFactory lines 47-48
-        // When metricPoolName is null, effectiveName = poolName
-        // (the HikariCP auto-generated name)
         SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory(null, null);
+                new SqlMetricsTrackerFactory(null, Map.of());
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
 
         factory.create("HikariPool-1", stats);
@@ -68,10 +70,8 @@ public class SqlMetricsTrackerFactoryTest {
 
     @Test
     void testCreateWithUserMetricPoolName() {
-        // Source: SqlMetricsTrackerFactory lines 47-48
-        // When metricPoolName is non-null, effectiveName = metricPoolName
         SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory("my-pool", null);
+                new SqlMetricsTrackerFactory("my-pool", Map.of());
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
 
         factory.create("HikariPool-2", stats);
@@ -85,13 +85,9 @@ public class SqlMetricsTrackerFactoryTest {
 
     @Test
     void testCreateRegistersPoolMetrics() {
-        // Source: SqlMetricsTrackerFactory lines 51-53
-        // create() calls registerPoolMetrics → pool should appear
-        // in the pool gauge registry
         String pool = "smtf-register-pool";
         SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory(pool,
-                        "jdbc:postgresql://localhost:5432/mydb");
+                new SqlMetricsTrackerFactory(pool, SAMPLE_TAGS);
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
 
         factory.create(pool, stats);
@@ -108,18 +104,13 @@ public class SqlMetricsTrackerFactoryTest {
 
     @Test
     void testCreateReturnsWorkingTracker() {
-        // Source: SqlMetricsTrackerFactory line 57
-        // Returned IMetricsTracker must correctly delegate to
-        // ObservabilityUtils when its methods are called
         String pool = "smtf-tracker-pool";
         PoolStats stats = createMockPoolStats(5, 3, 8, 2, 10, 1);
         SqlMetricsTrackerFactory factory =
-                new SqlMetricsTrackerFactory(pool,
-                        "jdbc:postgresql://localhost:5432/mydb");
+                new SqlMetricsTrackerFactory(pool, SAMPLE_TAGS);
 
         IMetricsTracker tracker = factory.create(pool, stats);
 
-        // Exercise tracker methods and verify they delegate
         tracker.recordConnectionAcquiredNanos(100_000_000L);
         assertNotNull(ObservabilityUtils.getCachedGauge(
                 METRIC_CONNECTION_ACQUISITION_TIME, pool));

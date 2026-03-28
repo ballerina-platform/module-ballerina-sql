@@ -312,7 +312,7 @@ public class SQLDatasource {
             }
             applyDriverOptions(config, sqlDatasourceParams.options);
             HikariDataSource ds = createInstrumentedPool(config,
-                    sqlDatasourceParams.url);
+                    sqlDatasourceParams.metricsTags);
             Runtime.getRuntime().addShutdownHook(
                     new Thread(this::closeConnectionPool));
             return ds;
@@ -322,15 +322,11 @@ public class SQLDatasource {
     }
 
     private String resolveMetricPoolName(BMap connectionPool) {
-        String userPoolName = null;
-        if (connectionPool != null) {
-            Object poolNameVal = connectionPool
-                    .get(Constants.ConnectionPool.POOL_NAME);
-            if (poolNameVal instanceof BString bStr) {
-                userPoolName = bStr.getValue();
-            }
-        }
-        return ObservabilityUtils.generatePoolName(userPoolName);
+        Object poolNameVal = connectionPool
+                .get(Constants.ConnectionPool.POOL_NAME);
+        String userPoolName = (poolNameVal instanceof BString bStr)
+                ? bStr.getValue() : null;
+        return ObservabilityUtils.sanitisePoolName(userPoolName);
     }
 
     private HikariConfig createHikariConfig(Properties poolProperties) {
@@ -538,32 +534,25 @@ public class SQLDatasource {
      * observability metrics if enabled, and resolve the metric pool name.
      * On failure, any registered metrics are cleaned up before rethrowing.
      */
-    private HikariDataSource createInstrumentedPool(HikariConfig config,
-                                                    String jdbcUrl) {
+    private HikariDataSource createInstrumentedPool(
+            HikariConfig config, Map<String, String> metricsTags) {
         boolean metricsEnabled = ObserveUtils.isMetricsEnabled();
         SqlMetricsTrackerFactory metricsFactory = null;
         if (metricsEnabled) {
             metricsFactory = new SqlMetricsTrackerFactory(
-                    this.metricPoolName, jdbcUrl);
+                    this.metricPoolName, metricsTags);
             config.setMetricsTrackerFactory(metricsFactory);
         }
         long initStart = metricsEnabled ? System.nanoTime() : 0;
         try {
             HikariDataSource ds = new HikariDataSource(config);
-            // Resolve metricPoolName from HikariCP if we deferred naming
-            if (this.metricPoolName == null) {
-                if (metricsFactory != null
-                        && metricsFactory.getRegisteredPoolName()
-                        != null) {
+            if (metricsEnabled) {
+                if (this.metricPoolName == null) {
                     this.metricPoolName =
                             metricsFactory.getRegisteredPoolName();
-                } else {
-                    this.metricPoolName = ds.getPoolName();
                 }
-            }
-            if (metricsEnabled) {
                 ObservabilityUtils.recordPoolInitTime(
-                        this.metricPoolName, jdbcUrl,
+                        this.metricPoolName, metricsTags,
                         (System.nanoTime() - initStart)
                                 / 1_000_000_000.0);
             }
@@ -571,7 +560,7 @@ public class SQLDatasource {
         } catch (Exception e) {
             if (metricsEnabled) {
                 String cleanupName = this.metricPoolName;
-                if (cleanupName == null && metricsFactory != null) {
+                if (cleanupName == null) {
                     cleanupName =
                             metricsFactory.getRegisteredPoolName();
                 }
@@ -690,6 +679,7 @@ public class SQLDatasource {
         private BMap connectionPool = null;
         private BMap options;
         private Properties poolProperties;
+        private Map<String, String> metricsTags;
 
         public SQLDatasourceParams() {
         }
@@ -730,6 +720,20 @@ public class SQLDatasource {
 
         public SQLDatasourceParams setPoolProperties(Properties properties) {
             this.poolProperties = properties;
+            return this;
+        }
+
+        /**
+         * Set supplementary metric tags for observability (db_host, db_port, etc.).
+         * Downstream database modules populate these from their client constructor
+         * parameters. When null, metrics will only have the pool_name tag.
+         *
+         * @param metricsTags tag map, or null
+         * @return this builder
+         * @since 1.18.0
+         */
+        public SQLDatasourceParams setMetricsTags(Map<String, String> metricsTags) {
+            this.metricsTags = metricsTags;
             return this;
         }
     }

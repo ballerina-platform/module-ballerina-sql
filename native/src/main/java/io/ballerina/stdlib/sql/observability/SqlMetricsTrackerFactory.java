@@ -22,6 +22,8 @@ import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.MetricsTrackerFactory;
 import com.zaxxer.hikari.metrics.PoolStats;
 
+import java.util.Map;
+
 /**
  * HikariCP MetricsTrackerFactory that bridges pool metrics to Ballerina's observe module.
  * <p>
@@ -34,12 +36,13 @@ import com.zaxxer.hikari.metrics.PoolStats;
 public class SqlMetricsTrackerFactory implements MetricsTrackerFactory {
 
     private final String metricPoolName;
-    private final String jdbcUrl;
+    private final Map<String, String> metricsTags;
     private String registeredPoolName;
 
-    public SqlMetricsTrackerFactory(String metricPoolName, String jdbcUrl) {
+    public SqlMetricsTrackerFactory(String metricPoolName,
+                                    Map<String, String> metricsTags) {
         this.metricPoolName = metricPoolName;
-        this.jdbcUrl = jdbcUrl;
+        this.metricsTags = metricsTags;
     }
 
     @Override
@@ -47,14 +50,13 @@ public class SqlMetricsTrackerFactory implements MetricsTrackerFactory {
         String effectiveName = (metricPoolName != null)
                 ? metricPoolName : poolName;
         this.registeredPoolName = effectiveName;
-        JdbcUrlInfo urlInfo = ObservabilityUtils.parseJdbcUrl(this.jdbcUrl);
         try {
             ObservabilityUtils.registerPoolMetrics(poolStats, effectiveName,
-                    urlInfo);
+                    metricsTags);
         } catch (Exception e) {
             // Silently swallow — pool must start even if metrics registration fails
         }
-        return new SqlMetricsTracker(effectiveName, urlInfo);
+        return new SqlMetricsTracker(effectiveName, metricsTags);
     }
 
     /**
