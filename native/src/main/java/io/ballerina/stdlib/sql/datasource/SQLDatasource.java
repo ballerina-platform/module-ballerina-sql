@@ -324,9 +324,10 @@ public class SQLDatasource {
     private String resolveMetricPoolName(BMap connectionPool) {
         Object poolNameVal = connectionPool
                 .get(Constants.ConnectionPool.POOL_NAME);
-        String userPoolName = (poolNameVal instanceof BString bStr)
-                ? bStr.getValue() : null;
-        return ObservabilityUtils.sanitisePoolName(userPoolName);
+        if (!(poolNameVal instanceof BString bStr)) {
+            return null;
+        }
+        return ObservabilityUtils.sanitisePoolName(bStr.getValue());
     }
 
     private HikariConfig createHikariConfig(Properties poolProperties) {

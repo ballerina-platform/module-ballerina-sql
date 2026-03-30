@@ -68,12 +68,12 @@ public final class ObservabilityUtils {
     private static final ConcurrentHashMap<String, Gauge> initTimeGauges =
             new ConcurrentHashMap<>();
 
-    // Cached timing Gauges (connection events)
-    private static final ConcurrentHashMap<String, Gauge> gaugeCache =
+    // Cached timing Gauges (connection events), keyed by poolName → metricName
+    private static final ConcurrentHashMap<String, ConcurrentHashMap<String, Gauge>> gaugeCache =
             new ConcurrentHashMap<>();
 
-    // Cached Counters (timeout, query total, query error)
-    private static final ConcurrentHashMap<String, Counter> counterCache =
+    // Cached Counters (timeout), keyed by poolName → metricName
+    private static final ConcurrentHashMap<String, ConcurrentHashMap<String, Counter>> counterCache =
             new ConcurrentHashMap<>();
 
     // Strong reference to PoolStats to prevent GC while PolledGauges are registered.
@@ -136,20 +136,15 @@ public final class ObservabilityUtils {
      * @return a sanitized pool name, or null if naming must be deferred to HikariCP
      */
     public static String sanitisePoolName(String userConfiguredPoolName) {
-        if (userConfiguredPoolName != null) {
-            userConfiguredPoolName = userConfiguredPoolName.trim();
+        userConfiguredPoolName = userConfiguredPoolName.trim();
+        if (userConfiguredPoolName.isEmpty()) {
+            return null;
         }
-        if (userConfiguredPoolName != null
-                && !userConfiguredPoolName.isEmpty()) {
-            String sanitized = userConfiguredPoolName
-                    .replaceAll("[^a-zA-Z0-9._-]", "-")
-                    .replaceAll("-{2,}", "-")
-                    .replaceAll("(^-)|(-$)", "");
-            if (!sanitized.isEmpty()) {
-                return sanitized;
-            }
-        }
-        return null;
+        String sanitized = userConfiguredPoolName
+                .replaceAll("[^a-zA-Z0-9._-]", "-")
+                .replaceAll("-{2,}", "-")
+                .replaceAll("(^-)|(-$)", "");
+        return sanitized.isEmpty() ? null : sanitized;
     }
 
     // ---- Tag helpers ----
@@ -269,23 +264,19 @@ public final class ObservabilityUtils {
                 registry.unregister(initGauge);
             }
 
-            // Cached Gauges matching this pool
-            gaugeCache.entrySet().removeIf(entry -> {
-                if (isForPool(entry.getKey(), poolName)) {
-                    registry.unregister(entry.getValue());
-                    return true;
-                }
-                return false;
-            });
+            // Cached Gauges for this pool
+            ConcurrentHashMap<String, Gauge> cachedGauges =
+                    gaugeCache.remove(poolName);
+            if (cachedGauges != null) {
+                cachedGauges.values().forEach(registry::unregister);
+            }
 
-            // Cached Counters matching this pool
-            counterCache.entrySet().removeIf(entry -> {
-                if (isForPool(entry.getKey(), poolName)) {
-                    registry.unregister(entry.getValue());
-                    return true;
-                }
-                return false;
-            });
+            // Cached Counters for this pool
+            ConcurrentHashMap<String, Counter> cachedCounters =
+                    counterCache.remove(poolName);
+            if (cachedCounters != null) {
+                cachedCounters.values().forEach(registry::unregister);
+            }
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -304,14 +295,14 @@ public final class ObservabilityUtils {
                                                 long elapsedAcquiredNanos,
                                                 Map<String, String> metricsTags) {
         try {
-            String key = METRIC_CONNECTION_ACQUISITION_TIME + ":" + poolName;
-            gaugeCache.computeIfAbsent(key, k ->
-                    Gauge.builder(METRIC_CONNECTION_ACQUISITION_TIME)
-                            .description(DESC_CONN_ACQUISITION)
-                            .tags(buildTags(poolName, metricsTags))
-                            .summarize(STATISTIC_CONFIG)
-                            .register()
-            ).setValue(elapsedAcquiredNanos / NANOS_TO_SECONDS);
+            gaugeCache.computeIfAbsent(poolName, k -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(METRIC_CONNECTION_ACQUISITION_TIME, k ->
+                            Gauge.builder(METRIC_CONNECTION_ACQUISITION_TIME)
+                                    .description(DESC_CONN_ACQUISITION)
+                                    .tags(buildTags(poolName, metricsTags))
+                                    .summarize(STATISTIC_CONFIG)
+                                    .register()
+                    ).setValue(elapsedAcquiredNanos / NANOS_TO_SECONDS);
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -328,14 +319,14 @@ public final class ObservabilityUtils {
                                           long elapsedBorrowedMillis,
                                           Map<String, String> metricsTags) {
         try {
-            String key = METRIC_CONNECTION_USAGE_TIME + ":" + poolName;
-            gaugeCache.computeIfAbsent(key, k ->
-                    Gauge.builder(METRIC_CONNECTION_USAGE_TIME)
-                            .description(DESC_CONN_USAGE)
-                            .tags(buildTags(poolName, metricsTags))
-                            .summarize(STATISTIC_CONFIG)
-                            .register()
-            ).setValue(elapsedBorrowedMillis / MILLIS_TO_SECONDS);
+            gaugeCache.computeIfAbsent(poolName, k -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(METRIC_CONNECTION_USAGE_TIME, k ->
+                            Gauge.builder(METRIC_CONNECTION_USAGE_TIME)
+                                    .description(DESC_CONN_USAGE)
+                                    .tags(buildTags(poolName, metricsTags))
+                                    .summarize(STATISTIC_CONFIG)
+                                    .register()
+                    ).setValue(elapsedBorrowedMillis / MILLIS_TO_SECONDS);
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -352,14 +343,14 @@ public final class ObservabilityUtils {
                                              long connectionCreatedMillis,
                                              Map<String, String> metricsTags) {
         try {
-            String key = METRIC_CONNECTION_CREATION_TIME + ":" + poolName;
-            gaugeCache.computeIfAbsent(key, k ->
-                    Gauge.builder(METRIC_CONNECTION_CREATION_TIME)
-                            .description(DESC_CONN_CREATION)
-                            .tags(buildTags(poolName, metricsTags))
-                            .summarize(STATISTIC_CONFIG)
-                            .register()
-            ).setValue(connectionCreatedMillis / MILLIS_TO_SECONDS);
+            gaugeCache.computeIfAbsent(poolName, k -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(METRIC_CONNECTION_CREATION_TIME, k ->
+                            Gauge.builder(METRIC_CONNECTION_CREATION_TIME)
+                                    .description(DESC_CONN_CREATION)
+                                    .tags(buildTags(poolName, metricsTags))
+                                    .summarize(STATISTIC_CONFIG)
+                                    .register()
+                    ).setValue(connectionCreatedMillis / MILLIS_TO_SECONDS);
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -374,13 +365,13 @@ public final class ObservabilityUtils {
     static void recordConnectionTimeout(String poolName,
                                         Map<String, String> metricsTags) {
         try {
-            String key = METRIC_CONNECTION_TIMEOUT_TOTAL + ":" + poolName;
-            counterCache.computeIfAbsent(key, k ->
-                    Counter.builder(METRIC_CONNECTION_TIMEOUT_TOTAL)
-                            .description(DESC_CONN_TIMEOUT)
-                            .tags(buildTags(poolName, metricsTags))
-                            .register()
-            ).increment();
+            counterCache.computeIfAbsent(poolName, k -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(METRIC_CONNECTION_TIMEOUT_TOTAL, k ->
+                            Counter.builder(METRIC_CONNECTION_TIMEOUT_TOTAL)
+                                    .description(DESC_CONN_TIMEOUT)
+                                    .tags(buildTags(poolName, metricsTags))
+                                    .register()
+                    ).increment();
         } catch (Exception e) {
             // Silently swallow — observability failures must never affect pool operations
         }
@@ -397,21 +388,17 @@ public final class ObservabilityUtils {
     }
 
     static Gauge getCachedGauge(String metricName, String poolName) {
-        return gaugeCache.get(metricName + ":" + poolName);
+        ConcurrentHashMap<String, Gauge> inner = gaugeCache.get(poolName);
+        return inner != null ? inner.get(metricName) : null;
     }
 
     static Counter getCachedCounter(String metricName, String poolName) {
-        return counterCache.get(metricName + ":" + poolName);
+        ConcurrentHashMap<String, Counter> inner = counterCache.get(poolName);
+        return inner != null ? inner.get(metricName) : null;
     }
 
     static Gauge getInitTimeGauge(String poolName) {
         return initTimeGauges.get(poolName);
     }
 
-    // ---- Private helpers ----
-
-    private static boolean isForPool(String key, String poolName) {
-        return key.contains(":" + poolName + ":")
-                || key.endsWith(":" + poolName);
-    }
 }

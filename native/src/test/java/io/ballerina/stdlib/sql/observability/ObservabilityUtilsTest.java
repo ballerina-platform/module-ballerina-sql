@@ -85,11 +85,6 @@ public class ObservabilityUtilsTest {
     }
 
     @Test
-    void testGeneratePoolNameNull() {
-        assertNull(ObservabilityUtils.sanitisePoolName(null));
-    }
-
-    @Test
     void testGeneratePoolNameEmpty() {
         assertNull(ObservabilityUtils.sanitisePoolName(""));
     }
