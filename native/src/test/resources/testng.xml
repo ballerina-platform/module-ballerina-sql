@@ -29,6 +29,9 @@
             <class name="io.ballerina.stdlib.sql.parameterprocessor.DefaultStatementParameterProcessorTest"/>
             <class name="io.ballerina.stdlib.sql.transaction.SQLTransactionContextTest"/>
             <class name="io.ballerina.stdlib.sql.utils.UtilsTest"/>
+            <class name="io.ballerina.stdlib.sql.observability.ObservabilityUtilsTest"/>
+            <class name="io.ballerina.stdlib.sql.observability.SqlMetricsTrackerTest"/>
+            <class name="io.ballerina.stdlib.sql.observability.SqlMetricsTrackerFactoryTest"/>
         </classes>
     </test>
 </suite>
