@@ -29,7 +29,7 @@ import java.util.Map;
  * timeout). The {@link #close()} method is called on pool shutdown and triggers metric
  * unregistration.
  *
- * @since 1.18.0
+ * @since 1.19.0
  */
 public class SqlMetricsTracker implements IMetricsTracker {
 

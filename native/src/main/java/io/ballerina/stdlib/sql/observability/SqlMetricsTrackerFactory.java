@@ -31,7 +31,7 @@ import java.util.Map;
  * {@link #create(String, PoolStats)} once when the pool starts, providing the pool name
  * and a PoolStats object for reading pool state on demand.
  *
- * @since 1.18.0
+ * @since 1.19.0
  */
 public class SqlMetricsTrackerFactory implements MetricsTrackerFactory {
 

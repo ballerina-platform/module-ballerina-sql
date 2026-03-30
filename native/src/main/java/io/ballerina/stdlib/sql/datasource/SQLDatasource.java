@@ -638,7 +638,7 @@ public class SQLDatasource {
      * and this returns {@code null}.
      *
      * @return the pool name, or null for XA pools
-     * @since 1.18.0
+     * @since 1.19.0
      */
     public String getPoolName() {
         return this.metricPoolName;
@@ -706,7 +706,7 @@ public class SQLDatasource {
          *
          * @param metricsTags tag map, or null
          * @return this builder
-         * @since 1.18.0
+         * @since 1.19.0
          */
         public SQLDatasourceParams setMetricsTags(Map<String, String> metricsTags) {
             this.metricsTags = Map.copyOf(metricsTags);

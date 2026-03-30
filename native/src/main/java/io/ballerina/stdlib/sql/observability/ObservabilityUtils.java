@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * All public methods are safe to call from any thread. Metric registration and reporting
  * failures are silently swallowed and never propagate exceptions.
  *
- * @since 1.18.0
+ * @since 1.19.0
  */
 public final class ObservabilityUtils {
 

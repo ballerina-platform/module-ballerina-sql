@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- [Add support for calling database functions using the `call` method](https://github.com/ballerina-platform/ballerina-library/issues/8635)
 - [Add observability metrics for SQL connection pools](https://github.com/ballerina-platform/ballerina-library/issues/7763)
+
+## [1.18.0]
+
+### Added
+- [Add support for calling database functions using the `call` method](https://github.com/ballerina-platform/ballerina-library/issues/8635)
 
 ### Changed
 - [Fix the CLOB retrieval issue as out parameter in OracleDB stored procedure calls](https://github.com/ballerina-platform/ballerina-library/issues/8386)

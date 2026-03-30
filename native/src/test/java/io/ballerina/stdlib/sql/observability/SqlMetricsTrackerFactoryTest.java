@@ -36,7 +36,7 @@ import static org.testng.Assert.assertTrue;
  * Verifies name resolution, pool metric registration, and
  * tracker creation.
  *
- * @since 1.18.0
+ * @since 1.19.0
  */
 public class SqlMetricsTrackerFactoryTest {
 

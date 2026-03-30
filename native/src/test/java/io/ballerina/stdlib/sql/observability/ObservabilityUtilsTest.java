@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * Unit tests for {@link ObservabilityUtils}.
  *
- * @since 1.18.0
+ * @since 1.19.0
  */
 public class ObservabilityUtilsTest {
 
