@@ -360,6 +360,7 @@ public class ObservabilityUtilsTest {
 
         @Override
         protected void update() {
+            // No-op — tests set values directly via setValues()
         }
     }
 }

@@ -313,8 +313,7 @@ public class SQLDatasource {
             applyDriverOptions(config, sqlDatasourceParams.options);
             HikariDataSource ds = createInstrumentedPool(config,
                     sqlDatasourceParams.metricsTags);
-            Runtime.getRuntime().addShutdownHook(
-                    new Thread(this::closeConnectionPool));
+            Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return ds;
         } catch (Throwable t) {
             throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
