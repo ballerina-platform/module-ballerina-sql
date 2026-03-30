@@ -50,7 +50,7 @@ public class ObservabilityUtilsTest {
             ObservabilityUtils.TAG_DB_PORT, "5432",
             ObservabilityUtils.TAG_DB_NAME, "testdb");
 
-    // ---- Pool name generation tests ----
+    // Pool name generation tests
 
     @Test
     void testGeneratePoolNameUserConfigured() {
@@ -99,7 +99,7 @@ public class ObservabilityUtilsTest {
         assertNull(ObservabilityUtils.sanitisePoolName(":::"));
     }
 
-    // ---- Safety guard tests ----
+    // Safety guard tests
 
     @Test
     void testUnregisterDoubleCallIdempotent() {
@@ -110,7 +110,7 @@ public class ObservabilityUtilsTest {
         ObservabilityUtils.unregisterPoolMetrics("double-unreg-pool");
     }
 
-    // ---- Pool registration lifecycle tests ----
+    // Pool registration lifecycle tests
 
     @Test
     void testRegisterAndUnregisterPoolMetrics() {
@@ -171,7 +171,7 @@ public class ObservabilityUtilsTest {
         ObservabilityUtils.unregisterPoolMetrics("never-registered");
     }
 
-    // ---- Connection event recording tests ----
+    // Connection event recording tests
 
     @Test
     void testRecordConnectionAcquisitionTime() {
@@ -278,7 +278,7 @@ public class ObservabilityUtilsTest {
                 "Init time gauge must be removed after unregister");
     }
 
-    // ---- Unregister cleans all cache types ----
+    // Unregister cleans all cache types
 
     @Test
     void testUnregisterCleansAllCacheTypes() {
@@ -328,7 +328,7 @@ public class ObservabilityUtilsTest {
                 "counterCache must be cleaned");
     }
 
-    // ---- Helpers ----
+    // Helpers
 
     private static PoolStats createMockPoolStats(int active, int idle,
                                                   int total, int pending,

@@ -82,7 +82,7 @@ public final class ObservabilityUtils {
     private static final ConcurrentHashMap<String, PoolStats> poolStatsRetainer =
             new ConcurrentHashMap<>();
 
-    // ---- Metric name constants (package-private for test access) ----
+    // Metric name constants (package-private for test access)
 
     static final String METRIC_POOL_ACTIVE_CONNECTIONS = "sql_pool_active_connections";
     static final String METRIC_POOL_IDLE_CONNECTIONS = "sql_pool_idle_connections";
@@ -97,14 +97,14 @@ public final class ObservabilityUtils {
     static final String METRIC_CONNECTION_CREATION_TIME = "sql_connection_creation_time_seconds";
     static final String METRIC_CONNECTION_TIMEOUT_TOTAL = "sql_connection_timeout_total";
 
-    // ---- Tag key constants (public for downstream module access) ----
+    // Tag key constants (public for downstream module access)
 
     public static final String TAG_DB_HOST = "db_host";
     public static final String TAG_DB_PORT = "db_port";
     public static final String TAG_DB_NAME = "db_name";
     public static final String TAG_DB_URL = "db_url";
 
-    // ---- Private constants ----
+    // Private constants
 
     private static final String TAG_POOL_NAME = "pool_name";
 
@@ -121,10 +121,10 @@ public final class ObservabilityUtils {
     private static final String DESC_CONN_CREATION = "Time to create a new physical connection";
     private static final String DESC_CONN_TIMEOUT = "Connection acquisitions that timed out";
 
-    private static final double NANOS_TO_SECONDS = 1_000_000_000.0;
+    public static final double NANOS_TO_SECONDS = 1_000_000_000.0;
     private static final double MILLIS_TO_SECONDS = 1_000.0;
 
-    // ---- Pool name generation ----
+    // Pool name generation
 
     /**
      * Generate a pool name for metric tagging. Uses the user-configured name
@@ -147,13 +147,8 @@ public final class ObservabilityUtils {
         return sanitized.isEmpty() ? null : sanitized;
     }
 
-    // ---- Tag helpers ----
+    // Tag helpers
 
-    /**
-     * Build the tag map for a metric. Always includes {@code pool_name}.
-     * Includes supplementary tags (db_host, db_port, etc.) when supplied
-     * by the downstream database module.
-     */
     private static Map<String, String> buildTags(String poolName,
                                                  Map<String, String> metricsTags) {
         Map<String, String> tags = new LinkedHashMap<>();
@@ -162,7 +157,7 @@ public final class ObservabilityUtils {
         return tags;
     }
 
-    // ---- Pool health metric registration and teardown ----
+    // Pool health metric registration and teardown
 
     /**
      * Register pool health PolledGauges that read values on Prometheus scrape.
@@ -282,7 +277,7 @@ public final class ObservabilityUtils {
         }
     }
 
-    // ---- Connection event recording (called from SqlMetricsTracker) ----
+    // Connection event recording (called from SqlMetricsTracker)
 
     /**
      * Record connection acquisition wait time.
@@ -377,7 +372,7 @@ public final class ObservabilityUtils {
         }
     }
 
-    // ---- Package-private test helpers ----
+    // Package-private test helpers
 
     static boolean hasRegisteredMetrics(String poolName) {
         return poolGaugeRegistry.containsKey(poolName);

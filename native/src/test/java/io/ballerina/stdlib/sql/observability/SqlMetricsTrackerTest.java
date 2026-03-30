@@ -46,7 +46,7 @@ public class SqlMetricsTrackerTest {
             ObservabilityUtils.TAG_DB_PORT, "5432",
             ObservabilityUtils.TAG_DB_NAME, "testdb");
 
-    // ---- Record methods verify delegation to ObservabilityUtils ----
+    // Record methods verify delegation to ObservabilityUtils
 
     @Test
     void testRecordConnectionAcquiredNanos() {
@@ -101,7 +101,7 @@ public class SqlMetricsTrackerTest {
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
-    // ---- Record methods with metric tags ----
+    // Record methods with metric tags
 
     @Test
     void testRecordWithMetricsTags() {
@@ -126,7 +126,7 @@ public class SqlMetricsTrackerTest {
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
-    // ---- Close lifecycle ----
+    // Close lifecycle
 
     @Test
     void testCloseUnregistersPoolMetrics() {
@@ -153,7 +153,7 @@ public class SqlMetricsTrackerTest {
         assertFalse(ObservabilityUtils.hasRegisteredMetrics(pool));
     }
 
-    // ---- Record after close (no-op path) ----
+    // Record after close (no-op path)
 
     @Test
     void testRecordAfterCloseDoesNotCreateCacheEntries() {
@@ -180,7 +180,7 @@ public class SqlMetricsTrackerTest {
                 "Closed tracker must not create timeout counter");
     }
 
-    // ---- Helpers ----
+    // Helpers
 
     private static PoolStats createMockPoolStats(int active, int idle,
                                                   int total, int pending,

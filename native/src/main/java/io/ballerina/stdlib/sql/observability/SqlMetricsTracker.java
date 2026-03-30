@@ -44,37 +44,30 @@ public class SqlMetricsTracker implements IMetricsTracker {
 
     @Override
     public void recordConnectionAcquiredNanos(long elapsedAcquiredNanos) {
-        if (closed) {
-            return;
+        if (!closed) {
+            ObservabilityUtils.recordConnectionAcquisitionTime(poolName, elapsedAcquiredNanos, metricsTags);
         }
-        ObservabilityUtils.recordConnectionAcquisitionTime(
-                poolName, elapsedAcquiredNanos, metricsTags);
     }
 
     @Override
     public void recordConnectionUsageMillis(long elapsedBorrowedMillis) {
-        if (closed) {
-            return;
+        if (!closed) {
+            ObservabilityUtils.recordConnectionUsageTime(poolName, elapsedBorrowedMillis, metricsTags);
         }
-        ObservabilityUtils.recordConnectionUsageTime(
-                poolName, elapsedBorrowedMillis, metricsTags);
     }
 
     @Override
     public void recordConnectionCreatedMillis(long connectionCreatedMillis) {
-        if (closed) {
-            return;
+        if (!closed) {
+            ObservabilityUtils.recordConnectionCreationTime(poolName, connectionCreatedMillis, metricsTags);
         }
-        ObservabilityUtils.recordConnectionCreationTime(
-                poolName, connectionCreatedMillis, metricsTags);
     }
 
     @Override
     public void recordConnectionTimeout() {
-        if (closed) {
-            return;
+        if (!closed) {
+            ObservabilityUtils.recordConnectionTimeout(poolName, metricsTags);
         }
-        ObservabilityUtils.recordConnectionTimeout(poolName, metricsTags);
     }
 
     @Override

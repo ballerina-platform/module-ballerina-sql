@@ -322,8 +322,7 @@ public class SQLDatasource {
     }
 
     private String resolveMetricPoolName(BMap connectionPool) {
-        Object poolNameVal = connectionPool
-                .get(Constants.ConnectionPool.POOL_NAME);
+        Object poolNameVal = connectionPool.get(Constants.ConnectionPool.POOL_NAME);
         if (!(poolNameVal instanceof BString bStr)) {
             return null;
         }
@@ -337,46 +336,37 @@ public class SQLDatasource {
         return new HikariConfig();
     }
 
-    private void configureDataSourceCredentials(HikariConfig config,
-            SQLDatasourceParams params) {
+    private void configureDataSourceCredentials(HikariConfig config, SQLDatasourceParams params) {
         config.setJdbcUrl(params.url);
         config.setUsername(params.user);
         config.setPassword(params.password);
         if (params.datasourceName != null
                 && !params.datasourceName.isEmpty()) {
-            if (params.options == null || !params.options
-                    .containsKey(Constants.Options.URL)) {
+            if (params.options == null || !params.options.containsKey(Constants.Options.URL)) {
                 // It is required to set the url to the datasource property
                 // when the datasource class name is provided. Because
                 // according to Hikari, either jdbcUrl or
                 // datasourceClassName will be honored.
-                config.addDataSourceProperty(
-                        Constants.Options.URL.getValue(), params.url);
+                config.addDataSourceProperty(Constants.Options.URL.getValue(), params.url);
             }
             if (params.user != null) {
-                config.addDataSourceProperty(
-                        Constants.USERNAME, params.user);
+                config.addDataSourceProperty(Constants.USERNAME, params.user);
             }
             if (params.password != null) {
-                config.addDataSourceProperty(
-                        Constants.PASSWORD, params.password);
+                config.addDataSourceProperty(Constants.PASSWORD, params.password);
             }
         }
         config.setDataSourceClassName(params.datasourceName);
     }
 
-    private void configureConnectionPool(HikariConfig config,
-            BMap connectionPool) throws ApplicationError {
+    private void configureConnectionPool(HikariConfig config, BMap connectionPool) throws ApplicationError {
         configurePoolSizing(config, connectionPool);
         configurePoolTimeouts(config, connectionPool);
         configurePoolBehavior(config, connectionPool);
     }
 
-    private void configurePoolSizing(HikariConfig config,
-            BMap connectionPool) throws ApplicationError {
-        int maxOpenConn = connectionPool
-                .getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS)
-                .intValue();
+    private void configurePoolSizing(HikariConfig config, BMap connectionPool) throws ApplicationError {
+        int maxOpenConn = connectionPool.getIntValue(Constants.ConnectionPool.MAX_OPEN_CONNECTIONS).intValue();
         if (maxOpenConn < 1) {
             throw new ApplicationError(
                     "ConnectionPool field 'maxOpenConnections' "
@@ -395,9 +385,7 @@ public class SQLDatasource {
         long connLifeTimeMS = (long) (connLifeTimeSec * 1000);
         config.setMaxLifetime(connLifeTimeMS);
 
-        int minIdleConnections = connectionPool
-                .getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS)
-                .intValue();
+        int minIdleConnections = connectionPool.getIntValue(Constants.ConnectionPool.MIN_IDLE_CONNECTIONS).intValue();
         if (minIdleConnections < 0) {
             throw new ApplicationError(
                     "ConnectionPool field 'minIdleConnections' "
@@ -460,10 +448,8 @@ public class SQLDatasource {
         config.setKeepaliveTime(keepAliveTimeMS);
     }
 
-    private void configurePoolBehavior(HikariConfig config,
-            BMap connectionPool) {
-        Object connectionPoolName = connectionPool
-                .get(Constants.ConnectionPool.POOL_NAME);
+    private void configurePoolBehavior(HikariConfig config, BMap connectionPool) {
+        Object connectionPoolName = connectionPool.get(Constants.ConnectionPool.POOL_NAME);
         if (connectionPoolName instanceof BString poolName) {
             config.setPoolName(poolName.getValue());
         }
@@ -475,20 +461,17 @@ public class SQLDatasource {
                 (long) (initializationFailTimeout * 1000);
         config.setInitializationFailTimeout(initializationFailTimeoutMS);
 
-        Object transactionIsolation = connectionPool
-                .get(Constants.ConnectionPool.TRANSACTION_ISOLATION);
+        Object transactionIsolation = connectionPool.get(Constants.ConnectionPool.TRANSACTION_ISOLATION);
         if (transactionIsolation instanceof BString isolation) {
             config.setTransactionIsolation(isolation.getValue());
         }
 
-        Object connectionTestQuery = connectionPool
-                .get(Constants.ConnectionPool.CONNECTION_TEST_QUERY);
+        Object connectionTestQuery = connectionPool.get(Constants.ConnectionPool.CONNECTION_TEST_QUERY);
         if (connectionTestQuery instanceof BString testQuery) {
             config.setConnectionTestQuery(testQuery.getValue());
         }
 
-        Object connectionInitSql = connectionPool
-                .get(Constants.ConnectionPool.CONNECTION_INIT_SQL);
+        Object connectionInitSql = connectionPool.get(Constants.ConnectionPool.CONNECTION_INIT_SQL);
         if (connectionInitSql instanceof BString sqlString) {
             config.setConnectionInitSql(sqlString.getValue());
         } else if (connectionInitSql instanceof BArray sqlArray) {
@@ -503,13 +486,10 @@ public class SQLDatasource {
             config.setConnectionInitSql(sqlBuilder.toString());
         }
 
-        boolean readOnly = connectionPool
-                .getBooleanValue(Constants.ConnectionPool.READ_ONLY);
+        boolean readOnly = connectionPool.getBooleanValue(Constants.ConnectionPool.READ_ONLY);
         config.setReadOnly(readOnly);
 
-        boolean allowPoolSuspension = connectionPool
-                .getBooleanValue(
-                        Constants.ConnectionPool.ALLOW_POOL_SUSPENSION);
+        boolean allowPoolSuspension = connectionPool.getBooleanValue(Constants.ConnectionPool.ALLOW_POOL_SUSPENSION);
         config.setAllowPoolSuspension(allowPoolSuspension);
 
         boolean isolateInternalQueries = connectionPool
@@ -521,8 +501,7 @@ public class SQLDatasource {
     @SuppressWarnings("unchecked")
     private void applyDriverOptions(HikariConfig config, BMap options) {
         if (options != null) {
-            BMap<BString, Object> optionMap =
-                    (BMap<BString, Object>) options;
+            BMap<BString, Object> optionMap = (BMap<BString, Object>) options;
             optionMap.entrySet().forEach(entry ->
                     config.addDataSourceProperty(
                             entry.getKey().getValue(),
@@ -530,11 +509,6 @@ public class SQLDatasource {
         }
     }
 
-    /**
-     * Create a HikariDataSource from the given config, instrument it with
-     * observability metrics if enabled, and resolve the metric pool name.
-     * On failure, any registered metrics are cleaned up before rethrowing.
-     */
     private HikariDataSource createInstrumentedPool(
             HikariConfig config, Map<String, String> metricsTags) {
         boolean metricsEnabled = ObserveUtils.isMetricsEnabled();
@@ -555,22 +529,24 @@ public class SQLDatasource {
                 ObservabilityUtils.recordPoolInitTime(
                         this.metricPoolName, metricsTags,
                         (System.nanoTime() - initStart)
-                                / 1_000_000_000.0);
+                                / ObservabilityUtils.NANOS_TO_SECONDS);
             }
             return ds;
         } catch (Exception e) {
             if (metricsEnabled) {
-                String cleanupName = this.metricPoolName;
-                if (cleanupName == null) {
-                    cleanupName =
-                            metricsFactory.getRegisteredPoolName();
-                }
-                if (cleanupName != null) {
-                    ObservabilityUtils.unregisterPoolMetrics(
-                            cleanupName);
-                }
+                cleanupMetrics(metricsFactory);
             }
             throw e;
+        }
+    }
+
+    private void cleanupMetrics(SqlMetricsTrackerFactory metricsFactory) {
+        String cleanupName = this.metricPoolName;
+        if (cleanupName == null) {
+            cleanupName = metricsFactory.getRegisteredPoolName();
+        }
+        if (cleanupName != null) {
+            ObservabilityUtils.unregisterPoolMetrics(cleanupName);
         }
     }
 

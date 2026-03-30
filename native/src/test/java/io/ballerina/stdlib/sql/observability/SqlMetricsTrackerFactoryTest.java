@@ -45,7 +45,7 @@ public class SqlMetricsTrackerFactoryTest {
             ObservabilityUtils.TAG_DB_PORT, "5432",
             ObservabilityUtils.TAG_DB_NAME, "testdb");
 
-    // ---- Name resolution ----
+    // Name resolution
 
     @Test
     void testGetRegisteredPoolNameBeforeCreate() {
@@ -81,7 +81,7 @@ public class SqlMetricsTrackerFactoryTest {
         ObservabilityUtils.unregisterPoolMetrics("my-pool");
     }
 
-    // ---- Pool metric registration ----
+    // Pool metric registration
 
     @Test
     void testCreateRegistersPoolMetrics() {
@@ -100,7 +100,7 @@ public class SqlMetricsTrackerFactoryTest {
         ObservabilityUtils.unregisterPoolMetrics(pool);
     }
 
-    // ---- Tracker functionality ----
+    // Tracker functionality
 
     @Test
     void testCreateReturnsWorkingTracker() {
@@ -122,7 +122,7 @@ public class SqlMetricsTrackerFactoryTest {
         tracker.close();
     }
 
-    // ---- Helpers ----
+    // Helpers
 
     private static PoolStats createMockPoolStats(int active, int idle,
                                                   int total, int pending,
