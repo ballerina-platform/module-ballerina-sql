@@ -315,8 +315,8 @@ public class SQLDatasource {
                     sqlDatasourceParams.metricsTags);
             Runtime.getRuntime().addShutdownHook(new Thread(this::closeConnectionPool));
             return ds;
-        } catch (Throwable t) {
-            throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(t));
+        } catch (Exception e) {
+            throw ErrorGenerator.getSQLApplicationError(buildErrorMessage(e));
         }
     }
 
