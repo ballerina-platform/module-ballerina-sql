@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.13.1"
+distribution-version = "2201.13.0"
 
 [[package]]
 org = "ballerina"
@@ -316,7 +316,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "sql"
-version = "1.18.0"
+version = "1.19.0"
 dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
@@ -327,7 +327,6 @@ dependencies = [
 	{org = "ballerina", name = "lang.transaction"},
 	{org = "ballerina", name = "os"},
 	{org = "ballerina", name = "test"},
-	{org = "ballerina", name = "time"},
 	{org = "ballerinai", name = "transaction"}
 ]
 modules = [
@@ -362,18 +361,16 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "time"
-version = "2.8.0"
+version = "2.7.0"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
-]
-modules = [
-	{org = "ballerina", packageName = "time", moduleName = "time"}
 ]
 
 [[package]]
 org = "ballerina"
 name = "url"
-version = "2.6.1"
+version = "2.6.0"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
