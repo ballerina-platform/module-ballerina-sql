@@ -327,6 +327,7 @@ dependencies = [
 	{org = "ballerina", name = "lang.transaction"},
 	{org = "ballerina", name = "os"},
 	{org = "ballerina", name = "test"},
+	{org = "ballerina", name = "time"},
 	{org = "ballerinai", name = "transaction"}
 ]
 modules = [
@@ -362,9 +363,11 @@ modules = [
 org = "ballerina"
 name = "time"
 version = "2.7.0"
-scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
+]
+modules = [
+	{org = "ballerina", packageName = "time", moduleName = "time"}
 ]
 
 [[package]]
