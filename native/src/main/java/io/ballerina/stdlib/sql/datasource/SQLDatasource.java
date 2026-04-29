@@ -57,6 +57,7 @@ import javax.transaction.xa.XAResource;
 public class SQLDatasource {
     private AtomicInteger clientCounter = new AtomicInteger(0);
     private Lock mutex = new ReentrantLock();
+    private static final Lock containerLock = new ReentrantLock();
     private boolean poolShutdown = false;
     private boolean xaConn;
     private AtomikosDataSourceBean atomikosDataSourceBean;
@@ -105,16 +106,21 @@ public class SQLDatasource {
         }
     }
 
-    public static synchronized Map<PoolKey, SQLDatasource> putDatasourceContainer(
+    public static Map<PoolKey, SQLDatasource> putDatasourceContainer(
             BMap<BString, Object> poolOptions,
             ConcurrentHashMap<PoolKey, SQLDatasource> datasourceMap) {
-        Map<PoolKey, SQLDatasource> existingDataSourceMap =
-                (Map<PoolKey, SQLDatasource>) poolOptions.getNativeData(POOL_MAP_KEY);
-        if (existingDataSourceMap != null) {
-            return existingDataSourceMap;
+        containerLock.lock();
+        try {
+            Map<PoolKey, SQLDatasource> existingDataSourceMap =
+                    (Map<PoolKey, SQLDatasource>) poolOptions.getNativeData(POOL_MAP_KEY);
+            if (existingDataSourceMap != null) {
+                return existingDataSourceMap;
+            }
+            poolOptions.addNativeData(POOL_MAP_KEY, datasourceMap);
+            return datasourceMap;
+        } finally {
+            containerLock.unlock();
         }
-        poolOptions.addNativeData(POOL_MAP_KEY, datasourceMap);
-        return datasourceMap;
     }
 
     /**
