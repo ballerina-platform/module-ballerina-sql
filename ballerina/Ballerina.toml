@@ -16,17 +16,30 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "sql-native"
 version = "1.17.1"
+<<<<<<< Updated upstream
 path = "../native/build/libs/sql-native-1.17.1.jar"
+||||||| Stash base
+version = "1.17.0"
+path = "../native/build/libs/sql-native-1.17.0.jar"
+=======
+path = "../native/build/libs/sql-native-1.17.1-SNAPSHOT.jar"
+>>>>>>> Stashed changes
 
 [[platform.java21.dependency]]
+<<<<<<< Updated upstream
 path = "../test-utils/build/libs/sql-test-utils-1.17.1.jar"
+||||||| Stash base
+path = "../test-utils/build/libs/sql-test-utils-1.17.0.jar"
+=======
+path = "../test-utils/build/libs/sql-test-utils-1.17.1-SNAPSHOT.jar"
+>>>>>>> Stashed changes
 scope = "testOnly"
 
 [[platform.java21.dependency]]
 groupId = "com.zaxxer"
 artifactId = "HikariCP"
-version = "4.0.3"
-path = "./lib/HikariCP-4.0.3.jar"
+version = "5.1.0"
+path = "./lib/HikariCP-5.1.0.jar"
 
 [[platform.java21.dependency]]
 path = "./lib/hsqldb-2.7.1.jar"

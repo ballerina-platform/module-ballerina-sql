@@ -3,4 +3,10 @@ id = "sql-compiler-plugin"
 class = "io.ballerina.stdlib.sql.compiler.SQLCompilerPlugin"
 
 [[dependency]]
+<<<<<<< Updated upstream
 path = "../compiler-plugin/build/libs/sql-compiler-plugin-1.17.1.jar"
+||||||| Stash base
+path = "../compiler-plugin/build/libs/sql-compiler-plugin-1.17.0.jar"
+=======
+path = "../compiler-plugin/build/libs/sql-compiler-plugin-1.17.1-SNAPSHOT.jar"
+>>>>>>> Stashed changes
