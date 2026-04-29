@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "sql"
-version = "1.17.1"
+version = "1.17.2"
 authors = ["Ballerina"]
 keywords = ["database", "client", "network", "SQL", "RDBMS"]
 repository = "https://github.com/ballerina-platform/module-ballerina-sql"
@@ -15,24 +15,11 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "sql-native"
-version = "1.17.1"
-<<<<<<< Updated upstream
-path = "../native/build/libs/sql-native-1.17.1.jar"
-||||||| Stash base
-version = "1.17.0"
-path = "../native/build/libs/sql-native-1.17.0.jar"
-=======
-path = "../native/build/libs/sql-native-1.17.1-SNAPSHOT.jar"
->>>>>>> Stashed changes
+version = "1.17.2"
+path = "../native/build/libs/sql-native-1.17.2-SNAPSHOT.jar"
 
 [[platform.java21.dependency]]
-<<<<<<< Updated upstream
-path = "../test-utils/build/libs/sql-test-utils-1.17.1.jar"
-||||||| Stash base
-path = "../test-utils/build/libs/sql-test-utils-1.17.0.jar"
-=======
-path = "../test-utils/build/libs/sql-test-utils-1.17.1-SNAPSHOT.jar"
->>>>>>> Stashed changes
+path = "../test-utils/build/libs/sql-test-utils-1.17.2-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
