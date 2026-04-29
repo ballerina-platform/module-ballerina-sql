@@ -149,16 +149,28 @@ public class SQLDatasource {
                 if (!existingSqlDatasource.isPoolShutdown()) {
                     existingSqlDatasource.incrementClientCounter();
                 } else {
-                    sqlDatasourceToBeReturned = hikariDatasourceMap.compute(poolKey,
-                            (key, value) -> createAndInitDatasource(sqlDatasourceParams));
+                    containerLock.lock();
+                    try {
+                        sqlDatasourceToBeReturned = createAndInitDatasource(sqlDatasourceParams);
+                        hikariDatasourceMap.put(poolKey, sqlDatasourceToBeReturned);
+                    } finally {
+                        containerLock.unlock();
+                    }
                 }
             } finally {
                 existingSqlDatasource.releaseMutex();
             }
         } else {
-            sqlDatasourceToBeReturned = hikariDatasourceMap.computeIfAbsent(poolKey,
-                    key -> createAndInitDatasource(sqlDatasourceParams));
-
+            containerLock.lock();
+            try {
+                sqlDatasourceToBeReturned = hikariDatasourceMap.get(poolKey);
+                if (sqlDatasourceToBeReturned == null) {
+                    sqlDatasourceToBeReturned = createAndInitDatasource(sqlDatasourceParams);
+                    hikariDatasourceMap.put(poolKey, sqlDatasourceToBeReturned);
+                }
+            } finally {
+                containerLock.unlock();
+            }
         }
         sqlDatasourceToBeReturned.setExecuteGKFlag(executeGKFlag);
         sqlDatasourceToBeReturned.setBatchExecuteGKFlag(batchExecuteGKFlag);
