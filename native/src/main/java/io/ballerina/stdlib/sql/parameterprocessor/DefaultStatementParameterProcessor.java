@@ -83,21 +83,16 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
  */
 public class DefaultStatementParameterProcessor extends AbstractStatementParameterProcessor {
 
-    private static final Object lock = new Object();
-    private static volatile DefaultStatementParameterProcessor instance;
-
     public DefaultStatementParameterProcessor() {
     }
 
     public static DefaultStatementParameterProcessor getInstance() {
-        if (instance == null) {
-            synchronized (lock) {
-                if (instance == null) {
-                    instance = new DefaultStatementParameterProcessor();
-                }
-            }
-        }
-        return instance;
+        return Holder.INSTANCE;
+    }
+
+    private static final class Holder {
+        private static final DefaultStatementParameterProcessor INSTANCE =
+                new DefaultStatementParameterProcessor();
     }
 
     private Object[] getArrayData(Object value) throws DataError, SQLException {

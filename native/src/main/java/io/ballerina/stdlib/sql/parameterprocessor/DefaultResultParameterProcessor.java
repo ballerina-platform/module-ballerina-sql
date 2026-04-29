@@ -77,21 +77,16 @@ import static io.ballerina.stdlib.sql.utils.Utils.getErrorStream;
  * @since 0.5.6
  */
 public class DefaultResultParameterProcessor extends AbstractResultParameterProcessor {
-    private static final Object lock = new Object();
-    private static volatile DefaultResultParameterProcessor instance;
-
     public DefaultResultParameterProcessor() {
     }
 
     public static DefaultResultParameterProcessor getInstance() {
-        if (instance == null) {
-            synchronized (lock) {
-                if (instance == null) {
-                    instance = new DefaultResultParameterProcessor();
-                }
-            }
-        }
-        return instance;
+        return Holder.INSTANCE;
+    }
+
+    private static final class Holder {
+        private static final DefaultResultParameterProcessor INSTANCE =
+                new DefaultResultParameterProcessor();
     }
 
     protected BArray createAndPopulateBBRefValueArray(Object firstNonNullElement, Object[] dataArray,
