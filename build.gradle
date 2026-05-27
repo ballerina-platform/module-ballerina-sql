@@ -59,6 +59,13 @@ allprojects {
 }
 
 subprojects {
+    plugins.withId('java') {
+        java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(25)
+            }
+        }
+    }
 
     configurations {
         externalJars
@@ -119,7 +126,7 @@ release {
     }
 }
 
-task build {
+tasks.named('build') {
     dependsOn(':sql-native:build')
     dependsOn(':sql-compiler-plugin:build')
     dependsOn(':sql-ballerina:build')
