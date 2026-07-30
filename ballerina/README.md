@@ -312,7 +312,7 @@ check from record{} student in resultStream
     };
 ```
 
-When a query result is mapped into a Ballerina record, each database column is matched to a record field **by name**. Ballerina record fields follow the camelCase convention, while database columns are commonly snake_case, so the names frequently do not line up. Use the `sql:Column` annotation to map a record field to its database column **whenever the field name differs from the column name**. The annotation is attached to the record field.
+When a query result is mapped into a Ballerina record, each database column is matched to a record field **by name, ignoring case**. Ballerina record fields follow the camelCase convention, while database columns are commonly snake_case, so the names frequently do not line up. Use the `sql:Column` annotation to map a record field to its database column **when the two names do not match case-insensitively**. The annotation is attached to the record field.
 ```ballerina
 type Student record {
     int id;
@@ -322,7 +322,7 @@ type Student record {
     string lastName;
 };
 ```
-The above maps the database column `first_name` to the Ballerina record field `firstName`. A field whose name already matches its column exactly (for example, an `id` column mapped to an `id` field) does not need the annotation. If the `query()` method does not return the `first_name` column, the field will not be populated.
+The above maps the database column `first_name` to the Ballerina record field `firstName`. A field whose name already matches its column apart from casing (for example, an `ID` column mapped to an `id` field) does not need the annotation. If the `query()` method does not return the `first_name` column, the field will not be populated.
 
 Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers.
 All columns of the `Teachers` table can be grouped to another Typed record such as `Teacher` type within the `Student` record.
