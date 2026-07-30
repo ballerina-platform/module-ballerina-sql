@@ -312,17 +312,17 @@ check from record{} student in resultStream
     };
 ```
 
-`sql:Column` annotation can be used to map database columns to Typed record fields of different name. This annotation should be attached to record fields.
+When a query result is mapped into a Ballerina record, each database column is matched to a record field **by name, ignoring case**. Ballerina record fields follow the camelCase convention, while database columns are commonly snake_case, so the names frequently do not line up. Use the `sql:Column` annotation to map a record field to its database column **when the two names do not match case-insensitively**. The annotation is attached to the record field.
 ```ballerina
 type Student record {
     int id;
     @sql:Column { name: "first_name" }
     string firstName;
     @sql:Column { name: "last_name" }
-    string lastName
+    string lastName;
 };
 ```
-The above annotation will map the database column `first_name` to the Ballerina record field `firstName`. If the `query()` method does not return `first_name` column, the field will not be populated.
+The above maps the database column `first_name` to the Ballerina record field `firstName`. A field whose name already matches its column apart from casing (for example, an `ID` column mapped to an `id` field) does not need the annotation. If the `query()` method does not return the `first_name` column, the field will not be populated.
 
 Multiple table columns can be matched to a single Ballerina record within a returned record. For instance if the query returns data from multiple tables such as Students and Teachers.
 All columns of the `Teachers` table can be grouped to another Typed record such as `Teacher` type within the `Student` record.
