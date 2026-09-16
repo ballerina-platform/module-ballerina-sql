@@ -60,13 +60,13 @@ import javax.transaction.xa.XAResource;
 public class SQLDatasource {
     private AtomicInteger clientCounter = new AtomicInteger(0);
     private Lock mutex = new ReentrantLock();
-    private boolean poolShutdown = false;
+    private volatile boolean poolShutdown = false;
     private boolean xaConn;
     private AtomikosDataSourceBean atomikosDataSourceBean;
     private HikariDataSource hikariDataSource;
     private XADataSource xaDataSource;
-    private boolean executeGKFlag;
-    private boolean batchExecuteGKFlag;
+    private volatile boolean executeGKFlag;
+    private volatile boolean batchExecuteGKFlag;
     private String metricPoolName;
     private static final String POOL_MAP_KEY = UUID.randomUUID().toString();
 
