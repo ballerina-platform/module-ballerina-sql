@@ -881,3 +881,47 @@ function testComplexWithStructDefDefault() returns error? {
     };
     test:assertEquals(value, mixTypesExpected, "Expected record did not match.");
 }
+
+type NilableJsonRecord record {|
+    int row_id;
+    json? json_type;
+|};
+
+type JsonRecord record {|
+    int row_id;
+    json json_type;
+|};
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testNullJsonToNilableJson() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    NilableJsonRecord[] result = check from NilableJsonRecord row in dbClient->query(
+        `SELECT row_id, json_type FROM MixTypes WHERE row_id IN (1, 2) ORDER BY row_id`, NilableJsonRecord)
+        select row;
+    check dbClient.close();
+    test:assertEquals(result, [{row_id: 1, json_type: [1, 2, 3]}, {row_id: 2, json_type: ()}]);
+}
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testNullJsonToJson() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    JsonRecord[] result = check from JsonRecord row in dbClient->query(
+        `SELECT row_id, json_type FROM MixTypes WHERE row_id = 2`, JsonRecord)
+        select row;
+    check dbClient.close();
+    test:assertEquals(result, [{row_id: 2, json_type: ()}]);
+}
+
+@test:Config {
+    groups: ["query", "query-complex-params"]
+}
+function testNullJsonQueryRow() returns error? {
+    MockClient dbClient = check new (url = complexQueryDb, user = user, password = password);
+    json result = check dbClient->queryRow(`SELECT json_type FROM MixTypes WHERE row_id = 2`);
+    check dbClient.close();
+    test:assertEquals(result, ());
+}

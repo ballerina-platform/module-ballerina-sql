@@ -363,8 +363,11 @@ public abstract class AbstractResultParameterProcessor {
 
     public Object processJsonResult(ResultSet resultSet, int columnIndex, int sqlType, Type ballerinaType)
             throws DataError, SQLException {
-        String jsonString = convertChar(
-                resultSet.getString(columnIndex), sqlType, ballerinaType).getValue();
+        BString jsonValue = convertChar(resultSet.getString(columnIndex), sqlType, ballerinaType);
+        if (jsonValue == null) {
+            return null;
+        }
+        String jsonString = jsonValue.getValue();
         Reader reader = new StringReader(jsonString);
         try {
             return JsonUtils.parse(reader, JsonUtils.NonStringValueProcessingMode.FROM_JSON_STRING);

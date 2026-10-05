@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- [Fix the error when a SQL `NULL` JSON value is retrieved into a `json` or `json?` field](https://github.com/ballerina-platform/ballerina-library/issues/9254)
+
 ## [1.19.0] - 2026-03-31
 
 ### Added
